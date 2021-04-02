@@ -1,0 +1,6 @@
+# Service that can be used to get orientation information about the EE using moveit
+
+---
+float32 r
+float32 p
+float32 y

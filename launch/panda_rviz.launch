@@ -1,0 +1,16 @@
+<!-- Launch file for loading RVIZ -->
+<launch>
+    <!-- Debug statement -->
+    <arg name="debug" default="false" />
+    <arg unless="$(arg debug)" name="launch_prefix" value="" />
+    <arg if="$(arg debug)" name="launch_prefix" value="gdb --ex run --args" />
+
+    <!-- rviz launch arguments -->
+    <arg name="rviz_file" default="$(find panda_openai_sim)/launch/panda.rviz" />
+    <arg name="command_args" value="-d $(arg rviz_file)" />
+
+    <!-- launch rviz -->
+    <node name="$(anon rviz)" launch-prefix="$(arg launch_prefix)" pkg="rviz" type="rviz" respawn="false" args="$(arg command_args)" output="screen">
+        <rosparam command="load" file="$(find panda_moveit_config)/cfg/kinematics.yaml" />
+    </node>
+</launch>

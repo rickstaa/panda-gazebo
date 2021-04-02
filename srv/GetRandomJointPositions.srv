@@ -1,0 +1,8 @@
+# Service that can be used to get valid joint positions for controlling the robot arm
+# and hand
+
+JointLimits joint_limits
+---
+bool success
+string[] joint_names
+float64[] joint_positions

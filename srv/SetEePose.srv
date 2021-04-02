@@ -1,0 +1,7 @@
+# Service that can be used to set the current EE pose and control the robot using
+# moveit.
+
+geometry_msgs/Pose pose
+---
+bool success
+string message

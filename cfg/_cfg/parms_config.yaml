@@ -1,0 +1,40 @@
+# This configuration file contains a number of parameters that are used in multiple
+# panda_openai_sim scripts.
+
+robot_control_types:  # The currently supported control types
+  arm:
+      - "joint_trajectory_control"
+      - "joint_position_control"
+      - "joint_effort_control"
+      - "joint_group_position_control"
+      - "joint_group_effort_control"
+      - "ee_control"
+  hand:
+      - "joint_trajectory_control"
+      - "joint_position_control"
+      - "joint_effort_control"
+      - "joint_group_position_control"
+      - "joint_group_effort_control"
+
+panda_joints: # The current robot joints
+    arm:
+        - "panda_joint1"
+        - "panda_joint2"
+        - "panda_joint3"
+        - "panda_joint4"
+        - "panda_joint5"
+        - "panda_joint6"
+        - "panda_joint7"
+    hand:
+        - "panda_finger_joint1"
+        - "panda_finger_joint2"
+    both:
+        - "panda_finger_joint1"
+        - "panda_finger_joint2"
+        - "panda_joint1"
+        - "panda_joint2"
+        - "panda_joint3"
+        - "panda_joint4"
+        - "panda_joint5"
+        - "panda_joint6"
+        - "panda_joint7"

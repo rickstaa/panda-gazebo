@@ -1,0 +1,12 @@
+# Configuration file for creating a panda hand joint trajectory controller
+# which can be used to control the panda robot (effort) joints.
+
+panda_hand_finger1_position_controller:
+    type: effort_controllers/JointPositionController
+    joint: panda_finger_joint1
+    pid: { p: 5, d: 3.0, i: 0, i_clamp: 1 }
+
+panda_hand_finger2_position_controller:
+    type: effort_controllers/JointPositionController
+    joint: panda_finger_joint2
+    pid: { p: 5, d: 3.0, i: 0, i_clamp: 1 }

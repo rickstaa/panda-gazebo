@@ -1,0 +1,6 @@
+# Service that can be used to set the current EE used in moveit.
+
+string ee_name
+---
+bool success
+string message

@@ -1,0 +1,5 @@
+# Service that can be used to switch the current control type used by the
+# 'panda_control_server'. Options are: 'joint_control' and 'joint_group_control'
+
+---
+bool success

@@ -1,0 +1,61 @@
+<!-- Launch file for launching the robot controllers -->
+<launch>
+
+    <!--## ARGUMENTS ##-->
+    <arg name="load_gripper" default="true" />
+
+    <!-- Controller args -->
+    <arg name="preload_controllers" default="false" /> <!-- Wheter to preload all non essential controllers -->
+
+    <!-- Controller YAML file locations -->
+    <arg name="panda_joint_state_controller_file" value="$(find panda_openai_sim)/cfg/controllers/panda_joint_state_control.yaml" />
+    <arg name="panda_arm_joint_trajectory_controller_file" value="$(find panda_openai_sim)/cfg/controllers/panda_arm_effort_joint_trajectory_control.yaml" />
+    <arg name="panda_arm_joint_position_controller_file" value="$(find panda_openai_sim)/cfg/controllers/panda_arm_effort_joint_position_control.yaml" />
+    <arg name="panda_arm_joint_group_position_controller_file" value="$(find panda_openai_sim)/cfg/controllers/panda_arm_effort_joint_group_position_control.yaml" />
+    <arg name="panda_arm_joint_effort_controller_file" value="$(find panda_openai_sim)/cfg/controllers/panda_arm_effort_joint_effort_control.yaml" />
+    <arg name="panda_arm_joint_group_effort_controller_file" value="$(find panda_openai_sim)/cfg/controllers/panda_arm_effort_joint_group_effort_control.yaml" />
+    <arg name="panda_hand_joint_trajectory_controller_file" value="$(find panda_openai_sim)/cfg/controllers/panda_hand_effort_joint_trajectory_control.yaml" />
+    <arg name="panda_hand_joint_position_controller_file" value="$(find panda_openai_sim)/cfg/controllers/panda_hand_effort_joint_position_control.yaml" />
+    <arg name="panda_hand_joint_group_position_controller_file" value="$(find panda_openai_sim)/cfg/controllers/panda_hand_effort_joint_group_position_control.yaml" />
+    <arg name="panda_hand_joint_effort_controller_file" value="$(find panda_openai_sim)/cfg/controllers/panda_hand_effort_joint_effort_control.yaml" />
+    <arg name="panda_hand_joint_group_effort_controller_file" value="$(find panda_openai_sim)/cfg/controllers/panda_hand_effort_joint_group_effort_control.yaml" />
+
+    <!--## LOAD CONTROLLER ##-->
+    <!-- Load paramters from controller YAML files -->
+    <rosparam file="$(arg panda_joint_state_controller_file)" command="load" />
+    <rosparam file="$(arg panda_arm_joint_trajectory_controller_file)" command="load" />
+    <rosparam file="$(arg panda_arm_joint_position_controller_file)" command="load" />
+    <rosparam file="$(arg panda_arm_joint_group_position_controller_file)" command="load" />
+    <rosparam file="$(arg panda_arm_joint_effort_controller_file)" command="load" />
+    <rosparam file="$(arg panda_arm_joint_group_effort_controller_file)" command="load" />
+    <rosparam file="$(arg panda_hand_joint_trajectory_controller_file)" command="load" />
+    <rosparam file="$(arg panda_hand_joint_position_controller_file)" command="load" />
+    <rosparam file="$(arg panda_hand_joint_group_position_controller_file)" command="load" />
+    <rosparam file="$(arg panda_hand_joint_effort_controller_file)" command="load" />
+    <rosparam file="$(arg panda_hand_joint_group_effort_controller_file)" command="load" />
+
+    <!-- load the controllers -->
+    <!-- NOTE: The joint trajectory controller is named `panda_arm_controller` instead of `panda_arm_joint_trajectory_controller' to
+        keep this package compatible with the melodic branch of the panda_moveit_config pacakge -->
+    <node name="joint_state_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="joint_state_controller" />
+    <node name="joint_trajectory_controller_spawner_arm" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="panda_arm_controller" />
+    <group if="$(arg preload_controllers)">
+        <node name="joint_position_controller_spawner_arm" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="--stopped
+            panda_arm_joint1_position_controller panda_arm_joint2_position_controller panda_arm_joint3_position_controller panda_arm_joint4_position_controller
+            panda_arm_joint5_position_controller panda_arm_joint6_position_controller panda_arm_joint7_position_controller" />
+        <node name="joint_group_position_controller_spawner_arm" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="--stopped panda_arm_joint_group_position_controller" />
+        <node name="joint_effort_controller_spawner_arm" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="--stopped
+            panda_arm_joint1_effort_controller panda_arm_joint2_effort_controller panda_arm_joint3_effort_controller panda_arm_joint4_effort_controller
+            panda_arm_joint5_effort_controller panda_arm_joint6_effort_controller panda_arm_joint7_effort_controller" />
+        <node name="joint_group_effort_controller_spawner_arm" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="--stopped panda_arm_joint_group_effort_controller" />
+    </group>
+    <group if="$(arg load_gripper)">
+        <node name="joint_trajectory_controller_spawner_hand" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="panda_hand_controller" />
+        <group if="$(arg preload_controllers)">
+            <node name="joint_position_controller_spawner_hand" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="--stopped panda_hand_finger1_position_controller panda_hand_finger2_position_controller" />
+            <node name="joint_group_position_controller_spawner_hand" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="--stopped panda_hand_joint_group_position_controller" />
+            <node name="joint_effort_controller_spawner_hand" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="--stopped panda_hand_finger1_effort_controller panda_hand_finger2_effort_controller" />
+            <node name="joint_group_effort_controller_spawner_hand" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="--stopped panda_hand_joint_group_effort_controller" />
+        </group>
+    </group>
+</launch>

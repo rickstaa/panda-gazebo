@@ -1,0 +1,9 @@
+# Service that can be used to retrieve the joints that are controlled for a given
+# control type
+string control_type
+
+---
+bool success
+string[] controlled_joints
+string[] controlled_joints_arm
+string[] controlled_joints_hand

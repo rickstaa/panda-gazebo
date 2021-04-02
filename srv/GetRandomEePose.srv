@@ -1,0 +1,6 @@
+# Service that can be used to get a valid EE pose for the robot
+
+BoundingRegion bounding_region
+---
+bool success
+geometry_msgs/Pose ee_pose

@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>panda_openai_sim</name>
+  <version>0.0.0</version>
+  <description>A package that allows you to train several ROS based robots using Gazebo.</description>
+
+
+  <!-- One maintainer tag required, multiple allowed, one person per tag -->
+  <maintainer email="rick.staa@outlook.com">Rick Staa</maintainer>
+
+
+  <!-- One license tag required, multiple allowed, one license per tag -->
+  <!-- Commonly used license strings: -->
+  <!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
+  <license>Rick Staa copyright</license>
+
+
+  <!-- Url tags are optional, but multiple are allowed, one per tag -->
+  <!-- Optional attribute type can be: website, bugtracker, or repository -->
+  <url type="website">https://rickstaa.github.io/openai_sim</url>
+  <url type="repository">https://github.com/rickstaa/openai_sim</url>
+  <url type="bugtracker">https://github.com/rickstaa/openai_sim/issues</url>
+
+
+  <!-- Author tags are optional, multiple are allowed, one per tag -->
+  <!-- Authors do not have to be maintainers, but could be -->
+  <author email="rick.staa@outlook.com">Rick Staa</author>
+
+
+  <!-- The *depend tags are used to specify dependencies -->
+  <!-- Dependencies can be catkin packages or system dependencies -->
+  <!-- Examples: -->
+  <!-- Use depend as a shortcut for packages that are both build and exec dependencies -->
+  <!--   <depend>roscpp</depend> -->
+  <!--   Note that this is equivalent to the following: -->
+  <!--   <build_depend>roscpp</build_depend> -->
+  <!--   <exec_depend>roscpp</exec_depend> -->
+  <!-- Use build_depend for packages you need at compile time: -->
+  <!--   <build_depend>message_generation</build_depend> -->
+  <!-- Use build_export_depend for packages you need in order to build against this package: -->
+  <!--   <build_export_depend>message_generation</build_export_depend> -->
+  <!-- Use buildtool_depend for build tool packages: -->
+  <!--   <buildtool_depend>catkin</buildtool_depend> -->
+  <!-- Use exec_depend for packages you need at runtime: -->
+  <!--   <exec_depend>message_runtime</exec_depend> -->
+  <!-- Use test_depend for packages you need only for testing: -->
+  <!--   <test_depend>gtest</test_depend> -->
+  <!-- Use doc_depend for packages you need only for building documentation: -->
+  <!--   <doc_depend>doxygen</doc_depend> -->
+
+  <!-- Build tools that are needed -->
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <!-- Packages that are needed both during building and running -->
+  <!-- Python packages -->
+  <depend>moveit</depend>
+  <depend>gym-pip</depend>
+  <depend>python-yaml</depend>
+
+  <!-- Packages that are required during building (find_packages()-ed in CMake).-->
+  <build_depend>rospy</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>message_generation</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>trajectory_msgs</build_depend>
+  <build_depend>actionlib</build_depend>
+  <build_depend>actionlib_msgs</build_depend>
+  <build_depend>control_msgs</build_depend>
+
+  <!-- Packages that are needed when building against this package (Included headers) -->
+  <!-- <build_export_depend>message_generation</build_export_depend> -->
+
+  <!-- Packages needed for running the code in this package ((CATKIN_)DEPENDS in
+    catkin_package()-ed in CMake)
+  -->
+  <exec_depend>rospy</exec_depend>
+  <exec_depend>message_runtime</exec_depend>
+
+  <exec_depend>gazebo_msgs</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>controller_manager_msgs</exec_depend>
+  <exec_depend>trajectory_msgs</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>actionlib</exec_depend>
+  <exec_depend>actionlib_msgs</exec_depend>
+  <exec_depend>control_msgs</exec_depend>
+  <exec_depend>rviz</exec_depend>
+
+  <!--Local ROS package dependencies -->
+  <exec_depend>franka_description</exec_depend>
+  <exec_depend>panda_moveit_config</exec_depend>
+  <exec_depend>panda_simulation</exec_depend>
+
+  <!-- The export tag contains other, unspecified, tags (Used for metapackages and
+  Plugins -->
+  <export>
+    <!-- <metapackage /> -->
+  </export>
+</package>
