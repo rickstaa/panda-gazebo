@@ -41,7 +41,7 @@ GAZEBO_MODEL_STATES_TOPIC = "/gazebo/model_states"
 GAZEBO_LINK_STATES_TOPIC = "/gazebo/link_states"
 DIRNAME = os.path.dirname(__file__)
 GAZEBO_MODELS_FOLDER_PATH = os.path.abspath(
-    os.path.join(DIRNAME, "../../../resources/models")
+    os.path.join(DIRNAME, "../../../assets/models")
 )
 
 

@@ -4,7 +4,7 @@
     <!--## ARGUMENTS ##-->
     <!-- Simulation arguments -->
     <arg name="paused" default="false" />
-    <arg name="world_name" default="/$(find panda_openai_sim)/resources/worlds/grasp_training.world" />
+    <arg name="world_name" default="/$(find panda_openai_sim)/assets/worlds/grasp_training.world" />
     <arg name="rviz" default="true" />
     <arg name="rviz_file" default="$(find panda_openai_sim)/launch/panda.rviz" />
     <arg name="moveit" default="true" />
