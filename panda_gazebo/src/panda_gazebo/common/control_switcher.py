@@ -15,32 +15,27 @@ user to switch between the following control types:
 * `joint_group_effort_control <https://wiki.ros.org/ros_controllers/>`_
 """
 
-# Main python imports
 import sys
 from itertools import compress
 
-from panda_openai_sim.functions import dict_clean, flatten_list
-from panda_openai_sim.extras import ControllerInfoDict
-
-# ROS python imports
 import rospy
-from rospy.exceptions import ROSException, ROSInterruptException
-
-# ROS msgs and srvs
 from controller_manager_msgs.srv import (
-    SwitchController,
-    SwitchControllerRequest,
     ListControllers,
     ListControllersRequest,
     LoadController,
     LoadControllerRequest,
+    SwitchController,
+    SwitchControllerRequest,
 )
-from panda_openai_sim.srv import (
-    SwitchControlType,
-    SwitchControlTypeRequest,
+from panda_gazebo.extras import ControllerInfoDict
+from panda_gazebo.functions import dict_clean, flatten_list
+from panda_gazebo.srv import (
     ListControlType,
     ListControlTypeRequest,
+    SwitchControlType,
+    SwitchControlTypeRequest,
 )
+from rospy.exceptions import ROSException, ROSInterruptException
 
 # Global variables
 ARM_CONTROLLERS = {

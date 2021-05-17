@@ -1,0 +1,7 @@
+<!-- Launch file for starting the openai Panda simulator -->
+<launch>
+
+    <!--DEBUG: Quick test-->
+    <!-- launch the gazebo simulator  spawn the robot -->
+    <include file="$(find panda_gazebo)/launch/demo_gazebo.launch"/>
+</launch>

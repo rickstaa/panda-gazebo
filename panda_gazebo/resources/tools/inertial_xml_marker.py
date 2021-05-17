@@ -5,12 +5,8 @@ inertia and center of mass."""
 from __future__ import print_function
 
 
-#################################################
-# Print xml #####################################
-#################################################
 def print_xml(i, s, m, v, com, d):
     """Create gazebo xml code for the given joint properties"""
-
     # Convert joint properties to xml code
     # NOTE: https://www.physicsforums.com/threads/how-does-the-moment-of-inertia-scale.703101/
     v = v / s ** 3
@@ -31,9 +27,6 @@ def print_xml(i, s, m, v, com, d):
     return True
 
 
-#################################################
-# Main code #####################################
-#################################################
 if __name__ == "__main__":
     s = 10
 

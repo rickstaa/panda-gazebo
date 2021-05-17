@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(panda_openai_sim)
+project(panda_gazebo)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -105,9 +105,9 @@ generate_messages(
 ##   * uncomment the "generate_dynamic_reconfigure_options" section below
 ##     and list every .cfg file to be processed
 
-## Generate dynamic reconfigure parameters in the 'cfg' folder
-# generate_dynamic_reconfigure_options(
-# )
+# Generate dynamic reconfigure parameters in the 'cfg' folder
+generate_dynamic_reconfigure_options(
+)
 
 ###################################
 ## catkin specific configuration ##
@@ -122,11 +122,11 @@ generate_messages(
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES panda_openai_sim
+#  LIBRARIES panda_gazebo
   CATKIN_DEPENDS
     message_runtime rospy gazebo_msgs std_msgs controller_manager_msgs
     geometry_msgs actionlib_msgs trajectory_msgs sensor_msgs control_msgs rviz actionlib
-    franka_description openai_ros panda_moveit_config panda_simulation
+    franka_description panda_moveit_config panda_simulation
 #  DEPENDS system_lib
 )
 
@@ -143,7 +143,7 @@ include_directories(
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/panda_openai_sim.cpp
+#   src/${PROJECT_NAME}/panda_gazebo.cpp
 # )
 
 ## Add cmake target dependencies of the library

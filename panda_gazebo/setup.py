@@ -7,10 +7,11 @@ to the package.xml. For example when we need a specific version of a python modu
 # Standard library imports
 import logging
 import os
-from setuptools import setup, find_packages
-import sys
 import re
+import sys
 from distutils.sysconfig import get_python_lib
+
+from setuptools import find_packages, setup
 
 # Get the relative path for including (data) files with the package
 relative_site_packages = get_python_lib().split(sys.prefix + os.sep)[1]

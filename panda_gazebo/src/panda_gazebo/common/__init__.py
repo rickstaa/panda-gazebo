@@ -7,10 +7,11 @@ creating the Panda openai :gym:`gym <>` environment.
 # implicit relative imports, you can also add this to the top:
 from __future__ import absolute_import
 
+from panda_gazebo.core.control_server import PandaControlServer
+from panda_gazebo.core.control_switcher import PandaControlSwitcher
+
 # Import module classes
-from panda_openai_sim.core.group_publisher import GroupPublisher
-from panda_openai_sim.core.control_switcher import PandaControlSwitcher
-from panda_openai_sim.core.control_server import PandaControlServer
+from panda_gazebo.core.group_publisher import GroupPublisher
 
 # NOTE: We can not yet import Moveit when using both python 2 and python 3 as Moveit is
 # not yet python3 compatible.

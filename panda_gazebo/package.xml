@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>panda_openai_sim</name>
+  <name>panda_gazebo</name>
   <version>0.0.0</version>
   <description>A package that allows you to train several ROS based robots using Gazebo.</description>
 
