@@ -1,0 +1,6 @@
+[submodule "panda_moveit_config"]
+	path = panda_moveit_config
+	url = ../panda_moveit_config.git
+[submodule "franka_ros"]
+	path = franka_ros
+	url = ../franka_ros.git
