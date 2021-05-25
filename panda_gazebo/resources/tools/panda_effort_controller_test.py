@@ -13,6 +13,7 @@ class JointEffortTester(object):
 
     Attributes:
         :obj:`rospy.impl.tcpros_service.ServiceProxy`: Joint efforts server client.
+        :obj:`dynamic_reconfigure.server.Server`: Dynamic reconfigure server client.
     """
 
     def __init__(self):

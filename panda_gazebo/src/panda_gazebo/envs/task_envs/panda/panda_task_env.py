@@ -11,21 +11,21 @@ import numpy as np
 from gym import utils
 from gym import spaces
 
-from panda_openai_sim.envs.robot_envs import PandaRobotEnv
-from panda_openai_sim.extras import TargetMarker, SampleRegionMarker
-from panda_openai_sim.exceptions import (
+from panda_gazebo.envs.robot_envs import PandaRobotEnv
+from panda_gazebo.extras import TargetMarker, SampleRegionMarker
+from panda_gazebo.exceptions import (
     EePoseLookupError,
     RandomJointPositionsError,
     RandomEePoseError,
     SpawnModelError,
     SetModelStateError,
 )
-from panda_openai_sim.errors import (
+from panda_gazebo.errors import (
     arg_type_error,
     arg_keys_error,
     arg_value_error,
 )
-from panda_openai_sim.functions import (
+from panda_gazebo.functions import (
     flatten_list,
     get_orientation_euler,
     lower_first_char,
@@ -52,8 +52,8 @@ from visualization_msgs.msg import Marker
 from std_msgs.msg import ColorRGBA
 from geometry_msgs.msg import Pose
 
-from panda_openai_sim.msg import BoundingRegion, JointLimits
-from panda_openai_sim.srv import (
+from panda_gazebo.msg import BoundingRegion, JointLimits
+from panda_gazebo.srv import (
     GetRandomEePose,
     GetRandomEePoseRequest,
     GetRandomJointPositions,
@@ -233,7 +233,7 @@ class PandaTaskEnv(PandaRobotEnv, utils.EzPickle):
                     parms_config = yaml.safe_load(stream)
                 except yaml.YAMLError as e:
                     rospy.logwarn(
-                        "Shutting down '%s' as the 'panda_openai_sim' parameters "
+                        "Shutting down '%s' as the 'panda_gazebo' parameters "
                         "could not be loaded from the parameter configuration '%s' "
                         "as the following error was thrown: %s"
                         % (rospy.get_name(), PARAMS_CONFIG_PATH, e)
@@ -241,7 +241,7 @@ class PandaTaskEnv(PandaRobotEnv, utils.EzPickle):
                     sys.exit(0)
         except FileNotFoundError:
             rospy.logwarn(
-                "Shutting down '%s' as the 'panda_openai_sim' package parameters "
+                "Shutting down '%s' as the 'panda_gazebo' package parameters "
                 "could not be loaded since the required parameter configuration file "
                 "'%s' was not found. Please make sure the configuration file is "
                 "present." % (rospy.get_name(), PARAMS_CONFIG_PATH)
@@ -398,28 +398,28 @@ class PandaTaskEnv(PandaRobotEnv, utils.EzPickle):
         # Create current target publisher
         rospy.logdebug("Creating target pose publisher.")
         self._target_pose_pub = rospy.Publisher(
-            "panda_openai_sim/current_target", Marker, queue_size=10
+            "panda_gazebo/current_target", Marker, queue_size=10
         )
         rospy.logdebug("Goal target publisher created.")
 
         # Create target bounding region publisher
         rospy.logdebug("Creating target bounding region publisher.")
         self._target_sample_region_pub = rospy.Publisher(
-            "panda_openai_sim/target_sample_region", Marker, queue_size=10
+            "panda_gazebo/target_sample_region", Marker, queue_size=10
         )
         rospy.logdebug("Target bounding region publisher created.")
 
         # Create initial pose bounding region publisher
         rospy.logdebug("Creating initial pose sample region publisher.")
         self._init_pose_sample_region_pub = rospy.Publisher(
-            "panda_openai_sim/init_pose_sample_region", Marker, queue_size=10
+            "panda_gazebo/init_pose_sample_region", Marker, queue_size=10
         )
         rospy.logdebug("Initial pose sample region publisher created.")
 
         # Create initial pose bounding region publisher
         rospy.logdebug("Creating initial object pose bounding region publisher.")
         self._obj_pose_sample_region_pub = rospy.Publisher(
-            "panda_openai_sim/obj_pose_sample_region", Marker, queue_size=10
+            "panda_gazebo/obj_pose_sample_region", Marker, queue_size=10
         )
         rospy.logdebug("Initial object pose bounding region publisher created.")
 
@@ -1875,10 +1875,7 @@ class PandaTaskEnv(PandaRobotEnv, utils.EzPickle):
             )
             if retval:  # Validate type
                 arg_type_error(
-                    "target_sampling_strategy",
-                    depth,
-                    invalid_types,
-                    valid_types,
+                    "target_sampling_strategy", depth, invalid_types, valid_types,
                 )
             retval, invalid_values = has_invalid_value(
                 self._target_sampling_strategy, valid_values=valid_values
@@ -2246,10 +2243,7 @@ class PandaTaskEnv(PandaRobotEnv, utils.EzPickle):
         )
         if retval:  # Validate type
             arg_type_error(
-                "gripper_extra_height",
-                depth,
-                invalid_types,
-                valid_types,
+                "gripper_extra_height", depth, invalid_types, valid_types,
             )
 
         # Block_gripper
@@ -2259,10 +2253,7 @@ class PandaTaskEnv(PandaRobotEnv, utils.EzPickle):
         )
         if retval:  # Validate type
             arg_type_error(
-                "block_gripper",
-                depth,
-                invalid_types,
-                valid_types,
+                "block_gripper", depth, invalid_types, valid_types,
             )
 
         # Has_object
@@ -2272,10 +2263,7 @@ class PandaTaskEnv(PandaRobotEnv, utils.EzPickle):
         )
         if retval:  # Validate type
             arg_type_error(
-                "has_object",
-                depth,
-                invalid_types,
-                valid_types,
+                "has_object", depth, invalid_types, valid_types,
             )
 
         # Target in the air
@@ -2285,36 +2273,25 @@ class PandaTaskEnv(PandaRobotEnv, utils.EzPickle):
         )
         if retval:  # Validate type
             arg_type_error(
-                "target_in_the_air",
-                depth,
-                invalid_types,
-                valid_types,
+                "target_in_the_air", depth, invalid_types, valid_types,
             )
 
         # Target offset
         valid_types = dict
         valid_items_types = (float, int)
         retval, depth, invalid_types = has_invalid_type(
-            self._target_offset,
-            variable_types=valid_types,
+            self._target_offset, variable_types=valid_types,
         )
         if retval:  # Validate type
             arg_type_error(
-                "target_offset",
-                depth,
-                invalid_types,
-                valid_types,
+                "target_offset", depth, invalid_types, valid_types,
             )
         retval, missing_keys, extra_keys = contains_keys(
-            self._target_offset,
-            required_keys=["x", "y", "z"],
-            exclusive=True,
+            self._target_offset, required_keys=["x", "y", "z"], exclusive=True,
         )
         if not retval:  # Validate keys
             arg_keys_error(
-                "target_offset",
-                missing_keys=missing_keys,
-                extra_keys=extra_keys,
+                "target_offset", missing_keys=missing_keys, extra_keys=extra_keys,
             )
 
         # Target sampling strategy
@@ -2325,10 +2302,7 @@ class PandaTaskEnv(PandaRobotEnv, utils.EzPickle):
         )
         if retval:  # Validate type
             arg_type_error(
-                "target_sampling_strategy",
-                depth,
-                invalid_types,
-                valid_types,
+                "target_sampling_strategy", depth, invalid_types, valid_types,
             )
         retval, invalid_values = has_invalid_value(
             self._target_sampling_strategy, valid_values=valid_values
@@ -2349,10 +2323,7 @@ class PandaTaskEnv(PandaRobotEnv, utils.EzPickle):
         )
         if retval:  # Validate type
             arg_type_error(
-                "target_bounds",
-                depth,
-                invalid_types,
-                valid_types,
+                "target_bounds", depth, invalid_types, valid_types,
             )
         retval, missing_keys, extra_keys = contains_keys(
             self._target_bounds[self._target_sampling_strategy],
@@ -2361,9 +2332,7 @@ class PandaTaskEnv(PandaRobotEnv, utils.EzPickle):
         )
         if not retval:  # Validate keys
             arg_keys_error(
-                "target_bounds",
-                missing_keys=missing_keys,
-                extra_keys=extra_keys,
+                "target_bounds", missing_keys=missing_keys, extra_keys=extra_keys,
             )
 
         # Distance threshold
@@ -2373,10 +2342,7 @@ class PandaTaskEnv(PandaRobotEnv, utils.EzPickle):
         )
         if retval:  # Validate type
             arg_type_error(
-                "distance_threshold",
-                depth,
-                invalid_types,
-                valid_types,
+                "distance_threshold", depth, invalid_types, valid_types,
             )
 
         # Init pose
@@ -2398,21 +2364,14 @@ class PandaTaskEnv(PandaRobotEnv, utils.EzPickle):
         )
         if retval:  # Validate type
             arg_type_error(
-                "init_pose",
-                depth,
-                invalid_types,
-                valid_types,
+                "init_pose", depth, invalid_types, valid_types,
             )
         retval, missing_keys, extra_keys = contains_keys(
-            self._init_pose,
-            required_keys=required_keys,
-            exclusive=True,
+            self._init_pose, required_keys=required_keys, exclusive=True,
         )
         if not retval:  # Validate keys
             arg_keys_error(
-                "init_pose",
-                missing_keys=missing_keys,
-                extra_keys=extra_keys,
+                "init_pose", missing_keys=missing_keys, extra_keys=extra_keys,
             )
 
         # Init pose bounds
@@ -2438,15 +2397,10 @@ class PandaTaskEnv(PandaRobotEnv, utils.EzPickle):
             )
             if retval:  # Validate type
                 arg_type_error(
-                    "init_pose_bounds",
-                    depth,
-                    invalid_types,
-                    valid_types,
+                    "init_pose_bounds", depth, invalid_types, valid_types,
                 )
             retval, missing_keys, extra_keys = contains_keys(
-                self._init_pose_bounds,
-                required_keys=required_keys,
-                exclusive=True,
+                self._init_pose_bounds, required_keys=required_keys, exclusive=True,
             )
             if not retval:  # Validate keys
                 arg_keys_error(
@@ -2466,21 +2420,14 @@ class PandaTaskEnv(PandaRobotEnv, utils.EzPickle):
         )
         if retval:  # Validate type
             arg_type_error(
-                "init_obj_pose",
-                depth,
-                invalid_types,
-                valid_types,
+                "init_obj_pose", depth, invalid_types, valid_types,
             )
         retval, missing_keys, extra_keys = contains_keys(
-            self._init_obj_pose,
-            required_keys=required_keys,
-            exclusive=True,
+            self._init_obj_pose, required_keys=required_keys, exclusive=True,
         )
         if not retval:  # Validate keys
             arg_keys_error(
-                "init_obj_pose",
-                missing_keys=missing_keys,
-                extra_keys=extra_keys,
+                "init_obj_pose", missing_keys=missing_keys, extra_keys=extra_keys,
             )
 
         # Object bounds
@@ -2492,21 +2439,14 @@ class PandaTaskEnv(PandaRobotEnv, utils.EzPickle):
         )
         if retval:  # Validate type
             arg_type_error(
-                "obj_bounds",
-                depth,
-                invalid_types,
-                valid_types,
+                "obj_bounds", depth, invalid_types, valid_types,
             )
         retval, missing_keys, extra_keys = contains_keys(
-            self._obj_bounds,
-            required_keys=required_keys,
-            exclusive=True,
+            self._obj_bounds, required_keys=required_keys, exclusive=True,
         )
         if not retval:  # Validate keys
             arg_keys_error(
-                "obj_bounds",
-                missing_keys=missing_keys,
-                extra_keys=extra_keys,
+                "obj_bounds", missing_keys=missing_keys, extra_keys=extra_keys,
             )
 
         # Reward type
@@ -2517,19 +2457,14 @@ class PandaTaskEnv(PandaRobotEnv, utils.EzPickle):
         )
         if retval:  # Validate type
             arg_type_error(
-                "reward_type",
-                depth,
-                invalid_types,
-                valid_types,
+                "reward_type", depth, invalid_types, valid_types,
             )
         retval, invalid_values = has_invalid_value(
             self.reward_type, valid_values=valid_values
         )
         if retval:  # Validate values
             arg_value_error(
-                "reward_type",
-                invalid_values=invalid_values,
-                valid_values=valid_values,
+                "reward_type", invalid_values=invalid_values, valid_values=valid_values,
             )
 
         # Robot arm control type
@@ -2540,10 +2475,7 @@ class PandaTaskEnv(PandaRobotEnv, utils.EzPickle):
         )
         if retval:  # Validate type
             arg_type_error(
-                "robot_arm_control_type",
-                depth,
-                invalid_types,
-                valid_types,
+                "robot_arm_control_type", depth, invalid_types, valid_types,
             )
         retval, invalid_values = has_invalid_value(
             self._robot_arm_control_type, valid_values=valid_values
@@ -2563,10 +2495,7 @@ class PandaTaskEnv(PandaRobotEnv, utils.EzPickle):
         )
         if retval:  # Validate type
             arg_type_error(
-                "robot_hand_control_type",
-                depth,
-                invalid_types,
-                valid_types,
+                "robot_hand_control_type", depth, invalid_types, valid_types,
             )
         retval, invalid_values = has_invalid_value(
             self._robot_hand_control_type, valid_values=valid_values
@@ -2586,10 +2515,7 @@ class PandaTaskEnv(PandaRobotEnv, utils.EzPickle):
             )
             if retval:  # Validate type
                 arg_type_error(
-                    "n_actions",
-                    depth,
-                    invalid_types,
-                    valid_types,
+                    "n_actions", depth, invalid_types, valid_types,
                 )
 
         # Action space joints
@@ -2601,10 +2527,7 @@ class PandaTaskEnv(PandaRobotEnv, utils.EzPickle):
         )
         if retval:  # Validate type
             arg_type_error(
-                "action_space_joints",
-                depth,
-                invalid_types,
-                valid_types,
+                "action_space_joints", depth, invalid_types, valid_types,
             )
 
         # Use gripper width
@@ -2614,8 +2537,5 @@ class PandaTaskEnv(PandaRobotEnv, utils.EzPickle):
         )
         if retval:  # Validate type
             arg_type_error(
-                "use_gripper_width",
-                depth,
-                invalid_types,
-                valid_types,
+                "use_gripper_width", depth, invalid_types, valid_types,
             )

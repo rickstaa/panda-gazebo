@@ -1,27 +1,27 @@
 """Module containing some additional functions used in the
-:panda_openai_sim:`panda_openai_sim <>` package.
+:panda_gazebo:`panda_gazebo <>` package.
 """
 
 # Main python imports
 import copy
-import os
 import glob
+import os
 
-from panda_openai_sim.extras import EulerAngles
+import control_msgs.msg as control_msgs
 
 # Import ROS python packages
 import rospy
-from rospy.exceptions import ROSException
-from tf.transformations import euler_from_quaternion
+from actionlib_msgs.msg import GoalStatusArray
 
 # ROS msgs and srvs
 from geometry_msgs.msg import Pose
-from actionlib_msgs.msg import GoalStatusArray
+from rospy.exceptions import ROSException
+from tf.transformations import euler_from_quaternion
 from trajectory_msgs.msg import JointTrajectoryPoint
-import control_msgs.msg as control_msgs
 
-from panda_openai_sim.msg import FollowJointTrajectoryGoal
-from panda_openai_sim.srv import SetJointPositionsRequest
+from panda_gazebo.extras import EulerAngles
+from panda_gazebo.msg import FollowJointTrajectoryGoal
+from panda_gazebo.srv import SetJointPositionsRequest
 
 
 #################################################
@@ -38,7 +38,7 @@ def action_dict_2_joint_trajectory_msg(action_dict):
 
     Returns
     -------
-    panda_openai_sim.msg.FollowJointTrajectoryGoal
+    panda_gazebo.msg.FollowJointTrajectoryGoal
         New FollowJointTrajectoryGoal message.
     """
 
@@ -60,15 +60,15 @@ def action_dict_2_joint_trajectory_msg(action_dict):
 
 
 def panda_action_msg_2_control_msgs_action_msg(panda_action_msg):
-    """Converts a panda_openai_sim FollowJointTrajectoryActionGoal action message
+    """Converts a panda_gazebo FollowJointTrajectoryActionGoal action message
     into a
     :control_msgs:`control_msgs/FollowJointTrajectoryGoal
     <html/action/FollowJointTrajectory.html>` action message.
 
     Parameters
     ----------
-    panda_action_msg : panda_openai_sim.msg.FollowJointTrajectoryGoal
-        panda_openai_sim follow joint trajectory goal message.
+    panda_action_msg : panda_gazebo.msg.FollowJointTrajectoryGoal
+        panda_gazebo follow joint trajectory goal message.
 
     Returns
     -------
@@ -91,7 +91,7 @@ def joint_positions_2_follow_joint_trajectory_goal(joint_positions, time_from_st
 
     Parameters
     ----------
-    joint_positions : dict or panda_openai_sim.msg.SetJointPositionsRequest
+    joint_positions : dict or panda_gazebo.msg.SetJointPositionsRequest
         Dictionary or message containing the joint positions of each of the robot
         joints.
     time_from_start : dict, optional
@@ -100,7 +100,7 @@ def joint_positions_2_follow_joint_trajectory_goal(joint_positions, time_from_st
 
     Returns
     -------
-    panda_openai_sim.msg.FollowJointTrajectoryGoal
+    panda_gazebo.msg.FollowJointTrajectoryGoal
         New FollowJointTrajectoryGoal message.
     """
 
@@ -144,7 +144,7 @@ def model_state_msg_2_link_state_dict(link_state_msgs):
     Returns
     -------
     dict
-        A panda_openai_sim model_state dictionary.
+        A panda_gazebo model_state dictionary.
     """
 
     # Create controller_list dictionary
@@ -187,7 +187,7 @@ def controller_list_array_2_dict(controller_list_msgs):
 
 def pose_dict_2_pose_msg(pose_dict):
     """Create a :geometry_msgs:`geometry_msgs.msg.Pose<html/msg/Pose.html>` message out
-    of a panda_openai_sim pose dictionary ``{x, y, z, rx, ry, rz, rw}``.
+    of a panda_gazebo pose dictionary ``{x, y, z, rx, ry, rz, rw}``.
 
     Parameters
     ----------
@@ -196,7 +196,7 @@ def pose_dict_2_pose_msg(pose_dict):
         ``{rx, ry, rz, rw}``
     """
 
-    # Create pose message out of a panda_openai_sim pose dict
+    # Create pose message out of a panda_gazebo pose dict
     pose_msg = Pose()
     pose_msg.position.x = pose_dict["x"]
     pose_msg.position.y = pose_dict["y"]
@@ -211,7 +211,7 @@ def pose_dict_2_pose_msg(pose_dict):
 
 
 def pose_msg_2_pose_dict(pose_msg):
-    """Create a panda_openai_sim pose dictionary ``{x, y, z, rx, ry, rz, rw}`` out of a
+    """Create a panda_gazebo pose dictionary ``{x, y, z, rx, ry, rz, rw}`` out of a
     :geometry_msgs:`geometry_msgs.msg.Pose<html/msg/Pose.html>` message.
 
     Parameters
@@ -971,7 +971,7 @@ def get_orientation_euler(quaternion):
 
     Returns
     -------
-    panda_openai_sim.EulerAngles
+    panda_gazebo.EulerAngles
         Object containing the yaw (z), pitch (y) and roll (z) euler angles.
     """
 

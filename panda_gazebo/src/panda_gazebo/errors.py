@@ -1,18 +1,12 @@
 """Module containing several custom ROS errors."""
 
-
-# Main python imports
 import sys
 
-from panda_openai_sim.functions import list_2_human_text
-
-# ROS python imports
 import rospy
 
+from panda_gazebo.functions import list_2_human_text
 
-#################################################
-# Custom ROS errors #############################
-#################################################
+
 def arg_type_error(arg_name, depth, invalid_types, valid_types, shutdown=True):
     """This function displays a argument type invalid ROS error/warning and shutdown the
     ROS node if requested.

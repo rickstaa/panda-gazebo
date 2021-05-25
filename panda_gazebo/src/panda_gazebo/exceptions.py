@@ -10,7 +10,7 @@ from builtins import super
 #################################################
 class InputMessageInvalidError(Exception):
     """Custom exception that is raised when an input argument to one of the
-    panda_openai_sim functions is invalid.
+    panda_gazebo functions is invalid.
 
     Attributes
     ----------

@@ -1,6 +1,6 @@
-#!/usr/bin/env python
-"""This node sets up a number of services that can be used to control
-the Panda Emika Franka robot.
+#!/usr/bin/env python3
+"""This node sets up a number of services that can be used to control the Panda Emika
+Franka robot.
 
 Source code
 ----------------------------
@@ -14,19 +14,13 @@ Source code
 import rospy
 
 # Panda_autograsp modules, msgs and srvs
-from panda_openai_sim.core import PandaControlServer
+from panda_gazebo.core import PandaControlServer
 
-
-#################################################
-# Main script####################################
-#################################################
 if __name__ == "__main__":
-
-    # Initiate ROS node
     rospy.init_node("panda_control_server")
 
     # Get ROS parameters
-    try:  # Check end effector
+    try:
         use_group_controller = rospy.get_param("~use_group_controller")
     except KeyError:
         use_group_controller = False

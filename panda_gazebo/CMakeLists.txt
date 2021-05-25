@@ -1,11 +1,11 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.0.2)
 project(panda_gazebo)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
 
 ## Find catkin macros and libraries
-## NOTE: Finds dependencies for this package. Needed for building
+# NOTE: Finds dependencies for this package. Needed for building
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
@@ -16,6 +16,8 @@ find_package(catkin REQUIRED COMPONENTS
   trajectory_msgs
   actionlib_msgs
   control_msgs
+  # NOTE: The packages below are disbabled as they are only needed for some test scripts
+  # dynamic_reconfigure
 )
 
 ## System dependencies are found with CMake's conventions
@@ -53,7 +55,6 @@ catkin_python_setup()
 ## Generate messages in the 'msg' folder
 add_message_files(
   FILES
-  RLExperimentInfo.msg
   BoundingRegion.msg
   JointLimits.msg
 )
@@ -84,11 +85,11 @@ add_action_files(
 ## Generate added messages and services with any dependencies listed here
 generate_messages(
   DEPENDENCIES
-  std_msgs  # Or other packages containing msgs
-  geometry_msgs
-  trajectory_msgs
-  actionlib_msgs
-  control_msgs
+    std_msgs  # Or other packages containing msgs
+    geometry_msgs
+    trajectory_msgs
+    actionlib_msgs
+    control_msgs
 )
 
 ################################################
@@ -104,15 +105,16 @@ generate_messages(
 ##     find_package(catkin REQUIRED COMPONENTS ...)
 ##   * uncomment the "generate_dynamic_reconfigure_options" section below
 ##     and list every .cfg file to be processed
-
 # Generate dynamic reconfigure parameters in the 'cfg' folder
-generate_dynamic_reconfigure_options(
-)
+# NOTE: The command below is disbabled as it is only needed for some test scripts
+# generate_dynamic_reconfigure_options(
+#   cfg/dyn_reconf/EffortTestDynReconf.cfg
+# )
 
 ###################################
 ## catkin specific configuration ##
 ###################################
-## NOTE: Declares dependencies for packages that depend on this package.
+# NOTE: Declares dependencies for packages that depend on this package.
 ##
 ## The catkin_package macro generates cmake config files for your package
 ## Declare things to be passed to dependent projects
@@ -127,6 +129,8 @@ catkin_package(
     message_runtime rospy gazebo_msgs std_msgs controller_manager_msgs
     geometry_msgs actionlib_msgs trajectory_msgs sensor_msgs control_msgs rviz actionlib
     franka_description panda_moveit_config panda_simulation
+    # NOTE: The packages below are disbabled as they are only needed for some test scripts
+    # dynamic_reconfigure
 #  DEPENDS system_lib
 )
 

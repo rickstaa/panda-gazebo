@@ -9,17 +9,17 @@ from collections import OrderedDict
 import numpy as np
 import yaml
 
-from panda_openai_sim.envs.robot_gazebo_goal_env import RobotGazeboGoalEnv
-from panda_openai_sim.exceptions import EePoseLookupError, EeRpyLookupError
-from panda_openai_sim.functions import (
+from panda_gazebo.envs.robot_gazebo_goal_env import RobotGazeboGoalEnv
+from panda_gazebo.exceptions import EePoseLookupError, EeRpyLookupError
+from panda_gazebo.functions import (
     action_server_exists,
     lower_first_char,
     get_orientation_euler,
     flatten_list,
     joint_positions_2_follow_joint_trajectory_goal,
 )
-from panda_openai_sim.extras import EulerAngles, Quaternion
-from panda_openai_sim.core import PandaControlSwitcher
+from panda_gazebo.extras import EulerAngles, Quaternion
+from panda_gazebo.core import PandaControlSwitcher
 
 # ROS python imports
 import rospy
@@ -31,8 +31,8 @@ from rospy.exceptions import ROSException, ROSInterruptException
 from sensor_msgs.msg import JointState
 from geometry_msgs.msg import PoseStamped, Pose
 
-from panda_openai_sim.msg import FollowJointTrajectoryAction
-from panda_openai_sim.srv import (
+from panda_gazebo.msg import FollowJointTrajectoryAction
+from panda_gazebo.srv import (
     GetEe,
     GetEeRequest,
     GetEePose,
@@ -172,7 +172,7 @@ class PandaRobotEnv(RobotGazeboGoalEnv):
                     parms_config = yaml.safe_load(stream)
                 except yaml.YAMLError as e:
                     rospy.logwarn(
-                        "Shutting down '%s' as the 'panda_openai_sim' parameters "
+                        "Shutting down '%s' as the 'panda_gazebo' parameters "
                         "could not be loaded from the parameter configuration '%s' "
                         "as the following error was thrown: %s"
                         % (rospy.get_name(), PARAMS_CONFIG_PATH, e)
@@ -180,7 +180,7 @@ class PandaRobotEnv(RobotGazeboGoalEnv):
                     sys.exit(0)
         except FileNotFoundError:
             rospy.logwarn(
-                "Shutting down '%s' as the 'panda_openai_sim' package parameters "
+                "Shutting down '%s' as the 'panda_gazebo' package parameters "
                 "could not be loaded since the required parameter configuration file "
                 "'%s' was not found. Please make sure the configuration file is "
                 "present." % (rospy.get_name(), PARAMS_CONFIG_PATH)
@@ -639,7 +639,7 @@ class PandaRobotEnv(RobotGazeboGoalEnv):
 
         Returns
         -------
-        panda_openai_sim.srv.GetEeRpyResponse
+        panda_gazebo.srv.GetEeRpyResponse
             Object containing the roll (x), yaw (z), pitch (y) euler angles.
         """
 
@@ -696,7 +696,7 @@ class PandaRobotEnv(RobotGazeboGoalEnv):
 
         Parameters
         ----------
-        ee_pose :  geometry_msgs.msg.Pose, panda_openai_sim.msg.SetEePoseRequest
+        ee_pose :  geometry_msgs.msg.Pose, panda_gazebo.msg.SetEePoseRequest
             The end effector pose.
         dict, list, tuple, int, float or numpy.ndarray
             A list or pose message containing the end effector position (x, y, z)
@@ -1391,7 +1391,7 @@ class PandaRobotEnv(RobotGazeboGoalEnv):
 
         Parameters
         ----------
-        joint_trajectory_msg : panda_openai_sim.msg.FollowJointTrajectoryGoal
+        joint_trajectory_msg : panda_gazebo.msg.FollowJointTrajectoryGoal
             The joint trajectory goal message.
         wait : bool, optional
             Wait till the control has finished, by default False

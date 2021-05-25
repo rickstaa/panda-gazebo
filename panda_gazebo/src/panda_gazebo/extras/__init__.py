@@ -8,10 +8,10 @@ creating the Panda openai :gym:`gym <>` environment.
 from __future__ import absolute_import
 
 # Import module classes
-from panda_openai_sim.extras.action_client_state import ActionClientState
-from panda_openai_sim.extras.controller_info_dict import ControllerInfoDict
-from panda_openai_sim.extras.euler_angles import EulerAngles
-from panda_openai_sim.extras.quaternion import Quaternion
-from panda_openai_sim.extras.target_marker import TargetMarker
-from panda_openai_sim.extras.sample_region_marker import SampleRegionMarker
-from panda_openai_sim.extras.nested_dict import NestedDict
+from panda_gazebo.extras.action_client_state import ActionClientState
+from panda_gazebo.extras.controller_info_dict import ControllerInfoDict
+from panda_gazebo.extras.euler_angles import EulerAngles
+from panda_gazebo.extras.quaternion import Quaternion
+from panda_gazebo.extras.target_marker import TargetMarker
+from panda_gazebo.extras.sample_region_marker import SampleRegionMarker
+from panda_gazebo.extras.nested_dict import NestedDict

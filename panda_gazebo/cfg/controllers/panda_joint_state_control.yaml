@@ -1,6 +1,0 @@
-# A configuration file for creating a joint state controller which
-# can be used to publish the panda robot joint states
-
-joint_state_controller:
-    type: joint_state_controller/JointStateController
-    publish_rate: 25

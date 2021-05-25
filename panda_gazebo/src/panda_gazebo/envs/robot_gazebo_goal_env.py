@@ -7,13 +7,13 @@ import os
 import gym
 from gym.utils import seeding
 
-from panda_openai_sim.functions import (
+from panda_gazebo.functions import (
     lower_first_char,
     model_state_msg_2_link_state_dict,
     find_gazebo_model_path,
 )
-from panda_openai_sim.extras import Quaternion
-from panda_openai_sim.exceptions import SpawnModelError, SetModelStateError
+from panda_gazebo.extras import Quaternion
+from panda_gazebo.exceptions import SpawnModelError, SetModelStateError
 
 # ROS python imports
 import rospy
@@ -23,7 +23,7 @@ from rospy.exceptions import ROSException, ROSInterruptException
 from genpy.message import SerializationError
 
 # ROS msgs and srvs
-from panda_openai_sim.msg import RLExperimentInfo
+from panda_gazebo.msg import RLExperimentInfo
 from geometry_msgs.msg import Pose, Twist
 from gazebo_msgs.msg import ModelStates, ModelState
 from gazebo_msgs.srv import (
@@ -309,7 +309,7 @@ class RobotGazeboGoalEnv(gym.GoalEnv):
 
         Raises
         ------
-        panda_openai_sim.exceptions.SpawnModelError
+        panda_gazebo.exceptions.SpawnModelError
             When model was not spawned successfully.
         """
 
@@ -434,7 +434,7 @@ class RobotGazeboGoalEnv(gym.GoalEnv):
 
         Raises
         ------
-        panda_openai_sim.exceptions.SpawnModelError
+        panda_gazebo.exceptions.SpawnModelError
             When model state was not set successfully.
         """
 
@@ -576,7 +576,7 @@ class RobotGazeboGoalEnv(gym.GoalEnv):
             An info dictionary with additional information
         """
 
-        # Convert the gym input arguments into panda_openai_sim input arguments
+        # Convert the gym input arguments into panda_gazebo input arguments
         observations = {}
         observations["achieved_goal"] = achieved_goal
         observations["desired_goal"] = desired_goal
@@ -585,7 +585,7 @@ class RobotGazeboGoalEnv(gym.GoalEnv):
         else:
             done = None
 
-        # Call the panda_openai_sim _compute_rewards function
+        # Call the panda_gazebo _compute_rewards function
         return self._compute_reward(observations, done)
 
     def _is_success(self, achieved_goal, desired_goal):
@@ -616,12 +616,12 @@ class RobotGazeboGoalEnv(gym.GoalEnv):
             episode is terminated because, for example, the robot has fallen.
         """
 
-        # Convert the gym input arguments into panda_openai_sim input arguments
+        # Convert the gym input arguments into panda_gazebo input arguments
         observations = {}
         observations["achieved_goal"] = achieved_goal
         observations["desired_goal"] = desired_goal
 
-        # Call the panda_openai_sim _is_done function
+        # Call the panda_gazebo _is_done function
         return self._is_done(self, observations)
 
     #############################################

@@ -12,7 +12,7 @@ from .panda_task_env import PandaTaskEnv
 class PandaSlideEnv(PandaTaskEnv, utils.EzPickle):
     """Classed used to create a Panda slide environment. It inherits from the
     main Panda Task environment
-    :py:class:`panda_openai_sim.envs.task_envs.PandaTaskEnv`.
+    :py:class:`panda_gazebo.envs.task_envs.PandaTaskEnv`.
     """
 
     def __init__(
@@ -75,7 +75,7 @@ class PandaSlideEnv(PandaTaskEnv, utils.EzPickle):
         -----------
             If the default value for a argument is set to None this means the default
             values of the parent class
-            :class:`panda_openai_sim.envs.task_envs.panda_task_env.PandaTaskEnv` are
+            :class:`panda_gazebo.envs.task_envs.panda_task_env.PandaTaskEnv` are
             used.
         """
 

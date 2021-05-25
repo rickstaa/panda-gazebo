@@ -101,5 +101,5 @@ timeout: 0.0"
 
 ## Other commands
 
--   List controllers: `rosrun controller_manager controller_manager list`
--   Controller gui: `rosrun rqt_controller_manager rqt_controller_manager`
+- List controllers: `rosrun controller_manager controller_manager list`
+- Controller gui: `rosrun rqt_controller_manager rqt_controller_manager`

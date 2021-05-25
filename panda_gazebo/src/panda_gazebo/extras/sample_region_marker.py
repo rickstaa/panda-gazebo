@@ -2,7 +2,7 @@
 the :visualization_msgs:`visualization_msgs.msgs.Marker <html/msg/Marker.html>`
 class in order to pre-initialize some of its attributes. It further also adds the
 ability to specify the marker scale using ``x``, ``y``, ``z`` max and min values. To
-visualize the marker you can publish it on the ``panda_openai_sim/goal_region`` topic.
+visualize the marker you can publish it on the ``panda_gazebo/goal_region`` topic.
 """
 
 # Main python 2/3 compatibility imports
@@ -11,7 +11,7 @@ from builtins import super
 # Main python imports
 import sys
 
-from panda_openai_sim.extras import Quaternion
+from panda_gazebo.extras import Quaternion
 
 # ROS python imports
 import rospy

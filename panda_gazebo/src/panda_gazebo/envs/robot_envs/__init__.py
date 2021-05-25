@@ -8,4 +8,4 @@ interaction with the Panda Robot (Control and Sensors).
 from __future__ import absolute_import
 
 # Import module classes
-from panda_openai_sim.envs.robot_envs.panda_robot_env import PandaRobotEnv
+from panda_gazebo.envs.robot_envs.panda_robot_env import PandaRobotEnv

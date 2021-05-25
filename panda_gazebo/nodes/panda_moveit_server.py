@@ -1,6 +1,6 @@
-#!/usr/bin/env python
-"""This node sets up a number of services that can be used to control
-the Panda Emika Franka robot using the Moveit framework.
+#!/usr/bin/env python3
+"""This node sets up a number of services that can be used to control the Panda Emika
+Franka robot using the Moveit framework.
 
 Source code
 ----------------------------
@@ -14,19 +14,13 @@ Source code
 import rospy
 
 # Panda_autograsp modules, msgs and srvs
-from panda_openai_sim.core.moveit_server import PandaMoveitPlannerServer
+from panda_gazebo.core.moveit_server import PandaMoveitPlannerServer
 
-
-#################################################
-# Main script####################################
-#################################################
 if __name__ == "__main__":
-
-    # Initiate Moveit Planner Server
     rospy.init_node("panda_moveit_planner_server")
 
     # Get private parameters specified in the launch file
-    try:  # Check end effector
+    try:
         arm_ee_link = rospy.get_param("~end_effector")
     except KeyError:
         arm_ee_link = "panda_hand"

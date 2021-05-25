@@ -1,0 +1,44 @@
+<!-- Launch file for launching the robot controllers -->
+<launch>
+    <arg name="moveit" default="false" />
+    <arg name="gazebo" default="true" />
+    <arg name="load_gripper" default="true" />
+    <!--Controller args-->
+    <!--    Wheter to preload all non essential controllers -->
+    <!-- <arg name="preload_controllers" default="false" /> -->
+
+    <!--Controller YAML file locations -->
+    <arg name="moveit_control_config_file" value="$(find panda_gazebo)/cfg/controllers/moveit_ros_control.yaml"/>
+    <arg name="ros_control_config_file" value="$(find panda_gazebo)/cfg/controllers/ros_control.yaml"/>
+    <arg name="gazebo_control_config_file" value="$(find panda_gazebo)/cfg/controllers/gazebo_ros_control.yaml"/>
+    <arg name="joint_state_controller_file" value="$(find panda_gazebo)/cfg/controllers/joint_state_control.yaml" />
+    <arg name="arm_joint_trajectory_controller_file" value="$(find panda_gazebo)/cfg/controllers/arm_position_joint_trajectory_control.yaml" />
+    <!-- <arg name="arm_joint_position_controller_file" value="$(find panda_gazebo)/cfg/controllers/arm_position_joint_position_control.yaml" /> -->
+    <!-- <arg name="arm_joint_effort_controller_file" value="$(find panda_gazebo)/cfg/controllers/arm_effort_joint_effort_control.yaml" /> -->
+    <arg name="hand_joint_trajectory_controller_file" value="$(find panda_gazebo)/cfg/controllers/hand_position_joint_trajectory_control.yaml" />
+    <!-- <arg name="hand_joint_position_controller_file" value="$(find panda_gazebo)/cfg/controllers/hand_position_joint_position_control.yaml" /> -->
+    <!-- <arg name="hand_joint_effort_controller_file" value="$(find panda_gazebo)/cfg/controllers/hand_effort_joint_effort_control.yaml" /> -->
+
+    <!--Load controller parameters-->
+    <!--    Load Moveit control configuration values-->
+    <rosparam if="$(arg moveit)" file="$(arg moveit_control_config_file)" command="load" />
+    <!--    Load general ros_control configuration values-->
+    <rosparam file="$(arg ros_control_config_file)" command="load" />
+    <!--    Load general Gazebo control configuration values-->
+    <rosparam if="$(arg gazebo)" file="$(arg gazebo_control_config_file)" command="load" />
+    <!--    Load the controller configuration values-->
+    <rosparam file="$(arg joint_state_controller_file)" command="load" />
+    <rosparam file="$(arg arm_joint_trajectory_controller_file)" command="load" />
+    <!-- <rosparam file="$(arg arm_joint_position_controller_file)" command="load" /> -->
+    <!-- <rosparam file="$(arg arm_joint_effort_controller_file)" command="load" /> -->
+    <rosparam file="$(arg hand_joint_trajectory_controller_file)" command="load" />
+    <!-- <rosparam file="$(arg hand_joint_position_controller_file)" command="load" /> -->
+    <!-- <rosparam file="$(arg hand_joint_effort_controller_file)" command="load" /> -->
+
+    <!--Load the controllers-->
+    <node name="joint_state_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="joint_state_controller" />
+    <node name="joint_trajectory_controller_spawner_arm" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="panda_arm_controller" />
+    <group if="$(arg load_gripper)">
+        <node name="joint_trajectory_controller_spawner_hand" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="panda_hand_controller" />
+    </group>
+</launch>

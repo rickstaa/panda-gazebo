@@ -1,7 +1,7 @@
 ﻿"""Class used for displaying a gasp target goal marker in rviz. This class overloads
 the :visualization_msgs:`visualization_msgs.msgs.Marker <html/msg/Marker.html>`
 class in order to pre-initialize some of its attributes. To visualize the marker you
-can publish it on the ``panda_openai_sim/current_goal`` topic.
+can publish it on the ``panda_gazebo/current_goal`` topic.
 """
 
 # Main python 2/3 compatibility imports
@@ -14,7 +14,7 @@ import sys
 import rospy
 from rospy.exceptions import ROSInitException
 
-from panda_openai_sim.extras import Quaternion
+from panda_gazebo.extras import Quaternion
 
 # ROS msgs and srvs
 from std_msgs.msg import Header

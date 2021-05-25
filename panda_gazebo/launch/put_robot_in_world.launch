@@ -1,7 +1,82 @@
-<!-- Launch file for starting the openai Panda simulator -->
+<!--Launch file for adding the panda robot to the gazebo world-->
 <launch>
+    <arg name="rviz" default="true" />
+    <arg name="gazebo" default="true" />
+    <arg name="load_gripper" default="true" />
+    <arg name="use_joint_state_gui" default="false"/>
+    <arg name="debug" default="false" />
+    <!--Moveit arugments-->
+    <arg name="moveit" default="true" />
+    <arg name="pipeline" default="ompl" />
+    <!--Control arguments -->
+    <!--    Wheter to preload all non-essential controllers -->
+    <arg name="preload_controllers" default="true" />
 
-    <!--DEBUG: Quick test-->
-    <!-- launch the gazebo simulator  spawn the robot -->
-    <include file="$(find panda_gazebo)/launch/demo_gazebo.launch"/>
+    <!--Send robot urdf to param server-->
+    <param name="robot_description" command="$(find xacro)/xacro '$(find franka_description)/robots/panda_arm_hand.urdf.xacro' use_cylinder_collision_model:=false use_gazebo_sim:=$(arg gazebo)"/>
+
+    <!--Spawn robot in gazebo at the origin, change x,y,z arguments to spawn in a different position-->
+    <node if="$(arg gazebo)" name="spawn_gazebo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model panda -x 0 -y 0 -z 0
+              -J panda_joint4 -0.07 -J panda_joint6 0.51 -unpause" respawn="false" output="screen" />
+
+    <!--When we don't have the robot connected publish fake joint states-->
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+        <param name="use_gui" value="$(arg use_joint_state_gui)"/>
+        <rosparam param="source_list">[/joint_states]</rosparam>
+    </node>
+    <node name="joint_state_desired_publisher" pkg="topic_tools" type="relay" args="joint_states joint_states_desired" />
+
+    <!--Given the published joint states, publish tf for the robot links-->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" output="screen" />
+
+    <!-- If needed, broadcast static tf for robot root -->
+    <node unless="$(arg gazebo)" pkg="tf2_ros" type="static_transform_publisher" name="virtual_joint_broadcaster_1" args="0 0 0 0 0 0 world panda_link0" />
+
+    <!--Start moveit related nodes-->
+    <group if="$(arg moveit)">
+        <!-- Run the main MoveIt! executable without trajectory execution (we do not have controllers configured by default) -->
+        <include if="$(arg moveit)" file="$(find panda_moveit_config)/launch/move_group.launch">
+            <arg name="allow_trajectory_execution" value="true"/>
+            <arg name="fake_execution" value="$(eval arg('gazebo') == 0)"/>
+            <arg name="info" value="true"/>
+            <arg name="debug" value="$(arg debug)"/>
+            <arg name="pipeline" value="$(arg pipeline)" />
+        </include>
+
+        <!--Set extra Moveit parameters
+            NOTE: The parameters below make sure the initial pose can be executed -->
+        <!--    Increase Moveit execution time limit-->
+        <param if="$(arg moveit)" name="move_group/trajectory_execution/allowed_execution_duration_scaling" value="4.0" />
+        <!--    Disable Moveit execution time monitoring all togheter-->
+        <param if="$(arg moveit)" name="move_group/trajectory_execution/execution_duration_monitoring" value="false" />
+
+        <!--Load Moveit control services-->
+        <!-- <node if="$(arg moveit)" pkg="panda_gazebo" type="panda_moveit_server.py" name="panda_moveit_planner_server" required="true">
+            <param name="create_all_services" value="false" />
+        </node> -->
+        <!-- <node pkg="panda_gazebo" type="panda_control_server.py" name="panda_control_server" required="true"> --> -->
+        <!-- <param name="use_group_controller" value="$(arg use_group_controller)" /> -->
+        <!-- <param name="create_all_services" value="false" /> -->
+        <!-- </node> -->
+    </group>
+
+    <!--Start Controllers-->
+    <!--    Load the ros controllers-->
+    <include if="$(arg gazebo)" file="$(find panda_gazebo)/launch/load_controllers.launch">
+        <arg name="moveit" value="$(arg moveit)" />
+        <arg name="gazebo" value="$(arg gazebo)" />
+        <arg name="load_gripper" value="$(arg load_gripper)" />
+        <!-- <arg name="preload_controllers" value="$(arg preload_controllers)" /> -->
+    </include>
+    <!--    Load ros_control service-->
+    <!-- <include file="$(find panda_moveit_config)/launch/ros_controllers.launch"/> -->
+    <!-- <node pkg="panda_gazebo" type="panda_control_server.py" name="panda_control_server" required="true">
+        <param name="use_group_controller" value="$(arg use_group_controller)" />
+        <param name="create_all_services" value="false" />
+    </node> -->
+
+    <!--Load Rviz-->
+    <include if="$(arg rviz)" file="$(find panda_gazebo)/launch/panda_rviz.launch">
+        <arg name="debug" value="$(arg debug)"/>
+    </include>
 </launch>

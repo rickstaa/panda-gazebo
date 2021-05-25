@@ -1,7 +1,6 @@
 # Example commands for joint trajectory control
 
-Here you find an example of valid joint trajectory command that can be send to the joint
-trajectory action server.
+Here you find an example of valid joint trajectory command that can be send to the joint trajectory action server.
 
 ## EXAMPLE POSE 1 (Positions)
 
