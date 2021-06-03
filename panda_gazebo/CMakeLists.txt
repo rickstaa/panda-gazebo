@@ -72,8 +72,6 @@ add_service_files(
   SetEePose.srv
   SetJointEfforts.srv
   SetJointPositions.srv
-  ListControlType.srv
-  SwitchControlType.srv
 )
 
 ## Generate actions in the 'action' folder

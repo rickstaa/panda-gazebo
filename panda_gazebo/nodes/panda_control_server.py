@@ -3,18 +3,16 @@
 Franka robot.
 
 Source code
-----------------------------
+-----------
+
 .. literalinclude:: ../../../../panda_openai_sim/nodes/panda_control_server.py
    :language: python
    :linenos:
-   :lines: 13-
+   :lines: 14-
 """
 
-# Import ROS packages
 import rospy
-
-# Panda_autograsp modules, msgs and srvs
-from panda_gazebo.core import PandaControlServer
+from panda_gazebo.core.control_server import PandaControlServer
 
 if __name__ == "__main__":
     rospy.init_node("panda_control_server")
@@ -29,14 +27,13 @@ if __name__ == "__main__":
     except KeyError:
         autofill_traj_positions = False
     try:  # Check required services
-        create_all_services = rospy.get_param("~services_load_type")
+        create_extra_services = rospy.get_param("~create_extra_services")
     except KeyError:
-        create_all_services = False
+        create_extra_services = False
 
     # Start control server
     control_server = PandaControlServer(
-        use_group_controller=use_group_controller,
         autofill_traj_positions=autofill_traj_positions,
-        create_all_services=create_all_services,
+        create_extra_services=create_extra_services,
     )
     rospy.spin()  # Maintain the service open

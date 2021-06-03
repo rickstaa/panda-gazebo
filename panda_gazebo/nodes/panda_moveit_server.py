@@ -1,19 +1,17 @@
 #!/usr/bin/env python3
-"""This node sets up a number of services that can be used to control the Panda Emika
+"""This node sets up several extra services that can be used to control the Panda Emika
 Franka robot using the Moveit framework.
 
 Source code
-----------------------------
+-----------
+
 .. literalinclude:: ../../../../panda_openai_sim/nodes/panda_moveit_server.py
    :language: python
    :linenos:
-   :lines: 13-
+   :lines: 14-
 """
 
-# Import ROS packages
 import rospy
-
-# Panda_autograsp modules, msgs and srvs
 from panda_gazebo.core.moveit_server import PandaMoveitPlannerServer
 
 if __name__ == "__main__":
@@ -23,14 +21,15 @@ if __name__ == "__main__":
     try:
         arm_ee_link = rospy.get_param("~end_effector")
     except KeyError:
-        arm_ee_link = "panda_hand"
+        # arm_ee_link = "panda_hand"
+        arm_ee_link = "panda_link8"
     try:  # Check required services
-        create_all_services = rospy.get_param("~services_load_type")
+        create_extra_services = rospy.get_param("~create_extra_services")
     except KeyError:
-        create_all_services = False
+        create_extra_services = False
 
-    # Start moveit planner server
+    # Start MoveIt planner server
     moveit_planner_server = PandaMoveitPlannerServer(
-        arm_ee_link=arm_ee_link, create_all_services=create_all_services
+        arm_ee_link=arm_ee_link, create_extra_services=create_extra_services
     )
     rospy.spin()  # Maintain the service open

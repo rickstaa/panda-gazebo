@@ -1,0 +1,6 @@
+# A configuration file that contains the configuration values for creating a joint state
+# controller which can be used to publish the panda robot joint states.
+# NOTE: Creates the /joint_states topic necessary in ROS
+joint_state_controller:
+  type: joint_state_controller/JointStateController
+  publish_rate: 50

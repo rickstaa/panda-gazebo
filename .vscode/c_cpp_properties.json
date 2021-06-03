@@ -1,0 +1,21 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "",
+        "limitSymbolsToIncludedHeaders": true
+      },
+      "includePath": [
+        "/home/ricks/Development/work/openai_ros/devel/include/**",
+        "/opt/ros/noetic/include/**",
+        "/home/ricks/Development/work/openai_ros/src/rosdeps/panda_gazebo/franka_ros/franka_control/include/**",
+        "/home/ricks/Development/work/openai_ros/src/rosdeps/panda_gazebo/franka_ros/franka_example_controllers/include/**",
+        "/home/ricks/Development/work/openai_ros/src/rosdeps/panda_gazebo/franka_ros/franka_gripper/include/**",
+        "/home/ricks/Development/work/openai_ros/src/rosdeps/panda_gazebo/franka_ros/franka_hw/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS"
+    }
+  ],
+  "version": 4
+}

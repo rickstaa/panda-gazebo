@@ -1,36 +1,24 @@
 """Class used to group a number of publishers together.
 """
 
-# ROS python imports
 import rospy
 
 
-#################################################
-# Group Publisher class #########################
-#################################################
 class GroupPublisher(list):
     """Used for bundling ROS publishers together and publishing
     to these publishers at the same time.
-
-    Methods
-    -------
-    publish(messages):
-        Publish messages to all publishers.
     """
 
     def __init__(self, iterable=[]):
-        """
-        Parameters
-        ----------
-        iterable : list, optional
-            New list initialized from iterable items, by default ``[]``.
+        """Initiate group publisher object.
 
-        Raises
-        ------
-        ValueError
-            If list does not only contain ROS publishers.
-        """
+        Args:
+            iterable (list, optional): New list initialized from iterable items.
+                Defaults to ``[]``.
 
+        Raises:
+            ValueError: If list does not only contain ROS publishers.
+        """
         # Validate if list contains publisher objects
         if type(iterable) is list:
             for publisher in iterable:
@@ -42,7 +30,6 @@ class GroupPublisher(list):
             if type(iterable) is not rospy.Publisher:
                 raise ValueError("Please supply a list containing only ros publishers.")
 
-        # Call superclass initation method
         super(GroupPublisher, self).__init__(iterable)
 
     def publish(self, messages):
@@ -50,17 +37,12 @@ class GroupPublisher(list):
         GroupPublisher object. The index of the message corresponds to the
         publisher the message will be published to.
 
-        Parameters
-        ----------
-        messages : list
-            List containing the messages to be published.
+        Args:
+            messages (list): List containing the messages to be published.
 
-        Raises
-        ------
-        ValueError
-            If something went wrong during publishing.
+        Raises:
+            ValueError: If something went wrong during publishing.
         """
-
         # Validate input messages
         if self.__len__() == 0:
             raise ValueError(

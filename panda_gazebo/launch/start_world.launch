@@ -2,7 +2,7 @@
 <launch>
     <!--Simulation arguments-->
     <arg name="world_name" default="$(find panda_gazebo)/resources/worlds/empty.world" />
-    <arg name="paused" default="false" />
+    <arg name="paused" default="true" />
     <arg name="gazebo_gui" default="true"/>
 
     <!--Start the gazebo world-->

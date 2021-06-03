@@ -4,28 +4,21 @@ import sys
 
 import rospy
 
-from panda_gazebo.functions import list_2_human_text
+from panda_gazebo.common.functions import list_2_human_text
 
 
 def arg_type_error(arg_name, depth, invalid_types, valid_types, shutdown=True):
     """This function displays a argument type invalid ROS error/warning and shutdown the
     ROS node if requested.
 
-    Parameters
-    ----------
-    arg_name : str
-        The name of the argument.
-    depth : int
-        The dict depth at which the error occurred.
-    invalid_type : tuple
-        The type that was invalid.
-    valid_types : tuple
-        The types that are valid.
-    shutdown : bool, optional
-        Whether to shutdown the ROS node after the error has been thrown, by default
-        True.
+    Args:
+        arg_name (str): The name of the argument.
+        depth (int): The dict depth at which the error occurred.
+        invalid_type (tuple): The type that was invalid.
+        valid_types (tuple): The types that are valid.
+        shutdown (bool, optional): Whether to shutdown the ROS node after the error has
+            been thrown. Defaults to ``True``.
     """
-
     # Throw Type error and shutdown ROS node
     if shutdown:
         if depth == 0:
@@ -107,23 +100,17 @@ def arg_keys_error(arg_name, missing_keys=[], extra_keys=[], shutdown=True):
     """This function displays a argument keys invalid ROS error/warning and shutdown the
     ROS node if requested.
 
-    Parameters
-    ----------
-    arg_name : str
-        The name of the argument.
-    missing_keys : list, optional
-        The dictionary keys that were missing from the input argument, by default
-        ``[]``.
-    extra_keys : list
-        The dictionary keys that were present but should not be, by default ``[]``.
-    shutdown : bool, optional
-        Whether to shutdown the ROS node after the error has been thrown, by default
-        True.
+    Args:
+        arg_name (str): The name of the argument.
+        missing_keys (list, optional): The dictionary keys that were missing from the
+            input argument. Defaults to ``[]``.
+        extra_keys (list): The dictionary keys that were present but should not be.
+            Defaults to ``[]``.
+        shutdown (bool, optional): Whether to shutdown the ROS node after the error has
+            been thrown. Defaults to ``True``.
     """
-
     # Display error/warning if missing or extra keys are not empty
     if missing_keys or extra_keys:
-
         # Log error message and shutdown if requested
         if shutdown:  # Display error if shutdown is True
             logerr_msg = (
@@ -217,19 +204,13 @@ def arg_value_error(arg_name, invalid_values, valid_values, shutdown=True):
     """This function displays a value invalid ROS error/warning and shutdown the ROS
     node if requested.
 
-    Parameters
-    ----------
-    arg_name : str
-        The name of the argument.
-    invalid_values : list, str
-        The values that were invalid.
-    valid_values : list, str
-        A list of valid values.
-    shutdown : bool, optional
-        Whether to shutdown the ROS node after the error has been thrown, by default
-        True.
+    Args:
+        arg_name (str): The name of the argument.
+        invalid_values (list, str): The values that were invalid.
+        valid_values (list, str): A list of valid values.
+        shutdown (bool, optional): Whether to shutdown the ROS node after the error has
+            been thrown. Defaults to ``True``.
     """
-
     # Convert string input to list
     if isinstance(invalid_values, str):
         invalid_values = [invalid_values]
