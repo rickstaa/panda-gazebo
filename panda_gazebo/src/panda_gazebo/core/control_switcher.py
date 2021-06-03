@@ -1,18 +1,12 @@
 """This class is responsible for switching the control type that is used for
 controlling the Panda Robot robot ``arm`` and ``hand``. It serves as a wrapper around
 the services created by the ROS
-`controller_manager <https://wiki.ros.org/controller_manager>`_ class. It allows the
-user to switch between the following control types:
+`controller_manager <https://wiki.ros.org/controller_manager>`_ class.
 
-* `joint_trajectory_control <https://wiki.ros.org/joint_trajectory_controller/>`_
-
-* `joint_position_control <https://wiki.ros.org/position_controllers/>`_
-
-* `joint_effort_control <https://wiki.ros.org/effort_controllers/>`_
-
-* `joint_group_position_control <https://wiki.ros.org/ros_controllers/>`_
-
-* `joint_group_effort_control <https://wiki.ros.org/ros_controllers/>`_
+Control types:
+    * `joint_trajectory_control <https://wiki.ros.org/joint_trajectory_controller/>`_
+    * `joint_position_control <https://wiki.ros.org/position_controllers/>`_
+    * `joint_effort_control <https://wiki.ros.org/effort_controllers/>`_
 """
 
 import sys
@@ -27,17 +21,11 @@ from controller_manager_msgs.srv import (
     SwitchController,
     SwitchControllerRequest,
 )
-from panda_gazebo.extras import ControllerInfoDict
-from panda_gazebo.functions import dict_clean, flatten_list
-from panda_gazebo.srv import (
-    ListControlType,
-    ListControlTypeRequest,
-    SwitchControlType,
-    SwitchControlTypeRequest,
-)
+from panda_gazebo.common import ControllerInfoDict
+from panda_gazebo.common.functions import dict_clean, flatten_list
 from rospy.exceptions import ROSException, ROSInterruptException
 
-# Global variables
+# Global script vars
 ARM_CONTROLLERS = {
     "ee_control": "panda_arm_controller",
     "joint_trajectory_control": "panda_arm_controller",
@@ -59,8 +47,6 @@ ARM_CONTROLLERS = {
         "panda_arm_joint6_effort_controller",
         "panda_arm_joint7_effort_controller",
     ],
-    "joint_group_position_control": "panda_arm_joint_group_position_controller",
-    "joint_group_effort_control": "panda_arm_joint_group_effort_controller",
 }
 HAND_CONTROLLERS = {
     "joint_trajectory_control": "panda_hand_controller",
@@ -72,49 +58,32 @@ HAND_CONTROLLERS = {
         "panda_hand_finger1_effort_controller",
         "panda_hand_finger2_effort_controller",
     ],
-    "joint_group_position_control": "panda_hand_joint_group_position_controller",
-    "joint_group_effort_control": "panda_hand_joint_group_effort_controller",
 }
 CONTROLLER_DICT = {"arm": ARM_CONTROLLERS, "hand": HAND_CONTROLLERS}
 
 
-#################################################
-# Panda Controller Switcher #####################
-#################################################
 class PandaControlSwitcher(object):
     """Used for switching the Panda robot controllers.
 
-    Attributes
-    ----------
-    verbose : bool
-        Boolean specifying whether we want to display log messages during switching.
-
-    Methods
-    -------
-    switch(self, control_group, control_type, load_controllers=True):
-        Switch Panda robot control type.
+    Attributes:
+        verbose : bool
+            Boolean specifying whether we want to display log messages during switching.
     """
 
     def __init__(self, connection_timeout=10, verbose=True):
         """Initializes the PandaControlSwitcher object.
 
-        Parameters
-        ----------
-        connection_timeout : str, optional
-            The timeout for connecting to the controller_manager services,
-            by default 3 sec.
-        verbose : bool, optional
-            Whether to display debug log messages, defaults to True.
+        Args:
+            connection_timeout (str, optional): The timeout for connecting to the
+                controller_manager services. Defaults to 3 sec.
+            verbose (bool, optional): Whether to display debug log messages. Defaults to
+                ``True``.
         """
-
-        # Create class attributes
         self.verbose = verbose
         self._controller_switch_timeout = 3
 
         # Connect to controller_manager services
         try:
-
-            # Connect to switch service
             rospy.logdebug(
                 "Connecting to '/controller_manager/switch_controller' service."
             )
@@ -127,8 +96,6 @@ class PandaControlSwitcher(object):
             rospy.logdebug(
                 "Connected to '/controller_manager/switch_controller' service!"
             )
-
-            # Connect to list service
             rospy.logdebug(
                 "Connecting to '/controller_manager/list_controllers' service."
             )
@@ -141,8 +108,6 @@ class PandaControlSwitcher(object):
             rospy.logdebug(
                 "Connected to '/controller_manager/list_controllers' service!"
             )
-
-            # Connect to load controller service
             rospy.logdebug(
                 "Connecting to '/controller_manager/load_controller' service."
             )
@@ -154,34 +119,6 @@ class PandaControlSwitcher(object):
             )
             rospy.logdebug(
                 "Connected to '/controller_manager/load_controller' service!"
-            )
-
-            # Connect to panda_control_server/switch_control_type service
-            rospy.logdebug(
-                "Connecting to '/panda_control_server/switch_control_type' service."
-            )
-            rospy.wait_for_service(
-                "/panda_control_server/switch_control_type", timeout=connection_timeout
-            )
-            self._panda_control_server_switch_control_type_client = rospy.ServiceProxy(
-                "/panda_control_server/switch_control_type", SwitchControlType
-            )
-            rospy.logdebug(
-                "Connected to '/panda_control_server/switch_control_type' service!"
-            )
-
-            # Connect to panda_control_server/list_control_type service
-            rospy.logdebug(
-                "Connecting to '/panda_control_server/list_control_type' service."
-            )
-            rospy.wait_for_service(
-                "/panda_control_server/list_control_type", timeout=connection_timeout
-            )
-            self._panda_control_server_list_control_type_client = rospy.ServiceProxy(
-                "/panda_control_server/list_control_type", ListControlType
-            )
-            rospy.logdebug(
-                "Connected to '/panda_control_server/switch_control_type' service!"
             )
         except (rospy.ServiceException, ROSException, ROSInterruptException) as e:
             rospy.logerr(
@@ -195,17 +132,14 @@ class PandaControlSwitcher(object):
             )
             sys.exit(0)
 
-    def _list_controllers_state(self):
+    def _list_controllers_state(self):  # noqa: C901
         """Get information about the currently running and loaded controllers.
 
-        Returns
-        -------
-        dict
-            Dictionary containing information about which controllers are currently
-            running or initialized divided by control group (arm/hand and other).
+        Returns:
+            dict: Dictionary containing information about which controllers are
+                currently running or initialized divided by control group
+                arm/hand and other).
         """
-
-        # Get the controller that is currently running
         list_controllers_resp = self._list_controller_client.call(
             ListControllersRequest()
         )
@@ -248,27 +182,20 @@ class PandaControlSwitcher(object):
                         controller.name
                     )
 
-        # Remove empty fields from dictionary
-        controllers_state = dict_clean(controllers_state)
-
         # Return list with running and initialized controllers
+        controllers_state = dict_clean(controllers_state)
         return controllers_state
 
     def _load(self, controllers):
         """Load controllers. For this to work the parameters of the controllers
         have to be loaded onto the ROS parameter server.
 
-        Parameters
-        ----------
-        controllers : str or list
-            The name of the controller you want to load.
+        Args:
+            controllers (union[str, list]): The name of the controller you want to load.
 
-        Returns
-        -------
-        bool
-            Success boolean or success boolean list.
+        Returns:
+            bool: Success boolean or success boolean list.
         """
-
         # Create load_controller request
         if type(controllers) is str:
 
@@ -286,8 +213,6 @@ class PandaControlSwitcher(object):
                         LoadControllerRequest(name=controller)
                     ).ok
                 )
-
-            # Return result
             return resp
         else:
             rospy.logwarn(
@@ -297,7 +222,7 @@ class PandaControlSwitcher(object):
             )
             return [False]
 
-    def switch(
+    def switch(  # noqa: C901
         self,
         control_group,
         control_type,
@@ -308,39 +233,27 @@ class PandaControlSwitcher(object):
         """Switch Panda robot control type. This function stops all currently running
         controllers and starts the required controllers for a given control type.
 
-        Parameters
-        ----------
-        control_group : str
-            The control group of which you want the switch the control type. Options
-            are 'hand' or 'arm'.
-        control_type : str
-            The robot control type you want to switch to for the given 'control_group'.
-            Options are: ``joint_trajectory_control``, ``joint_position_control``,
-            ``joint_effort_control``, ``joint_group_position_control`` and
-            ``joint_group_effort_control``.
-        load_controllers : bool
-            Try to load the required controllers for a given control_type if they are
-            not yet loaded.
-        timeout : int, optional
-            The timout for switching to a given controller, by default
-            :py:attr:`self._controller_switch_timeout`.
-        verbose : bool, optional
-            Whether to display debug log messages, defaults to verbose value set during
-            the class initiation.
+        Args:
+            control_group (str): The control group of which you want the switch the
+                control type. Options are 'hand' or 'arm'.
+            control_type (str): The robot control type you want to switch to for the
+                given 'control_group'. Options are: ``joint_trajectory_control``,
+                ``joint_position_control`` and ``joint_effort_control``.
+            load_controllers (bool): Try to load the required controllers for a given
+                control_type if they are not yet loaded.
+            timeout (int, optional): The timout for switching to a given controller.
+                Defaults to :py:attr:`self._controller_switch_timeout`.
+            verbose (bool, optional): Whether to display debug log messages. Defaults
+                to verbose value set during the class initiation.
 
-        Returns
-        -------
-        ControllerSwitcherResponse
-            Contains information about whether the switch operation was successfull
-            'success' and the previously used controller 'prev_control_type'.
+        Returns:
+            :obj:`~panda_gazebo.core.control_switcher.ControllerSwitcherResponse`:
+                Contains information about whether the switch operation was successfull
+                'success' and the previously used controller 'prev_control_type'.
         """
-
-        # Check verbosity
+        resp = ControllerSwitcherResponse()
         if not verbose:
             verbose = self.verbose
-
-        # Create response message
-        resp = ControllerSwitcherResponse()
 
         # Validate input arguments
         control_type = control_type.lower()
@@ -429,8 +342,6 @@ class PandaControlSwitcher(object):
                     )
                 )
             else:
-
-                # Log result and return
                 rospy.logwarn(
                     "The Panda %s control type was not switched to '%s' because the %s "
                     "controllers could not be loaded as 'load_controllers' was set to "
@@ -460,8 +371,6 @@ class PandaControlSwitcher(object):
                     controllers_state[control_group]["running"].values()
                 )
             else:
-
-                # Log result and return
                 rospy.logwarn(
                     "The Panda %s control type was not switched to '%s' as the %s "
                     "controllers could not be loaded."
@@ -471,7 +380,6 @@ class PandaControlSwitcher(object):
                 resp.prev_control_type = prev_control_type
                 return resp
         else:
-
             # Fill the start_controllers field of the switch control message
             switch_controller_msg.start_controllers = (
                 CONTROLLER_DICT[control_group][control_type]
@@ -495,33 +403,6 @@ class PandaControlSwitcher(object):
             # Change panda_controller_server control type if needed and switch was
             # successfull
             if retval.ok:
-
-                # Request 'panda_controller_server' to use group control if needed
-                if control_type in [
-                    "joint_group_position_control",
-                    "joint_group_effort_control",
-                ]:
-                    if (
-                        self._panda_control_server_list_control_type_client(
-                            ListControlTypeRequest()
-                        ).control_type
-                        != "joint_group_control"
-                    ):
-                        self._panda_control_server_switch_control_type_client(
-                            SwitchControlTypeRequest()
-                        )
-                elif control_type in ["joint_position_control", "joint_effort_control"]:
-                    if (
-                        self._panda_control_server_list_control_type_client(
-                            ListControlTypeRequest()
-                        ).control_type
-                        != "joint_control"
-                    ):
-                        self._panda_control_server_switch_control_type_client(
-                            SwitchControlTypeRequest()
-                        )
-
-                # Log result and return
                 rospy.logdebug(
                     "Switching Panda %s control type to '%s' successfull."
                     % (control_group, control_type)
@@ -530,8 +411,6 @@ class PandaControlSwitcher(object):
                 resp.prev_control_type = prev_control_type
                 return resp
             else:
-
-                # Log result and return
                 rospy.logwarn(
                     "Switching Panda %s control type to '%s' failed."
                     % (control_group, control_type)
@@ -539,10 +418,7 @@ class PandaControlSwitcher(object):
                 resp.success = retval.ok
                 resp.prev_control_type = prev_control_type
                 return resp
-
         else:
-
-            # Log result and return
             if verbose:
                 rospy.logdebug(
                     "Panda %s control type not switched to '%s' as the Panda robot was "
@@ -554,31 +430,22 @@ class PandaControlSwitcher(object):
             return resp
 
 
-#################################################
-# Panda Controller Switcher Response ############
-#################################################
 class ControllerSwitcherResponse:
     """Class used for returning the result of the ControllerSwitcher.switch method.
 
-    Attributes
-    ----------
-    success : bool
-        Specifies whether the switch operation was successfull.
-    prev_control_type : str
-        The previous used control type.
+    Attributes:
+        success (bool): Specifies whether the switch operation was successfull.
+        prev_control_type (str): The previous used control type.
     """
 
     def __init__(self, success=True, prev_control_type=""):
         """Initiate ControllerSwitcher response object.
 
-        Parameters
-        ----------
-        success : bool, optional
-            Whether the switch operation was successfull, by default True.
-        prev_control_type : str, optional
-            The previous used control type, by default ``""``.
+        Args:
+            success (bool, optional): Whether the switch operation was successfull.
+                Defaults to ``True``.
+            prev_control_type (str, optional): The previous used control type. Defaults
+                to ``""``.
         """
-
-        # Set class attributes
         self.success = success
         self.prev_control_type = prev_control_type
