@@ -18,10 +18,6 @@ if __name__ == "__main__":
     rospy.init_node("panda_control_server")
 
     # Get ROS parameters
-    try:
-        use_group_controller = rospy.get_param("~use_group_controller")
-    except KeyError:
-        use_group_controller = False
     try:  # Auto fill joint traj position field if left empty
         autofill_traj_positions = rospy.get_param("~autofill_traj_positions")
     except KeyError:

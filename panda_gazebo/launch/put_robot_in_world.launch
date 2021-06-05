@@ -11,8 +11,8 @@
     <!--Control arguments-->
     <!--    The control type used for controlling the robot (Options: Trajectory, position, effort)-->
     <!-- <arg name="control_type" default="trajectory"/> -->
-    <!-- <arg name="control_type" default="position"/> -->
-    <arg name="control_type" default="effort"/>
+    <arg name="control_type" default="position"/>
+    <!-- <arg name="control_type" default="effort"/> -->
 
     <!--Retrieve the right hardware_interface for the control type-->
     <arg if="$(eval arg('control_type') == 'effort')" name="hardware_interface" value="EffortJointInterface"/>
@@ -58,7 +58,8 @@
                 <arg name="gazebo" value="$(arg gazebo)" />
                 <arg name="load_gripper" value="$(arg load_gripper)" />
                 <arg name="joint_state_controller" value="false"/>
-                <arg name="stopped" value="true"/>
+                <!-- <arg name="stopped" value="true"/> -->
+                <arg name="stopped" value="false"/>
             </include>
             <!--Load joint_trajectory controller in stopped mode
                 NOTE: This enabled us to set the initial robot pose using euclidean coordinates.
@@ -67,6 +68,7 @@
                 <arg name="moveit" value="$(arg moveit)" />
                 <arg name="gazebo" value="$(arg gazebo)" />
                 <arg name="load_gripper" value="$(arg load_gripper)" />
+                <arg name="stopped" value="true"/>
             </include>
         </group>
         <!--Joint position controllers-->
@@ -76,7 +78,8 @@
                 <arg name="gazebo" value="$(arg gazebo)" />
                 <arg name="load_gripper" value="$(arg load_gripper)" />
                 <arg name="joint_state_controller" value="false"/>
-                <arg name="stopped" value="true"/>
+                <!-- <arg name="stopped" value="true"/> -->
+                <arg name="stopped" value="false"/>
             </include>
         </group>
         <!--Joint_trajectory controller (Loaded for joint position and joint trajectory control)
@@ -85,6 +88,7 @@
             <arg name="moveit" value="$(arg moveit)" />
             <arg name="gazebo" value="$(arg gazebo)" />
             <arg name="load_gripper" value="$(arg load_gripper)" />
+            <arg name="stopped" value="true"/>
         </include>
     </group>
 
@@ -99,10 +103,7 @@
     <node if="$(arg moveit)" pkg="panda_gazebo" type="panda_moveit_server.py" name="panda_moveit_planner_server" required="true"/>
 
     <!--    Load ros_control service-->
-    <!-- <node pkg="panda_gazebo" type="panda_control_server.py" name="panda_control_server" required="true">
-        <param name="use_group_controller" value="$(arg use_group_controller)" />
-        <param name="create_all_services" value="false" />
-    </node> -->
+    <node pkg="panda_gazebo" type="panda_control_server.py" name="panda_control_server" required="true"/>
 
     <!--Load Rviz-->
     <include if="$(arg rviz)" file="$(find panda_gazebo)/launch/panda_rviz.launch">

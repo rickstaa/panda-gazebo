@@ -1,5 +1,0 @@
-<launch>
-    <node pkg="panda_gazebo" type="panda_control_server.py" name="panda_control_server" required="true">
-        <param name="create_extra_services" value="true" />
-    </node>
-</launch>

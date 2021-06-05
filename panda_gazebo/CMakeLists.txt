@@ -17,7 +17,7 @@ find_package(catkin REQUIRED COMPONENTS
   actionlib_msgs
   control_msgs
   # NOTE: The packages below are disbabled as they are only needed for some test scripts
-  # dynamic_reconfigure
+  dynamic_reconfigure
 )
 
 ## System dependencies are found with CMake's conventions
@@ -105,9 +105,10 @@ generate_messages(
 ##     and list every .cfg file to be processed
 # Generate dynamic reconfigure parameters in the 'cfg' folder
 # NOTE: The command below is disbabled as it is only needed for some test scripts
-# generate_dynamic_reconfigure_options(
-#   cfg/dyn_reconf/EffortTestDynReconf.cfg
-# )
+generate_dynamic_reconfigure_options(
+  cfg/dyn_reconf/PositionControlTestDynReconf.cfg
+  cfg/dyn_reconf/EffortControlTestDynReconf.cfg
+)
 
 ###################################
 ## catkin specific configuration ##
