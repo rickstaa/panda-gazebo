@@ -11,6 +11,7 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 import os
 import sys
+
 import sphinx_rtd_theme
 
 # -- Add module, and scripts paths to the system path --
@@ -18,12 +19,12 @@ import sphinx_rtd_theme
 # sys.path.insert(0, os.path.join(os.path.abspath(os.path.dirname(__name__)), ".."))
 sys.path.insert(
     0,
-    os.path.join(os.path.abspath(os.path.dirname(__name__)), "../panda_openai_sim/src"),
+    os.path.join(os.path.abspath(os.path.dirname(__name__)), "../panda_gazebo/src"),
 )
 sys.path.insert(
     0,
     os.path.abspath(
-        os.path.join(os.path.dirname(__name__), "../../panda_openai_sim/nodes")
+        os.path.join(os.path.dirname(__name__), "../../panda_gazebo/nodes")
     ),
 )
 sys.path.insert(

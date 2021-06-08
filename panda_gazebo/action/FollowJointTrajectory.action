@@ -1,7 +1,7 @@
 # Follow_joint_trajectory action
 # NOTE: This action is a direct copy of the action found in the control_msgs package. It
 # was created to provide a better distinction between the messages of the
-# panda_openai_sim/follow_joint_trajectory action server and the
+# panda_gazebo/follow_joint_trajectory action server and the
 # panda_arm_controller/follow_joint_trajectory action serer.
 
 # The joint trajectory to follow

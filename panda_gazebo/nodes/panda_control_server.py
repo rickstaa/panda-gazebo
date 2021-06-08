@@ -5,7 +5,7 @@ Franka robot.
 Source code
 -----------
 
-.. literalinclude:: ../../../../panda_openai_sim/nodes/panda_control_server.py
+.. literalinclude:: ../../../../panda_gazebo/nodes/panda_control_server.py
    :language: python
    :linenos:
    :lines: 14-

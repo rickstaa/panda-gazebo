@@ -1,0 +1,25 @@
+# Logs and data
+logs/*
+
+# Docs
+_autosummary/
+
+# Cache
+__pycache__/
+*.pyc
+
+# Tests
+pytest/
+*.pytest_cache/
+.coverage
+pytest-coverage.txt
+
+# Dist
+build/
+dist/
+.eggs/
+*.egg-info/
+
+# IDE files to ignore
+.vscode
+*.code-workspace

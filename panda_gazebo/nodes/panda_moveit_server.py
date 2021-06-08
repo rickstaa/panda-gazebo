@@ -5,7 +5,7 @@ Franka robot using the Moveit framework.
 Source code
 -----------
 
-.. literalinclude:: ../../../../panda_openai_sim/nodes/panda_moveit_server.py
+.. literalinclude:: ../../../../panda_gazebo/nodes/panda_moveit_server.py
    :language: python
    :linenos:
    :lines: 14-

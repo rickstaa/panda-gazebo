@@ -4,11 +4,12 @@
     <arg name="world_name" default="$(find panda_gazebo)/resources/worlds/grasp.world" />
     <arg name="paused" default="true" />
     <arg name="gazebo_gui" default="true" />
+    <arg name="verbose" default="true"/>
 
     <!--Start the gazebo world-->
     <include file="$(find panda_gazebo)/launch/start_world.launch">
         <arg name="world_name" value="$(arg world_name)"/>
-        <arg name="verbose" value="true"/>
+        <arg name="verbose" value="$(arg verbose)"/>
         <arg name="paused" value="$(arg paused)"/>
         <arg name="gazebo_gui" value="$(arg gazebo_gui)"/>
     </include>
