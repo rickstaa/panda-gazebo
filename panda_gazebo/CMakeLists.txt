@@ -127,9 +127,7 @@ catkin_package(
   CATKIN_DEPENDS
     message_runtime rospy gazebo_msgs std_msgs controller_manager_msgs
     geometry_msgs actionlib_msgs trajectory_msgs sensor_msgs control_msgs rviz actionlib
-    franka_description panda_moveit_config panda_simulation
-    # NOTE: The packages below are disbabled as they are only needed for some test scripts
-    # dynamic_reconfigure
+    franka_description openai_ros panda_moveit_config
 #  DEPENDS system_lib
 )
 
