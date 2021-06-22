@@ -265,6 +265,40 @@ class PandaControlSwitcher(object):
             arm_control_type = ""
         return arm_control_type
 
+    def wait_for_control_type(self, control_group, control_type, timeout=None, rate=10):
+        """Function that can be used to wait till all the controllers used for a given
+        'control_group' and 'control_type' are running. Usefull 6 when you expect a
+        launch file to load certain controllers.
+
+        Args:
+            control_group (str): The control group of which you want the switch the
+                control type. Options are 'hand' or 'arm'.
+            control_type (str): The robot control type you want to switch to for the
+                given 'control_group'. Options are: ``trajectory_control``,
+                ``position_control`` and ``effort_control``.
+            timeout (float, optional): The function timeout. Defaults to `None` meaning
+                the function will wait for ever.
+            rate (int, optional): The 'control_type' check rate. Defaults to `10`
+                hz.
+
+        Raises:
+            TimeoutError: Thrown when the set timeout has passed.
+        """
+        start_time = time.time()
+        timeout = timeout if timeout else -1
+        while (
+            (control_type == "arm" and control_type != self.arm_control_type)
+            or (control_type == "hand" and control_type != self.hand_control_type)
+            and time.time() - start_time <= timeout
+        ):
+
+            time.sleep(1.0 / rate)
+        if time.time() - start_time > timeout:
+            raise TimeoutError(
+                f"Control type '{control_type}' for control_group '{control_group}' "
+                "was not spawned within the set timeout (i.e. {timeout})."
+            )
+
     def switch(  # noqa: C901
         self,
         control_group,
