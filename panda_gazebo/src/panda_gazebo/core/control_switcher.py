@@ -4,9 +4,9 @@ the services created by the ROS
 `controller_manager <https://wiki.ros.org/controller_manager>`_ class.
 
 Control types:
-    * `joint_trajectory_control <https://wiki.ros.org/joint_trajectory_controller/>`_
-    * `joint_position_control <https://wiki.ros.org/position_controllers/>`_
-    * `joint_effort_control <https://wiki.ros.org/effort_controllers/>`_
+    * `trajectory_control <https://wiki.ros.org/joint_trajectory_controller/>`_
+    * `position_control <https://wiki.ros.org/position_controllers/>`_
+    * `effort_control <https://wiki.ros.org/effort_controllers/>`_
 """
 
 import sys
@@ -28,8 +28,8 @@ from rospy.exceptions import ROSException, ROSInterruptException
 # Global script vars
 ARM_CONTROLLERS = {
     "ee_control": "panda_arm_controller",
-    "joint_trajectory_control": "panda_arm_controller",
-    "joint_position_control": [
+    "trajectory_control": "panda_arm_controller",
+    "position_control": [
         "panda_arm_joint1_position_controller",
         "panda_arm_joint2_position_controller",
         "panda_arm_joint3_position_controller",
@@ -38,7 +38,7 @@ ARM_CONTROLLERS = {
         "panda_arm_joint6_position_controller",
         "panda_arm_joint7_position_controller",
     ],
-    "joint_effort_control": [
+    "effort_control": [
         "panda_arm_joint1_effort_controller",
         "panda_arm_joint2_effort_controller",
         "panda_arm_joint3_effort_controller",
@@ -49,12 +49,12 @@ ARM_CONTROLLERS = {
     ],
 }
 HAND_CONTROLLERS = {
-    "joint_trajectory_control": "panda_hand_controller",
-    "joint_position_control": [
+    "trajectory_control": "panda_hand_controller",
+    "position_control": [
         "panda_hand_finger1_position_controller",
         "panda_hand_finger2_position_controller",
     ],
-    "joint_effort_control": [
+    "effort_control": [
         "panda_hand_finger1_effort_controller",
         "panda_hand_finger2_effort_controller",
     ],
@@ -124,7 +124,7 @@ class PandaControlSwitcher(object):
             rospy.logerr(
                 "Shutting down '%s' because no connection could be established "
                 "with the '%s' service and this service is needed "
-                "when using 'joint_position_control'."
+                "when using 'position_control'."
                 % (
                     rospy.get_name(),
                     "/" + e.args[0].split(" /")[1],
@@ -237,8 +237,8 @@ class PandaControlSwitcher(object):
             control_group (str): The control group of which you want the switch the
                 control type. Options are 'hand' or 'arm'.
             control_type (str): The robot control type you want to switch to for the
-                given 'control_group'. Options are: ``joint_trajectory_control``,
-                ``joint_position_control`` and ``joint_effort_control``.
+                given 'control_group'. Options are: ``trajectory_control``,
+                ``position_control`` and ``effort_control``.
             load_controllers (bool): Try to load the required controllers for a given
                 control_type if they are not yet loaded.
             timeout (int, optional): The timout for switching to a given controller.

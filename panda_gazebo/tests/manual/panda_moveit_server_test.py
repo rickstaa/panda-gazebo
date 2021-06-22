@@ -19,6 +19,8 @@ from panda_gazebo.srv import (
     SetEeRequest,
     SetJointPositions,
     SetJointPositionsRequest,
+    GetMoveItControlledJoints,
+    GetMoveItControlledJointsRequest,
 )
 
 if __name__ == "__main__":
@@ -140,4 +142,13 @@ if __name__ == "__main__":
         GetRandomEePose,
     )
     resp = get_random_ee_pose_srv.call(req)
+    print(resp)
+
+    # -- Test get controlled joints service --
+    req = GetMoveItControlledJointsRequest()
+    get_controlled_joints_srv = rospy.ServiceProxy(
+        "panda_moveit_planner_server/get_controlled_joints",
+        GetMoveItControlledJoints,
+    )
+    resp = get_controlled_joints_srv.call(req)
     print(resp)

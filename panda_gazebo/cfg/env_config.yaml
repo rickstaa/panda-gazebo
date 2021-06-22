@@ -135,8 +135,8 @@ simulation:
 
   # Control settings
   control:
-    robot_arm_control_type: "joint_position_control" # (DEFAULT) - The type of control
-    robot_hand_control_type: "joint_position_control" # (DEFAULT) - The type of control
+    robot_arm_control_type: "position_control" # (DEFAULT) - The type of control
+    robot_hand_control_type: "position_control" # (DEFAULT) - The type of control
     block_gripper: False # (DEFAULT) - Block the gripper control
     ee_link: "panda_hand" # Link that is specified as the end effector. Used for the distance to the target position.
     gripper_extra_height: 0.10 # (DEFAULT) - Add extra height

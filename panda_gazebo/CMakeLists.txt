@@ -63,6 +63,7 @@ add_message_files(
 add_service_files(
   FILES
   GetControlledJoints.srv
+  GetMoveItControlledJoints.srv
   GetEe.srv
   SetEe.srv
   GetEePose.srv

@@ -3,14 +3,14 @@
 
 robot_control_types: # The currently supported control types
   arm:
-    - "joint_trajectory_control"
-    - "joint_position_control"
-    - "joint_effort_control"
+    - "trajectory_control"
+    - "position_control"
+    - "effort_control"
     - "ee_control"
   hand:
-    - "joint_trajectory_control"
-    - "joint_position_control"
-    - "joint_effort_control"
+    - "trajectory_control"
+    - "position_control"
+    - "effort_control"
 
 panda_joints: # The current robot joints
   arm:

@@ -7,14 +7,12 @@ import actionlib_tutorials.msg
 import rospy
 from panda_gazebo.msg import FollowJointTrajectoryAction, FollowJointTrajectoryGoal
 from panda_gazebo.srv import (
-    ListControlType,
-    ListControlTypeRequest,
     SetJointEfforts,
     SetJointEffortsRequest,
     SetJointPositions,
     SetJointPositionsRequest,
-    SwitchControlType,
-    SwitchControlTypeRequest,
+    GetControlledJointsRequest,
+    GetControlledJoints,
 )
 from std_msgs.msg import Header
 from trajectory_msgs.msg import JointTrajectoryPoint
@@ -32,7 +30,7 @@ from trajectory_msgs.msg import JointTrajectoryPoint
 if __name__ == "__main__":
     rospy.init_node("panda_control_server_test")
 
-    # ####### - TEST SET JOINT EFFORTS - #########
+    # -- TEST SET JOINT EFFORTS --
     # %% /panda_control_server/set_joint_efforts test
 
     # # Connect to /panda_control_server/set_joint_efforts
@@ -57,7 +55,7 @@ if __name__ == "__main__":
     # retval = set_joint_effort_srv.call(set_joint_efforts_msg)
     # print(retval.message)
 
-    # ####### - TEST SET ARM JOINT EFFORTS - #########
+    # -- TEST SET ARM JOINT EFFORTS --
     # %% /panda_control_server/panda_arm/set_joint_efforts test
 
     # # Connect to /panda_control_server/set_joint_efforts
@@ -82,7 +80,7 @@ if __name__ == "__main__":
     # retval = set_arm_joint_effort_srv.call(set_arm_joint_efforts_msg)
     # print(retval.message)
 
-    # ######## - TEST SET HAND EFFORTS - #########
+    # --# - TEST SET HAND EFFORTS --
     # %% /panda_control_server/panda_hand/set_joint_positions test
 
     # # Connect to /panda_control_server/set_joint_positions
@@ -111,7 +109,7 @@ if __name__ == "__main__":
     # retval = set_hand_joint_effort_srv.call(set_hand_joint_efforts_msg)
     # print(retval.message)
 
-    # ######## - TEST SET JOINT POSITIONS - #########
+    # --# - TEST SET JOINT POSITIONS --
     # %% /panda_control_server/set_joint_positions test
 
     # # Connect to /panda_control_server/set_joint_positions
@@ -174,7 +172,7 @@ if __name__ == "__main__":
     # retval = set_joint_positions_srv.call(set_joint_positions_msg)
     # print(retval.message)
 
-    # ####### - TEST SET ARM JOINT POSITIONS - #########
+    # -- TEST SET ARM JOINT POSITIONS --
     # %% /panda_control_server/panda_arm/set_joint_positions test
 
     # # Connect to /panda_control_server/set_joint_positions
@@ -218,7 +216,7 @@ if __name__ == "__main__":
     # retval = set_arm_joint_positions_srv.call(set_arm_joint_positions_msg)
     # print(retval.message)
 
-    # # ####### - TEST SET HAND JOINT POSITIONS - #########
+    # # -- TEST SET HAND JOINT POSITIONS --
     # # %% /panda_control_server/panda_hand/set_joint_positions test
     # # Connect to /panda_control_server/set_joint_positions
     # rospy.logdebug(
@@ -245,7 +243,7 @@ if __name__ == "__main__":
     # retval = set_hand_joint_positions_srv.call(set_hand_joint_positions_msg)
     # print(retval.message)
 
-    # ####### - TEST SET JOINT TRAJ SERVICE - #########
+    # -- TEST SET JOINT TRAJ SERVICE --
 
     # # Create action client
     # follow_joint_traj_client = actionlib.SimpleActionClient(
@@ -289,7 +287,7 @@ if __name__ == "__main__":
     # result = follow_joint_traj_client.get_result()
     # print(result)
 
-    # ####### - TEST SET ARM JOINT TRAJ SERVICE - #########
+    # -- TEST SET ARM JOINT TRAJ SERVICE --
 
     # # Create action client
     # follow_joint_traj_client = actionlib.SimpleActionClient(
@@ -333,7 +331,7 @@ if __name__ == "__main__":
     # result = follow_joint_traj_client.get_result()
     # print(result)
 
-    # ####### - TEST SET HAND JOINT TRAJ SERVICE - #########
+    # -- TEST SET HAND JOINT TRAJ SERVICE --
 
     # # Create action client
     # follow_joint_traj_client = actionlib.SimpleActionClient(
@@ -376,3 +374,13 @@ if __name__ == "__main__":
     # follow_joint_traj_client.wait_for_result()
     # result = follow_joint_traj_client.get_result()
     # print(result)
+
+    # -- Test get controlled joints service --
+    req = GetControlledJointsRequest()
+    req.control_type = "position_control"
+    get_controlled_joints_srv = rospy.ServiceProxy(
+        "/panda_control_server/get_controlled_joints",
+        GetControlledJoints,
+    )
+    resp = get_controlled_joints_srv.call(req)
+    print(resp)

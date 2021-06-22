@@ -11,6 +11,7 @@ Main services:
     * set_joint_positions
     * get_random_joint_positions
     * get_random_ee_pose
+    * get_controlled_joints
 
 Extra services:
     * panda_arm/set_joint_positions
@@ -39,6 +40,8 @@ from panda_gazebo.common.functions import (
 from panda_gazebo.common.quaternion import Quaternion
 from panda_gazebo.exceptions import InputMessageInvalidError
 from panda_gazebo.srv import (
+    GetMoveItControlledJoints,
+    GetMoveItControlledJointsResponse,
     GetEe,
     GetEePose,
     GetEePoseResponse,
@@ -204,6 +207,14 @@ class PandaMoveitPlannerServer(object):
             "%s/get_random_ee_pose" % rospy.get_name()[1:],
             GetRandomEePose,
             self._get_random_ee_pose_callback,
+        )
+        rospy.logdebug(
+            "Creating '%s/get_controlled_joints' service." % rospy.get_name()
+        )
+        self._get_controlled_joints_srv = rospy.Service(
+            "%s/get_controlled_joints" % rospy.get_name()[1:],
+            GetMoveItControlledJoints,
+            self._get_controlled_joints_cb,
         )
 
         # Create extra services
@@ -1249,4 +1260,40 @@ class PandaMoveitPlannerServer(object):
                         "bounding region. Trying again."
                     )
                     n_sample += 1
+        return resp
+
+    def _get_controlled_joints_cb(self, get_controlled_joints_req):
+        """Returns the joints that are currently being controlled by moveit.
+
+        Args:
+            get_controlled_joints_req (:obj:`panda_gazebo.srv.GetControlledJointsRequest`):
+                The service request message specifying the control_type.
+
+        Returns:
+            :obj:`panda_gazebo.srv.GetControlledJointsResponse`: The response message
+                that contains the ``controlled_joints`` list that specifies the joints
+                that are currently controlled by MoveIt.
+        """  # noqa: E501
+        resp = GetMoveItControlledJointsResponse()
+        resp.success = True
+        try:
+            resp.controlled_joints = (
+                flatten_list(
+                    [
+                        self._controlled_joints_dict["hand"],
+                        self._controlled_joints_dict["arm"],
+                    ]
+                )
+                if self._joint_states.name[0] in self._controlled_joints_dict["hand"]
+                else flatten_list(
+                    [
+                        self._controlled_joints_dict["arm"],
+                        self._controlled_joints_dict["hand"],
+                    ]
+                )
+            )
+            resp.controlled_joints_arm = self._controlled_joints_dict["arm"]
+            resp.controlled_joints_hand = self._controlled_joints_dict["hand"]
+        except InputMessageInvalidError:
+            resp.success = False
         return resp
