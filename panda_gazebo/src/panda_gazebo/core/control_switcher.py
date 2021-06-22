@@ -23,7 +23,7 @@ from controller_manager_msgs.srv import (
     SwitchControllerRequest,
 )
 from panda_gazebo.common import ControllerInfoDict
-from panda_gazebo.common.functions import dict_clean, flatten_list
+from panda_gazebo.common.functions import dict_clean, flatten_list, get_unique_list
 from rospy.exceptions import ROSException, ROSInterruptException
 
 # Global script vars
@@ -63,6 +63,27 @@ HAND_CONTROLLERS = {
 CONTROLLER_DICT = {"arm": ARM_CONTROLLERS, "hand": HAND_CONTROLLERS}
 
 
+class ControllerSwitcherResponse:
+    """Class used for returning the result of the ControllerSwitcher.switch method.
+
+    Attributes:
+        success (bool): Specifies whether the switch operation was successfull.
+        prev_control_type (str): The previous used control type.
+    """
+
+    def __init__(self, success=True, prev_control_type=""):
+        """Initiate ControllerSwitcher response object.
+
+        Args:
+            success (bool, optional): Whether the switch operation was successfull.
+                Defaults to ``True``.
+            prev_control_type (str, optional): The previous used control type. Defaults
+                to ``""``.
+        """
+        self.success = success
+        self.prev_control_type = prev_control_type
+
+
 class PandaControlSwitcher(object):
     """Used for switching the Panda robot controllers.
 
@@ -82,6 +103,7 @@ class PandaControlSwitcher(object):
         """
         self.verbose = verbose
         self._controller_manager_response_timeout = 3
+        self._controller_spawner_wait_timeout = 5
 
         # Connect to controller_manager services
         try:
@@ -181,9 +203,7 @@ class PandaControlSwitcher(object):
                         controller.name
                     )
 
-        # Return list with running and initialized controllers
-        controllers_state = dict_clean(controllers_state)
-        return controllers_state
+        return dict_clean(controllers_state)
 
     def _load(self, controllers):
         """Load controllers. For this to work the parameters of the controllers
@@ -196,16 +216,14 @@ class PandaControlSwitcher(object):
             bool: Success boolean or success boolean list.
         """
         # Create load_controller request
-        if type(controllers) is str:
-
+        if isinstance(controllers, str):
             # Send load controller request
             resp = self._load_controller_client(LoadControllerRequest(name=controllers))
             return [resp.ok]
-        elif type(controllers) is list:
+        elif isinstance(controllers, list):
             # Loop through controllers and request to load them
             resp = []
             for controller in controllers:
-
                 # Send load controller request
                 resp.append(
                     self._load_controller_client(
@@ -220,6 +238,32 @@ class PandaControlSwitcher(object):
                 "argument of type 'str' or 'list'." % type(controllers)
             )
             return [False]
+
+    @property
+    def arm_control_type(self):
+        """Returns the currently active arm control type. Returns empty string when no
+        control type is enabled.
+        """
+        try:
+            arm_control_type = list(
+                self._list_controllers_state()["arm"]["running"].keys()
+            )[0]
+        except KeyError:
+            arm_control_type = ""
+        return arm_control_type
+
+    @property
+    def hand_control_type(self):
+        """Returns the currently active hand control type. Returns empty string when no
+        control type is enabled.
+        """
+        try:
+            arm_control_type = list(
+                self._list_controllers_state()["arm"]["running"].keys()
+            )[0]
+        except KeyError:
+            arm_control_type = ""
+        return arm_control_type
 
     def switch(  # noqa: C901
         self,
@@ -289,11 +333,13 @@ class PandaControlSwitcher(object):
             switch_timeout = timeout
 
         # Get active controllers
+        # NOTE: Here we wait a bit till we are sure the controller_spawner is ready
         start_time = time.time()
-        controllers_state = []
-        while not controllers_state and (
-            time.time() - start_time <= self._controller_manager_response_timeout
-        ):
+        controllers_state = {}
+        while (
+            control_group not in controllers_state.keys()
+            or "running" not in controllers_state[control_group].keys()
+        ) and time.time() - start_time <= self._controller_spawner_wait_timeout:
             controllers_state = self._list_controllers_state()
 
         # Generate switch controller msg
@@ -311,7 +357,9 @@ class PandaControlSwitcher(object):
         switch_controller_msg.timeout = switch_timeout
         try:
             running_control_types = controllers_state[control_group]["running"].keys()
-            running_controllers = controllers_state[control_group]["running"].values()
+            running_controllers = get_unique_list(
+                flatten_list(controllers_state[control_group]["running"].values())
+            )
         except KeyError:
             running_control_types, running_controllers = [], []
         try:
@@ -330,7 +378,7 @@ class PandaControlSwitcher(object):
             # Fill the start_controllers field of the switch control message
             switch_controller_msg.start_controllers = (
                 CONTROLLER_DICT[control_group][control_type]
-                if type(CONTROLLER_DICT[control_group][control_type]) is list
+                if isinstance(CONTROLLER_DICT[control_group][control_type], list)
                 else [CONTROLLER_DICT[control_group][control_type]]
             )
 
@@ -354,7 +402,7 @@ class PandaControlSwitcher(object):
                 rospy.logwarn(
                     "The Panda %s control type was not switched to '%s' because the %s "
                     "controllers could not be loaded as 'load_controllers' was set to "
-                    "argument was set to False."
+                    "argument was set to 'False'."
                     % (
                         control_group,
                         control_type,
@@ -370,33 +418,39 @@ class PandaControlSwitcher(object):
                 # Fill the start_controllers field of the switch control message
                 switch_controller_msg.start_controllers = (
                     CONTROLLER_DICT[control_group][control_type]
-                    if type(CONTROLLER_DICT[control_group][control_type]) is list
+                    if isinstance(CONTROLLER_DICT[control_group][control_type], list)
                     else [CONTROLLER_DICT[control_group][control_type]]
                 )
 
                 # Fill the stop_controllers field of the switch control message
-                switch_controller_msg.stop_controllers = flatten_list(
-                    running_controllers
-                )
+                switch_controller_msg.stop_controllers = running_controllers
             else:
-                rospy.logwarn(
-                    "The Panda %s control type was not switched to '%s' as the %s "
-                    "controllers could not be loaded."
-                    % (control_group, control_type, failed_controllers)
-                )
-                resp.success = False
+                if (
+                    control_group == "arm" and control_type is not self.arm_control_type
+                ) or (
+                    control_group == "hand"
+                    and control_type is not self.hand_control_type
+                ):
+                    rospy.logwarn(
+                        "The Panda %s control type was not switched to '%s' as the %s "
+                        "controllers could not be loaded."
+                        % (control_group, control_type, failed_controllers)
+                    )
+                    resp.success = False
+                else:
+                    resp.success = False
                 resp.prev_control_type = prev_control_type
                 return resp
         else:
             # Fill the start_controllers field of the switch control message
             switch_controller_msg.start_controllers = (
                 CONTROLLER_DICT[control_group][control_type]
-                if type(CONTROLLER_DICT[control_group][control_type]) is list
+                if isinstance(CONTROLLER_DICT[control_group][control_type], list)
                 else [CONTROLLER_DICT[control_group][control_type]]
             )
 
             # Fill the stop_controllers field of the switch control message
-            switch_controller_msg.stop_controllers = flatten_list(running_controllers)
+            switch_controller_msg.stop_controllers = running_controllers
 
         # Send switch_controller msgs
         if not controller_already_running:
@@ -414,11 +468,19 @@ class PandaControlSwitcher(object):
                 resp.prev_control_type = prev_control_type
                 return resp
             else:
-                rospy.logwarn(
-                    "Switching Panda %s control type to '%s' failed."
-                    % (control_group, control_type)
-                )
-                resp.success = retval.ok
+                if (
+                    control_group == "arm" and control_type is not self.arm_control_type
+                ) or (
+                    control_group == "hand"
+                    and control_type is not self.arm_control_type
+                ):
+                    rospy.logwarn(
+                        "Switching Panda %s control type to '%s' failed."
+                        % (control_group, control_type)
+                    )
+                    resp.success = retval.ok
+                else:
+                    resp.success = True
                 resp.prev_control_type = prev_control_type
                 return resp
         else:
@@ -431,24 +493,3 @@ class PandaControlSwitcher(object):
             resp.success = True
             resp.prev_control_type = prev_control_type
             return resp
-
-
-class ControllerSwitcherResponse:
-    """Class used for returning the result of the ControllerSwitcher.switch method.
-
-    Attributes:
-        success (bool): Specifies whether the switch operation was successfull.
-        prev_control_type (str): The previous used control type.
-    """
-
-    def __init__(self, success=True, prev_control_type=""):
-        """Initiate ControllerSwitcher response object.
-
-        Args:
-            success (bool, optional): Whether the switch operation was successfull.
-                Defaults to ``True``.
-            prev_control_type (str, optional): The previous used control type. Defaults
-                to ``""``.
-        """
-        self.success = success
-        self.prev_control_type = prev_control_type
