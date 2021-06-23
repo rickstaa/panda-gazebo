@@ -103,6 +103,8 @@ class PandaControlServer(object):
 
     Attributes:
         joints (:obj:`sensor_msgs.JointState`): The current joint states.
+        controllers (dict): Dictionary with information about the currently loaded
+            controllers.
         joint_positions_setpoint (dict): Dictionary containing the last Panda arm and
             hand positions setpoint.
         joint_efforts_setpoint (dict): Dictionary containing the last Panda arm and hand
@@ -374,11 +376,6 @@ class PandaControlServer(object):
         )
         self._traj_controllers = flatten_list(
             [self.arm_traj_controllers, self.hand_traj_controllers]
-        )
-
-        # Retrieve informations about the controllers
-        self._controllers = controller_list_array_2_dict(
-            self.list_controllers_client.call(ListControllersRequest())
         )
 
         # Retrieve the names of the joints that are controlled when we use joint
@@ -2564,7 +2561,7 @@ class PandaControlServer(object):
                     return control_commands, controlled_joints_dict
 
     def _get_controlled_joints(self, control_type, verbose=False):  # noqa: C901
-        """Returns the joints that are controlled by a given control type.
+        """Returns the joints that can be controlled by a given control type.
 
         Args:
             control_type (str): The type of control that is being executed and on which
@@ -2579,21 +2576,16 @@ class PandaControlServer(object):
 
         Raises:
             :obj:`panda_gazebo.exceptions.InputMessageInvalidError`: Raised when the
-                input_msg could not be converted into ``moveit_commander`` arm hand
-                joint position commands.
+                the control_type is invalid.
         """
         control_type = control_type.lower()
 
         # Get the joints which are contolled by a given control type
+        controlled_joints_dict = OrderedDict(zip(["arm", "hand", "both"], [[], [], []]))
         if control_type == "position_control":
-
-            # Get contolled joints information
-            controlled_joints_dict = OrderedDict(
-                zip(["arm", "hand", "both"], [[], [], []])
-            )
-            try:
-                for position_controller in self._position_controllers:
-                    for claimed_resources in self._controllers[
+            for position_controller in self._position_controllers:
+                try:
+                    for claimed_resources in self.controllers[
                         position_controller
                     ].claimed_resources:
                         for resource in claimed_resources.resources:
@@ -2601,30 +2593,12 @@ class PandaControlServer(object):
                                 controlled_joints_dict["arm"].append(resource)
                             elif position_controller in self.hand_position_controllers:
                                 controlled_joints_dict["hand"].append(resource)
-            except KeyError:  # Controllers not initialized
-                logwarn_message = (
-                    "Could not retrieve the controllable joints for 'joint_position' "
-                    "control as the '%s' position controllers are not initialized. "
-                    "Initialization of these controllers is needed to retrieve "
-                    "information about thejoints they control."
-                    % (self._position_controllers)
-                )
-                if verbose:
-                    rospy.logwarn(logwarn_message)
-                raise InputMessageInvalidError(
-                    message="Required controllers not initialised.",
-                    details={"controlled_joints": self._position_controllers},
-                    log_message=logwarn_message,
-                )
+                except KeyError:  # Controller not initialized
+                    pass
         elif control_type == "effort_control":
-
-            # Get controlled joints information
-            controlled_joints_dict = OrderedDict(
-                zip(["arm", "hand", "both"], [[], [], []])
-            )
-            try:
-                for effort_controller in self._effort_controllers:
-                    for claimed_resources in self._controllers[
+            for effort_controller in self._effort_controllers:
+                try:
+                    for claimed_resources in self.controllers[
                         effort_controller
                     ].claimed_resources:
                         for resource in claimed_resources.resources:
@@ -2632,30 +2606,12 @@ class PandaControlServer(object):
                                 controlled_joints_dict["arm"].append(resource)
                             elif effort_controller in self.hand_effort_controllers:
                                 controlled_joints_dict["hand"].append(resource)
-            except KeyError:  # Controllers not initialized
-                logwarn_message = (
-                    "Could not retrieve the controllable joints for 'joint_effort' "
-                    "control as the '%s' effort controllers are not initialized. "
-                    "Initialization of these controllers is needed to retrieve "
-                    "information about thejoints they control."
-                    % (self._effort_controllers)
-                )
-                if verbose:
-                    rospy.logwarn(logwarn_message)
-                raise InputMessageInvalidError(
-                    message="Required controllers not initialised.",
-                    details={"controlled_joints": self._effort_controllers},
-                    log_message=logwarn_message,
-                )
+                except KeyError:  # Controller not initialized
+                    pass
         elif control_type == "traj_control" or control_type == "ee_control":
-
-            # Get controlled joints information
-            controlled_joints_dict = OrderedDict(
-                zip(["arm", "hand", "both"], [[], [], []])
-            )
-            try:
-                for traj_controller in self._traj_controllers:
-                    for claimed_resources in self._controllers[
+            for traj_controller in self._traj_controllers:
+                try:
+                    for claimed_resources in self.controllers[
                         traj_controller
                     ].claimed_resources:
                         for resource in claimed_resources.resources:
@@ -2663,21 +2619,8 @@ class PandaControlServer(object):
                                 controlled_joints_dict["arm"].append(resource)
                             elif traj_controller in self.hand_traj_controllers:
                                 controlled_joints_dict["hand"].append(resource)
-            except KeyError:  # Controllers not initialized
-                logwarn_message = (
-                    "Could not retrieve the controllable joints for 'joint_traj' "
-                    "control as the '%s' joint trajectory controllers are not "
-                    "initialized. Initialization of these controllers is needed to "
-                    "retrieve information about thejoints they control."
-                    % (self._effort_controllers)
-                )
-                if verbose:
-                    rospy.logwarn(logwarn_message)
-                raise InputMessageInvalidError(
-                    message="Required controllers not initialised.",
-                    details={"controlled_joints": self._effort_controllers},
-                    log_message=logwarn_message,
-                )
+                except KeyError:  # Controller not initialized
+                    pass
         else:
             logwarn_message = (
                 "Please specify a valid control type. Valid values are %s."
@@ -2690,7 +2633,7 @@ class PandaControlServer(object):
                 log_message=logwarn_message,
             )
 
-        # Fill controlled joints dict
+        # Return controlled joints dict
         controlled_joints_dict["arm"] = flatten_list(controlled_joints_dict["arm"])
         controlled_joints_dict["hand"] = flatten_list(controlled_joints_dict["hand"])
         controlled_joints_dict["both"] = (
@@ -2702,7 +2645,6 @@ class PandaControlServer(object):
                 [controlled_joints_dict["arm"], controlled_joints_dict["hand"]]
             )
         )
-
         return controlled_joints_dict
 
     def _get_joint_controllers(self):
@@ -2714,16 +2656,23 @@ class PandaControlServer(object):
                 able to control these joints.
         """
         # Loop through active controllers
-        joint_contollers_dict = {}
-        for (key, val) in self._controllers.items():
+        joint_controllers_dict = {}
+        for (key, val) in self.controllers.items():
             for resources_item in val.claimed_resources:
                 for resource in resources_item.resources:
-                    if resource in joint_contollers_dict.keys():
-                        joint_contollers_dict[resource].append(key)
+                    if resource in joint_controllers_dict.keys():
+                        joint_controllers_dict[resource].append(key)
                     else:
-                        joint_contollers_dict[resource] = [key]
+                        joint_controllers_dict[resource] = [key]
 
-        return joint_contollers_dict
+        return joint_controllers_dict
+
+    @property
+    def controllers(self):
+        """Retrieves information about the currently running controllers."""
+        return controller_list_array_2_dict(
+            self.list_controllers_client.call(ListControllersRequest())
+        )
 
     ################################################
     # Subscribers callback functions ###############
@@ -2764,11 +2713,6 @@ class PandaControlServer(object):
         controllers_missing = {"arm": False, "hand": False}
         resp = SetJointPositionsResponse()
 
-        # Retrieve controller information
-        self._controllers = controller_list_array_2_dict(
-            self.list_controllers_client.call(ListControllersRequest())
-        )
-
         # Check if all controllers are available and running
         stopped_controllers = {"arm": [], "hand": []}
         missing_controllers = {"arm": [], "hand": []}
@@ -2778,7 +2722,7 @@ class PandaControlServer(object):
         }.items():
             for position_controller in position_controllers:
                 try:
-                    if self._controllers[position_controller].state != "running":
+                    if self.controllers[position_controller].state != "running":
                         stopped_controllers[group].append(position_controller)
                 except KeyError:
                     missing_controllers[group].append(position_controller)
@@ -2930,11 +2874,6 @@ class PandaControlServer(object):
         controllers_missing = {"arm": False, "hand": False}
         resp = SetJointEffortsResponse()
 
-        # Retrieve controller information
-        self._controllers = controller_list_array_2_dict(
-            self.list_controllers_client.call(ListControllersRequest())
-        )
-
         # Check if all controllers are available and running
         stopped_controllers = {"arm": [], "hand": []}
         missing_controllers = {"arm": [], "hand": []}
@@ -2944,7 +2883,7 @@ class PandaControlServer(object):
         }.items():
             for effort_controller in effort_controllers:
                 try:
-                    if self._controllers[effort_controller].state != "running":
+                    if self.controllers[effort_controller].state != "running":
                         stopped_controllers[group].append(effort_controller)
                 except KeyError:
                     missing_controllers[group].append(effort_controller)
@@ -3096,17 +3035,12 @@ class PandaControlServer(object):
         controllers_missing = False
         resp = SetJointPositionsResponse()
 
-        # Retrieve controller information
-        self._controllers = controller_list_array_2_dict(
-            self.list_controllers_client.call(ListControllersRequest())
-        )
-
         # Check if all controllers are available and running
         stopped_controllers = []
         missing_controllers = []
         for position_controller in self.arm_position_controllers:
             try:
-                if self._controllers[position_controller].state != "running":
+                if self.controllers[position_controller].state != "running":
                     stopped_controllers.append(position_controller)
             except KeyError:
                 missing_controllers.append(position_controller)
@@ -3235,17 +3169,12 @@ class PandaControlServer(object):
         controllers_missing = False
         resp = SetJointEffortsResponse()
 
-        # Retrieve controller information
-        self._controllers = controller_list_array_2_dict(
-            self.list_controllers_client.call(ListControllersRequest())
-        )
-
         # Check if all controllers are available and running
         stopped_controllers = []
         missing_controllers = []
         for effort_controller in self.arm_effort_controllers:
             try:
-                if self._controllers[effort_controller].state != "running":
+                if self.controllers[effort_controller].state != "running":
                     stopped_controllers.append(effort_controller)
             except KeyError:
                 missing_controllers.append(effort_controller)
@@ -3376,17 +3305,12 @@ class PandaControlServer(object):
         controllers_missing = False
         resp = SetJointPositionsResponse()
 
-        # Retrieve controller information
-        self._controllers = controller_list_array_2_dict(
-            self.list_controllers_client.call(ListControllersRequest())
-        )
-
         # Check if all controllers are available and running
         stopped_controllers = []
         missing_controllers = []
         for position_controller in self.hand_position_controllers:
             try:
-                if self._controllers[position_controller].state != "running":
+                if self.controllers[position_controller].state != "running":
                     stopped_controllers.append(position_controller)
             except KeyError:
                 missing_controllers.append(position_controller)
@@ -3516,17 +3440,12 @@ class PandaControlServer(object):
         controllers_missing = False
         resp = SetJointEffortsResponse()
 
-        # Retrieve controller information
-        self._controllers = controller_list_array_2_dict(
-            self.list_controllers_client.call(ListControllersRequest())
-        )
-
         # Check if all controllers are available and running
         stopped_controllers = []
         missing_controllers = []
         for effort_controller in self.hand_effort_controllers:
             try:
-                if self._controllers[effort_controller].state != "running":
+                if self.controllers[effort_controller].state != "running":
                     stopped_controllers.append(effort_controller)
             except KeyError:
                 missing_controllers.append(effort_controller)
