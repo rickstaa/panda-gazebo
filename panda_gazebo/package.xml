@@ -83,6 +83,7 @@
   <exec_depend>actionlib</exec_depend>
   <exec_depend>actionlib_msgs</exec_depend>
   <exec_depend>control_msgs</exec_depend>
+  <exec_depend>moveit</exec_depend>
 
   <!--Extra run dependencies
     NOTE: Disabled by default as they are only needed for some test scripts
@@ -94,7 +95,6 @@
   <exec_depend>panda_moveit_config</exec_depend>
 
   <!-- Python packages -->
-  <depend>moveit</depend>
   <depend>gym-pip</depend>
   <depend>python3-yaml</depend>
 
