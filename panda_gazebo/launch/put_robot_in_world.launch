@@ -10,9 +10,7 @@
     <arg name="pipeline" default="ompl" />
     <!--Control arguments-->
     <!--    The control type used for controlling the robot (Options: Trajectory, position, effort)-->
-    <!-- <arg name="control_type" default="trajectory"/> -->
-    <arg name="control_type" default="position"/>
-    <!-- <arg name="control_type" default="effort"/> -->
+    <arg name="control_type" default="trajectory"/>
 
     <!--Retrieve the right hardware_interface for the control type-->
     <arg if="$(eval arg('control_type') == 'effort')" name="hardware_interface" value="EffortJointInterface"/>
@@ -58,7 +56,6 @@
                 <arg name="gazebo" value="$(arg gazebo)" />
                 <arg name="load_gripper" value="$(arg load_gripper)" />
                 <arg name="joint_state_controller" value="false"/>
-                <!-- <arg name="stopped" value="true"/> -->
                 <arg name="stopped" value="false"/>
             </include>
             <!--Load joint_trajectory controller in stopped mode
@@ -78,7 +75,6 @@
                 <arg name="gazebo" value="$(arg gazebo)" />
                 <arg name="load_gripper" value="$(arg load_gripper)" />
                 <arg name="joint_state_controller" value="false"/>
-                <!-- <arg name="stopped" value="true"/> -->
                 <arg name="stopped" value="false"/>
             </include>
         </group>
@@ -88,7 +84,7 @@
             <arg name="moveit" value="$(arg moveit)" />
             <arg name="gazebo" value="$(arg gazebo)" />
             <arg name="load_gripper" value="$(arg load_gripper)" />
-            <arg name="stopped" value="true"/>
+            <arg name="stopped" value="$(eval arg('control_type') != 'trajectory')"/>
         </include>
     </group>
 
@@ -105,7 +101,7 @@
     <!--    Load ros_control service-->
     <node pkg="panda_gazebo" type="panda_control_server.py" name="panda_control_server" required="true"/>
 
-    <!--Load Rviz-->
+    <!--Load RViz-->
     <include if="$(arg rviz)" file="$(find panda_gazebo)/launch/panda_rviz.launch">
         <arg name="debug" value="$(arg debug)"/>
         <arg name="moveit" value="$(arg moveit)"/>
