@@ -7,6 +7,9 @@
     <arg name="debug" default="false" />
     <!--Moveit arguments-->
     <arg name="moveit" default="true" />
+    <arg unless="$(arg moveit)" name="rviz_file_default" value="$(find panda_gazebo)/launch/includes/rviz/panda.rviz"/>
+    <arg if="$(arg moveit)" name="rviz_file_default" value="$(find panda_gazebo)/launch/includes/rviz/panda_moveit.rviz"/>
+    <arg name="rviz_file" default="$(arg rviz_file_default)" />
     <arg name="pipeline" default="ompl" />
     <arg name="max_velocity_scaling_factor" default="1.0"/>
     <arg name="max_acceleration_scaling_factor" default="1.0"/>
@@ -110,5 +113,6 @@
     <include if="$(arg rviz)" file="$(find panda_gazebo)/launch/panda_rviz.launch">
         <arg name="debug" value="$(arg debug)"/>
         <arg name="moveit" value="$(arg moveit)"/>
+        <arg name="rviz_file" value="$(arg rviz_file)"/>
     </include>
 </launch>
