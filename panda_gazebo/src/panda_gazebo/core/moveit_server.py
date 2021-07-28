@@ -16,6 +16,13 @@ Main services:
 Extra services:
     * panda_arm/set_joint_positions
     * panda_hand/set_joint_positions
+
+Dynamic reconfigure service:
+    This node also contains a dynamic reconfigure service that allows you to change
+    the control max velocity and acceleration scaling factors. You can supply the
+    initial values for this dynamic reconfigure server using the
+    'panda_moveit_planner_server/max_velocity_scaling_factor' and
+    'panda_moveit_planner_server/max_velocity_scaling_factor' topics.
 """
 
 import copy
@@ -27,9 +34,11 @@ from itertools import compress
 import moveit_commander
 import numpy as np
 import rospy
+from dynamic_reconfigure.server import Server
 from geometry_msgs.msg import Pose
 from moveit_commander.exception import MoveItCommanderException
 from moveit_msgs.msg import DisplayTrajectory
+from panda_gazebo.cfg import MoveitServerConfig
 from panda_gazebo.common.functions import (
     flatten_list,
     get_duplicate_list,
@@ -40,14 +49,14 @@ from panda_gazebo.common.functions import (
 from panda_gazebo.common.quaternion import Quaternion
 from panda_gazebo.exceptions import InputMessageInvalidError
 from panda_gazebo.srv import (
-    GetMoveItControlledJoints,
-    GetMoveItControlledJointsResponse,
     GetEe,
     GetEePose,
     GetEePoseResponse,
     GetEeResponse,
     GetEeRpy,
     GetEeRpyResponse,
+    GetMoveItControlledJoints,
+    GetMoveItControlledJointsResponse,
     GetRandomEePose,
     GetRandomEePoseResponse,
     GetRandomJointPositions,
@@ -147,6 +156,10 @@ class PandaMoveitPlannerServer(object):
             DisplayTrajectory,
             queue_size=10,
         )
+
+        # Retrieve parameters and create dynamic reconfigure server
+        self._get_params()
+        self._dyn_reconfigure_srv = Server(MoveitServerConfig, self._dyn_reconfigure_cb)
 
         ########################################
         # Create node services services ########
@@ -277,6 +290,27 @@ class PandaMoveitPlannerServer(object):
     ################################################
     # Helper functions #############################
     ################################################
+    def _get_params(self):
+        """Retrieve optional 'moveit_server' parameters from the parameter server.
+
+        .. note::
+            Can be used to specify parameters of the 'moveit_server'. You can for
+            example set the 'max_velocity_scaling_factor' used by the
+            :class:`~moveit_commander.MoveGroupCommander` by setting the
+            'panda_moveit_planner_server/max_velocity_scaling_factor' and
+            'panda_moveit_planner_server/max_acceleration_scaling_factor' topics.
+        """
+        try:
+            self._max_velocity_scaling = rospy.get_param("~max_velocity_scaling_factor")
+        except KeyError:
+            self._max_velocity_scaling = None
+        try:
+            self._max_acceleration_scaling = rospy.get_param(
+                "~max_acceleration_scaling_factor"
+            )
+        except KeyError:
+            self._max_acceleration_scaling = None
+
     def _link_exists(self, link_name):
         """Function checks whether a given link exists in the robot_description.
 
@@ -531,6 +565,70 @@ class PandaMoveitPlannerServer(object):
     ###############################################
     # Service callback functions ##################
     ###############################################
+    def _dyn_reconfigure_cb(self, config, level):
+        """Dynamic reconfigure callback function.
+
+        Args:
+            config (:obj:`dynamic_reconfigure.encoding.Config`): The current dynamic
+                reconfigure configuration object.
+            level (int): Bitmask that gives information about which parameter has been
+                changed.
+
+        Returns:
+            :obj:`~dynamic_reconfigure.encoding.Config`: Modified dynamic reconfigure
+                configuration object.
+        """
+        rospy.logdebug(
+            (
+                "Reconfigure Request: max_vel_scaling - {max_velocity_scaling_factor} "
+                "max_acc_scaling - {max_acceleration_scaling_factor}"
+            ).format(**config)
+        )
+        if level == -1:
+            # Update initial values to user supplied parameters
+            if self._max_velocity_scaling:
+                if self._max_velocity_scaling < 0.0 or self._max_velocity_scaling > 1.0:
+                    rospy.logwarn(
+                        "Max velocity scaling factor was clipped since it was not "
+                        "between 0.0 and 1.0."
+                    )
+                    self._max_velocity_scaling = max(
+                        0.0, min(self._max_velocity_scaling, 1.0)
+                    )
+                config["max_velocity_scaling_factor"] = self._max_velocity_scaling
+            if self._max_acceleration_scaling:
+                if (
+                    self._max_acceleration_scaling < 0.0
+                    or self._max_acceleration_scaling > 1.0
+                ):
+                    rospy.logwarn(
+                        "Max acceleration scaling factor was clipped since it was not "
+                        "between 0.0 and 1.0."
+                    )
+                    self._max_acceleration_scaling = max(
+                        0.0, min(self._max_acceleration_scaling, 1.0)
+                    )
+                config[
+                    "max_acceleration_scaling_factor"
+                ] = self._max_acceleration_scaling
+        elif level == 0:
+            # Update move group velocity settings
+            self.move_group_arm.set_max_velocity_scaling_factor(
+                config["max_velocity_scaling_factor"]
+            )
+            self.move_group_hand.set_max_velocity_scaling_factor(
+                config["max_velocity_scaling_factor"]
+            )
+        elif level == 1:
+            # Update move group accelleration settings
+            self.move_group_arm.set_max_acceleration_scaling_factor(
+                config["max_acceleration_scaling_factor"]
+            )
+            self.move_group_arm.set_max_acceleration_scaling_factor(
+                config["max_acceleration_scaling_factor"]
+            )
+        return config
+
     def _arm_set_ee_pose_callback(self, set_ee_pose_req):
         """Request the Panda arm to control to a given end effector
         (EE) pose.

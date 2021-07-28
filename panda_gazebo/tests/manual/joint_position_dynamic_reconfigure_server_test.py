@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Small node that spins up a dynamic reconfigure server that can be used to change the
-joint efforts.
+joint positions.
 """
 import rospy
 from dynamic_reconfigure.server import Server
-from panda_gazebo.cfg import JointEffortConfig
+from panda_gazebo.cfg import JointPositionConfig
 
 
 def callback(config, level):
@@ -17,21 +17,22 @@ def callback(config, level):
             changed.
 
     Returns:
-        : Modified dynamic reconfigure configuration object.
+        :obj:`~dynamic_reconfigure.encoding.Config`: Modified dynamic reconfigure
+            configuration object.
     """
     rospy.loginfo(
-        """Reconfigure Request: {joint1_effort}, {joint2_effort}, {joint3_effort}, \
-{joint4_effort}, {joint5_effort}, {joint6_effort}, {joint7_effort}""".format(
-            **config
-        )
+        (
+            "Reconfigure Request: {int_param}, {double_param}, "
+            "{str_param}, {bool_param}, {size}"
+        ).format(**config)
     )
     return config
 
 
 if __name__ == "__main__":
     rospy.init_node(
-        "joint_effort_control_test_dynamic_reconfigure_srv", anonymous=False
+        "joint_position_control_test_dynamic_reconfigure_server_test", anonymous=False
     )
 
-    srv = Server(JointEffortConfig, callback)
+    srv = Server(JointPositionConfig, callback)
     rospy.spin()

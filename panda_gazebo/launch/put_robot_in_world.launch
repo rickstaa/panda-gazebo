@@ -8,6 +8,8 @@
     <!--Moveit arguments-->
     <arg name="moveit" default="true" />
     <arg name="pipeline" default="ompl" />
+    <arg name="max_velocity_scaling_factor" default="1.0"/>
+    <arg name="max_acceleration_scaling_factor" default="1.0"/>
     <!--Control arguments-->
     <!--    The control type used for controlling the robot (Options: Trajectory, position, effort)-->
     <arg name="control_type" default="trajectory"/>
@@ -96,7 +98,10 @@
     <param if="$(arg moveit)" name="move_group/trajectory_execution/execution_duration_monitoring" value="false" />
 
     <!-- Load Moveit control services-->
-    <node if="$(arg moveit)" pkg="panda_gazebo" type="panda_moveit_server.py" name="panda_moveit_planner_server" required="true"/>
+    <node if="$(arg moveit)" pkg="panda_gazebo" type="panda_moveit_server.py" name="panda_moveit_planner_server" required="true">
+        <param name="max_velocity_scaling_factor" value="$(arg max_velocity_scaling_factor)"/>
+        <param name="max_acceleration_scaling_factor" value="$(arg max_acceleration_scaling_factor)"/>
+    </node>
 
     <!--    Load ros_control service-->
     <node pkg="panda_gazebo" type="panda_control_server.py" name="panda_control_server" required="true"/>

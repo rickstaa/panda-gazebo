@@ -16,7 +16,6 @@ find_package(catkin REQUIRED COMPONENTS
   trajectory_msgs
   actionlib_msgs
   control_msgs
-  # NOTE: The packages below are disbabled as they are only needed for some test scripts
   dynamic_reconfigure
 )
 
@@ -105,10 +104,11 @@ generate_messages(
 ##   * uncomment the "generate_dynamic_reconfigure_options" section below
 ##     and list every .cfg file to be processed
 # Generate dynamic reconfigure parameters in the 'cfg' folder
-# NOTE: The command below is disbabled as it is only needed for some test scripts
 generate_dynamic_reconfigure_options(
-  cfg/dyn_reconf/PositionControlTestDynReconf.cfg
-  cfg/dyn_reconf/EffortControlTestDynReconf.cfg
+  cfg/dyn_reconf/MoveitServerDynReconf.cfg
+  # NOTE: The entries below are disbabled as it is only needed for some test scripts
+  # cfg/dyn_reconf/PositionControlTestDynReconf.cfg
+  # cfg/dyn_reconf/EffortControlTestDynReconf.cfg
 )
 
 ###################################
