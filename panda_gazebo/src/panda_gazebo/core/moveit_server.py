@@ -115,12 +115,6 @@ class PandaMoveitPlannerServer(object):
         """
         self._joint_state_topic = "/joint_states"
 
-        i = 0
-        import time
-
-        while i == 0:
-            time.sleep(1)
-
         # Initialize Moveit/Robot/Scene and group commanders
         rospy.logdebug("Initialize Moveit Robot/Scene and group commanders.")
         try:
