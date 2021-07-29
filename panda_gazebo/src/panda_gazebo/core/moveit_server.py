@@ -115,6 +115,12 @@ class PandaMoveitPlannerServer(object):
         """
         self._joint_state_topic = "/joint_states"
 
+        i = 0
+        import time
+
+        while i == 0:
+            time.sleep(1)
+
         # Initialize Moveit/Robot/Scene and group commanders
         rospy.logdebug("Initialize Moveit Robot/Scene and group commanders.")
         try:
@@ -590,11 +596,9 @@ class PandaMoveitPlannerServer(object):
                 if self._max_velocity_scaling < 0.0 or self._max_velocity_scaling > 1.0:
                     rospy.logwarn(
                         "Max velocity scaling factor was clipped since it was not "
-                        "between 0.0 and 1.0."
+                        "between 0.01 and 1.0."
                     )
-                    self._max_velocity_scaling = max(
-                        0.0, min(self._max_velocity_scaling, 1.0)
-                    )
+                    self._max_velocity_scaling = np.clip(0.0, 1e-2, 1.0)
                 config["max_velocity_scaling_factor"] = self._max_velocity_scaling
             if self._max_acceleration_scaling:
                 if (
@@ -603,11 +607,9 @@ class PandaMoveitPlannerServer(object):
                 ):
                     rospy.logwarn(
                         "Max acceleration scaling factor was clipped since it was not "
-                        "between 0.0 and 1.0."
+                        "between 0.01 and 1.0."
                     )
-                    self._max_acceleration_scaling = max(
-                        0.0, min(self._max_acceleration_scaling, 1.0)
-                    )
+                    self._max_acceleration_scaling = np.clip(0.0, 1e-2, 1.0)
                 config[
                     "max_acceleration_scaling_factor"
                 ] = self._max_acceleration_scaling
