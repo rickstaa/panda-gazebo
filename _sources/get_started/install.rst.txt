@@ -35,4 +35,4 @@ dependencies are installed, you can build the ROS packages inside the catkin wor
 
 .. code-block:: bash
 
-  catkin build -j4 -DCMAKE_BUILD_TYPE=Release -DFranka_DIR:PATH=~/libfranka/build
+    catkin build -j4 -DCMAKE_BUILD_TYPE=Release -DFranka_DIR:PATH=~/libfranka/build

@@ -9,7 +9,7 @@ Install requirements
 
 Building the :panda-gazebo:`panda-gazebo <>` documentation requires `sphinx`_,
 the panda-gazebo package and several plugins. All of the above can be
-installed using the following `pip`_ command:
+installed using the following `pip`_ command inside the ``./panda_gazebo`` folder:
 
 .. code-block:: bash
 
