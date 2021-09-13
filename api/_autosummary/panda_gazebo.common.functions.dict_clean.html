@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>panda_moveit_server &mdash; panda-gazebo 1.0.17 documentation</title>
+  <title>panda_gazebo.common.functions.dict_clean &mdash; panda-gazebo 1.0.17 documentation</title>
   
 
   
@@ -42,7 +42,8 @@
     
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="prev" title="panda_control_server" href="panda_control_server.html" /> 
+    <link rel="next" title="panda_gazebo.common.functions.flatten_list" href="panda_gazebo.common.functions.flatten_list.html" />
+    <link rel="prev" title="panda_gazebo.common.functions.controller_list_array_2_dict" href="panda_gazebo.common.functions.controller_list_array_2_dict.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -104,15 +105,21 @@
 <p class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="../api.html">Code API</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../api.html#modules">Modules</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="../api.html#ros-nodes">ROS nodes</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="panda_control_server.html">panda_control_server</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">panda_moveit_server</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#source-code">Source code</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#modules">Modules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="panda_gazebo.core.html">panda_gazebo.core</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="panda_gazebo.common.html">panda_gazebo.common</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="panda_gazebo.common.action_client_state.html">panda_gazebo.common.action_client_state</a></li>
+<li class="toctree-l4"><a class="reference internal" href="panda_gazebo.common.controller_info_dict.html">panda_gazebo.common.controller_info_dict</a></li>
+<li class="toctree-l4"><a class="reference internal" href="panda_gazebo.common.euler_angles.html">panda_gazebo.common.euler_angles</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="panda_gazebo.common.functions.html">panda_gazebo.common.functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="panda_gazebo.common.nested_dict.html">panda_gazebo.common.nested_dict</a></li>
+<li class="toctree-l4"><a class="reference internal" href="panda_gazebo.common.quaternion.html">panda_gazebo.common.quaternion</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="panda_gazebo.exceptions.html">panda_gazebo.exceptions</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#ros-nodes">ROS nodes</a></li>
 </ul>
 </li>
 </ul>
@@ -165,14 +172,18 @@
         
           <li><a href="../api.html">Code API</a> &raquo;</li>
         
-      <li>panda_moveit_server</li>
+          <li><a href="panda_gazebo.common.html">panda_gazebo.common</a> &raquo;</li>
+        
+          <li><a href="panda_gazebo.common.functions.html">panda_gazebo.common.functions</a> &raquo;</li>
+        
+      <li>panda_gazebo.common.functions.dict_clean</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
           
             
-              <a href="https://github.com/rickstaa/panda-gazebo/blob/noetic-devel/docs/source/api/_autosummary/panda_moveit_server.rst" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/rickstaa/panda-gazebo/blob/noetic-devel/docs/source/api/_autosummary/panda_gazebo.common.functions.dict_clean.rst" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -186,37 +197,26 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-panda_moveit_server">
-<span id="panda-moveit-server"></span><h1>panda_moveit_server<a class="headerlink" href="#module-panda_moveit_server" title="Permalink to this headline">¶</a></h1>
-<p>This node sets up several extra services that can be used to control the Panda Emika
-Franka robot using the Moveit framework.</p>
-<div class="section" id="source-code">
-<h2>Source code<a class="headerlink" href="#source-code" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="lineno"> 1 </span><span class="kn">import</span> <span class="nn">rospy</span>
-<span class="lineno"> 2 </span><span class="kn">from</span> <span class="nn">panda_gazebo.core.moveit_server</span> <span class="kn">import</span> <span class="n">PandaMoveitPlannerServer</span>
-<span class="lineno"> 3 </span>
-<span class="lineno"> 4 </span><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-<span class="lineno"> 5 </span>    <span class="n">rospy</span><span class="o">.</span><span class="n">init_node</span><span class="p">(</span><span class="s2">&quot;panda_moveit_planner_server&quot;</span><span class="p">)</span>
-<span class="lineno"> 6 </span>
-<span class="lineno"> 7 </span>    <span class="c1"># Get private parameters specified in the launch file</span>
-<span class="lineno"> 8 </span>    <span class="k">try</span><span class="p">:</span>
-<span class="lineno"> 9 </span>        <span class="n">arm_ee_link</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_param</span><span class="p">(</span><span class="s2">&quot;~end_effector&quot;</span><span class="p">)</span>
-<span class="lineno">10 </span>    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-<span class="lineno">11 </span>        <span class="c1"># arm_ee_link = &quot;panda_hand&quot;</span>
-<span class="lineno">12 </span>        <span class="n">arm_ee_link</span> <span class="o">=</span> <span class="s2">&quot;panda_link8&quot;</span>
-<span class="lineno">13 </span>    <span class="k">try</span><span class="p">:</span>  <span class="c1"># Check required services</span>
-<span class="lineno">14 </span>        <span class="n">create_extra_services</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_param</span><span class="p">(</span><span class="s2">&quot;~create_extra_services&quot;</span><span class="p">)</span>
-<span class="lineno">15 </span>    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-<span class="lineno">16 </span>        <span class="n">create_extra_services</span> <span class="o">=</span> <span class="bp">False</span>
-<span class="lineno">17 </span>
-<span class="lineno">18 </span>    <span class="c1"># Start MoveIt planner server</span>
-<span class="lineno">19 </span>    <span class="n">moveit_planner_server</span> <span class="o">=</span> <span class="n">PandaMoveitPlannerServer</span><span class="p">(</span>
-<span class="lineno">20 </span>        <span class="n">arm_ee_link</span><span class="o">=</span><span class="n">arm_ee_link</span><span class="p">,</span> <span class="n">create_extra_services</span><span class="o">=</span><span class="n">create_extra_services</span>
-<span class="lineno">21 </span>    <span class="p">)</span>
-<span class="lineno">22 </span>    <span class="n">rospy</span><span class="o">.</span><span class="n">spin</span><span class="p">()</span>  <span class="c1"># Maintain the service open</span>
-</pre></div>
-</div>
-</div>
+  <div class="section" id="panda-gazebo-common-functions-dict-clean">
+<h1>panda_gazebo.common.functions.dict_clean<a class="headerlink" href="#panda-gazebo-common-functions-dict-clean" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="panda_gazebo.common.functions.dict_clean">
+<span class="sig-prename descclassname"><span class="pre">panda_gazebo.common.functions.</span></span><span class="sig-name descname"><span class="pre">dict_clean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/panda_gazebo/common/functions.html#dict_clean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.common.functions.dict_clean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes empty dictionary keys from a dictionary and returns a cleaned up
+dictionary. Empty meaning an empty list, string or dict or a None value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>input_dict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a>) – The input dictionary.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The cleaned dictionary</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 
 
@@ -225,7 +225,8 @@ Franka robot using the Moveit framework.</p>
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="panda_control_server.html" class="btn btn-neutral float-left" title="panda_control_server" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="panda_gazebo.common.functions.flatten_list.html" class="btn btn-neutral float-right" title="panda_gazebo.common.functions.flatten_list" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="panda_gazebo.common.functions.controller_list_array_2_dict.html" class="btn btn-neutral float-left" title="panda_gazebo.common.functions.controller_list_array_2_dict" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>

@@ -1,0 +1,23 @@
+panda\_gazebo.common.euler\_angles.EulerAngles
+==============================================
+
+.. currentmodule:: panda_gazebo.common.euler_angles
+
+.. autoclass:: EulerAngles
+   :members:
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~EulerAngles.__init__
+   
+   
+
+   
+   
+   

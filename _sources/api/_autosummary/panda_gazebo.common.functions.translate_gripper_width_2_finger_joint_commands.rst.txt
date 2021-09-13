@@ -1,0 +1,6 @@
+panda\_gazebo.common.functions.translate\_gripper\_width\_2\_finger\_joint\_commands
+====================================================================================
+
+.. currentmodule:: panda_gazebo.common.functions
+
+.. autofunction:: translate_gripper_width_2_finger_joint_commands
