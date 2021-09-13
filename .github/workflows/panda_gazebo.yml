@@ -1,5 +1,5 @@
-# Main Simsoo github action. Performs linting and formatting checks. It also runs tests.
-name: Simzoo CI
+# Main Panda-gazebo github action. Performs linting and formatting checks. It also runs tests.
+name: Panda-gazebo CI
 on:
   push:
     branches:

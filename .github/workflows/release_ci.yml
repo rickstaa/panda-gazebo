@@ -1,6 +1,6 @@
 # Github action that updates the code version tags, adds a changelog and drafts a release when
 # a new version tag is added.
-name: Simzoo release CI
+name: Panda-gazebo release CI
 on:
   push:
     tags:
@@ -50,7 +50,7 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           branch: noetic-devel
-          file_pattern: simzoo/version.py setup.cfg package.json
+          file_pattern: panda_gazebo/src/panda_gazebo/version.py panda_gazebo/package.xml package.json
           commit_message: "chore(release): updates code version to ${{ steps.get_semver.outputs.current_version }}"
   create-release:
     # NOTE: Drafts a release for the new tag
