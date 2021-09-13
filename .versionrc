@@ -1,6 +1,10 @@
 {
   "bumpFiles": [
     {
+      "filename": "docs/source/conf.py",
+      "updater": ".standard-version/conf.py.updater.js"
+    },
+    {
       "filename": "panda_gazebo/src/panda_gazebo/version.py",
       "updater": ".standard-version/version.py.updater.js"
     },
