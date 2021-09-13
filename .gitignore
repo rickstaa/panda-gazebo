@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Logs and data
 logs/*
 
@@ -21,9 +20,6 @@ dist/
 .eggs/
 *.egg-info/
 
-# IDE files to ignore
-=======
 # IDE
->>>>>>> 1a233a9... :see_no_evil: Adds gitignore
 .vscode
 *.code-workspace

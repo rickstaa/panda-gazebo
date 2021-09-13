@@ -607,6 +607,20 @@ class PandaMoveitPlannerServer(object):
                 config[
                     "max_acceleration_scaling_factor"
                 ] = self._max_acceleration_scaling
+
+            # Set initial scaling factors
+            self.move_group_arm.set_max_velocity_scaling_factor(
+                config["max_velocity_scaling_factor"]
+            )
+            self.move_group_hand.set_max_velocity_scaling_factor(
+                config["max_velocity_scaling_factor"]
+            )
+            self.move_group_arm.set_max_acceleration_scaling_factor(
+                config["max_acceleration_scaling_factor"]
+            )
+            self.move_group_hand.set_max_acceleration_scaling_factor(
+                config["max_acceleration_scaling_factor"]
+            )
         elif level == 0:
             # Update move group velocity settings
             self.move_group_arm.set_max_velocity_scaling_factor(
@@ -620,7 +634,7 @@ class PandaMoveitPlannerServer(object):
             self.move_group_arm.set_max_acceleration_scaling_factor(
                 config["max_acceleration_scaling_factor"]
             )
-            self.move_group_arm.set_max_acceleration_scaling_factor(
+            self.move_group_hand.set_max_acceleration_scaling_factor(
                 config["max_acceleration_scaling_factor"]
             )
         return config
