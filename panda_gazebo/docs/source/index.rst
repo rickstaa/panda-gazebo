@@ -8,7 +8,7 @@ Below you will find more information about all the modules and ROS nodes that ar
 this package.
 
 .. _`gazebo`: http://gazebosim.org/
-.. _`gazebo`: https://wiki.ros.org/openai_ros
+.. _`openai_ros`: https://wiki.ros.org/openai_ros
 
 
 Contents
