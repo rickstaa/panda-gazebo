@@ -1,13 +1,13 @@
 /**
- * Updater used to update Python configuration files (i.e. `setup.cfg`).
+ * Updater used to update ROS package files files (i.e. `package.xml`).
  */
 
 /**
  * Reads the current version from the Python configuration file.
  */
-module.exports.readVersion = function (contents) {
+ module.exports.readVersion = function (contents) {
   // console.debug(`file contents:\n\n${contents}`);
-  const version = contents.match(/(?<=version = )\d+\.\d+\.\d+/g)[0];
+  const version = contents.match(/(?<=<version>)\d+\.\d+\.\d+(?=<\/version>)/g)[0];
   // console.debug("found version:", version);
   return version;
 };
@@ -17,8 +17,9 @@ module.exports.readVersion = function (contents) {
  */
 module.exports.writeVersion = function (contents, version) {
   // console.debug(`file contents:\n\n${contents}`);
-  return contents.replace(/(?<=version = )\d+\.\d+\.\d+/g, () => {
+  const test = contents.replace(/(?<=<version>)\d+\.\d+\.\d+(?=<\/version>)/g, () => {
     // console.debug("replace version with", version);
     return version;
   });
+  return test
 };
