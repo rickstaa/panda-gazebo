@@ -35,7 +35,8 @@ gh-pages:
 	cd .. && \
 	git add docs/build/html && \
 	git clean -ffxd && \
-	mv -fv docs/build/html/* ../ && \
+	cp -r docs/build/html/* ../ && \
+	cp -r docs/build/html/.[!.]* ../ && \
 	cd .. && \
 	rm -rf $(GH_PAGES_SOURCES) && \
 	git add -A && \
