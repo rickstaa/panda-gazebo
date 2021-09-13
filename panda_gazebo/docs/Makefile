@@ -6,7 +6,7 @@ SPHINXBUILD   = sphinx-build
 SPHINXPROJ    = panda-gazebo
 SOURCEDIR     = source
 BUILDDIR      = build
-GH_PAGES_SOURCES = docs pandag_gazebo
+GH_PAGES_SOURCES = pandag_gazebo
 
 # Put it first so that "make" without argument is like "make help".
 .PHONY: help Makefile
@@ -23,13 +23,13 @@ clean:
 # Publish gh-pages command
 .PHONY: gh-pages
 gh-pages:
-	cd .. && \
+	cd ../.. && \
 	git submodule update --recursive && \
 	git checkout gh-pages && \
 	git rm -rf . && git clean -fxd && \
 	git checkout noetic-devel $(GH_PAGES_SOURCES) && \
 	git reset HEAD && \
-	cd docs && \
+	cd panda-gazebo/docs && \
 	make clean && \
 	make html && \
 	cd .. && \
