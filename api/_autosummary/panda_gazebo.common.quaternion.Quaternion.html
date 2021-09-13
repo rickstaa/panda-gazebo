@@ -1,0 +1,430 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>panda_gazebo.common.quaternion.Quaternion &mdash; panda-gazebo 1.1.19 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/modify.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="panda_gazebo.exceptions" href="panda_gazebo.exceptions.html" />
+    <link rel="prev" title="panda_gazebo.common.quaternion" href="panda_gazebo.common.quaternion.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> panda-gazebo
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.1.19
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../get_started/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../get_started/usage.html">Usage</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../dev/release_dev.html">Release package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dev/doc_dev.html">Release documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">Code API</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#modules">Modules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="panda_gazebo.core.html">panda_gazebo.core</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="panda_gazebo.common.html">panda_gazebo.common</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="panda_gazebo.common.action_client_state.html">panda_gazebo.common.action_client_state</a></li>
+<li class="toctree-l4"><a class="reference internal" href="panda_gazebo.common.controller_info_dict.html">panda_gazebo.common.controller_info_dict</a></li>
+<li class="toctree-l4"><a class="reference internal" href="panda_gazebo.common.euler_angles.html">panda_gazebo.common.euler_angles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="panda_gazebo.common.functions.html">panda_gazebo.common.functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="panda_gazebo.common.nested_dict.html">panda_gazebo.common.nested_dict</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="panda_gazebo.common.quaternion.html">panda_gazebo.common.quaternion</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="panda_gazebo.exceptions.html">panda_gazebo.exceptions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#ros-nodes">ROS nodes</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">panda-gazebo</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../api.html">Code API</a> &raquo;</li>
+        
+          <li><a href="panda_gazebo.common.html">panda_gazebo.common</a> &raquo;</li>
+        
+          <li><a href="panda_gazebo.common.quaternion.html">panda_gazebo.common.quaternion</a> &raquo;</li>
+        
+      <li>panda_gazebo.common.quaternion.Quaternion</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+              <a href="https://github.com/rickstaa/panda-gazebo/blob/noetic-devel/docs/source/api/_autosummary/panda_gazebo.common.quaternion.Quaternion.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="panda-gazebo-common-quaternion-quaternion">
+<h1>panda_gazebo.common.quaternion.Quaternion<a class="headerlink" href="#panda-gazebo-common-quaternion-quaternion" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="panda_gazebo.common.quaternion.Quaternion">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">panda_gazebo.common.quaternion.</span></span><span class="sig-name descname"><span class="pre">Quaternion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/panda_gazebo/common/quaternion.html#Quaternion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.common.quaternion.Quaternion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used for storing and modifying quaternions.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="panda_gazebo.common.quaternion.Quaternion.x">
+<span class="sig-name descname"><span class="pre">x</span></span><a class="headerlink" href="#panda_gazebo.common.quaternion.Quaternion.x" title="Permalink to this definition">¶</a></dt>
+<dd><p>The quaternion x coordinate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="panda_gazebo.common.quaternion.Quaternion.y">
+<span class="sig-name descname"><span class="pre">y</span></span><a class="headerlink" href="#panda_gazebo.common.quaternion.Quaternion.y" title="Permalink to this definition">¶</a></dt>
+<dd><p>The quaternion y coordinate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="panda_gazebo.common.quaternion.Quaternion.z">
+<span class="sig-name descname"><span class="pre">z</span></span><a class="headerlink" href="#panda_gazebo.common.quaternion.Quaternion.z" title="Permalink to this definition">¶</a></dt>
+<dd><p>The quaternion z coordinate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="panda_gazebo.common.quaternion.Quaternion.w">
+<span class="sig-name descname"><span class="pre">w</span></span><a class="headerlink" href="#panda_gazebo.common.quaternion.Quaternion.w" title="Permalink to this definition">¶</a></dt>
+<dd><p>The quaternion w coordinate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="panda_gazebo.common.quaternion.Quaternion.norm">
+<span class="sig-name descname"><span class="pre">norm</span></span><a class="headerlink" href="#panda_gazebo.common.quaternion.Quaternion.norm" title="Permalink to this definition">¶</a></dt>
+<dd><p>The quaternion norm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="panda_gazebo.common.quaternion.Quaternion.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/panda_gazebo/common/quaternion.html#Quaternion.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.common.quaternion.Quaternion.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initiates quaternion object.</p>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#panda_gazebo.common.quaternion.Quaternion.__init__" title="panda_gazebo.common.quaternion.Quaternion.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(*args, **kwds)</p></td>
+<td><p>Initiates quaternion object.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">deserialize</span></code>(str)</p></td>
+<td><p>unpack serialized message in str into this message instance :param str: byte array of serialized message, <code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">deserialize_numpy</span></code>(str, numpy)</p></td>
+<td><p>unpack serialized message in str into this message instance using numpy for array types :param str: byte array of serialized message, <code class="docutils literal notranslate"><span class="pre">str</span></code> :param numpy: numpy python module</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#panda_gazebo.common.quaternion.Quaternion.normalize" title="panda_gazebo.common.quaternion.Quaternion.normalize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalize</span></code></a>()</p></td>
+<td><p>Normalizes the quaternion.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#panda_gazebo.common.quaternion.Quaternion.normalize_quaternion" title="panda_gazebo.common.quaternion.Quaternion.normalize_quaternion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalize_quaternion</span></code></a>(quaternion)</p></td>
+<td><p>Normalizes a given quaternion.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#panda_gazebo.common.quaternion.Quaternion.quaternion_norm" title="panda_gazebo.common.quaternion.Quaternion.quaternion_norm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quaternion_norm</span></code></a>(Quaternion)</p></td>
+<td><p>Calculates the norm of a quaternion.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">serialize</span></code>(buff)</p></td>
+<td><p>serialize message into buffer :param buff: buffer, <code class="docutils literal notranslate"><span class="pre">StringIO</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">serialize_numpy</span></code>(buff, numpy)</p></td>
+<td><p>serialize message with numpy array types into buffer :param buff: buffer, <code class="docutils literal notranslate"><span class="pre">StringIO</span></code> :param numpy: numpy python module</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#panda_gazebo.common.quaternion.Quaternion.x" title="panda_gazebo.common.quaternion.Quaternion.x"><code class="xref py py-obj docutils literal notranslate"><span class="pre">x</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#panda_gazebo.common.quaternion.Quaternion.y" title="panda_gazebo.common.quaternion.Quaternion.y"><code class="xref py py-obj docutils literal notranslate"><span class="pre">y</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#panda_gazebo.common.quaternion.Quaternion.z" title="panda_gazebo.common.quaternion.Quaternion.z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">z</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#panda_gazebo.common.quaternion.Quaternion.w" title="panda_gazebo.common.quaternion.Quaternion.w"><code class="xref py py-obj docutils literal notranslate"><span class="pre">w</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#id0" title="panda_gazebo.common.quaternion.Quaternion.norm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">norm</span></code></a></p></td>
+<td><p>Retrieves the quaternion norm.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="panda_gazebo.common.quaternion.Quaternion.normalize">
+<span class="sig-name descname"><span class="pre">normalize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/panda_gazebo/common/quaternion.html#Quaternion.normalize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.common.quaternion.Quaternion.normalize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Normalizes the quaternion.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="id0">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">norm</span></span><a class="headerlink" href="#id0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves the quaternion norm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The quaternion norm.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="panda_gazebo.common.quaternion.Quaternion.normalize_quaternion">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">normalize_quaternion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">quaternion</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/panda_gazebo/common/quaternion.html#Quaternion.normalize_quaternion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.common.quaternion.Quaternion.normalize_quaternion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Normalizes a given quaternion.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>Quaternion</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">geometry_msgs.msg.Quaternion</span></code>) – A quaternion.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The normalized quaternion.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">geometry_msgs.msg.Quaternion</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="panda_gazebo.common.quaternion.Quaternion.quaternion_norm">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">quaternion_norm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Quaternion</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/panda_gazebo/common/quaternion.html#Quaternion.quaternion_norm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.common.quaternion.Quaternion.quaternion_norm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the norm of a quaternion.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>Quaternion</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">geometry_msgs.msg.Quaternion</span></code>) – A quaternion.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The norm of the quaternion.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="panda_gazebo.exceptions.html" class="btn btn-neutral float-right" title="panda_gazebo.exceptions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="panda_gazebo.common.quaternion.html" class="btn btn-neutral float-left" title="panda_gazebo.common.quaternion" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Rick Staa.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

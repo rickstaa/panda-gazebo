@@ -1,0 +1,35 @@
+panda\_gazebo.core.group\_publisher.GroupPublisher
+==================================================
+
+.. currentmodule:: panda_gazebo.core.group_publisher
+
+.. autoclass:: GroupPublisher
+   :members:
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~GroupPublisher.__init__
+      ~GroupPublisher.append
+      ~GroupPublisher.clear
+      ~GroupPublisher.copy
+      ~GroupPublisher.count
+      ~GroupPublisher.extend
+      ~GroupPublisher.index
+      ~GroupPublisher.insert
+      ~GroupPublisher.pop
+      ~GroupPublisher.publish
+      ~GroupPublisher.remove
+      ~GroupPublisher.reverse
+      ~GroupPublisher.sort
+   
+   
+
+   
+   
+   

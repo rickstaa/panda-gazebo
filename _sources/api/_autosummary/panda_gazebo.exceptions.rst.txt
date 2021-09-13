@@ -1,0 +1,30 @@
+﻿panda\_gazebo.exceptions
+========================
+
+.. automodule:: panda_gazebo.exceptions
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Exceptions
+
+   .. autosummary::
+      :toctree:
+   
+      InputMessageInvalidError
+   
+   
+
+
+

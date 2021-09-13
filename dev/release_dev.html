@@ -1,0 +1,327 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Release package &mdash; panda-gazebo 1.1.19 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/modify.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Release documentation" href="doc_dev.html" />
+    <link rel="prev" title="Usage" href="../get_started/usage.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> panda-gazebo
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.1.19
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../get_started/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../get_started/usage.html">Usage</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Release package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#code-formatting-guidelines">Code formatting guidelines</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pre-commit-hooks">Pre-commit hooks</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#general-guidelines">General guidelines</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#release-guidelines">Release guidelines</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#commit-guidelines">Commit guidelines</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#versioning-guidelines">Versioning guidelines</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="doc_dev.html">Release documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/api.html">Code API</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">panda-gazebo</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Release package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+              <a href="https://github.com/rickstaa/panda-gazebo/blob/noetic-devel/docs/source/dev/release_dev.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="release-package">
+<h1><a class="toc-backref" href="#id1">Release package</a><a class="headerlink" href="#release-package" title="Permalink to this headline">¶</a></h1>
+<div class="contents topic" id="table-of-contents">
+<p class="topic-title">Table of Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#release-package" id="id1">Release package</a></p>
+<ul>
+<li><p><a class="reference internal" href="#code-formatting-guidelines" id="id2">Code formatting guidelines</a></p>
+<ul>
+<li><p><a class="reference internal" href="#pre-commit-hooks" id="id3">Pre-commit hooks</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#general-guidelines" id="id4">General guidelines</a></p>
+<ul>
+<li><p><a class="reference internal" href="#release-guidelines" id="id5">Release guidelines</a></p></li>
+<li><p><a class="reference internal" href="#commit-guidelines" id="id6">Commit guidelines</a></p></li>
+<li><p><a class="reference internal" href="#versioning-guidelines" id="id7">Versioning guidelines</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="code-formatting-guidelines">
+<h2><a class="toc-backref" href="#id2">Code formatting guidelines</a><a class="headerlink" href="#code-formatting-guidelines" title="Permalink to this headline">¶</a></h2>
+<p>To increase code quality, readability and usability, we use several language guidelines.</p>
+<dl class="simple">
+<dt>Python guidelines:</dt><dd><ul class="simple">
+<li><p><strong>Linting:</strong> Please ensure your python code doesn’t contain any errors by checking it with the <a class="reference external" href="https://flake8.pycqa.org/en/latest/">flake8 python linter</a>.</p></li>
+<li><p><strong>Formatting:</strong> Please format all your scripts using the <a class="reference external" href="https://github.com/psf/black">black python formatter</a>.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Markdown guidelines:</dt><dd><ul class="simple">
+<li><p><strong>Linting and formatting:</strong> Please make sure your markdown code contains no errors and is formatted according to the <a class="reference external" href="https://github.com/remarkjs/remark-lint">remark-lint</a> style guidelines.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The panda-gazebo framework contains several <a class="reference external" href="https://github.com/rickstaa/panda-gazebo/actions">GitHub actions</a>, which check code changes
+against these coding guidelines. As a result, when the above guidelines are not met, you will
+receive an error/warning when you create a pull request. Some of these actions will create pull requests
+which you can use to fix some of these violations. For other errors/warning, you are expected to handle
+them yourself before merging them into the master branch. If you think a code guideline is not correct
+or your code structure doesn’t allow you to respect the guideline, please state so in the
+pull request.</p>
+</div>
+<div class="section" id="pre-commit-hooks">
+<h3><a class="toc-backref" href="#id3">Pre-commit hooks</a><a class="headerlink" href="#pre-commit-hooks" title="Permalink to this headline">¶</a></h3>
+<p>The panda-gazebo package also contains several pre-commit hooks that can be used to enforce the aforementioned guidelines before a commit is made. To enable these hooks please:</p>
+<ol class="arabic simple">
+<li><p>Install <a class="reference external" href="https://nodejs.org/en/download/package-manager">node</a>.</p></li>
+<li><p>Install <a class="reference external" href="https://www.python.org/downloads">python</a>.</p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">npm</span> <span class="pre">install</span> <span class="pre">-D</span></code> and <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">.[dev]</span></code> to install husky and the required linters.</p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">npm</span> <span class="pre">run</span> <span class="pre">prepare</span></code> to setup the pre-commit hooks.</p></li>
+</ol>
+</div>
+</div>
+<div class="section" id="general-guidelines">
+<h2><a class="toc-backref" href="#id4">General guidelines</a><a class="headerlink" href="#general-guidelines" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="release-guidelines">
+<h3><a class="toc-backref" href="#id5">Release guidelines</a><a class="headerlink" href="#release-guidelines" title="Permalink to this headline">¶</a></h3>
+<p>Before releasing the package, make sure the following steps are performed:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Create a new branch on which you implement your changes.</p></li>
+<li><p>Commit your changes.</p></li>
+<li><p>Create a pull request to pull the changes of your development branch onto the master branch.</p></li>
+<li><p>Make sure that all the <a class="reference external" href="https://github.com/rickstaa/panda-gazebo/actions">pull request checks</a> were successful.</p></li>
+<li><p>Add a version label to (<code class="docutils literal notranslate"><span class="pre">bump:patch</span></code>, <code class="docutils literal notranslate"><span class="pre">bump:minor</span></code> or <code class="docutils literal notranslate"><span class="pre">bump:major</span></code>) to the pull request.</p></li>
+<li><p>Squash and merge your branch with the main branch.</p></li>
+<li><p>Create a release using the GitHub draft release tool.</p></li>
+</ol>
+</div></blockquote>
+</div>
+<div class="section" id="commit-guidelines">
+<h3><a class="toc-backref" href="#id6">Commit guidelines</a><a class="headerlink" href="#commit-guidelines" title="Permalink to this headline">¶</a></h3>
+<p>Make sure you add a good descriptive commit message while committing to this repository. A
+good guide can be found <a class="reference external" href="https://www.conventionalcommits.org/en/v1.0.0/">here</a>. Please check out the <a class="reference external" href="https://github.com/commitizen/cz-cli">commitizen</a> npm package as it is very helpful
+in helping you write good commit messages.</p>
+</div>
+<div class="section" id="versioning-guidelines">
+<h3><a class="toc-backref" href="#id7">Versioning guidelines</a><a class="headerlink" href="#versioning-guidelines" title="Permalink to this headline">¶</a></h3>
+<p>Additionally, please use the <a class="reference external" href="https://semver.org/">versioning guidelines specified at semver.org</a>.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="doc_dev.html" class="btn btn-neutral float-right" title="Release documentation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../get_started/usage.html" class="btn btn-neutral float-left" title="Usage" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Rick Staa.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

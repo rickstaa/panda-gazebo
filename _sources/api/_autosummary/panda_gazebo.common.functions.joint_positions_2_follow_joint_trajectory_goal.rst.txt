@@ -1,0 +1,6 @@
+panda\_gazebo.common.functions.joint\_positions\_2\_follow\_joint\_trajectory\_goal
+===================================================================================
+
+.. currentmodule:: panda_gazebo.common.functions
+
+.. autofunction:: joint_positions_2_follow_joint_trajectory_goal

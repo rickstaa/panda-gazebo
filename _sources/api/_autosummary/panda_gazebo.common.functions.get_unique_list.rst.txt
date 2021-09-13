@@ -1,0 +1,6 @@
+panda\_gazebo.common.functions.get\_unique\_list
+================================================
+
+.. currentmodule:: panda_gazebo.common.functions
+
+.. autofunction:: get_unique_list
