@@ -6,7 +6,7 @@ SPHINXBUILD   = sphinx-build
 SPHINXPROJ    = panda-gazebo
 SOURCEDIR     = source
 BUILDDIR      = build
-GH_PAGES_SOURCES = panda_gazebo franka_ros panda_moveit_config
+GH_PAGES_SOURCES = panda_gazebo
 
 # Put it first so that "make" without argument is like "make help".
 .PHONY: help Makefile
