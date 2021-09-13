@@ -1,5 +1,9 @@
-# Sphinx template folder
+# Panda_gazebo
 
-Used to change several sphinx default .rst pages. It contains the following templates:
+This package contains all the ROS packages needed for creating a Panda Emika Franka
+Gazebo simulation. It is used by the [openai_ros](https://bitbucket.org/rickstaa/openai_ros/src/noetic/)
+ROS RL package to create the openai_ros panda task environments.
 
-*   **custom-class-template.rst & custom-module-template**: Templates added to enable deep nested autosummary generation (see [this stackoverflow issue](https://stackoverflow.com/questions/2701998/sphinx-autodoc-is-not-automatic-enough/62613202#62613202>)).
+## Installation and Usage
+
+Please see the [docs](https://rickstaa.github.io/panda-autograsp/) for installation and usage instructions.
