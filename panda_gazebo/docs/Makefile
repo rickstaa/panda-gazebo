@@ -24,7 +24,6 @@ clean:
 .PHONY: gh-pages
 gh-pages:
 	cd ../.. && \
-	git submodule update --recursive && \
 	git checkout gh-pages && \
 	git rm -rf . && git clean -ffxd && \
 	git checkout noetic-devel $(GH_PAGES_SOURCES) && \
