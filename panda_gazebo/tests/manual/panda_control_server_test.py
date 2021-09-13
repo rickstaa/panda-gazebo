@@ -19,7 +19,7 @@ from trajectory_msgs.msg import JointTrajectoryPoint
 
 # --TESTS--
 # For the `joint effort`, `joint_position` and `joint_trajectory` services test the
-# folowing:Test trajectory services
+# following test trajectory services:
 #   1. Empty message -> Success
 #   2. Only control commands -> Success
 #   3. To little or to much control commands -> Fail

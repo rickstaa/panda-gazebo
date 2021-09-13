@@ -1,10 +1,18 @@
 /* Css code that is used to overwrite parts of the RTD theme css*/
 
+/*Media queries*/
+@media screen and (min-width: 1100px) {
+  .wy-nav-content-wrap {
+    background-color: var(--color--warmgraylight) !important;
+  }
+}
+
 /* override table width restrictions */
+
 @media screen and (min-width: 767px) {
   .wy-table-responsive table td {
     /* !important prevents the common CSS stylesheets from
-       overriding this as on RTD they are loaded after this stylesheet */
+     overriding this as on RTD they are loaded after this stylesheet */
     white-space: normal !important;
   }
   .wy-table-responsive {

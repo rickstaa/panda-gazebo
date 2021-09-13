@@ -1,7 +1,6 @@
 ﻿"""Module that contains the core components (classes and functions) that are needed for
-creating the Panda openai :gym:`gym <>` environment.
+creating the panda-gazebo simulation.
 """
-
 
 from panda_gazebo.core.control_server import PandaControlServer
 from panda_gazebo.core.control_switcher import PandaControlSwitcher

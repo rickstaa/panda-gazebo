@@ -331,7 +331,7 @@ class PandaMoveitPlannerServer(object):
                 Defaults to ``both``.
 
         Returns:
-            list: List specifying whether the arm and/or hand execution was successfull.
+            list: List specifying whether the arm and/or hand execution was successful.
                 If ``control_group == "both"`` then ``["arm_success", "hand_success"]``.
         """
         if control_group.lower() == "arm":
@@ -630,7 +630,7 @@ class PandaMoveitPlannerServer(object):
                 config["max_velocity_scaling_factor"]
             )
         elif level == 1:
-            # Update move group accelleration settings
+            # Update move group acceleration settings
             self.move_group_arm.set_max_acceleration_scaling_factor(
                 config["max_acceleration_scaling_factor"]
             )
@@ -678,7 +678,7 @@ class PandaMoveitPlannerServer(object):
             self.move_group_arm.set_pose_target(self.ee_pose_target)
             retval = self._execute(control_group="arm")
 
-            # Check if setpoint execution was successfull
+            # Check if setpoint execution was successful
             if not all(retval):
                 resp.success = False
                 resp.message = "Ee pose could not be set"

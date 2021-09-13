@@ -67,7 +67,7 @@ class ControllerSwitcherResponse:
     """Class used for returning the result of the ControllerSwitcher.switch method.
 
     Attributes:
-        success (bool): Specifies whether the switch operation was successfull.
+        success (bool): Specifies whether the switch operation was successful.
         prev_control_type (str): The previous used control type.
     """
 
@@ -75,7 +75,7 @@ class ControllerSwitcherResponse:
         """Initiate ControllerSwitcher response object.
 
         Args:
-            success (bool, optional): Whether the switch operation was successfull.
+            success (bool, optional): Whether the switch operation was successful.
                 Defaults to ``True``.
             prev_control_type (str, optional): The previous used control type. Defaults
                 to ``""``.
@@ -325,7 +325,7 @@ class PandaControlSwitcher(object):
 
         Returns:
             :obj:`~panda_gazebo.core.control_switcher.ControllerSwitcherResponse`:
-                Contains information about whether the switch operation was successfull
+                Contains information about whether the switch operation was successful
                 'success' and the previously used controller 'prev_control_type'.
         """
         resp = ControllerSwitcherResponse()
@@ -495,7 +495,7 @@ class PandaControlSwitcher(object):
             retval = self._switch_controller_client(switch_controller_msg)
             if retval.ok:
                 rospy.logdebug(
-                    "Switching Panda %s control type to '%s' successfull."
+                    "Switching Panda %s control type to '%s' successful."
                     % (control_group, control_type)
                 )
                 resp.success = retval.ok

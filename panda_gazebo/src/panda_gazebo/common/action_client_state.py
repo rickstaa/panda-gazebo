@@ -21,11 +21,11 @@ class ActionClientState(object):
         """Initializes the InputMessageInvalidError exception object.
 
         Args:
-        action_client (:obj:`actionlib.simple_action_client.SimpleActionClient, optional):
-            The action client to which you want to link the ActionClientState object.
-            Defaults to ``None``.
-        state (int, optional): The state value of the actionclient. Defaults to ``-1``.
-        state_string (str, optional): The name of the current action client state.
+            action_client (:obj:`actionlib.simple_action_client.SimpleActionClient, optional):
+                The action client to which you want to link the ActionClientState object.
+                Defaults to ``None``.
+            state (int, optional): The state value of the actionclient. Defaults to ``-1``.
+            state_string (str, optional): The name of the current action client state.
         """  # noqa: E501
         if not action_client:
             self.action_client = action_client

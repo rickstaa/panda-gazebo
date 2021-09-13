@@ -1,20 +1,24 @@
-# Minimal makefile for Sphinx documentation
-#
+# Makefile for panda gazebo Sphinx documentation
 
-# You can set these variables from the command line, and also
-# from the environment for the first two.
+# You can set these variables from the command line.
 SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
-SPHINXPROJ    = panda_openai_sim
+SPHINXPROJ    = panda-gazebo
 SOURCEDIR     = source
 BUILDDIR      = build
-GH_PAGES_SOURCES = docs panda_openai_sim panda_training
+GH_PAGES_SOURCES = docs pandag_gazebo
 
 # Put it first so that "make" without argument is like "make help".
+.PHONY: help Makefile
 help:
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
-.PHONY: help Makefile
+# Create make clean command
+.PHONY: clean
+clean:
+	@rm -rf $(BUILDDIR)/*
+	@rm -rf $(SOURCEDIR)/dev/api/_autosummary
+	@echo "Build folder cleaned"
 
 # Publish gh-pages command
 .PHONY: gh-pages
@@ -23,7 +27,7 @@ gh-pages:
 	git submodule update --recursive && \
 	git checkout gh-pages && \
 	git rm -rf . && git clean -fxd && \
-	git checkout melodic-devel $(GH_PAGES_SOURCES) && \
+	git checkout noetic-devel $(GH_PAGES_SOURCES) && \
 	git reset HEAD && \
 	cd docs && \
 	make clean && \
@@ -34,18 +38,13 @@ gh-pages:
 	mv -fv docs/build/html/* ./ && \
 	rm -rf $(GH_PAGES_SOURCES) && \
 	git add -A && \
-	git commit -m ":pencil: Generated gh-pages for `git log melodic-devel -1 --pretty=short --abbrev-commit`" && \
+	git commit -m "docs: Generated gh-pages for `git log noetic-devel -1 --pretty=short --abbrev-commit`" && \
 	git push origin gh-pages && \
-	git checkout melodic-devel && \
+	git checkout noetic-devel && \
 	git submodule update --recursive
-
-# Create make clean command
-.PHONY: clean
-clean:
-	@rm -rf $(BUILDDIR)/*
-	@echo "Build folder cleaned"
 
 # Catch-all target: route all unknown targets to Sphinx using the new
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
 %: Makefile
+	git submodule update --init --recursive
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)

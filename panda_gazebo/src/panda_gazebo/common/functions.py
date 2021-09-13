@@ -1,5 +1,5 @@
 """Module containing some additional functions used in the
-:panda_gazebo:`panda_gazebo <>` package.
+:panda-gazebo:`panda-gazebo <>` package.
 """
 
 import copy
@@ -68,8 +68,7 @@ def action_dict_2_joint_trajectory_msg(action_dict):
 
 def panda_action_msg_2_control_msgs_action_msg(panda_action_msg):
     """Converts a panda_gazebo FollowJointTrajectoryActionGoal action message
-    into a
-    :control_msgs:`control_msgs/FollowJointTrajectoryGoal
+    into a :control_msgs:`control_msgs/FollowJointTrajectoryGoal
     <html/action/FollowJointTrajectory.html>` action message.
 
     Args:
@@ -260,7 +259,7 @@ def wrap_space_around(text):
         return text
 
 
-def list_2_human_text(input_list, seperator=",", end_seperator="&"):
+def list_2_human_text(input_list, separator=",", end_separator="&"):
     """Function converts a list of values into human readable sentence.
 
     Example:
@@ -274,15 +273,15 @@ def list_2_human_text(input_list, seperator=",", end_seperator="&"):
         str: A human readable string that can be printed.
     """
     # Add spaces around separators if not present
-    seperator = wrap_space_around(seperator)[1:]
-    end_seperator = wrap_space_around(end_seperator)
+    separator = wrap_space_around(separator)[1:]
+    end_separator = wrap_space_around(end_separator)
 
     # Create human readable comma deliminated text
     if isinstance(input_list, list):
         if len(input_list) > 1:
             return (
-                seperator.join([str(item) for item in input_list[:-1]])
-                + end_seperator
+                separator.join([str(item) for item in input_list[:-1]])
+                + end_separator
                 + str(input_list[-1])
             )
         if len(input_list) == 0:
@@ -293,8 +292,8 @@ def list_2_human_text(input_list, seperator=",", end_seperator="&"):
         input_list = list(input_list)
         if len(input_list) > 1:
             return (
-                seperator.join([str(item) for item in input_list[:-1]])
-                + end_seperator
+                separator.join([str(item) for item in input_list[:-1]])
+                + end_separator
                 + str(input_list[-1])
             )
         if len(input_list) == 0:

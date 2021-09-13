@@ -97,7 +97,7 @@
         NOTE: The parameters below make sure the initial pose can be executed -->
     <!--    Increase Moveit execution time limit-->
     <param if="$(arg moveit)" name="move_group/trajectory_execution/allowed_execution_duration_scaling" value="4.0" />
-    <!--    Disable Moveit execution time monitoring all togheter-->
+    <!--    Disable Moveit execution time monitoring all together-->
     <param if="$(arg moveit)" name="move_group/trajectory_execution/execution_duration_monitoring" value="false" />
 
     <!-- Load Moveit control services-->
