@@ -5,7 +5,8 @@ from setuptools import setup
 
 # fetch values from package.xml
 setup_args = generate_distutils_setup(
-    packages=["panda_gazebo"], package_dir={"": "src"},
+    packages=["panda_gazebo"],
+    package_dir={"": "src"},
 )
 
 setup(**setup_args)
