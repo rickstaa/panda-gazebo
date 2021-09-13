@@ -3,11 +3,12 @@ Welcome to panda-gazebo documentation
 =====================================
 
 Welcome to the API documentation for the :panda-gazebo:`panda-gazebo <>` package. This package contains all
-the components for the `gazebo`_ panda simulation that is used in the 'openai_ros' ROS package.
+the components for the `gazebo`_ panda simulation that is used in the `openai_ros`_ ROS package.
 Below you will find more information about all the modules and ROS nodes that are contained in
 this package.
 
 .. _`gazebo`: http://gazebosim.org/
+.. _`gazebo`: https://wiki.ros.org/openai_ros
 
 
 Contents
