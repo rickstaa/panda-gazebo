@@ -7,7 +7,7 @@ import copy
 import control_msgs.msg as control_msgs
 import rospy
 from actionlib_msgs.msg import GoalStatusArray
-from panda_gazebo.msg import FollowJointTrajectoryGoal
+from control_msgs.msg import FollowJointTrajectoryGoal
 from panda_gazebo.srv import SetJointPositionsRequest
 from rospy.exceptions import ROSException
 from sensor_msgs.msg import JointState
@@ -48,7 +48,7 @@ def action_dict_2_joint_trajectory_msg(action_dict):
         action_dict (dict): Dictionary containing actions and joints.
 
     Returns:
-        :obj:`panda_gazebo.msg.FollowJointTrajectoryGoal`: New FollowJointTrajectoryGoal
+        :obj:`control_msgs.msg.FollowJointTrajectoryGoal`: New FollowJointTrajectoryGoal
             message.
     """
     # Initiate waypoints and new trajectory message
@@ -72,7 +72,7 @@ def panda_action_msg_2_control_msgs_action_msg(panda_action_msg):
     <html/action/FollowJointTrajectory.html>` action message.
 
     Args:
-        panda_action_msg :obj:`panda_gazebo.msg.FollowJointTrajectoryGoal`: Panda_gazebo
+        panda_action_msg :obj:`control_msgs.msg.FollowJointTrajectoryGoal`: Panda_gazebo
             follow joint trajectory goal message.
 
     Returns:
@@ -92,14 +92,14 @@ def joint_positions_2_follow_joint_trajectory_goal(joint_positions, time_from_st
     msgs.
 
     Args:
-        joint_positions (union[dict, :obj:`panda_gazebo.msg.SetJointPositionsRequest`]):
+        joint_positions (union[dict, :obj:`control_msgs.msg.SetJointPositionsRequest`]):
             Dictionary or message containing the joint positions of each of the robot
             joints.
         time_from_start (dict, optional): The time from the start at which the joint
             position has to be achieved. Defaults to  1 sec.
 
     Returns:
-        :obj:`panda_gazebo.msg.FollowJointTrajectoryGoal`):New FollowJointTrajectoryGoal
+        :obj:`control_msgs.msg.FollowJointTrajectoryGoal`):New FollowJointTrajectoryGoal
             message.
     """
     # Initiate waypoints and new trajectory message

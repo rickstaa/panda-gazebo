@@ -113,7 +113,7 @@ class PandaMoveitPlannerServer(object):
             create_extra_services (bool, optional): Specifies whether the extra services
                 should also be created.
         """
-        self._joint_state_topic = "/joint_states"
+        self._joint_state_topic = "joint_states"
 
         # Initialize Moveit/Robot/Scene and group commanders
         rospy.logdebug("Initialize Moveit Robot/Scene and group commanders.")
@@ -268,7 +268,7 @@ class PandaMoveitPlannerServer(object):
                 )
             except ROSException:
                 rospy.logwarn(
-                    "Current /joint_states not ready yet, retrying for getting %s"
+                    "Current joint_states not ready yet, retrying for getting %s"
                     % self._joint_state_topic
                 )
         self._controlled_joints_dict = {
@@ -820,7 +820,7 @@ class PandaMoveitPlannerServer(object):
         """
         rospy.logdebug("Setting arm joint position targets.")
 
-        # Check if set_joint_positions_req.joint_names contains duplicates\
+        # Check if set_joint_positions_req.joint_names contains duplicates
         duplicate_list = get_duplicate_list(set_joint_positions_req.joint_names)
         if duplicate_list:
             rospy.logwarn(

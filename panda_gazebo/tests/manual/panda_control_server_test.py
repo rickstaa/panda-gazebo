@@ -5,7 +5,7 @@ import sys
 import actionlib
 import actionlib_tutorials.msg
 import rospy
-from panda_gazebo.msg import FollowJointTrajectoryAction, FollowJointTrajectoryGoal
+from control_msgs.msg import FollowJointTrajectoryAction, FollowJointTrajectoryGoal
 from panda_gazebo.srv import (
     SetJointEfforts,
     SetJointEffortsRequest,
@@ -78,35 +78,6 @@ if __name__ == "__main__":
     # set_arm_joint_efforts_msg.joint_efforts = [0, 0]
     # # set_arm_joint_efforts_msg.joint_efforts = [0, 0, 0]
     # retval = set_arm_joint_effort_srv.call(set_arm_joint_efforts_msg)
-    # print(retval.message)
-
-    # --# - TEST SET HAND EFFORTS --
-    # %% /panda_control_server/panda_hand/set_joint_positions test
-
-    # # Connect to /panda_control_server/set_joint_positions
-    # rospy.logdebug(
-    #     "Connecting to '/panda_control_server/panda_hand/set_joint_efforts' service."
-    # )
-    # rospy.wait_for_service(
-    #     "/panda_control_server/panda_hand/set_joint_efforts", timeout=10
-    # )
-    # set_hand_joint_effort_srv = rospy.ServiceProxy(
-    #     "/panda_control_server/panda_hand/set_joint_efforts", SetJointEfforts
-    # )
-    # rospy.logdebug(
-    #     "Connected to 'panda_control_server/panda_hand/set_joint_efforts' service!"
-    # )
-
-    # # Generate joint_efforts msg
-    # set_hand_joint_efforts_msg = SetJointEffortsRequest()
-    # set_hand_joint_efforts_msg.joint_names = [
-    #     "panda_finger_joint1",
-    #     "panda_finger_joint2",
-    # ]
-    # set_hand_joint_efforts_msg.joint_efforts = [-0.08, 0.05]
-    # # set_hand_joint_efforts_msg.joint_efforts = [-0.08, -0.08]
-    # set_hand_joint_efforts_msg.wait = True
-    # retval = set_hand_joint_effort_srv.call(set_hand_joint_efforts_msg)
     # print(retval.message)
 
     # --# - TEST SET JOINT POSITIONS --
@@ -216,33 +187,6 @@ if __name__ == "__main__":
     # retval = set_arm_joint_positions_srv.call(set_arm_joint_positions_msg)
     # print(retval.message)
 
-    # # -- TEST SET HAND JOINT POSITIONS --
-    # # %% /panda_control_server/panda_hand/set_joint_positions test
-    # # Connect to /panda_control_server/set_joint_positions
-    # rospy.logdebug(
-    #     "Connecting to '/panda_control_server/panda_hand/set_joint_positions' service."
-    # )
-    # rospy.wait_for_service(
-    #     "/panda_control_server/panda_hand/set_joint_positions", timeout=10
-    # )
-    # set_hand_joint_positions_srv = rospy.ServiceProxy(
-    #     "/panda_control_server/panda_hand/set_joint_positions", SetJointPositions
-    # )
-    # rospy.logdebug(
-    #     "Connected to 'panda_control_server/panda_hand/set_joint_positions' service!"
-    # )
-
-    # # Generate joint_efforts msg
-    # set_hand_joint_positions_msg = SetJointPositionsRequest()
-    # set_hand_joint_positions_msg.joint_names = [
-    #     "panda_finger_joint1",
-    #     "panda_finger_joint2",
-    # ]
-    # set_hand_joint_positions_msg.joint_positions = [0.04, 0.04]
-    # set_hand_joint_positions_msg.wait = True
-    # retval = set_hand_joint_positions_srv.call(set_hand_joint_positions_msg)
-    # print(retval.message)
-
     # -- TEST SET JOINT TRAJ SERVICE --
 
     # Create action client
@@ -297,50 +241,6 @@ if __name__ == "__main__":
     # Create action client
     follow_joint_traj_client = actionlib.SimpleActionClient(
         "/panda_control_server/panda_arm/follow_joint_trajectory",
-        FollowJointTrajectoryAction,
-    )
-
-    # Waits until the action server has started up and started
-    # listening for goals.
-    retval = follow_joint_traj_client.wait_for_server(timeout=rospy.Duration(5))
-    if not retval:
-        rospy.logerr("Shutting down")
-        sys.exit(0)
-
-    # Create action client goal
-    header = Header()
-    # header.stamp = rospy.get_rostime()
-    goal = FollowJointTrajectoryGoal()
-    # goal.trajectory.joint_names = [
-    #     "panda_joint1",
-    #     "panda_joint2",
-    #     "panda_joint3",
-    #     "panda_joint4",
-    #     "panda_joint5",
-    #     "panda_joint6",
-    #     "panda_joint7",
-    # ]
-    point = JointTrajectoryPoint()
-    point.positions = [
-        0.02,
-        0.02,
-    ]
-    point.time_from_start.secs = 1
-    goal.trajectory.points.append(point)
-    # goal.trajectory.header = header
-    # goal.goal_time_tolerance.secs = 5
-
-    # Send goal
-    follow_joint_traj_client.send_goal(goal)
-    follow_joint_traj_client.wait_for_result()
-    result = follow_joint_traj_client.get_result()
-    print(result)
-
-    # -- TEST SET HAND JOINT TRAJ SERVICE --
-
-    # Create action client
-    follow_joint_traj_client = actionlib.SimpleActionClient(
-        "/panda_control_server/panda_hand/follow_joint_trajectory",
         FollowJointTrajectoryAction,
     )
 

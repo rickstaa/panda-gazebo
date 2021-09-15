@@ -21,10 +21,3 @@ panda_arm_joint6_effort_controller:
 panda_arm_joint7_effort_controller:
   type: effort_controllers/JointEffortController
   joint: panda_joint7
-
-panda_hand_finger1_effort_controller:
-  type: effort_controllers/JointEffortController
-  joint: panda_finger_joint1
-panda_hand_finger2_effort_controller:
-  type: effort_controllers/JointEffortController
-  joint: panda_finger_joint2

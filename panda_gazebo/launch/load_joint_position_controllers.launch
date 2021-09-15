@@ -2,7 +2,6 @@
 <launch>
     <arg name="moveit" default="true" />
     <arg name="ros_control" default="true" />
-    <arg name="gazebo" default="true" />
     <arg name="load_gripper" default="true" />
     <arg name="joint_state_controller" default="true"/>
     <arg name="stopped" default="false"/>
@@ -13,7 +12,7 @@
     <!--    Load general ros_control configuration values-->
     <rosparam if="$(arg ros_control)" file="$(find panda_gazebo)/cfg/controllers/ros_control.yaml" command="load" />
     <!--    Load general Gazebo control configuration values-->
-    <rosparam if="$(arg gazebo)" file="$(find panda_gazebo)/cfg/controllers/gazebo_ros_control.yaml" command="load" />
+    <rosparam file="$(find panda_gazebo)/cfg/controllers/gazebo_ros_control.yaml" command="load" />
     <!--    Load the controller configuration values-->
     <rosparam if="$(arg joint_state_controller)" file="$(find panda_gazebo)/cfg/controllers/joint_state_controller.yaml" command="load" />
     <rosparam file="$(find panda_gazebo)/cfg/controllers/joint_position_controllers.yaml" command="load" />

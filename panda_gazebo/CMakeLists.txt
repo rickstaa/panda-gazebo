@@ -14,7 +14,6 @@ find_package(catkin REQUIRED COMPONENTS
   message_generation
   geometry_msgs
   trajectory_msgs
-  actionlib_msgs
   control_msgs
   dynamic_reconfigure
 )
@@ -75,10 +74,10 @@ add_service_files(
 )
 
 ## Generate actions in the 'action' folder
-add_action_files(
-  DIRECTORY action
-  FILES FollowJointTrajectory.action
-)
+# add_action_files(
+#   DIRECTORY action
+#   FILES Action1.action
+# )
 
 ## Generate added messages and services with any dependencies listed here
 generate_messages(
@@ -86,7 +85,6 @@ generate_messages(
     std_msgs  # Or other packages containing msgs
     geometry_msgs
     trajectory_msgs
-    actionlib_msgs
     control_msgs
 )
 
@@ -127,7 +125,7 @@ catkin_package(
 #  LIBRARIES panda_gazebo
   CATKIN_DEPENDS
     message_runtime rospy gazebo_msgs std_msgs controller_manager_msgs
-    geometry_msgs actionlib_msgs trajectory_msgs sensor_msgs control_msgs rviz actionlib
+    geometry_msgs trajectory_msgs sensor_msgs control_msgs rviz actionlib
     franka_description panda_moveit_config
 #  DEPENDS system_lib
 )
