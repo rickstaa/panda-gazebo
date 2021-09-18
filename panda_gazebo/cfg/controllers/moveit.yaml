@@ -1,0 +1,11 @@
+# Configuration that contains the general MoveIt configuration values
+# MoveIt-specific simulation settings
+move_group:
+  moveit_sim_hw_interface:
+    joint_model_group: panda_arm
+    joint_model_group_pose: ready
+  # NOTE: Parameters below make sure the initial pose can be executed.
+  # Increase MoveIt execution time limit
+  trajectory_execution:
+    allowed_execution_duration_scaling: 4.0
+    execution_duration_monitoring: false

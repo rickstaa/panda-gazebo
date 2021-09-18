@@ -126,7 +126,7 @@ catkin_package(
   CATKIN_DEPENDS
     message_runtime rospy gazebo_msgs std_msgs controller_manager_msgs
     geometry_msgs trajectory_msgs sensor_msgs control_msgs rviz actionlib
-    franka_description panda_moveit_config
+    franka_description franka_gazebo panda_moveit_config
 #  DEPENDS system_lib
 )
 

@@ -18,7 +18,7 @@ class ActionClientState(object):
     """
 
     def __init__(self, action_client=None, state=-1, state_string=""):
-        """Initializes the InputMessageInvalidError exception object.
+        """Initializes the ActionClientState object.
 
         Args:
             action_client (:obj:`actionlib.simple_action_client.SimpleActionClient, optional):

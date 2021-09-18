@@ -8,14 +8,15 @@ Main services:
     * set_joint_efforts
     * get_controlled_joints
     * follow_joint_trajectory
-
-Extra services:
     * panda_arm/set_joint_positions
     * panda_arm/set_joint_efforts
     * panda_arm/follow_joint_trajectory
 """
-
-# TODO: Clean up control types
+# TODO: Check if the current services still work.
+# TODO: Add combined panda_control effort service
+# TODO: Add combined panda_control position service
+# TODO: Add cartesian joint impedance control
+# TODO: Add gravity compensation effort control.
 
 import copy
 import os
@@ -26,7 +27,6 @@ from itertools import compress
 import actionlib
 import numpy as np
 import rospy
-import yaml
 from controller_manager_msgs.srv import ListControllers, ListControllersRequest
 from panda_gazebo.common import ActionClientState
 from panda_gazebo.common.functions import (
@@ -60,9 +60,18 @@ from std_msgs.msg import Float64, Header
 
 # Global script variables
 DIRNAME = os.path.dirname(__file__)
-PARAMS_CONFIG_PATH = os.path.abspath(
-    os.path.join(DIRNAME, "../../../cfg/_cfg/parms_config.yaml")
-)
+PANDA_JOINTS = {
+    "arm": [
+        "panda_joint1",
+        "panda_joint2",
+        "panda_joint3",
+        "panda_joint4",
+        "panda_joint5",
+        "panda_joint6",
+        "panda_joint7",
+    ],
+    "hand": ["panda_finger_joint1", "panda_finger_joint2"],
+}
 ARM_POSITION_CONTROLLERS = [
     "panda_arm_joint1_position_controller",
     "panda_arm_joint2_position_controller",
@@ -82,7 +91,7 @@ ARM_EFFORT_CONTROLLERS = [
     "panda_arm_joint7_effort_controller",
 ]
 ARM_TRAJ_CONTROLLERS = ["panda_arm_controller"]
-ARM_TRAJ_ACTION_SERVER_TOPIC = "/panda_arm_controller/follow_joint_trajectory"
+ARM_TRAJ_ACTION_SERVER_TOPIC = "panda_arm_controller/follow_joint_trajectory"
 
 
 class PandaControlServer(object):
@@ -100,8 +109,6 @@ class PandaControlServer(object):
             the joint positions are within the given setpoint.
         joint_efforts_threshold (int): Threshold for determining whether the joint
             efforts are within the given setpoint.
-        use_group_controller (bool): Whether we are using the group controllers or
-            controlling the individual joints.
         autofill_traj_positions (bool): Whether you want to automatically set the
             current states as positions when the positions field of the joint trajectory
             message is left empty.
@@ -109,16 +116,11 @@ class PandaControlServer(object):
             controllers used for the arm.
         arm_effort_controllers (list): List containing the names of the effort
             controllers used for the arm.
-        hand_position_controllers (list):List containing the names of the position
-            controllers used for the hand.
-        hand_effort_controller (list): List containing the names of the effort
-            controllers used for the hand.
     """
 
     def __init__(  # noqa: C901
         self,
         autofill_traj_positions=False,
-        create_extra_services=False,
         connection_timeout=10,
     ):
         """Initializes the PandaControlServer object.
@@ -127,8 +129,6 @@ class PandaControlServer(object):
             autofill_traj_positions (bool, optional): Whether you want to automatically
                 set the current states as positions when the positions field of the
                 joint trajectory message is left empty. Defaults to ``False``.
-            create_extra_services (bool, optional): Specifies whether the extra services
-                should also be created. Defaults to ``False``.
             connection_timeout (int, optional): The timeout for connecting to the
                 controller_manager services. Defaults to 3 sec.
         """
@@ -141,33 +141,9 @@ class PandaControlServer(object):
         self._joint_efforts_grad_threshold = 0.01
         self._joint_positions_grad_threshold = 0.01
         self._joint_state_topic = "joint_states"
-        self._full_joint_traj_control = False
         self._as_arm_feedback = FollowJointTrajectoryFeedback()
         self._as_hand_feedback = FollowJointTrajectoryFeedback()
         self._as_feedback = FollowJointTrajectoryFeedback()
-
-        # Try to load package parameters from the package configuration file
-        try:
-            with open(PARAMS_CONFIG_PATH, "r") as stream:
-                try:
-                    parms_config = yaml.safe_load(stream)
-                except yaml.YAMLError as e:
-                    rospy.logwarn(
-                        "Shutting down '%s' as the 'panda_gazebo' parameters "
-                        "could not be loaded from the parameter configuration '%s' "
-                        "as the following error was thrown: %s"
-                        % (rospy.get_name(), PARAMS_CONFIG_PATH, e)
-                    )
-                    sys.exit(0)
-        except FileNotFoundError:
-            rospy.logwarn(
-                "Shutting down '%s' as the 'panda_gazebo' package parameters "
-                "could not be loaded since the required parameter configuration file "
-                "'%s' was not found. Please make sure the configuration file is "
-                "present." % (rospy.get_name(), PARAMS_CONFIG_PATH)
-            )
-            sys.exit(0)
-        panda_joints = parms_config["panda_joints"]
 
         ########################################
         # Create Panda control services ########
@@ -175,18 +151,6 @@ class PandaControlServer(object):
 
         # Create main PandaControlServer services
         rospy.loginfo("Creating '%s' services." % rospy.get_name())
-        rospy.logdebug("Creating '%s/set_joint_positions' service." % rospy.get_name())
-        self._set_joint_positions_srv = rospy.Service(
-            "%s/set_joint_positions" % rospy.get_name()[1:],
-            SetJointPositions,
-            self._set_joint_positions_cb,
-        )
-        rospy.logdebug("Creating '%s/set_joint_efforts' service." % rospy.get_name())
-        self._set_joint_efforts_srv = rospy.Service(
-            "%s/set_joint_efforts" % rospy.get_name()[1:],
-            SetJointEfforts,
-            self._set_joint_efforts_cb,
-        )
         rospy.logdebug(
             "Creating '%s/get_controlled_joints' service." % rospy.get_name()
         )
@@ -195,26 +159,22 @@ class PandaControlServer(object):
             GetControlledJoints,
             self._get_controlled_joints_cb,
         )
-
-        # Create extra services
-        if create_extra_services:
-            rospy.logdebug(
-                "Creating '%s/panda_arm/set_joint_positions' service."
-                % rospy.get_name()
-            )
-            self._set_arm_joint_positions_srv = rospy.Service(
-                "%s/panda_arm/set_joint_positions" % rospy.get_name()[1:],
-                SetJointPositions,
-                self._arm_set_joint_positions_cb,
-            )
-            rospy.logdebug(
-                "Creating '%s/panda_arm/set_joint_efforts' service." % rospy.get_name()
-            )
-            self._set_arm_joint_efforts_srv = rospy.Service(
-                "%s/panda_arm/set_joint_efforts" % rospy.get_name()[1:],
-                SetJointEfforts,
-                self._arm_set_joint_efforts_cb,
-            )
+        rospy.logdebug(
+            "Creating '%s/panda_arm/set_joint_positions' service." % rospy.get_name()
+        )
+        self._set_arm_joint_positions_srv = rospy.Service(
+            "%s/panda_arm/set_joint_positions" % rospy.get_name()[1:],
+            SetJointPositions,
+            self._arm_set_joint_positions_cb,
+        )
+        rospy.logdebug(
+            "Creating '%s/panda_arm/set_joint_efforts' service." % rospy.get_name()
+        )
+        self._set_arm_joint_efforts_srv = rospy.Service(
+            "%s/panda_arm/set_joint_efforts" % rospy.get_name()[1:],
+            SetJointEfforts,
+            self._arm_set_joint_efforts_cb,
+        )
         rospy.loginfo("'%s' services created successfully." % rospy.get_name())
 
         ########################################
@@ -237,28 +197,6 @@ class PandaControlServer(object):
         self._arm_joint_effort_pub = GroupPublisher()
         for effort_controller in ARM_EFFORT_CONTROLLERS:
             self._arm_joint_effort_pub.append(
-                rospy.Publisher(
-                    "%s/command" % (effort_controller),
-                    Float64,
-                    queue_size=10,
-                )
-            )
-
-        # Create and joint position publishers
-        self._hand_joint_position_pub = GroupPublisher()
-        for position_controller in HAND_POSITION_CONTROLLERS:
-            self._hand_joint_position_pub.append(
-                rospy.Publisher(
-                    "%s/command" % (position_controller),
-                    Float64,
-                    queue_size=10,
-                )
-            )
-
-        # Create hand joint group effort publishers
-        self._hand_joint_effort_pub = GroupPublisher()
-        for effort_controller in HAND_EFFORT_CONTROLLERS:
-            self._hand_joint_effort_pub.append(
                 rospy.Publisher(
                     "%s/command" % (effort_controller),
                     Float64,
@@ -326,21 +264,6 @@ class PandaControlServer(object):
         self.arm_position_controllers = ARM_POSITION_CONTROLLERS
         self.arm_effort_controllers = ARM_EFFORT_CONTROLLERS
         self.arm_traj_controllers = ARM_TRAJ_CONTROLLERS
-        self._arm_position_pub = self._arm_joint_position_pub
-        self._arm_effort_pub = self._arm_joint_effort_pub
-        self._arm_position_controller_msg_type = Float64
-        self._arm_effort_controller_msg_type = Float64
-
-        # Create combined position/effort controllers lists
-        self._position_controllers = flatten_list(
-            [self.arm_position_controllers, self.hand_position_controllers]
-        )
-        self._effort_controllers = flatten_list(
-            [self.arm_effort_controllers, self.hand_effort_controllers]
-        )
-        self._traj_controllers = flatten_list(
-            [self.arm_traj_controllers, self.hand_traj_controllers]
-        )
 
         # Retrieve the names of the joints that are controlled when we use joint
         # trajectory control
@@ -349,7 +272,7 @@ class PandaControlServer(object):
                 control_type="traj_control"
             )
         except InputMessageInvalidError:
-            self._controlled_joints_traj_control = panda_joints
+            self._controlled_joints_traj_control = PANDA_JOINTS
 
         ########################################
         # Create joint trajectory action #######
@@ -996,13 +919,13 @@ class PandaControlServer(object):
         except InputMessageInvalidError:
             logwarn_message = (
                 "The joint trajectory publisher message could not be created as the "
-                "'%s' are not initialized." % (self._traj_controllers)
+                "'%s' are not initialized." % (self.arm_traj_controllers)
             )
             if verbose:
                 rospy.logwarn(logwarn_message)
             raise InputMessageInvalidError(
                 message="Required controllers not initialised.",
-                details={"controlled_joints": self._effort_controllers},
+                details={"controlled_joints": self.arm_effort_controllers},
                 log_message=logwarn_message,
             )
 
@@ -1479,9 +1402,9 @@ class PandaControlServer(object):
                     "effort control"
                     if control_type == "effort_control"
                     else "position control",
-                    self._effort_controllers
+                    self.arm_effort_controllers
                     if control_type == "effort_control"
-                    else self._position_controllers,
+                    else self.arm_position_controllers,
                     "joint effort controllers"
                     if control_type == "effort_control"
                     else "joint position controllers",
@@ -1491,7 +1414,7 @@ class PandaControlServer(object):
                 rospy.logwarn(logwarn_message)
             raise InputMessageInvalidError(
                 message="Required controllers not initialised.",
-                details={"controlled_joints": self._effort_controllers},
+                details={"controlled_joints": self.arm_effort_controllers},
                 log_message=logwarn_message,
             )
 
@@ -1503,10 +1426,8 @@ class PandaControlServer(object):
         # Get control publisher message type and current joint states
         if control_type == "position_control":
             arm_state_dict = state_dict["arm"]["positions"]
-            arm_msg_type = self._arm_position_controller_msg_type
         elif control_type == "effort_control":
             arm_state_dict = state_dict["arm"]["efforts"]
-            arm_msg_type = self._arm_effort_controller_msg_type
 
         # Check service request input
         if len(joint_names) == 0:  # If not joint_names were given
@@ -1562,7 +1483,7 @@ class PandaControlServer(object):
             arm_position_commands[: len(control_input)] = control_input
 
             # Return publishers command dictionary
-            control_commands = [arm_msg_type(item) for item in arm_position_commands]
+            control_commands = [Float64(item) for item in arm_position_commands]
             return control_commands, controlled_joints_dict
         else:
             # Check if enough control values were given
@@ -1696,9 +1617,9 @@ class PandaControlServer(object):
         control_type = control_type.lower()
 
         # Get the joints which are contolled by a given control type
-        controlled_joints_dict = OrderedDict(zip(["arm", "hand", "both"], [[], [], []]))
+        controlled_joints = []
         if control_type == "position_control":
-            for position_controller in self._position_controllers:
+            for position_controller in self.arm_position_controllers:
                 try:
                     for claimed_resources in self.controllers[
                         position_controller
@@ -1711,7 +1632,7 @@ class PandaControlServer(object):
                 except KeyError:  # Controller not initialized
                     pass
         elif control_type == "effort_control":
-            for effort_controller in self._effort_controllers:
+            for effort_controller in self.arm_effort_controllers:
                 try:
                     for claimed_resources in self.controllers[
                         effort_controller
@@ -1724,7 +1645,8 @@ class PandaControlServer(object):
                 except KeyError:  # Controller not initialized
                     pass
         elif control_type == "traj_control" or control_type == "ee_control":
-            for traj_controller in self._traj_controllers:
+            controlled_joints =
+            for traj_controller in self.arm_traj_controllers:
                 try:
                     for claimed_resources in self.controllers[
                         traj_controller
@@ -1919,7 +1841,7 @@ class PandaControlServer(object):
 
         # Publish request
         rospy.logdebug("Publishing Panda arm joint positions control message.")
-        self._arm_position_pub.publish(control_pub_msgs["arm"])
+        self._arm_joint_position_pub.publish(control_pub_msgs["arm"])
 
         # Wait till control is finished or timeout has been reached
         if set_joint_positions_req.wait and not controllers_missing:
@@ -2053,7 +1975,7 @@ class PandaControlServer(object):
 
         # Publish request
         rospy.logdebug("Publishing Panda arm joint efforts control message.")
-        self._arm_effort_pub.publish(control_pub_msgs["arm"])
+        self._arm_joint_effort_pub.publish(control_pub_msgs["arm"])
 
         # Wait till control is finished or timeout has been reached
         if set_joint_efforts_req.wait and not controllers_missing:
@@ -2182,16 +2104,8 @@ class PandaControlServer(object):
         """
         self._as_arm_feedback = feedback
 
-        # Check if callback was called from the combined action server
-        if self._full_joint_traj_control:
-            # Combine feedback with hand feedback
-            combined_feedback = self._get_combined_action_server_fb_msg()
-
-            # Publish feedback to the combined action server
-            self._joint_traj_as.publish_feedback(combined_feedback)
-        else:
-            # Publish feedback to hand action server
-            self._arm_joint_traj_as.publish_feedback(feedback)
+        # Publish feedback to arm action server
+        self._arm_joint_traj_as.publish_feedback(feedback)
 
     def _arm_joint_traj_preempt_cb(self):
         """Relays the preempt request made to the
@@ -2201,4 +2115,3 @@ class PandaControlServer(object):
         # Stop panda_arm_controller action server
         self._arm_joint_traj_client.cancel_goal()
         self._arm_joint_traj_as.set_preempted()
-        self._full_joint_traj_control = False

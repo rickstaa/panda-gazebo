@@ -1,8 +1,9 @@
 <!--Launch file for adding the panda robot to the gazebo world-->
 <launch>
+    <!--TODO test other control types!-->
     <arg name="rviz" default="true"/>
     <arg name="load_gripper" default="true"/>
-    <arg name="use_joint_state_gui" default="false"/>
+    <!--Here-->
     <arg name="debug" default="false"/>
     <!--Moveit arguments-->
     <arg name="moveit" default="true"/>
@@ -16,85 +17,52 @@
     <arg name="paused" default="false"/>
     <!--Control arguments-->
     <!--    The control type used for controlling the robot (Options: Trajectory, position, effort)-->
-    <arg name="control_type" default="effort"/>
+    <arg name="control_type" default="trajectory"/>
+
+    <!--Retrieve the right hardware_interface for the control type-->
+    <arg if="$(eval arg('control_type') == 'position')" name="hardware_interface" value="PositionJointInterface"/>
+    <arg unless="$(eval arg('control_type') == 'position')" name="hardware_interface" value="EffortJointInterface"/>
 
     <!--Spawn the Panda robot-->
     <include file="$(find franka_gazebo)/launch/panda.launch">
         <arg name="gazebo" value="$(arg gazebo)"/>
-        <arg name="paused" value="$(arg paused)"/>
         <arg unless="$(arg gazebo_gui)" name="headless" value="true"/>
         <arg if="$(arg gazebo_gui)" name="headless" value="false"/>
+        <arg name="paused" value="$(arg paused)"/>
+        <arg name="use_gripper" default="$(arg load_gripper)"/>
+        <arg name="transmission" value="hardware_interface/$(arg hardware_interface)"/>
     </include>
 
-    <!--Retrieve the right hardware_interface for the control type-->
-    <arg if="$(eval arg('control_type') == 'effort')" name="hardware_interface" value="EffortJointInterface"/>
-    <arg unless="$(eval arg('control_type') == 'effort')" name="hardware_interface" value="PositionJointInterface"/>
-
-    <!-- If needed, broadcast static tf for robot root -->
-    <!-- <node unless="$(arg gazebo)" pkg="tf2_ros" type="static_transform_publisher" name="virtual_joint_broadcaster_1" args="0 0 0 0 0 0 world panda_link0" /> -->
+    <!--Load Moveit configuration values-->
+    <rosparam if="$(arg moveit)" file="$(find panda_gazebo)/cfg/controllers/moveit.yaml" command="load" />
 
     <!--Run the main MoveIt! executable without trajectory execution (we do not have controllers configured by default)-->
     <include ns="panda" if="$(arg moveit)" file="$(find panda_moveit_config)/launch/move_group.launch">
-        <arg name="allow_trajectory_execution" value="true"/>
-        <arg name="fake_execution" value="$(eval arg('gazebo') == 0)"/>
         <arg name="info" value="true"/>
         <arg name="debug" value="$(arg debug)"/>
         <arg name="pipeline" value="$(arg pipeline)" />
+        <arg name="allow_trajectory_execution" value="true"/>
+        <arg name="fake_execution" value="$(eval arg('gazebo') == 0)"/>
+        <arg name="load_gripper" value="$(arg load_gripper)"/>
         <arg name="load_robot_description" value="false"/>
     </include>
 
     <!--Load and start the controllers-->
-    <!--Joint effort controllers-->
-    <group ns="panda" if="$(eval arg('control_type') == 'effort')">
-        <include file="$(find panda_gazebo)/launch/load_joint_effort_controllers.launch">
-            <arg name="moveit" value="$(arg moveit)" />
-            <arg name="load_gripper" value="$(arg load_gripper)" />
-            <arg name="joint_state_controller" value="false"/>
-            <arg name="stopped" value="false"/>
-        </include>
-        <!--Load joint_trajectory controller in stopped mode
-            NOTE: This enabled us to set the initial robot pose using euclidean coordinates.
-        -->
-        <include file="$(find panda_gazebo)/launch/load_effort_joint_trajectory_controllers.launch">
-            <arg name="moveit" value="$(arg moveit)" />
-            <arg name="load_gripper" value="$(arg load_gripper)" />
-            <arg name="stopped" value="true"/>
-        </include>
-    </group>
-    <!--Joint position controllers-->
-    <!-- <group if="$(eval arg('control_type') == 'position')">
-        <include file="$(find panda_gazebo)/launch/load_joint_position_controllers.launch">
-            <arg name="moveit" value="$(arg moveit)" />
-            <arg name="gazebo" value="$(arg gazebo)" />
-            <arg name="load_gripper" value="$(arg load_gripper)" />
-            <arg name="joint_state_controller" value="false"/>
-            <arg name="stopped" value="false"/>
-        </include>
-    </group> -->
-    <!--Joint_trajectory controller (Loaded for joint position and joint trajectory control)
-        NOTE: Also loaded when control_type is invalid-->
-    <!-- <include unless="$(eval arg('control_type') == 'effort')" file="$(find panda_gazebo)/launch/load_joint_trajectory_controllers.launch">
-        <arg name="moveit" value="$(arg moveit)" />
-        <arg name="gazebo" value="$(arg gazebo)" />
-        <arg name="load_gripper" value="$(arg load_gripper)" />
-        <arg name="stopped" value="$(eval arg('control_type') != 'trajectory')"/>
-    </include> -->
-
-    <!--Set extra Moveit parameters
-        NOTE: The parameters below make sure the initial pose can be executed -->
-    <!--    Increase Moveit execution time limit-->
-    <param if="$(arg moveit)" name="move_group/trajectory_execution/allowed_execution_duration_scaling" value="4.0" />
-    <!--    Disable Moveit execution time monitoring all together-->
-    <param if="$(arg moveit)" name="move_group/trajectory_execution/execution_duration_monitoring" value="false" />
+    <include ns="panda" file="$(find panda_gazebo)/launch/load_controllers.launch">
+        <arg name="moveit" default="$(arg moveit)"/>
+        <arg name="control_type" value="$(arg control_type)"/>
+        <arg name="load_gripper" value="$(arg load_gripper)"/>
+    </include>
 
     <!--Load Moveit control services-->
-    <node ns="panda" if="$(arg moveit)" pkg="panda_gazebo" type="panda_moveit_server.py" name="panda_moveit_planner_server" required="true">
+    <!--FIXME: Load gripper false not working-->
+    <!-- <node ns="panda" if="$(arg moveit)" pkg="panda_gazebo" type="panda_moveit_server.py" name="panda_moveit_planner_server" required="true">
         <param name="max_velocity_scaling_factor" value="$(arg max_velocity_scaling_factor)"/>
         <param name="max_acceleration_scaling_factor" value="$(arg max_acceleration_scaling_factor)"/>
-    </node>
+    </node> -->
 
     <!--Load ros_control service-->
-    <node ns="panda" pkg="panda_gazebo" type="panda_control_server.py" name="panda_control_server" required="true"/>
+    <!-- <node ns="panda" pkg="panda_gazebo" type="panda_control_server.py" name="panda_control_server" required="true"/> -->
 
     <!--Load RViz-->
     <include ns="panda" if="$(arg rviz)" file="$(find panda_gazebo)/launch/panda_rviz.launch">

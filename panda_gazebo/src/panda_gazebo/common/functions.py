@@ -87,46 +87,6 @@ def panda_action_msg_2_control_msgs_action_msg(panda_action_msg):
     return control_msgs_action_msg
 
 
-def joint_positions_2_follow_joint_trajectory_goal(joint_positions, time_from_start=1):
-    """Converts a dictionary of joint_positions into a FollowJointTrajectoryGoal
-    msgs.
-
-    Args:
-        joint_positions (union[dict, :obj:`control_msgs.msg.SetJointPositionsRequest`]):
-            Dictionary or message containing the joint positions of each of the robot
-            joints.
-        time_from_start (dict, optional): The time from the start at which the joint
-            position has to be achieved. Defaults to  1 sec.
-
-    Returns:
-        :obj:`control_msgs.msg.FollowJointTrajectoryGoal`):New FollowJointTrajectoryGoal
-            message.
-    """
-    # Initiate waypoints and new trajectory message
-    goal_msg = FollowJointTrajectoryGoal()
-    waypoint = JointTrajectoryPoint()
-    waypoint.time_from_start.secs = time_from_start
-
-    # creates waypoint from joint_posisitions
-    if isinstance(joint_positions, SetJointPositionsRequest):
-        waypoint.positions = joint_positions.joint_positions
-        goal_msg.trajectory.joint_names = joint_positions.joint_names
-    elif isinstance(joint_positions, dict):
-        waypoint.positions = list(joint_positions.values())
-        goal_msg.trajectory.joint_names = list(joint_positions.keys())
-    else:
-        TypeError(
-            "FollowJointTrajectory message could not be created since the "
-            "joint_positions argument has the %s type while the "
-            "'joint_positions_2_follow_joint_trajectory_goal' function only accepts "
-            "a dictionary or a SetJointPositions message." % type(joint_positions)
-        )
-
-    # Add waypoint to trajectory message and return goal msgs
-    goal_msg.trajectory.points.append(waypoint)
-    return goal_msg
-
-
 def controller_list_array_2_dict(controller_list_msgs):
     """Converts a :controller_manager_msgs:`Controller_manager/list_controllers
     <html/srv/ListControllers.html>` message into a controller information dictionary.
@@ -172,50 +132,6 @@ def translate_actionclient_result_error_code(actionclient_retval):
         if error_dict[actionclient_retval.error_code] != "SUCCESSFUL"
         else ""
     )
-
-
-def translate_gripper_width_2_finger_joint_commands(input_dict):
-    """Translate any ``gripper_width`` keys that are present in the action dictionary
-    into the corresponding finger joint control commands which are used by the
-    controllers.
-
-    Args:
-        input_dict (dict): Dictionary containing the desired actions.
-
-    Returns:
-        dict: Action dictionary in which the gripper_width is translated to finger joint
-            commands.
-    """
-    input_dict = input_dict.copy()  # Ensure that changes stay within this scope
-
-    # Translate any 'gripper_width' keys into Panda finger joint command keys
-    if isinstance(input_dict, dict):
-        if "gripper_width" in input_dict.keys():  # If dictionary contains commands
-            finger_position = input_dict["gripper_width"] / 2.0
-            del input_dict["gripper_width"]
-            input_dict["panda_finger_joint1"] = finger_position
-            input_dict["panda_finger_joint2"] = finger_position
-        elif (
-            "gripper_width_min" in input_dict.keys()
-            or "gripper_width_max" in input_dict.keys()
-        ):  # If dictionary contains bounds commands
-            if "gripper_width_min" in input_dict.keys():  # Translate min
-                finger_position_min = input_dict["gripper_width_min"] / 2.0
-                del input_dict["gripper_width_min"]
-                input_dict["panda_finger_joint1_min"] = finger_position_min
-                input_dict["panda_finger_joint2_min"] = finger_position_min
-            if "gripper_width_max" in input_dict.keys():  # Translate max
-                finger_position_max = input_dict["gripper_width_max"] / 2.0
-                del input_dict["gripper_width_max"]
-                input_dict["panda_finger_joint1_max"] = finger_position_max
-                input_dict["panda_finger_joint2_max"] = finger_position_max
-    else:
-        raise TypeError(
-            "Input argument has the wrong type the"
-            "'translate_gripper_width_2_finger_joint_commands'"
-            "function only takes a dictionary."
-        )
-    return input_dict
 
 
 #################################################

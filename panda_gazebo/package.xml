@@ -90,11 +90,10 @@
 
   <!--Local ROS package dependencies -->
   <exec_depend>franka_description</exec_depend>
+  <exec_depend>franka_gazebo</exec_depend>
   <exec_depend>panda_moveit_config</exec_depend>
 
   <!-- Python packages -->
-  <depend>gym-pip</depend>
-  <depend>python3-yaml</depend>
 
   <!-- The export tag contains other, unspecified, tags (Used for metapackages and
   Plugins -->

@@ -8,9 +8,7 @@
     <arg name="gazebo_gui" default="true"/>
     <!--Control arguments-->
     <!--    The control type used for controlling the robot (Options: Trajectory, position, effort)-->
-    <!-- <arg name="control_type" default="trajectory"/> -->
-    <arg name="control_type" default="position"/>
-    <!-- <arg name="control_type" default="effort"/> -->
+    <arg name="control_type" default="effort"/>
 
     <!--Launch gazebo environment-->
     <include file="$(find panda_gazebo)/launch/start_world.launch">

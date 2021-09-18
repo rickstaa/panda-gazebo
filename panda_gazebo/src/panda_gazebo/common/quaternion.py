@@ -19,6 +19,11 @@ class Quaternion(QuaternionParent):
         z (float): The quaternion z coordinate.
         w (float): The quaternion w coordinate.
         norm (float): The quaternion norm.
+
+    Methods:
+        quaternion_norm(cls, Quaternion): Calculates the norm of a quaternion.
+        normalize_quaternion(cls, quaternion): Normalizes a given quaternion.
+        normalize(): Normalize the quaternion.
     """
 
     def __init__(self, *args, **kwds):
@@ -28,8 +33,6 @@ class Quaternion(QuaternionParent):
     def normalize(self):
         """Normalizes the quaternion."""
         norm = self.norm
-
-        # Normalize quaternion and return
         if norm == 0.0 or isnan(norm):
             rospy.logwarn(
                 "Quaternion could not be normalized since the norm could not be "
@@ -55,17 +58,15 @@ class Quaternion(QuaternionParent):
         """Normalizes a given quaternion.
 
         Args:
-            Quaternion (:obj:`geometry_msgs.msg.Quaternion`): A quaternion.
+            quaternion (:obj:`geometry_msgs.msg.Quaternion`): A quaternion.
 
         Returns:
             :obj:`geometry_msgs.msg.Quaternion`: The normalized quaternion.
         """
-        quaternion = copy.deepcopy(
-            quaternion
-        )  # Create a hardcopy such that the original object is not modified
+        quaternion = copy.deepcopy(quaternion)
         norm = cls.quaternion_norm(quaternion)
 
-        # Normalize quaternion and return
+        # Normalize quaternion
         if norm == nan:
             # test
             rospy.logwarn(
