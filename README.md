@@ -8,4 +8,4 @@ ROS RL package to create the openai_ros panda task environments.
 
 ## Installation and Usage
 
-Please see the [docs](https://rickstaa.github.io/panda-autograsp/) for installation and usage instructions.
+Please see the [docs](https://rickstaa.github.io/panda-gazebo/) for installation and usage instructions.
