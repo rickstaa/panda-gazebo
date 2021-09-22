@@ -70,6 +70,7 @@ add_service_files(
   GetRandomEePose.srv
   GetRandomJointPositions.srv
   SetEePose.srv
+  SetGripperWidth.srv
   SetJointCommands.srv
   SetJointEfforts.srv
   SetJointPositions.srv

@@ -1,5 +1,7 @@
 # Service that can be used to control the robot joint positions/efforts using the
 # panda_control_server.
+# NOTE: This is done by publishing the joint commands to the right topics while sending
+# the gripper  width to the 'franka_gripper/move' action service.
 string[] joint_names
 float64[] joint_commands
 string control_type

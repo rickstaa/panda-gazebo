@@ -1,6 +1,6 @@
 # Service that can be used to control the robot joint positions using the
-# panda_control_server. This is done by publishing the joint efforts commands
-# to the right topic.
+# panda_control_server.
+# NOTE: This is done by publishing the joint efforts commands to the right topics.
 string[] joint_names
 float64[] joint_positions
 bool wait

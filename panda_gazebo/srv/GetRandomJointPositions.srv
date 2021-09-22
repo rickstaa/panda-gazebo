@@ -1,5 +1,5 @@
 # Service that can be used to get valid joint positions for controlling the robot arm
-# and hand
+# and hand.
 JointLimits joint_limits
 ---
 bool success

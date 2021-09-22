@@ -10,9 +10,8 @@ Main services:
     * panda_arm/set_joint_positions
     * panda_arm/set_joint_efforts
     * panda_arm/follow_joint_trajectory
+    * panda_hand/set_gripper_width
 """
-# TODO: Add combined panda_control effort service
-# TODO: Add combined panda_control position service
 # TODO: Add gravity compensation effort control.
 
 import copy
@@ -47,6 +46,8 @@ from panda_gazebo.msg import (
 from panda_gazebo.srv import (
     GetControlledJoints,
     GetControlledJointsResponse,
+    SetGripperWidth,
+    SetGripperWidthResponse,
     SetJointCommands,
     SetJointCommandsResponse,
     SetJointEfforts,
@@ -178,6 +179,18 @@ class PandaControlServer(object):
             "%s/panda_arm/set_joint_efforts" % rospy.get_name().split("/")[-1],
             SetJointEfforts,
             self._arm_set_joint_efforts_cb,
+        )
+        # NOTE: The service below serves as a wrapper around the original
+        # 'franka_gripper/move' action. It makes sure that users only need to set the
+        # gripper width while it automatically sets the speed to the maximum. It also
+        # clips gripper width that are not possible.
+        rospy.logdebug(
+            "Creating '%s/panda_hand/set_gripper_width' service." % rospy.get_name()
+        )
+        self._set_gripper_width_srv = rospy.Service(
+            "%s/panda_hand/set_gripper_width" % rospy.get_name().split("/")[-1],
+            SetGripperWidth,
+            self._set_gripper_width_cb,
         )
         rospy.loginfo("'%s' services created successfully." % rospy.get_name())
 
@@ -1809,6 +1822,46 @@ class PandaControlServer(object):
 
         resp.success = True
         resp.message = "Everything went OK"
+        return resp
+
+    def _set_gripper_width_cb(self, set_gripper_width_req):
+        """Request gripper width.
+
+        Args:
+            set_gripper_width_req (:obj:`panda_gazebo.srv.SetGripperWidth`):
+                Service request message specifying the gripper width for the robot hand.
+
+        Returns:
+            :obj:`panda_gazebo.srv.SetGripperWidthReponse`: Service response.
+        """
+        # Check if gripper width is within boundaries
+        if set_gripper_width_req.width < 0.0 or set_gripper_width_req.width > 0.08:
+            rospy.logwarn(
+                "Gripper width was clipped as it was not within bounds [0, 0.8]."
+            )
+            gripper_width = np.clip(set_gripper_width_req.width, 0, 0.08)
+        else:
+            gripper_width = set_gripper_width_req.width
+
+        # Create 'franka_gripper/move' action request message
+        req = MoveGoal()
+        req.width = gripper_width
+        req.speed = 0.2  # NOTE: Use maximum gripper speed
+
+        # Invoke 'franka_gripper/move' aciton server
+        self._gripper_move_client.send_goal(req)
+
+        # Return result
+        resp = SetGripperWidthResponse()
+        if set_gripper_width_req.wait:
+            gripper_result = self._gripper_move_client.wait_for_result()
+            resp.success = gripper_result
+        else:
+            resp.success = True
+        if resp.success:
+            resp.message = "Everything went OK"
+        else:
+            resp.message = "Gripper width could not be set"
         return resp
 
     def _get_controlled_joints_cb(self, get_controlled_joints_req):

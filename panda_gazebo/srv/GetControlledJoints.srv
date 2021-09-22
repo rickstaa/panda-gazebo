@@ -1,5 +1,5 @@
 # Service that can be used to retrieve the joints that are controlled for a given
-# control type
+# control type.
 string control_type
 ---
 bool success
