@@ -1,0 +1,9 @@
+# Service that can be used to control the robot joint positions/efforts using the
+# panda_control_server.
+string[] joint_names
+float64[] joint_commands
+string control_type
+bool wait
+---
+bool success
+string message

@@ -8,7 +8,6 @@ import control_msgs.msg as control_msgs
 import rospy
 from actionlib_msgs.msg import GoalStatusArray
 from control_msgs.msg import FollowJointTrajectoryGoal
-from panda_gazebo.srv import SetJointPositionsRequest
 from rospy.exceptions import ROSException
 from sensor_msgs.msg import JointState
 from trajectory_msgs.msg import JointTrajectoryPoint

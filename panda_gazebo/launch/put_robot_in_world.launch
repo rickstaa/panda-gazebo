@@ -42,7 +42,7 @@
         <arg name="debug" value="$(arg debug)"/>
         <arg name="pipeline" value="$(arg pipeline)" />
         <arg name="allow_trajectory_execution" value="true"/>
-        <arg name="fake_execution" value="$(eval arg('gazebo') == 0)"/>
+        <arg name="fake_execution" value="false"/>
         <arg name="load_gripper" value="$(arg load_gripper)"/>
         <arg name="load_robot_description" value="false"/>
     </include>
