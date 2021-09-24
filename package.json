@@ -55,7 +55,7 @@
     "remark-cli": "10.0.0",
     "remark-lint": "9.1.0",
     "remark-preset-lint-recommended": "6.1.0",
-    "sort-package-json": "1.51.0",
+    "sort-package-json": "1.52.0",
     "standard-version": "^9.3.1"
   }
 }
