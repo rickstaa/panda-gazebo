@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>panda_gazebo.common.quaternion.Quaternion &mdash; panda-gazebo 1.0.17 documentation</title>
+  <title>panda_gazebo.common.quaternion.Quaternion &mdash; panda-gazebo 2.0.1 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.0.17
+                2.0.1
               </div>
             
           
@@ -110,9 +110,7 @@
 <li class="toctree-l3 current"><a class="reference internal" href="panda_gazebo.common.html">panda_gazebo.common</a><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="panda_gazebo.common.action_client_state.html">panda_gazebo.common.action_client_state</a></li>
 <li class="toctree-l4"><a class="reference internal" href="panda_gazebo.common.controller_info_dict.html">panda_gazebo.common.controller_info_dict</a></li>
-<li class="toctree-l4"><a class="reference internal" href="panda_gazebo.common.euler_angles.html">panda_gazebo.common.euler_angles</a></li>
 <li class="toctree-l4"><a class="reference internal" href="panda_gazebo.common.functions.html">panda_gazebo.common.functions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="panda_gazebo.common.nested_dict.html">panda_gazebo.common.nested_dict</a></li>
 <li class="toctree-l4 current"><a class="reference internal" href="panda_gazebo.common.quaternion.html">panda_gazebo.common.quaternion</a></li>
 </ul>
 </li>
@@ -259,6 +257,24 @@
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="panda_gazebo.common.quaternion.Quaternion.quaternion_norm">
+<span class="sig-name descname"><span class="pre">quaternion_norm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Quaternion</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/panda_gazebo/common/quaternion.html#Quaternion.quaternion_norm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.common.quaternion.Quaternion.quaternion_norm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the norm of a quaternion.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="panda_gazebo.common.quaternion.Quaternion.normalize_quaternion">
+<span class="sig-name descname"><span class="pre">normalize_quaternion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quaternion</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/panda_gazebo/common/quaternion.html#Quaternion.normalize_quaternion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.common.quaternion.Quaternion.normalize_quaternion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Normalizes a given quaternion.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="panda_gazebo.common.quaternion.Quaternion.normalize">
+<span class="sig-name descname"><span class="pre">normalize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/panda_gazebo/common/quaternion.html#Quaternion.normalize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.common.quaternion.Quaternion.normalize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Normalize the quaternion.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="panda_gazebo.common.quaternion.Quaternion.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/panda_gazebo/common/quaternion.html#Quaternion.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.common.quaternion.Quaternion.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initiates quaternion object.</p>
@@ -280,13 +296,13 @@
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">deserialize_numpy</span></code>(str, numpy)</p></td>
 <td><p>unpack serialized message in str into this message instance using numpy for array types :param str: byte array of serialized message, <code class="docutils literal notranslate"><span class="pre">str</span></code> :param numpy: numpy python module</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#panda_gazebo.common.quaternion.Quaternion.normalize" title="panda_gazebo.common.quaternion.Quaternion.normalize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalize</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#id0" title="panda_gazebo.common.quaternion.Quaternion.normalize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalize</span></code></a>()</p></td>
 <td><p>Normalizes the quaternion.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#panda_gazebo.common.quaternion.Quaternion.normalize_quaternion" title="panda_gazebo.common.quaternion.Quaternion.normalize_quaternion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalize_quaternion</span></code></a>(quaternion)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#id2" title="panda_gazebo.common.quaternion.Quaternion.normalize_quaternion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalize_quaternion</span></code></a>(quaternion)</p></td>
 <td><p>Normalizes a given quaternion.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#panda_gazebo.common.quaternion.Quaternion.quaternion_norm" title="panda_gazebo.common.quaternion.Quaternion.quaternion_norm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quaternion_norm</span></code></a>(Quaternion)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#id3" title="panda_gazebo.common.quaternion.Quaternion.quaternion_norm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quaternion_norm</span></code></a>(Quaternion)</p></td>
 <td><p>Calculates the norm of a quaternion.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">serialize</span></code>(buff)</p></td>
@@ -316,20 +332,20 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#panda_gazebo.common.quaternion.Quaternion.w" title="panda_gazebo.common.quaternion.Quaternion.w"><code class="xref py py-obj docutils literal notranslate"><span class="pre">w</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#id0" title="panda_gazebo.common.quaternion.Quaternion.norm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">norm</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#id1" title="panda_gazebo.common.quaternion.Quaternion.norm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">norm</span></code></a></p></td>
 <td><p>Retrieves the quaternion norm.</p></td>
 </tr>
 </tbody>
 </table>
 <dl class="py method">
-<dt class="sig sig-object py" id="panda_gazebo.common.quaternion.Quaternion.normalize">
-<span class="sig-name descname"><span class="pre">normalize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/panda_gazebo/common/quaternion.html#Quaternion.normalize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.common.quaternion.Quaternion.normalize" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">normalize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/panda_gazebo/common/quaternion.html#Quaternion.normalize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id0" title="Permalink to this definition">¶</a></dt>
 <dd><p>Normalizes the quaternion.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id0">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">norm</span></span><a class="headerlink" href="#id0" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id1">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">norm</span></span><a class="headerlink" href="#id1" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieves the quaternion norm.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -342,12 +358,12 @@
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="panda_gazebo.common.quaternion.Quaternion.normalize_quaternion">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">normalize_quaternion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">quaternion</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/panda_gazebo/common/quaternion.html#Quaternion.normalize_quaternion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.common.quaternion.Quaternion.normalize_quaternion" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id2">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">normalize_quaternion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">quaternion</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/panda_gazebo/common/quaternion.html#Quaternion.normalize_quaternion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id2" title="Permalink to this definition">¶</a></dt>
 <dd><p>Normalizes a given quaternion.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>Quaternion</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">geometry_msgs.msg.Quaternion</span></code>) – A quaternion.</p>
+<dd class="field-odd"><p><strong>quaternion</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">geometry_msgs.msg.Quaternion</span></code>) – A quaternion.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The normalized quaternion.</p>
@@ -359,8 +375,8 @@
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="panda_gazebo.common.quaternion.Quaternion.quaternion_norm">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">quaternion_norm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Quaternion</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/panda_gazebo/common/quaternion.html#Quaternion.quaternion_norm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.common.quaternion.Quaternion.quaternion_norm" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id3">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">quaternion_norm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Quaternion</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/panda_gazebo/common/quaternion.html#Quaternion.quaternion_norm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id3" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates the norm of a quaternion.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

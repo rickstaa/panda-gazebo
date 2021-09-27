@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>panda_gazebo.common.functions &mdash; panda-gazebo 1.0.17 documentation</title>
+  <title>panda_gazebo.common.functions &mdash; panda-gazebo 2.0.1 documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                1.0.17
+                2.0.1
               </div>
             
           
@@ -178,8 +178,7 @@
 <span class="kn">import</span> <span class="nn">control_msgs.msg</span> <span class="k">as</span> <span class="nn">control_msgs</span>
 <span class="kn">import</span> <span class="nn">rospy</span>
 <span class="kn">from</span> <span class="nn">actionlib_msgs.msg</span> <span class="k">import</span> <span class="n">GoalStatusArray</span>
-<span class="kn">from</span> <span class="nn">panda_gazebo.msg</span> <span class="k">import</span> <span class="n">FollowJointTrajectoryGoal</span>
-<span class="kn">from</span> <span class="nn">panda_gazebo.srv</span> <span class="k">import</span> <span class="n">SetJointPositionsRequest</span>
+<span class="kn">from</span> <span class="nn">control_msgs.msg</span> <span class="k">import</span> <span class="n">FollowJointTrajectoryGoal</span>
 <span class="kn">from</span> <span class="nn">rospy.exceptions</span> <span class="k">import</span> <span class="n">ROSException</span>
 <span class="kn">from</span> <span class="nn">sensor_msgs.msg</span> <span class="k">import</span> <span class="n">JointState</span>
 <span class="kn">from</span> <span class="nn">trajectory_msgs.msg</span> <span class="k">import</span> <span class="n">JointTrajectoryPoint</span>
@@ -219,7 +218,7 @@
 <span class="sd">        action_dict (dict): Dictionary containing actions and joints.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        :obj:`panda_gazebo.msg.FollowJointTrajectoryGoal`: New FollowJointTrajectoryGoal</span>
+<span class="sd">        :obj:`control_msgs.msg.FollowJointTrajectoryGoal`: New FollowJointTrajectoryGoal</span>
 <span class="sd">            message.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Initiate waypoints and new trajectory message</span>
@@ -243,7 +242,7 @@
 <span class="sd">    &lt;html/action/FollowJointTrajectory.html&gt;` action message.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        panda_action_msg :obj:`panda_gazebo.msg.FollowJointTrajectoryGoal`: Panda_gazebo</span>
+<span class="sd">        panda_action_msg :obj:`control_msgs.msg.FollowJointTrajectoryGoal`: Panda_gazebo</span>
 <span class="sd">            follow joint trajectory goal message.</span>
 
 <span class="sd">    Returns:</span>
@@ -256,46 +255,6 @@
     <span class="n">control_msgs_action_msg</span><span class="o">.</span><span class="n">goal_tolerance</span> <span class="o">=</span> <span class="n">panda_action_msg</span><span class="o">.</span><span class="n">goal_tolerance</span>
     <span class="n">control_msgs_action_msg</span><span class="o">.</span><span class="n">path_tolerance</span> <span class="o">=</span> <span class="n">panda_action_msg</span><span class="o">.</span><span class="n">path_tolerance</span>
     <span class="k">return</span> <span class="n">control_msgs_action_msg</span></div>
-
-
-<div class="viewcode-block" id="joint_positions_2_follow_joint_trajectory_goal"><a class="viewcode-back" href="../../../api/_autosummary/panda_gazebo.common.functions.joint_positions_2_follow_joint_trajectory_goal.html#panda_gazebo.common.functions.joint_positions_2_follow_joint_trajectory_goal">[docs]</a><span class="k">def</span> <span class="nf">joint_positions_2_follow_joint_trajectory_goal</span><span class="p">(</span><span class="n">joint_positions</span><span class="p">,</span> <span class="n">time_from_start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Converts a dictionary of joint_positions into a FollowJointTrajectoryGoal</span>
-<span class="sd">    msgs.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        joint_positions (union[dict, :obj:`panda_gazebo.msg.SetJointPositionsRequest`]):</span>
-<span class="sd">            Dictionary or message containing the joint positions of each of the robot</span>
-<span class="sd">            joints.</span>
-<span class="sd">        time_from_start (dict, optional): The time from the start at which the joint</span>
-<span class="sd">            position has to be achieved. Defaults to  1 sec.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        :obj:`panda_gazebo.msg.FollowJointTrajectoryGoal`):New FollowJointTrajectoryGoal</span>
-<span class="sd">            message.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Initiate waypoints and new trajectory message</span>
-    <span class="n">goal_msg</span> <span class="o">=</span> <span class="n">FollowJointTrajectoryGoal</span><span class="p">()</span>
-    <span class="n">waypoint</span> <span class="o">=</span> <span class="n">JointTrajectoryPoint</span><span class="p">()</span>
-    <span class="n">waypoint</span><span class="o">.</span><span class="n">time_from_start</span><span class="o">.</span><span class="n">secs</span> <span class="o">=</span> <span class="n">time_from_start</span>
-
-    <span class="c1"># creates waypoint from joint_posisitions</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">joint_positions</span><span class="p">,</span> <span class="n">SetJointPositionsRequest</span><span class="p">):</span>
-        <span class="n">waypoint</span><span class="o">.</span><span class="n">positions</span> <span class="o">=</span> <span class="n">joint_positions</span><span class="o">.</span><span class="n">joint_positions</span>
-        <span class="n">goal_msg</span><span class="o">.</span><span class="n">trajectory</span><span class="o">.</span><span class="n">joint_names</span> <span class="o">=</span> <span class="n">joint_positions</span><span class="o">.</span><span class="n">joint_names</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">joint_positions</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-        <span class="n">waypoint</span><span class="o">.</span><span class="n">positions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">joint_positions</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-        <span class="n">goal_msg</span><span class="o">.</span><span class="n">trajectory</span><span class="o">.</span><span class="n">joint_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">joint_positions</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="ne">TypeError</span><span class="p">(</span>
-            <span class="s2">&quot;FollowJointTrajectory message could not be created since the &quot;</span>
-            <span class="s2">&quot;joint_positions argument has the </span><span class="si">%s</span><span class="s2"> type while the &quot;</span>
-            <span class="s2">&quot;&#39;joint_positions_2_follow_joint_trajectory_goal&#39; function only accepts &quot;</span>
-            <span class="s2">&quot;a dictionary or a SetJointPositions message.&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">joint_positions</span><span class="p">)</span>
-        <span class="p">)</span>
-
-    <span class="c1"># Add waypoint to trajectory message and return goal msgs</span>
-    <span class="n">goal_msg</span><span class="o">.</span><span class="n">trajectory</span><span class="o">.</span><span class="n">points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">waypoint</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">goal_msg</span></div>
 
 
 <div class="viewcode-block" id="controller_list_array_2_dict"><a class="viewcode-back" href="../../../api/_autosummary/panda_gazebo.common.functions.controller_list_array_2_dict.html#panda_gazebo.common.functions.controller_list_array_2_dict">[docs]</a><span class="k">def</span> <span class="nf">controller_list_array_2_dict</span><span class="p">(</span><span class="n">controller_list_msgs</span><span class="p">):</span>
@@ -345,48 +304,26 @@
     <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="translate_gripper_width_2_finger_joint_commands"><a class="viewcode-back" href="../../../api/_autosummary/panda_gazebo.common.functions.translate_gripper_width_2_finger_joint_commands.html#panda_gazebo.common.functions.translate_gripper_width_2_finger_joint_commands">[docs]</a><span class="k">def</span> <span class="nf">translate_gripper_width_2_finger_joint_commands</span><span class="p">(</span><span class="n">input_dict</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Translate any ``gripper_width`` keys that are present in the action dictionary</span>
-<span class="sd">    into the corresponding finger joint control commands which are used by the</span>
-<span class="sd">    controllers.</span>
+<div class="viewcode-block" id="translate_moveit_error_code"><a class="viewcode-back" href="../../../api/_autosummary/panda_gazebo.common.functions.translate_moveit_error_code.html#panda_gazebo.common.functions.translate_moveit_error_code">[docs]</a><span class="k">def</span> <span class="nf">translate_moveit_error_code</span><span class="p">(</span><span class="n">moveit_error_code</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Translates a MoveIt error code object into a human readable error message.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        input_dict (dict): Dictionary containing the desired actions.</span>
+<span class="sd">        moveit_error_code (:obj:`~moveit_msgs.msg._MoveItErrorCodes.MoveItErrorCodes`):</span>
+<span class="sd">            The MoveIt error code object</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        dict: Action dictionary in which the gripper_width is translated to finger joint</span>
-<span class="sd">            commands.</span>
+<span class="sd">        str: Error string that corresponds to the error code.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">input_dict</span> <span class="o">=</span> <span class="n">input_dict</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>  <span class="c1"># Ensure that changes stay within this scope</span>
-
-    <span class="c1"># Translate any &#39;gripper_width&#39; keys into Panda finger joint command keys</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_dict</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-        <span class="k">if</span> <span class="s2">&quot;gripper_width&quot;</span> <span class="ow">in</span> <span class="n">input_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>  <span class="c1"># If dictionary contains commands</span>
-            <span class="n">finger_position</span> <span class="o">=</span> <span class="n">input_dict</span><span class="p">[</span><span class="s2">&quot;gripper_width&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mf">2.0</span>
-            <span class="k">del</span> <span class="n">input_dict</span><span class="p">[</span><span class="s2">&quot;gripper_width&quot;</span><span class="p">]</span>
-            <span class="n">input_dict</span><span class="p">[</span><span class="s2">&quot;panda_finger_joint1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">finger_position</span>
-            <span class="n">input_dict</span><span class="p">[</span><span class="s2">&quot;panda_finger_joint2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">finger_position</span>
-        <span class="k">elif</span> <span class="p">(</span>
-            <span class="s2">&quot;gripper_width_min&quot;</span> <span class="ow">in</span> <span class="n">input_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-            <span class="ow">or</span> <span class="s2">&quot;gripper_width_max&quot;</span> <span class="ow">in</span> <span class="n">input_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-        <span class="p">):</span>  <span class="c1"># If dictionary contains bounds commands</span>
-            <span class="k">if</span> <span class="s2">&quot;gripper_width_min&quot;</span> <span class="ow">in</span> <span class="n">input_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>  <span class="c1"># Translate min</span>
-                <span class="n">finger_position_min</span> <span class="o">=</span> <span class="n">input_dict</span><span class="p">[</span><span class="s2">&quot;gripper_width_min&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mf">2.0</span>
-                <span class="k">del</span> <span class="n">input_dict</span><span class="p">[</span><span class="s2">&quot;gripper_width_min&quot;</span><span class="p">]</span>
-                <span class="n">input_dict</span><span class="p">[</span><span class="s2">&quot;panda_finger_joint1_min&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">finger_position_min</span>
-                <span class="n">input_dict</span><span class="p">[</span><span class="s2">&quot;panda_finger_joint2_min&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">finger_position_min</span>
-            <span class="k">if</span> <span class="s2">&quot;gripper_width_max&quot;</span> <span class="ow">in</span> <span class="n">input_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>  <span class="c1"># Translate max</span>
-                <span class="n">finger_position_max</span> <span class="o">=</span> <span class="n">input_dict</span><span class="p">[</span><span class="s2">&quot;gripper_width_max&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mf">2.0</span>
-                <span class="k">del</span> <span class="n">input_dict</span><span class="p">[</span><span class="s2">&quot;gripper_width_max&quot;</span><span class="p">]</span>
-                <span class="n">input_dict</span><span class="p">[</span><span class="s2">&quot;panda_finger_joint1_max&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">finger_position_max</span>
-                <span class="n">input_dict</span><span class="p">[</span><span class="s2">&quot;panda_finger_joint2_max&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">finger_position_max</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-            <span class="s2">&quot;Input argument has the wrong type the&quot;</span>
-            <span class="s2">&quot;&#39;translate_gripper_width_2_finger_joint_commands&#39;&quot;</span>
-            <span class="s2">&quot;function only takes a dictionary.&quot;</span>
-        <span class="p">)</span>
-    <span class="k">return</span> <span class="n">input_dict</span></div>
+    <span class="n">error_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">value</span><span class="p">:</span> <span class="n">attr</span>
+        <span class="k">for</span> <span class="n">attr</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">moveit_error_code</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">attr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;_&quot;</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">isupper</span><span class="p">,</span> <span class="n">attr</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)))</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">error_dict</span><span class="p">[</span><span class="n">moveit_error_code</span><span class="o">.</span><span class="n">val</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span>
+        <span class="k">if</span> <span class="n">error_dict</span><span class="p">[</span><span class="n">moveit_error_code</span><span class="o">.</span><span class="n">val</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;SUCCESSFUL&quot;</span>
+        <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+    <span class="p">)</span></div>
 
 
 <span class="c1">#################################################</span>

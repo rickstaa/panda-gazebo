@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>panda_control_server &mdash; panda-gazebo 1.0.17 documentation</title>
+  <title>panda_control_server &mdash; panda-gazebo 2.0.1 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.0.17
+                2.0.1
               </div>
             
           
@@ -204,17 +204,12 @@ Franka robot.</p>
 <span class="lineno"> 9 </span>        <span class="n">autofill_traj_positions</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_param</span><span class="p">(</span><span class="s2">&quot;~autofill_traj_positions&quot;</span><span class="p">)</span>
 <span class="lineno">10 </span>    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
 <span class="lineno">11 </span>        <span class="n">autofill_traj_positions</span> <span class="o">=</span> <span class="bp">False</span>
-<span class="lineno">12 </span>    <span class="k">try</span><span class="p">:</span>  <span class="c1"># Check required services</span>
-<span class="lineno">13 </span>        <span class="n">create_extra_services</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_param</span><span class="p">(</span><span class="s2">&quot;~create_extra_services&quot;</span><span class="p">)</span>
-<span class="lineno">14 </span>    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-<span class="lineno">15 </span>        <span class="n">create_extra_services</span> <span class="o">=</span> <span class="bp">False</span>
-<span class="lineno">16 </span>
-<span class="lineno">17 </span>    <span class="c1"># Start control server</span>
-<span class="lineno">18 </span>    <span class="n">control_server</span> <span class="o">=</span> <span class="n">PandaControlServer</span><span class="p">(</span>
-<span class="lineno">19 </span>        <span class="n">autofill_traj_positions</span><span class="o">=</span><span class="n">autofill_traj_positions</span><span class="p">,</span>
-<span class="lineno">20 </span>        <span class="n">create_extra_services</span><span class="o">=</span><span class="n">create_extra_services</span><span class="p">,</span>
-<span class="lineno">21 </span>    <span class="p">)</span>
-<span class="lineno">22 </span>    <span class="n">rospy</span><span class="o">.</span><span class="n">spin</span><span class="p">()</span>  <span class="c1"># Maintain the service open</span>
+<span class="lineno">12 </span>
+<span class="lineno">13 </span>    <span class="c1"># Start control server</span>
+<span class="lineno">14 </span>    <span class="n">control_server</span> <span class="o">=</span> <span class="n">PandaControlServer</span><span class="p">(</span>
+<span class="lineno">15 </span>        <span class="n">autofill_traj_positions</span><span class="o">=</span><span class="n">autofill_traj_positions</span><span class="p">,</span>
+<span class="lineno">16 </span>    <span class="p">)</span>
+<span class="lineno">17 </span>    <span class="n">rospy</span><span class="o">.</span><span class="n">spin</span><span class="p">()</span>  <span class="c1"># Maintain the service open</span>
 </pre></div>
 </div>
 </div>

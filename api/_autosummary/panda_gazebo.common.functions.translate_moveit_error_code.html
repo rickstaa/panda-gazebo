@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>panda_gazebo.common.euler_angles &mdash; panda-gazebo 1.0.17 documentation</title>
+  <title>panda_gazebo.common.functions.translate_moveit_error_code &mdash; panda-gazebo 2.0.1 documentation</title>
   
 
   
@@ -42,8 +42,8 @@
     
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="panda_gazebo.common.euler_angles.EulerAngles" href="panda_gazebo.common.euler_angles.EulerAngles.html" />
-    <link rel="prev" title="panda_gazebo.common.controller_info_dict.ControllerInfoDict" href="panda_gazebo.common.controller_info_dict.ControllerInfoDict.html" /> 
+    <link rel="next" title="panda_gazebo.common.functions.wrap_space_around" href="panda_gazebo.common.functions.wrap_space_around.html" />
+    <link rel="prev" title="panda_gazebo.common.functions.translate_actionclient_result_error_code" href="panda_gazebo.common.functions.translate_actionclient_result_error_code.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.0.17
+                2.0.1
               </div>
             
           
@@ -110,9 +110,7 @@
 <li class="toctree-l3 current"><a class="reference internal" href="panda_gazebo.common.html">panda_gazebo.common</a><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="panda_gazebo.common.action_client_state.html">panda_gazebo.common.action_client_state</a></li>
 <li class="toctree-l4"><a class="reference internal" href="panda_gazebo.common.controller_info_dict.html">panda_gazebo.common.controller_info_dict</a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="#">panda_gazebo.common.euler_angles</a></li>
-<li class="toctree-l4"><a class="reference internal" href="panda_gazebo.common.functions.html">panda_gazebo.common.functions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="panda_gazebo.common.nested_dict.html">panda_gazebo.common.nested_dict</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="panda_gazebo.common.functions.html">panda_gazebo.common.functions</a></li>
 <li class="toctree-l4"><a class="reference internal" href="panda_gazebo.common.quaternion.html">panda_gazebo.common.quaternion</a></li>
 </ul>
 </li>
@@ -174,14 +172,16 @@
         
           <li><a href="panda_gazebo.common.html">panda_gazebo.common</a> &raquo;</li>
         
-      <li>panda_gazebo.common.euler_angles</li>
+          <li><a href="panda_gazebo.common.functions.html">panda_gazebo.common.functions</a> &raquo;</li>
+        
+      <li>panda_gazebo.common.functions.translate_moveit_error_code</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
           
             
-              <a href="https://github.com/rickstaa/panda-gazebo/blob/noetic-devel/docs/source/api/_autosummary/panda_gazebo.common.euler_angles.rst" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/rickstaa/panda-gazebo/blob/noetic-devel/docs/source/api/_autosummary/panda_gazebo.common.functions.translate_moveit_error_code.rst" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -195,21 +195,25 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-panda_gazebo.common.euler_angles">
-<span id="panda-gazebo-common-euler-angles"></span><h1>panda_gazebo.common.euler_angles<a class="headerlink" href="#module-panda_gazebo.common.euler_angles" title="Permalink to this headline">¶</a></h1>
-<p>Class for storing euler angles. It uses the ypr (x-y-z) euler angle convention.</p>
-<p class="rubric">Classes</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="panda_gazebo.common.euler_angles.EulerAngles.html#panda_gazebo.common.euler_angles.EulerAngles" title="panda_gazebo.common.euler_angles.EulerAngles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EulerAngles</span></code></a>([y, p, r])</p></td>
-<td><p>Used for storing euler angles.</p></td>
-</tr>
-</tbody>
-</table>
+  <div class="section" id="panda-gazebo-common-functions-translate-moveit-error-code">
+<h1>panda_gazebo.common.functions.translate_moveit_error_code<a class="headerlink" href="#panda-gazebo-common-functions-translate-moveit-error-code" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="panda_gazebo.common.functions.translate_moveit_error_code">
+<span class="sig-prename descclassname"><span class="pre">panda_gazebo.common.functions.</span></span><span class="sig-name descname"><span class="pre">translate_moveit_error_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">moveit_error_code</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/panda_gazebo/common/functions.html#translate_moveit_error_code"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.common.functions.translate_moveit_error_code" title="Permalink to this definition">¶</a></dt>
+<dd><p>Translates a MoveIt error code object into a human readable error message.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>moveit_error_code</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">MoveItErrorCodes</span></code>) – The MoveIt error code object</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Error string that corresponds to the error code.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 
 
@@ -218,8 +222,8 @@
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="panda_gazebo.common.euler_angles.EulerAngles.html" class="btn btn-neutral float-right" title="panda_gazebo.common.euler_angles.EulerAngles" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="panda_gazebo.common.controller_info_dict.ControllerInfoDict.html" class="btn btn-neutral float-left" title="panda_gazebo.common.controller_info_dict.ControllerInfoDict" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="panda_gazebo.common.functions.wrap_space_around.html" class="btn btn-neutral float-right" title="panda_gazebo.common.functions.wrap_space_around" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="panda_gazebo.common.functions.translate_actionclient_result_error_code.html" class="btn btn-neutral float-left" title="panda_gazebo.common.functions.translate_actionclient_result_error_code" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>

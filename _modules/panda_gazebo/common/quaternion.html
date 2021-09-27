@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>panda_gazebo.common.quaternion &mdash; panda-gazebo 1.0.17 documentation</title>
+  <title>panda_gazebo.common.quaternion &mdash; panda-gazebo 2.0.1 documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                1.0.17
+                2.0.1
               </div>
             
           
@@ -190,6 +190,11 @@
 <span class="sd">        z (float): The quaternion z coordinate.</span>
 <span class="sd">        w (float): The quaternion w coordinate.</span>
 <span class="sd">        norm (float): The quaternion norm.</span>
+
+<span class="sd">    Methods:</span>
+<span class="sd">        quaternion_norm(cls, Quaternion): Calculates the norm of a quaternion.</span>
+<span class="sd">        normalize_quaternion(cls, quaternion): Normalizes a given quaternion.</span>
+<span class="sd">        normalize(): Normalize the quaternion.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="Quaternion.__init__"><a class="viewcode-back" href="../../../api/_autosummary/panda_gazebo.common.quaternion.Quaternion.html#panda_gazebo.common.quaternion.Quaternion.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
@@ -199,8 +204,6 @@
 <div class="viewcode-block" id="Quaternion.normalize"><a class="viewcode-back" href="../../../api/_autosummary/panda_gazebo.common.quaternion.Quaternion.html#panda_gazebo.common.quaternion.Quaternion.normalize">[docs]</a>    <span class="k">def</span> <span class="nf">normalize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Normalizes the quaternion.&quot;&quot;&quot;</span>
         <span class="n">norm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm</span>
-
-        <span class="c1"># Normalize quaternion and return</span>
         <span class="k">if</span> <span class="n">norm</span> <span class="o">==</span> <span class="mf">0.0</span> <span class="ow">or</span> <span class="n">isnan</span><span class="p">(</span><span class="n">norm</span><span class="p">):</span>
             <span class="n">rospy</span><span class="o">.</span><span class="n">logwarn</span><span class="p">(</span>
                 <span class="s2">&quot;Quaternion could not be normalized since the norm could not be &quot;</span>
@@ -226,17 +229,15 @@
         <span class="sd">&quot;&quot;&quot;Normalizes a given quaternion.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            Quaternion (:obj:`geometry_msgs.msg.Quaternion`): A quaternion.</span>
+<span class="sd">            quaternion (:obj:`geometry_msgs.msg.Quaternion`): A quaternion.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            :obj:`geometry_msgs.msg.Quaternion`: The normalized quaternion.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">quaternion</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span>
-            <span class="n">quaternion</span>
-        <span class="p">)</span>  <span class="c1"># Create a hardcopy such that the original object is not modified</span>
+        <span class="n">quaternion</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">quaternion</span><span class="p">)</span>
         <span class="n">norm</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">quaternion_norm</span><span class="p">(</span><span class="n">quaternion</span><span class="p">)</span>
 
-        <span class="c1"># Normalize quaternion and return</span>
+        <span class="c1"># Normalize quaternion</span>
         <span class="k">if</span> <span class="n">norm</span> <span class="o">==</span> <span class="n">nan</span><span class="p">:</span>
             <span class="c1"># test</span>
             <span class="n">rospy</span><span class="o">.</span><span class="n">logwarn</span><span class="p">(</span>

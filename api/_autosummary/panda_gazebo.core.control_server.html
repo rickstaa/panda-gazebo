@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>panda_gazebo.core.control_server &mdash; panda-gazebo 1.0.17 documentation</title>
+  <title>panda_gazebo.core.control_server &mdash; panda-gazebo 2.0.1 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.0.17
+                2.0.1
               </div>
             
           
@@ -195,24 +195,18 @@
             
   <div class="section" id="module-panda_gazebo.core.control_server">
 <span id="panda-gazebo-core-control-server"></span><h1>panda_gazebo.core.control_server<a class="headerlink" href="#module-panda_gazebo.core.control_server" title="Permalink to this headline">¶</a></h1>
-<p>This server is responsible for controlling the Panda arm/hand. It created a number of
+<p>This server is responsible for controlling the Panda arm. It created a number of
 (action) services that can be used to send control commands to the Panda Robot arm and
 hand.</p>
 <dl class="simple">
 <dt>Main services:</dt><dd><ul class="simple">
-<li><p>set_joint_positions</p></li>
-<li><p>set_joint_efforts</p></li>
 <li><p>get_controlled_joints</p></li>
 <li><p>follow_joint_trajectory</p></li>
-</ul>
-</dd>
-<dt>Extra services:</dt><dd><ul class="simple">
+<li><p>set_joint_commands</p></li>
 <li><p>panda_arm/set_joint_positions</p></li>
 <li><p>panda_arm/set_joint_efforts</p></li>
 <li><p>panda_arm/follow_joint_trajectory</p></li>
-<li><p>panda_hand/set_joint_positions</p></li>
-<li><p>panda_hand/set_joint_efforts</p></li>
-<li><p>panda_hand/follow_joint_trajectory</p></li>
+<li><p>panda_hand/set_gripper_width</p></li>
 </ul>
 </dd>
 </dl>
