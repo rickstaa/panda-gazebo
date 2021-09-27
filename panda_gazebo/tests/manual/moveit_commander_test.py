@@ -28,8 +28,10 @@ if __name__ == "__main__":
     # Create commanders
     robot = moveit_commander.RobotCommander()
     scene = moveit_commander.PlanningSceneInterface()
-    group_name = "panda_arm"
-    move_group = moveit_commander.MoveGroupCommander(group_name)
+
+    # Load arm and hand groups
+    move_group = moveit_commander.MoveGroupCommander("panda_arm")
+    hand_move_group = moveit_commander.MoveGroupCommander("hand")
 
     display_trajectory_publisher = rospy.Publisher(
         "/move_group/display_planned_path",
@@ -55,49 +57,60 @@ if __name__ == "__main__":
     print(robot.get_current_state())
     print("")
 
-    # -- Plan joint goal --
+    # # -- Plan arm joint goal --
 
-    # We get the joint values from the group and change some of the values:
-    joint_goal = move_group.get_current_joint_values()
-    joint_goal[0] = 0
-    joint_goal[1] = -tau / 8
-    joint_goal[2] = 0
-    joint_goal[3] = -tau / 4
-    joint_goal[4] = 0
-    joint_goal[5] = tau / 6  # 1/6 of a turn
-    joint_goal[6] = 0
+    # # We get the joint values from the group and change some of the values:
+    # joint_goal = move_group.get_current_joint_values()
+    # joint_goal[0] = 0
+    # joint_goal[1] = -tau / 8
+    # joint_goal[2] = 0
+    # joint_goal[3] = -tau / 4
+    # joint_goal[4] = 0
+    # joint_goal[5] = tau / 6  # 1/6 of a turn
+    # joint_goal[6] = 0
 
-    # METHOD 1
-    # -- UNCOMMENT BELOW TO SEE THE SACLING FACTOR IN ACTION --
-    # max_vel_scale_factor = 0.2
-    # max_vel_scale_factor = 1.0
-    # max_acc_scale_factor = 0.2
-    # max_acc_scale_factor = 1.0
-    # move_group.set_max_velocity_scaling_factor(max_vel_scale_factor)
-    # move_group.set_max_acceleration_scaling_factor(max_acc_scale_factor)
-    # -- UNCOMMENT ABOVE TO SEE THE SACLING FACTOR IN ACTION --
-    move_group.set_joint_value_target(joint_goal)
-    move_group.plan()
-    move_group.go(wait=True)
+    # # METHOD 1
+    # # -- UNCOMMENT BELOW TO SEE THE SACLING FACTOR IN ACTION --
+    # # max_vel_scale_factor = 0.2
+    # # max_vel_scale_factor = 1.0
+    # # max_acc_scale_factor = 0.2
+    # # max_acc_scale_factor = 1.0
+    # # move_group.set_max_velocity_scaling_factor(max_vel_scale_factor)
+    # # move_group.set_max_acceleration_scaling_factor(max_acc_scale_factor)
+    # # -- UNCOMMENT ABOVE TO SEE THE SACLING FACTOR IN ACTION --
+    # move_group.set_joint_value_target(joint_goal)
+    # move_group.plan()
+    # move_group.go(wait=True)
 
-    # # METHOD 2
-    # # The go command can be called with joint values, poses, or without any
-    # # parameters if you have already set the pose or joint target for the group
-    # move_group.go(joint_goal, wait=True)
-    # # Calling ``stop()`` ensures that there is no residual movement
+    # # # METHOD 2
+    # # # The go command can be called with joint values, poses, or without any
+    # # # parameters if you have already set the pose or joint target for the group
+    # # move_group.go(joint_goal, wait=True)
+
+    # # # Calling ``stop()`` ensures that there is no residual movement
+    # # move_group.stop()
+
+    # # -- Plan pose goal --
+    # pose_goal = geometry_msgs.msg.Pose()
+    # pose_goal.orientation.w = 1.0
+    # pose_goal.position.x = 0.4
+    # pose_goal.position.y = 0.1
+    # pose_goal.position.z = 0.4
+
+    # move_group.set_pose_target(pose_goal)
+    # plan = move_group.go(wait=True)
+
+    # # Calling `stop()` ensures that there is no residual movement
     # move_group.stop()
 
-    # -- Plan pose goal --
-    pose_goal = geometry_msgs.msg.Pose()
-    pose_goal.orientation.w = 1.0
-    pose_goal.position.x = 0.4
-    pose_goal.position.y = 0.1
-    pose_goal.position.z = 0.4
+    # # It is always good to clear your targets after planning with poses.
+    # # Note: there is no equivalent function for clear_joint_value_targets()
+    # move_group.clear_pose_targets()
 
-    move_group.set_pose_target(pose_goal)
-    plan = move_group.go(wait=True)
-    # Calling `stop()` ensures that there is no residual movement
+    # -- Plan hand goal --
+    hand_move_group.set_joint_value_target([0.0, 0.0])
+    (hand_plan_retval, plan, _, error_code) = hand_move_group.plan()
+    retval = hand_move_group.execute(plan, wait=True)
+
+    # Calling ``stop()`` ensures that there is no residual movement
     move_group.stop()
-    # It is always good to clear your targets after planning with poses.
-    # Note: there is no equivalent function for clear_joint_value_targets()
-    move_group.clear_pose_targets()

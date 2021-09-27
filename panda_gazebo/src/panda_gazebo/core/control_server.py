@@ -1375,10 +1375,11 @@ class PandaControlServer(object):
             arm_req = None
 
         # Create hand control message
+        # NOTE: Use 'kDefaultGripperActionSpeed' see 'franka_gripper.sim.h'
         if gripper_width_command:
             gripper_req = MoveGoal()
             gripper_req.width = gripper_width_command[0]
-            gripper_req.speed = 0.2  # NOTE: Use maximum gripper speed
+            gripper_req.speed = 0.1
         else:
             gripper_req = None
 
@@ -1844,9 +1845,10 @@ class PandaControlServer(object):
             gripper_width = set_gripper_width_req.width
 
         # Create 'franka_gripper/move' action request message
+        # NOTE: Use 'kDefaultGripperActionSpeed' see 'franka_gripper.sim.h'
         req = MoveGoal()
         req.width = gripper_width
-        req.speed = 0.2  # NOTE: Use maximum gripper speed
+        req.speed = 0.1
 
         # Invoke 'franka_gripper/move' aciton server
         self._gripper_move_client.send_goal(req)

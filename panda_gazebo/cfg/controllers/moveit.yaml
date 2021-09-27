@@ -4,8 +4,8 @@ move_group:
   moveit_sim_hw_interface:
     joint_model_group: panda_arm
     joint_model_group_pose: ready
-  # NOTE: Parameters below make sure the initial pose can be executed.
   # Increase MoveIt execution time limit
+  # NOTE: Needed because PID gains are not well tuned see #9
   trajectory_execution:
-    allowed_execution_duration_scaling: 4.0
-    execution_duration_monitoring: false
+    allowed_execution_duration_scaling: 5.0
+    # allowed_goal_duration_margin: 2.5

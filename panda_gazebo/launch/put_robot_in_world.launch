@@ -1,6 +1,5 @@
 <!--Launch file for adding the panda robot to the gazebo world-->
 <launch>
-    <!--TODO test other control types!-->
     <arg name="rviz" default="true"/>
     <arg name="load_gripper" default="true"/>
     <!--Here-->
@@ -33,9 +32,6 @@
         <arg name="transmission" value="hardware_interface/$(arg hardware_interface)"/>
     </include>
 
-    <!--Load Moveit configuration values-->
-    <rosparam if="$(arg moveit)" file="$(find panda_gazebo)/cfg/controllers/moveit.yaml" command="load" />
-
     <!--Run the main MoveIt! executable without trajectory execution (we do not have controllers configured by default)-->
     <include ns="panda" if="$(arg moveit)" file="$(find panda_moveit_config)/launch/move_group.launch">
         <arg name="info" value="true"/>
@@ -46,6 +42,9 @@
         <arg name="load_gripper" value="$(arg load_gripper)"/>
         <arg name="load_robot_description" value="false"/>
     </include>
+
+    <!--Load Moveit configuration values-->
+    <rosparam ns="panda" if="$(arg moveit)" file="$(find panda_gazebo)/cfg/controllers/moveit.yaml" command="load" />
 
     <!--Load and start the controllers-->
     <include ns="panda" file="$(find panda_gazebo)/launch/load_controllers.launch">

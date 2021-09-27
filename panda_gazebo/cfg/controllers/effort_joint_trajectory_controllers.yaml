@@ -10,6 +10,23 @@ panda_arm_controller:
     - panda_joint5
     - panda_joint6
     - panda_joint7
+  constraints:
+    goal_time: 0.5
+    stopped_velocity_tolerance: 0 # Added because of wrong PID gains see #9
+    panda_joint1:
+      goal: 0.05
+    panda_joint2:
+      goal: 0.05
+    panda_joint3:
+      goal: 0.05
+    panda_joint4:
+      goal: 0.05
+    panda_joint5:
+      goal: 0.05
+    panda_joint6:
+      goal: 0.05
+    panda_joint7:
+      goal: 0.05
   gains:
     panda_joint1: { p: 12000, d: 50, i: 0.0, i_clamp: 10000 }
     panda_joint2: { p: 30000, d: 100, i: 0.02, i_clamp: 10000 }

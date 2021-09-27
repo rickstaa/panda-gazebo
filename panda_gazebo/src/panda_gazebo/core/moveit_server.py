@@ -12,8 +12,6 @@ Main services:
     * get_random_joint_positions
     * get_random_ee_pose
     * get_controlled_joints
-
-Extra services:
     * panda_arm/set_joint_positions
     * panda_hand/set_joint_positions
 
@@ -45,6 +43,7 @@ from panda_gazebo.common.functions import (
     get_unique_list,
     joint_state_dict_2_joint_state_msg,
     lower_first_char,
+    translate_moveit_error_code,
 )
 from panda_gazebo.common.quaternion import Quaternion
 from panda_gazebo.exceptions import InputMessageInvalidError
@@ -78,28 +77,28 @@ MAX_RANDOM_SAMPLES = 5
 
 class PandaMoveitPlannerServer(object):
     """Used to control or request information from the Panda Robot. This is done using
-    the Moveit `moveit_commander` module.
+    the MoveIt `moveit_commander` module.
 
     Attributes:
-        robot (:obj:`moveit_commander.robot.RobotCommander`): The Moveit robot
+        robot (:obj:`moveit_commander.robot.RobotCommander`): The MoveIt robot
             commander object.
         scene (:obj:`moveit_commander.planning_scene_interface.PlanningSceneInterface`):
-            The Moveit robot scene commander object.
+            The MoveIt robot scene commander object.
         move_group_arm (:obj:`moveit_commander.move_group.MoveGroupCommander`):
-            The Moveit arm move group object.
+            The MoveIt arm move group object.
         move_group_hand (:obj:`moveit_commander.move_group.MoveGroupCommander`):
-            The Moveit hand move group object.
+            The MoveIt hand move group object.
         ee_pose_target (:obj:`geometry_msgs.msg.Pose`): The last set ee pose.
         joint_positions_target (:obj:`dict`): Dictionary containing the last Panda arm
             and hand joint positions setpoint.
     """
 
-    def __init__(
+    def __init__(  # noqa: C901
         self,
         arm_move_group="panda_arm",
         arm_ee_link="panda_link8",
         hand_move_group="hand",
-        create_extra_services=False,
+        load_gripper=True,
     ):
         """Initializes the PandaMoveitPlannerServer object.
 
@@ -110,19 +109,22 @@ class PandaMoveitPlannerServer(object):
                 controlling the Panda arm. Defaults to ``panda_link8``.
             hand_move_group (str, optional): The name of the move group you want to use
                 for controlling the Panda hand. Defaults to ``hand``.
-            create_extra_services (bool, optional): Specifies whether the extra services
-                should also be created.
+            load_gripper (boolean, optional): Whether we also want to load the gripper
+                control services.
         """
-        self._joint_state_topic = "joint_states"
+        self._load_gripper = load_gripper
 
-        # Initialize Moveit/Robot/Scene and group commanders
-        rospy.logdebug("Initialize Moveit Robot/Scene and group commanders.")
+        # Initialize MoveIt/Robot/Scene and group commanders
+        rospy.logdebug("Initialize MoveIt Robot/Scene and group commanders.")
         try:
             moveit_commander.roscpp_initialize(sys.argv)
             self.robot = moveit_commander.RobotCommander()
             self.scene = moveit_commander.PlanningSceneInterface()
             self.move_group_arm = moveit_commander.MoveGroupCommander(arm_move_group)
-            self.move_group_hand = moveit_commander.MoveGroupCommander(hand_move_group)
+            if self._load_gripper:
+                self.move_group_hand = moveit_commander.MoveGroupCommander(
+                    hand_move_group
+                )
         except Exception as e:
             if "invalid robot mode" in e.args[0]:
                 rospy.logerr(
@@ -152,12 +154,14 @@ class PandaMoveitPlannerServer(object):
 
         self.move_group_arm.set_end_effector_link(arm_ee_link)
         self._display_trajectory_publisher = rospy.Publisher(
-            "/move_group/display_planned_path",
+            "move_group/display_planned_path",
             DisplayTrajectory,
             queue_size=10,
         )
 
         # Retrieve parameters and create dynamic reconfigure server
+        # NOTE: Used to change the max velocity and acceleration scaling that is used
+        # by the MoveIt control server.
         self._get_params()
         self._dyn_reconfigure_srv = Server(MoveitServerConfig, self._dyn_reconfigure_cb)
 
@@ -171,19 +175,19 @@ class PandaMoveitPlannerServer(object):
             "Creating '%s/panda_arm/set_ee_pose' service." % rospy.get_name()
         )
         self._arm_set_ee_pose_srv = rospy.Service(
-            "%s/panda_arm/set_ee_pose" % rospy.get_name()[1:],
+            "%s/panda_arm/set_ee_pose" % rospy.get_name().split("/")[-1],
             SetEePose,
             self._arm_set_ee_pose_callback,
         )
         rospy.logdebug("Creating '%s/panda_arm/get_ee' service." % rospy.get_name())
         self._arm_get_ee = rospy.Service(
-            "%s/panda_arm/get_ee" % rospy.get_name()[1:],
+            "%s/panda_arm/get_ee" % rospy.get_name().split("/")[-1],
             GetEe,
             self._arm_get_ee_callback,
         )
         rospy.logdebug("Creating '%s/panda_arm/set_ee' service." % rospy.get_name())
         self._arm_set_ee = rospy.Service(
-            "%s/panda_arm/set_ee" % rospy.get_name()[1:],
+            "%s/panda_arm/set_ee" % rospy.get_name().split("/")[-1],
             SetEe,
             self._arm_set_ee_callback,
         )
@@ -191,19 +195,19 @@ class PandaMoveitPlannerServer(object):
             "Creating '%s/panda_arm/get_ee_pose' service." % rospy.get_name()
         )
         self._arm_get_ee_pose_srv = rospy.Service(
-            "%s/panda_arm/get_ee_pose" % rospy.get_name()[1:],
+            "%s/panda_arm/get_ee_pose" % rospy.get_name().split("/")[-1],
             GetEePose,
             self._arm_get_ee_pose_callback,
         )
         rospy.logdebug("Creating '%s/panda_arm/get_ee_rpy' service." % rospy.get_name())
         self._arm_get_ee_rpy_srv = rospy.Service(
-            "%s/panda_arm/get_ee_rpy" % rospy.get_name()[1:],
+            "%s/panda_arm/get_ee_rpy" % rospy.get_name().split("/")[-1],
             GetEeRpy,
             self._arm_get_ee_rpy_callback,
         )
         rospy.logdebug("Creating '%s/set_joint_positions' service." % rospy.get_name())
         self._set_joint_positions_srv = rospy.Service(
-            "%s/set_joint_positions" % rospy.get_name()[1:],
+            "%s/set_joint_positions" % rospy.get_name().split("/")[-1],
             SetJointPositions,
             self._set_joint_positions_callback,
         )
@@ -211,13 +215,13 @@ class PandaMoveitPlannerServer(object):
             "Creating '%s/get_random_joint_positions' service." % rospy.get_name()
         )
         self._get_random_joints_positions_srv = rospy.Service(
-            "%s/get_random_joint_positions" % rospy.get_name()[1:],
+            "%s/get_random_joint_positions" % rospy.get_name().split("/")[-1],
             GetRandomJointPositions,
             self._get_random_joint_positions_callback,
         )
         rospy.logdebug("Creating '%s/get_random_ee_pose' service." % rospy.get_name())
         self._get_random_ee_pose_srv = rospy.Service(
-            "%s/get_random_ee_pose" % rospy.get_name()[1:],
+            "%s/get_random_ee_pose" % rospy.get_name().split("/")[-1],
             GetRandomEePose,
             self._get_random_ee_pose_callback,
         )
@@ -225,28 +229,25 @@ class PandaMoveitPlannerServer(object):
             "Creating '%s/get_controlled_joints' service." % rospy.get_name()
         )
         self._get_controlled_joints_srv = rospy.Service(
-            "%s/get_controlled_joints" % rospy.get_name()[1:],
+            "%s/get_controlled_joints" % rospy.get_name().split("/")[-1],
             GetMoveItControlledJoints,
             self._get_controlled_joints_cb,
         )
-
-        # Create extra services
-        if create_extra_services:
-            rospy.logdebug(
-                "Creating '%s/panda_arm/set_joint_positions' service."
-                % rospy.get_name()
-            )
-            self._arm_set_joint_positions_srv = rospy.Service(
-                "%s/panda_arm/set_joint_positions" % rospy.get_name()[1:],
-                SetJointPositions,
-                self._arm_set_joint_positions_callback,
-            )
+        rospy.logdebug(
+            "Creating '%s/panda_arm/set_joint_positions' service." % rospy.get_name()
+        )
+        self._arm_set_joint_positions_srv = rospy.Service(
+            "%s/panda_arm/set_joint_positions" % rospy.get_name().split("/")[-1],
+            SetJointPositions,
+            self._arm_set_joint_positions_callback,
+        )
+        if self._load_gripper:
             rospy.logdebug(
                 "Creating '%s/panda_hand/set_joint_positions' service."
                 % rospy.get_name()
             )
             self._hand_set_joint_positions_srv = rospy.Service(
-                "%s/panda_hand/set_joint_positions" % rospy.get_name()[1:],
+                "%s/panda_hand/set_joint_positions" % rospy.get_name().split("/")[-1],
                 SetJointPositions,
                 self._hand_set_joint_positions_callback,
             )
@@ -264,16 +265,18 @@ class PandaMoveitPlannerServer(object):
         while self._joint_states is None and not rospy.is_shutdown():
             try:
                 self._joint_states = rospy.wait_for_message(
-                    self._joint_state_topic, JointState, timeout=1.0
+                    "joint_states", JointState, timeout=1.0
                 )
             except ROSException:
                 rospy.logwarn(
                     "Current joint_states not ready yet, retrying for getting %s"
-                    % self._joint_state_topic
+                    % "joint_states"
                 )
         self._controlled_joints_dict = {
             "arm": flatten_list(self.move_group_arm.get_active_joints()),
-            "hand": flatten_list(self.move_group_hand.get_active_joints()),
+            "hand": flatten_list(self.move_group_hand.get_active_joints())
+            if self._load_gripper
+            else [],
         }
 
         # Retrieve joint state mask
@@ -322,44 +325,100 @@ class PandaMoveitPlannerServer(object):
         """
         return link_name in self.robot.get_link_names()
 
-    def _execute(self, control_group="both"):
+    def _execute(self, control_group="both", wait=True):  # noqa: C901
         """Plan and execute a trajectory/pose or orientation setpoints
 
         Args:
             control_group (str, optional): The robot control group for which you want
                 to execute the control. Options are ``arm`` or ``hand`` or ``both``.
                 Defaults to ``both``.
+            wait (boolean, optional): Whether to wait on the control to be executed.
 
         Returns:
             list: List specifying whether the arm and/or hand execution was successful.
                 If ``control_group == "both"`` then ``["arm_success", "hand_success"]``.
         """
-        if control_group.lower() == "arm":
-            self.arm_plan = self.move_group_arm.plan()
-            arm_retval = self.move_group_arm.go(wait=True)
-            retval = [arm_retval]
-        elif control_group.lower() == "hand":
-            self.hand_plan = self.move_group_hand.plan()
-            hand_retval = self.move_group_hand.go(wait=True)
-            retval = [hand_retval]
-        elif control_group.lower() == "both":
-            self.arm_plan = self.move_group_arm.plan()
-            arm_retval = self.move_group_arm.go(wait=True)
-            self.hand_plan = self.move_group_hand.plan()
-            hand_retval = self.move_group_hand.go(wait=True)
-            retval = [arm_retval, hand_retval]
+        control_group = control_group.lower()
+
+        # Execute
+        retval = []
+        if control_group == "arm":
+            (arm_plan_retval, _, _, error_code) = self.move_group_arm.plan()
+            if arm_plan_retval:
+                arm_retval = self.move_group_arm.go(wait=wait)
+                if wait:
+                    self.move_group_arm.stop()
+            else:
+                rospy.logwarn(
+                    "No plan found for the current hand setpoints since '%s'"
+                    % translate_moveit_error_code(error_code)
+                )
+                arm_retval = False
+            retval.append(arm_retval)
+        elif control_group == "hand":
+            if self._load_gripper:
+                (hand_plan_retval, _, _, error_code) = self.move_group_hand.plan()
+                if hand_plan_retval:
+                    hand_retval = self.move_group_hand.go(wait=wait)
+                    if wait:
+                        self.move_group_hand.stop()
+                else:
+                    rospy.logwarn(
+                        "No plan found for the current hand setpoints since '%s'"
+                        % translate_moveit_error_code(error_code)
+                    )
+                    hand_retval = False
+                retval.append(hand_retval)
+            else:
+                rospy.logwarn("Hand commands not executed since gripper is not loaded.")
+                retval.append(False)
+        elif control_group == "both":
+            # Get hand plan
+            if not self._load_gripper:
+                rospy.logwarn_once(
+                    "Hand commands not executed since gripper is not loaded."
+                )
+            else:
+                (hand_plan_retval, _, _, error_code) = self.move_group_hand.plan()
+
+            # Get arm plan
+            (arm_plan_retval, _, _, error_code) = self.move_group_arm.plan()
+
+            # Execute arm/hand plans
+            if self._load_gripper:
+                if hand_plan_retval:
+                    hand_retval = self.move_group_hand.go(wait=False)
+                else:
+                    rospy.logwarn(
+                        "No plan found for the current hand setpoints since '%s'"
+                        % translate_moveit_error_code(error_code)
+                    )
+                    hand_retval = False
+                retval.append(hand_retval)
+            if arm_plan_retval:
+                arm_retval = self.move_group_arm.go(wait=wait)
+                if wait:
+                    self.move_group_hand.stop()
+                    self.move_group_arm.stop()
+            else:
+                rospy.logwarn(
+                    "No plan found for the current hand setpoints since '%s'"
+                    % translate_moveit_error_code(error_code)
+                )
+                arm_retval = False
+            retval.append(arm_retval)
         else:
             logwarn_msg = (
                 "Control group '%s' does not exist. Please specify a valid control "
                 "group. Valid values are %s."
-                % (control_group.lower(), "['arm', 'hand', 'both']")
+                % (control_group, "['arm', 'hand', 'both']")
             )
             rospy.logwarn(logwarn_msg)
             retval = [False]
         return retval
 
     def _create_joint_positions_commands(  # noqa: C901
-        self, input_msg, control_group="both", verbose=False
+        self, input_msg, control_group="both"
     ):
         """Converts the service input message in `moveit_commander` compatible joint
         position setpoint commands. While doing this it also verifies whether the given
@@ -370,8 +429,6 @@ class PandaMoveitPlannerServer(object):
             control_group (str, optional): The robot control group for which you want to
                 execute the control. Options are ``arm`` or ``hand`` or ``both``.
                 Defaults to ``both``.
-            verbose (bool): Boolean specifying whether you want to send a warning
-                message to the ROS logger.
 
         Returns:
             dict: Dictionary that contains the 'moveit_commander' arm and hand joint
@@ -384,72 +441,147 @@ class PandaMoveitPlannerServer(object):
         """
         joint_names = input_msg.joint_names
         joint_positions = list(input_msg.joint_positions)
+        control_group = control_group.lower()
 
-        # Get controlled joints
-        if control_group.lower() == "arm":
+        # Validate control_group
+        if control_group not in ["arm", "hand", "both"]:
+            logwarn_msg = (
+                "The '%s' control group does not exist. Please specify a valid control "
+                "group (options: %s)." % (control_group, "['arm', 'hand', 'both']")
+            )
+            rospy.logerr(logwarn_msg)
+            raise InputMessageInvalidError(
+                message="Control group '%s' does not exist." % control_group,
+                log_message=logwarn_msg,
+            )
+        elif control_group == "hand" and not self._load_gripper:
+            logwarn_msg = (
+                "The 'hand' control group can not be used when the 'load_gripper' "
+                "variable is set to False. Please change 'load_gripper' to True or "
+                "specify a valid control group (options: ['arm'])."
+            )
+            rospy.logerr(logwarn_msg)
+            raise InputMessageInvalidError(
+                message="Control group '%s' does not exist." % control_group,
+                log_message=logwarn_msg,
+            )
+        elif control_group == "both" and not self._load_gripper:
+            # Change to arm if the hand is not loaded
+            control_group = "arm"
+
+        # Get controlled joints, throw warning if control group is incorrect.
+        if control_group == "arm":
             controlled_joints = self._controlled_joints_dict["arm"]
-        elif control_group.lower() == "hand":
+        elif control_group == "hand":
             controlled_joints = self._controlled_joints_dict["hand"]
-        elif control_group.lower() == "both":
+        else:
             controlled_joints = flatten_list(
                 [
                     self._controlled_joints_dict["arm"],
                     self._controlled_joints_dict["hand"],
                 ]
             )
-        else:
-            logwarn_msg = (
-                "The '%s' control group does not exist. Please specify a valid control "
-                "group (options: %s)."
-                % (control_group.lower(), "['arm', 'hand', 'both']")
+
+        # Get the current state of the arm and hand
+        arm_state_dict = OrderedDict(
+            zip(
+                self.move_group_arm.get_active_joints(),
+                self.move_group_arm.get_current_joint_values(),
             )
-            if verbose:
-                rospy.logwarn(logwarn_msg)
-            raise InputMessageInvalidError(
-                message="Control group '%s' does not exist." % control_group.lower(),
-                log_message=logwarn_msg,
+        )
+        if control_group in ["hand", "both"]:
+            hand_state_dict = OrderedDict(
+                zip(
+                    self.move_group_hand.get_active_joints(),
+                    self.move_group_hand.get_current_joint_values(),
+                )
             )
 
         # Generate 'moveit_commander' control command
         controlled_joints_size = len(controlled_joints)
         if len(joint_names) == 0:
             # Check if enough joint position commands were given
-            if len(joint_positions) != controlled_joints_size:
-                logwarn_msg = "You specified %s while the Panda Robot %s %s %s." % (
-                    "%s %s"
+            if len(joint_positions) > controlled_joints_size:
+                logwarn_msg = (
+                    "You specified %s while the Panda Robot %s only %s %s. Only the "
+                    "first %s are used in the control."
                     % (
+                        "%s %s"
+                        % (
+                            len(joint_positions),
+                            "joint position"
+                            if len(joint_positions) == 1
+                            else "joint positions",
+                        ),
+                        "arm and hand" if control_group == "both" else control_group,
+                        "contain" if control_group == "both" else "contains",
+                        "%s %s"
+                        % (
+                            controlled_joints_size,
+                            "active joint"
+                            if controlled_joints_size == 1
+                            else "active joints",
+                        ),
+                        "%s %s"
+                        % (
+                            controlled_joints_size,
+                            "joint position"
+                            if controlled_joints_size == 1
+                            else "joint positions",
+                        ),
+                    )
+                )
+                rospy.logwarn(logwarn_msg)
+
+                # Remove the extra joint commands
+                joint_positions = joint_positions[:controlled_joints_size]
+            elif len(joint_positions) < controlled_joints_size:
+                logwarn_msg = (
+                    "You specified %s while the Panda Robot %s %s %s. As a result "
+                    "only the first %s joints are controlled while for the other "
+                    "joints the current robot state is used."
+                    % (
+                        "%s %s"
+                        % (
+                            len(joint_positions),
+                            "joint position"
+                            if len(joint_positions) == 1
+                            else "joint positions",
+                        ),
+                        "arm and hand" if control_group == "both" else control_group,
+                        "contain" if control_group == "both" else "contains",
+                        "%s %s"
+                        % (
+                            controlled_joints_size,
+                            "active joint"
+                            if controlled_joints_size == 1
+                            else "active joints",
+                        ),
                         len(joint_positions),
-                        "joint position"
-                        if len(joint_positions) == 1
-                        else "joint positions",
-                    ),
-                    "arm and hand"
-                    if control_group.lower() == "both"
-                    else control_group.lower(),
-                    "contain" if control_group.lower() == "both" else "contains",
-                    "%s %s"
-                    % (
-                        controlled_joints_size,
-                        "active joint"
-                        if controlled_joints_size == 1
-                        else "active joints",
-                    ),
+                    )
                 )
-                if verbose:
-                    rospy.logwarn(logwarn_msg)
-                raise InputMessageInvalidError(
-                    message="Invalid number of joint position commands.",
-                    log_message=logwarn_msg,
-                    details={
-                        "joint_positions_command_length": len(joint_positions),
-                        "controlled_joints": controlled_joints_size,
-                    },
-                )
+                rospy.logwarn(logwarn_msg)
+
+                # Fill the missing joint commands
+                if control_group == "both":
+                    joint_states = (
+                        list(arm_state_dict.values()) + list(hand_state_dict.values())
+                        if self._arm_states_mask[0]
+                        else list(hand_state_dict.values())
+                        + list(arm_state_dict.values())
+                    )
+                else:
+                    joint_states = (
+                        list(arm_state_dict.values())
+                        if control_group == "arm"
+                        else list(hand_state_dict.values())
+                    )
+                joint_positions = joint_positions + joint_states[len(joint_positions) :]
 
             # Return moveit_commander_control command dictionary
-            if control_group.lower() == "arm":
+            if control_group == "arm":
                 control_commands = {"arm": joint_positions}
-            elif control_group.lower() == "hand":
+            elif control_group == "hand":
                 control_commands = {"hand": joint_positions}
             else:
                 control_commands = {
@@ -481,8 +613,7 @@ class PandaMoveitPlannerServer(object):
                         ),
                     )
                 )
-                if verbose:
-                    rospy.logwarn(logwarn_msg)
+                rospy.logerr(logwarn_msg)
                 raise InputMessageInvalidError(
                     message=(
                         "Joint_names and joint_positions fields of the input "
@@ -501,59 +632,38 @@ class PandaMoveitPlannerServer(object):
                 for joint_name in joint_names
                 if joint_name not in controlled_joints
             ]
+            input_command_dict = OrderedDict(zip(joint_names, joint_positions))
             if len(invalid_joint_names) != 0:
+                # Remove invalid keys and throw warning
+                [input_command_dict.pop(joint, None) for joint in invalid_joint_names]
                 logwarn_msg = (
-                    "%s %s that %s specified in the 'joint_names' field of the "
-                    "'panda_gazebo/SetJointPositions' message %s invalid. Valid "
-                    "joint names for controlling the panda %s are %s."
+                    "Ignoring %s %s since %s invalid. Valid joint names for "
+                    "controlling the panda %s are %s."
                     % (
-                        "Joint" if len(invalid_joint_names) == 1 else "Joints",
                         invalid_joint_names,
-                        "was" if len(invalid_joint_names) == 1 else "were",
-                        "was" if len(invalid_joint_names) == 1 else "were",
-                        "arm and hand"
-                        if control_group.lower() == "both"
-                        else control_group.lower(),
+                        "joint" if len(invalid_joint_names) == 1 else "joints",
+                        "it is" if len(invalid_joint_names) == 1 else "they are",
+                        "arm and hand" if control_group == "both" else control_group,
                         controlled_joints,
                     )
                 )
-                if verbose:
-                    rospy.logwarn(logwarn_msg)
-                raise InputMessageInvalidError(
-                    message="Invalid joint_names were given.",
-                    log_message=logwarn_msg,
-                    details={"invalid_joint_names": invalid_joint_names},
-                )
-
-            # Get the current state of the arm and hand
-            arm_state_dict = OrderedDict(
-                zip(
-                    self.move_group_arm.get_active_joints(),
-                    self.move_group_arm.get_current_joint_values(),
-                )
-            )
-            hand_state_dict = OrderedDict(
-                zip(
-                    self.move_group_hand.get_active_joints(),
-                    self.move_group_hand.get_current_joint_values(),
-                )
-            )
-            input_command_dict = OrderedDict(zip(joint_names, joint_positions))
+                rospy.logwarn(logwarn_msg)
 
             # Update current state dictionary with given joint_position setpoints
             arm_output_command_dict = copy.deepcopy(arm_state_dict)
-            hand_output_command_dict = copy.deepcopy(hand_state_dict)
             for (joint, position) in input_command_dict.items():  # Update arm
                 if joint in arm_state_dict:
                     arm_output_command_dict[joint] = position
-            for (joint, position) in input_command_dict.items():  # Update hand
-                if joint in hand_state_dict:
-                    hand_output_command_dict[joint] = position
+            if control_group in ["hand", "both"]:
+                hand_output_command_dict = copy.deepcopy(hand_state_dict)
+                for (joint, position) in input_command_dict.items():  # Update hand
+                    if joint in hand_state_dict:
+                        hand_output_command_dict[joint] = position
 
             # Return moveit_commander_control command dictionary
-            if control_group.lower() == "arm":
+            if control_group == "arm":
                 control_commands = {"arm": list(arm_output_command_dict.values())}
-            elif control_group.lower() == "hand":
+            elif control_group == "hand":
                 control_commands = {"hand": list(hand_output_command_dict.values())}
             else:
                 control_commands = {
@@ -565,8 +675,10 @@ class PandaMoveitPlannerServer(object):
     ###############################################
     # Service callback functions ##################
     ###############################################
-    def _dyn_reconfigure_cb(self, config, level):
-        """Dynamic reconfigure callback function.
+    def _dyn_reconfigure_cb(self, config, level):  # noqa: C901
+        """Dynamic reconfigure callback function. Can be used to update the
+        ``max_velocity_scaling_factor`` and ``max_acceleration_scaling_factor`` used by
+        the MoveIt control server.
 
         Args:
             config (:obj:`dynamic_reconfigure.encoding.Config`): The current dynamic
@@ -612,31 +724,34 @@ class PandaMoveitPlannerServer(object):
             self.move_group_arm.set_max_velocity_scaling_factor(
                 config["max_velocity_scaling_factor"]
             )
-            self.move_group_hand.set_max_velocity_scaling_factor(
-                config["max_velocity_scaling_factor"]
-            )
             self.move_group_arm.set_max_acceleration_scaling_factor(
                 config["max_acceleration_scaling_factor"]
             )
-            self.move_group_hand.set_max_acceleration_scaling_factor(
-                config["max_acceleration_scaling_factor"]
-            )
+            if self._load_gripper:
+                self.move_group_hand.set_max_velocity_scaling_factor(
+                    config["max_velocity_scaling_factor"]
+                )
+                self.move_group_hand.set_max_acceleration_scaling_factor(
+                    config["max_acceleration_scaling_factor"]
+                )
         elif level == 0:
             # Update move group velocity settings
             self.move_group_arm.set_max_velocity_scaling_factor(
                 config["max_velocity_scaling_factor"]
             )
-            self.move_group_hand.set_max_velocity_scaling_factor(
-                config["max_velocity_scaling_factor"]
-            )
+            if self._load_gripper:
+                self.move_group_hand.set_max_velocity_scaling_factor(
+                    config["max_velocity_scaling_factor"]
+                )
         elif level == 1:
             # Update move group acceleration settings
             self.move_group_arm.set_max_acceleration_scaling_factor(
                 config["max_acceleration_scaling_factor"]
             )
-            self.move_group_hand.set_max_acceleration_scaling_factor(
-                config["max_acceleration_scaling_factor"]
-            )
+            if self._load_gripper:
+                self.move_group_hand.set_max_acceleration_scaling_factor(
+                    config["max_acceleration_scaling_factor"]
+                )
         return config
 
     def _arm_set_ee_pose_callback(self, set_ee_pose_req):
@@ -677,6 +792,7 @@ class PandaMoveitPlannerServer(object):
         try:
             self.move_group_arm.set_pose_target(self.ee_pose_target)
             retval = self._execute(control_group="arm")
+            self.move_group_arm.clear_pose_targets()
 
             # Check if setpoint execution was successful
             if not all(retval):
@@ -735,42 +851,40 @@ class PandaMoveitPlannerServer(object):
 
         # Set joint positions setpoint
         arm_joint_states = self.move_group_arm.get_current_joint_values()
-        hand_joint_states = self.move_group_hand.get_current_joint_values()
         rospy.logdebug("Current arm joint positions: %s" % arm_joint_states)
-        rospy.logdebug(
-            "Arm joint positions setpoint: %s" % moveit_commander_commands["arm"]
-        )
-        rospy.logdebug("Current hand joint positions: %s" % hand_joint_states)
-        rospy.logdebug(
-            "Hand joint positions setpoint: %s" % moveit_commander_commands["hand"]
-        )
-        rospy.logdebug("Setting arm and hand setpoints.")
+        if self._load_gripper:
+            hand_joint_states = self.move_group_hand.get_current_joint_values()
+            rospy.logdebug("Current hand joint positions: %s" % hand_joint_states)
         self.joint_positions_target = moveit_commander_commands
         set_joint_value_target_success_bool = []
         set_joint_value_target_error_msg = []
         try:
+            rospy.logdebug(
+                "Arm joint positions setpoint: %s" % moveit_commander_commands["arm"]
+            )
             self.move_group_arm.set_joint_value_target(moveit_commander_commands["arm"])
             set_joint_value_target_success_bool.append(True)
         except MoveItCommanderException as e:
             set_joint_value_target_success_bool.append(False)
             set_joint_value_target_error_msg.append(e.args[0])
-        try:
-            self.move_group_hand.set_joint_value_target(
-                moveit_commander_commands["hand"]
-            )
-            set_joint_value_target_success_bool.append(True)
-        except MoveItCommanderException as e:
-            set_joint_value_target_success_bool.append(False)
-            set_joint_value_target_error_msg.append(e.args[0])
+        if self._load_gripper:
+            try:
+                rospy.logdebug(
+                    "Hand joint positions setpoint: %s"
+                    % moveit_commander_commands["hand"]
+                )
+                self.move_group_hand.set_joint_value_target(
+                    moveit_commander_commands["hand"]
+                )
+                set_joint_value_target_success_bool.append(True)
+            except MoveItCommanderException as e:
+                set_joint_value_target_success_bool.append(False)
+                set_joint_value_target_error_msg.append(e.args[0])
 
         # Print error message if an error occurred and return
         if set_joint_value_target_error_msg:
-            log_warn_string = (
-                "arm and hand"
-                if len(set_joint_value_target_error_msg) > 1
-                else ("arm" if set_joint_value_target_success_bool[0] else "hand")
-            )
             if len(set_joint_value_target_error_msg) > 1:
+                log_warn_string = "arm and hand"
                 rospy.logwarn(
                     "Setting arm joint position targets failed since there was an %s"
                     % (lower_first_char(set_joint_value_target_error_msg[0]))
@@ -780,6 +894,11 @@ class PandaMoveitPlannerServer(object):
                     % (lower_first_char(set_joint_value_target_error_msg[1]))
                 )
             else:
+                log_warn_string = (
+                    "arm"
+                    if not self._load_gripper
+                    else ("arm" if set_joint_value_target_success_bool[0] else "hand")
+                )
                 rospy.logwarn(
                     "Setting %s joint position targets failed since there was an %s"
                     % (
@@ -852,12 +971,11 @@ class PandaMoveitPlannerServer(object):
         # Set joint positions setpoint
         arm_joint_states = self.move_group_arm.get_current_joint_values()
         rospy.logdebug("Current arm joint positions: %s" % arm_joint_states)
-        rospy.logdebug(
-            "Arm joint positions setpoint: %s" % moveit_commander_commands["arm"]
-        )
         self.joint_positions_target = moveit_commander_commands
-        rospy.logdebug("Setting arm setpoints.")
         try:
+            rospy.logdebug(
+                "Arm joint positions setpoint: %s" % moveit_commander_commands["arm"]
+            )
             self.move_group_arm.set_joint_value_target(moveit_commander_commands["arm"])
         except MoveItCommanderException as e:
             rospy.logwarn(
@@ -929,12 +1047,11 @@ class PandaMoveitPlannerServer(object):
         # Set joint positions setpoint
         hand_joint_states = self.move_group_hand.get_current_joint_values()
         rospy.logdebug("Current hand joint positions: %s" % hand_joint_states)
-        rospy.logdebug(
-            "Hand joint positions setpoint: %s" % moveit_commander_commands["hand"]
-        )
         self.joint_positions_target = moveit_commander_commands
-        rospy.logdebug("Setting hand joint position setpoints.")
         try:
+            rospy.logdebug(
+                "Hand joint positions setpoint: %s" % moveit_commander_commands["hand"]
+            )
             self.move_group_hand.set_joint_value_target(
                 moveit_commander_commands["hand"]
             )
@@ -963,7 +1080,7 @@ class PandaMoveitPlannerServer(object):
             resp.message = e.args[0]
         return resp
 
-    def _arm_get_ee_pose_callback(self, get_ee_pose_req):
+    def _arm_get_ee_pose_callback(self, _):
         """Request end effector pose.
 
         Args:
@@ -978,7 +1095,7 @@ class PandaMoveitPlannerServer(object):
         ee_pose_resp = ee_pose.pose
         return ee_pose_resp
 
-    def _arm_get_ee_rpy_callback(self, get_ee_rpy_req):
+    def _arm_get_ee_rpy_callback(self, _):
         """Request current end effector (EE) orientation.
 
         Args:
@@ -996,7 +1113,7 @@ class PandaMoveitPlannerServer(object):
         ee_rpy_res.p = ee_rpy[2]
         return ee_rpy_res
 
-    def _arm_get_ee_callback(self, get_ee_req):
+    def _arm_get_ee_callback(self, _):
         """Request end effector (EE) name.
 
         Args:
@@ -1055,7 +1172,9 @@ class PandaMoveitPlannerServer(object):
         """
         # Retrieve possible joints
         arm_joints = self.move_group_arm.get_active_joints()
-        hand_joints = self.move_group_hand.get_active_joints()
+        hand_joints = (
+            self.move_group_hand.get_active_joints() if self._load_gripper else []
+        )
         valid_joint_names = flatten_list(
             [
                 [item + "_min", item + "_max"]
@@ -1111,17 +1230,20 @@ class PandaMoveitPlannerServer(object):
             )
         except MoveItCommanderException:
             get_random_arm_joint_positions_srvs_exception = True
-        try:
-            random_hand_joint_values_unbounded = OrderedDict(
-                zip(hand_joints, self.move_group_hand.get_random_joint_values())
-            )
-        except MoveItCommanderException:
-            get_random_hand_joint_positions_srvs_exception = True
+        if self._load_gripper:
+            try:
+                random_hand_joint_values_unbounded = OrderedDict(
+                    zip(hand_joints, self.move_group_hand.get_random_joint_values())
+                )
+            except MoveItCommanderException:
+                get_random_hand_joint_positions_srvs_exception = True
 
         # Get random joint positions (while taking into possible joint limits)
         resp = GetRandomJointPositionsResponse()
-        random_arm_joint_values = random_arm_joint_values_unbounded  # Fixme: Why here?
-        random_hand_joint_values = random_hand_joint_values_unbounded
+        random_arm_joint_values = random_arm_joint_values_unbounded
+        random_hand_joint_values = (
+            random_hand_joint_values_unbounded if self._load_gripper else {}
+        )
         if (
             not get_random_position_req.joint_limits.names
             and not get_random_position_req.joint_limits.values
@@ -1130,8 +1252,6 @@ class PandaMoveitPlannerServer(object):
                 not get_random_arm_joint_positions_srvs_exception
                 and not get_random_hand_joint_positions_srvs_exception
             ):
-                random_arm_joint_values = random_arm_joint_values_unbounded
-                random_hand_joint_values = random_hand_joint_values_unbounded
                 resp.success = True
             else:
                 resp.success = False
@@ -1147,8 +1267,10 @@ class PandaMoveitPlannerServer(object):
             # Try to find random joint values within the joint limits
             n_sample = 0
             arm_joint_commands_valid = False
-            hand_joint_commands_valid = False
+            hand_joint_commands_valid = False if self._load_gripper else True
             while True:  # Continue till joint positions are valid or max samples size
+                if n_sample > 0:
+                    rospy.logdebug("Retrieving a valid random joint positions.")
                 for joint in get_unique_list(
                     [
                         names.replace("_min", "").replace("_max", "")
@@ -1157,16 +1279,16 @@ class PandaMoveitPlannerServer(object):
                 ):
                     # Sample random value for the given joint within the joint limits
                     if (
-                        joint in random_arm_joint_values.keys()
-                        and not arm_joint_commands_valid
+                        not arm_joint_commands_valid
+                        and joint in random_arm_joint_values.keys()
                     ):
                         random_arm_joint_values[joint] = np.random.uniform(
                             joint_limits_dict[joint + "_min"],
                             joint_limits_dict[joint + "_max"],
                         )
                     if (
-                        joint in random_hand_joint_values.keys()
-                        and not hand_joint_commands_valid
+                        not hand_joint_commands_valid
+                        and joint in random_hand_joint_values.keys()
                     ):
                         random_hand_joint_values[joint] = np.random.uniform(
                             joint_limits_dict[joint + "_min"],
@@ -1218,7 +1340,10 @@ class PandaMoveitPlannerServer(object):
 
                         # Create response message and break out of loop
                         random_arm_joint_values = random_arm_joint_values_unbounded
-                        random_hand_joint_values = random_hand_joint_values_unbounded
+                        if self._load_gripper:
+                            random_hand_joint_values = (
+                                random_hand_joint_values_unbounded
+                            )
                         resp.success = True
                         break
                     else:
@@ -1276,9 +1401,9 @@ class PandaMoveitPlannerServer(object):
         """
         # Get a random ee pose
         rospy.logdebug("Retrieving a valid random end effector pose.")
-        get_random_pose_srvs_exception = False
         try:
             random_ee_pose_unbounded = self.move_group_arm.get_random_pose()
+            get_random_pose_srvs_exception = False
         except MoveItCommanderException:
             get_random_pose_srvs_exception = True
 
@@ -1303,7 +1428,6 @@ class PandaMoveitPlannerServer(object):
             else:
                 resp.success = False
         else:  # A bounding region was set
-
             # Try to find a valid ee_pose within the bounding region
             n_sample = 0
             ee_pose_valid = False
@@ -1370,7 +1494,7 @@ class PandaMoveitPlannerServer(object):
                     n_sample += 1
         return resp
 
-    def _get_controlled_joints_cb(self, get_controlled_joints_req):
+    def _get_controlled_joints_cb(self, _):
         """Returns the joints that are currently being controlled by moveit.
 
         Args:

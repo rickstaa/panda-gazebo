@@ -133,6 +133,28 @@ def translate_actionclient_result_error_code(actionclient_retval):
     )
 
 
+def translate_moveit_error_code(moveit_error_code):
+    """Translates a MoveIt error code object into a human readable error message.
+
+    Args:
+        moveit_error_code (:obj:`~moveit_msgs.msg._MoveItErrorCodes.MoveItErrorCodes`):
+            The MoveIt error code object
+
+    Returns:
+        str: Error string that corresponds to the error code.
+    """
+    error_dict = {
+        value: attr
+        for attr, value in moveit_error_code.__class__.__dict__.items()
+        if attr[0] != "_" and all(map(str.isupper, attr.replace("_", "")))
+    }
+    return (
+        error_dict[moveit_error_code.val].lower().capitalize().replace("_", " ") + "."
+        if error_dict[moveit_error_code.val] != "SUCCESSFUL"
+        else ""
+    )
+
+
 #################################################
 # List dict and text manipulation functions #####
 #################################################
