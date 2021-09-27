@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>panda_gazebo</name>
-  <version>1.0.17</version>
+  <version>1.0.18</version>
   <description>A package that allows you to train several ROS based robots using Gazebo.</description>
 
 
@@ -92,11 +92,10 @@
 
   <!--Local ROS package dependencies -->
   <exec_depend>franka_description</exec_depend>
+  <exec_depend>franka_gazebo</exec_depend>
   <exec_depend>panda_moveit_config</exec_depend>
 
   <!-- Python packages -->
-  <depend>gym-pip</depend>
-  <depend>python3-yaml</depend>
 
   <!-- The export tag contains other, unspecified, tags (Used for metapackages and
   Plugins -->

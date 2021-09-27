@@ -1,22 +1,18 @@
 #! /usr/bin/env python3
-"""This server is responsible for controlling the Panda arm/hand. It created a number of
+"""This server is responsible for controlling the Panda arm. It created a number of
 (action) services that can be used to send control commands to the Panda Robot arm and
 hand.
 
 Main services:
-    * set_joint_positions
-    * set_joint_efforts
     * get_controlled_joints
     * follow_joint_trajectory
-
-Extra services:
+    * set_joint_commands
     * panda_arm/set_joint_positions
     * panda_arm/set_joint_efforts
     * panda_arm/follow_joint_trajectory
-    * panda_hand/set_joint_positions
-    * panda_hand/set_joint_efforts
-    * panda_hand/follow_joint_trajectory
+    * panda_hand/set_gripper_width
 """
+# TODO: Add gravity compensation effort control.
 
 import copy
 import os
@@ -25,16 +21,13 @@ from collections import OrderedDict
 from itertools import compress
 
 import actionlib
-import control_msgs.msg as control_msgs
 import numpy as np
 import rospy
-import yaml
 from controller_manager_msgs.srv import ListControllers, ListControllersRequest
 from panda_gazebo.common import ActionClientState
 from panda_gazebo.common.functions import (
     action_server_exists,
     controller_list_array_2_dict,
-    dict_clean,
     flatten_list,
     get_duplicate_list,
     list_2_human_text,
@@ -44,14 +37,19 @@ from panda_gazebo.common.functions import (
 )
 from panda_gazebo.core.group_publisher import GroupPublisher
 from panda_gazebo.exceptions import InputMessageInvalidError
+import control_msgs.msg as control_msgs
+from franka_gripper.msg import MoveAction, MoveGoal
 from panda_gazebo.msg import (
     FollowJointTrajectoryAction,
-    FollowJointTrajectoryFeedback,
     FollowJointTrajectoryResult,
 )
 from panda_gazebo.srv import (
     GetControlledJoints,
     GetControlledJointsResponse,
+    SetGripperWidth,
+    SetGripperWidthResponse,
+    SetJointCommands,
+    SetJointCommandsResponse,
     SetJointEfforts,
     SetJointEffortsResponse,
     SetJointPositions,
@@ -59,13 +57,22 @@ from panda_gazebo.srv import (
 )
 from rospy.exceptions import ROSException, ROSInterruptException
 from sensor_msgs.msg import JointState
-from std_msgs.msg import Float64, Header
+from std_msgs.msg import Float64
 
 # Global script variables
 DIRNAME = os.path.dirname(__file__)
-PARAMS_CONFIG_PATH = os.path.abspath(
-    os.path.join(DIRNAME, "../../../cfg/_cfg/parms_config.yaml")
-)
+PANDA_JOINTS = {
+    "arm": [
+        "panda_joint1",
+        "panda_joint2",
+        "panda_joint3",
+        "panda_joint4",
+        "panda_joint5",
+        "panda_joint6",
+        "panda_joint7",
+    ],
+    "hand": ["panda_finger_joint1", "panda_finger_joint2"],
+}
 ARM_POSITION_CONTROLLERS = [
     "panda_arm_joint1_position_controller",
     "panda_arm_joint2_position_controller",
@@ -85,17 +92,7 @@ ARM_EFFORT_CONTROLLERS = [
     "panda_arm_joint7_effort_controller",
 ]
 ARM_TRAJ_CONTROLLERS = ["panda_arm_controller"]
-HAND_POSITION_CONTROLLERS = [
-    "panda_hand_finger1_position_controller",
-    "panda_hand_finger2_position_controller",
-]
-HAND_EFFORT_CONTROLLERS = [
-    "panda_hand_finger1_effort_controller",
-    "panda_hand_finger2_effort_controller",
-]
-HAND_TRAJ_CONTROLLERS = ["panda_hand_controller"]
-ARM_TRAJ_ACTION_SERVER_TOPIC = "/panda_arm_controller/follow_joint_trajectory"
-HAND_TRAJ_ACTION_SERVER_TOPIC = "/panda_hand_controller/follow_joint_trajectory"
+HAND_CONTROLLERS = ["franka_gripper"]
 
 
 class PandaControlServer(object):
@@ -113,25 +110,14 @@ class PandaControlServer(object):
             the joint positions are within the given setpoint.
         joint_efforts_threshold (int): Threshold for determining whether the joint
             efforts are within the given setpoint.
-        use_group_controller (bool): Whether we are using the group controllers or
-            controlling the individual joints.
         autofill_traj_positions (bool): Whether you want to automatically set the
             current states as positions when the positions field of the joint trajectory
             message is left empty.
-        arm_position_controllers (list): List containing the names of the position
-            controllers used for the arm.
-        arm_effort_controllers (list): List containing the names of the effort
-            controllers used for the arm.
-        hand_position_controllers (list):List containing the names of the position
-            controllers used for the hand.
-        hand_effort_controller (list): List containing the names of the effort
-            controllers used for the hand.
     """
 
     def __init__(  # noqa: C901
         self,
         autofill_traj_positions=False,
-        create_extra_services=False,
         connection_timeout=10,
     ):
         """Initializes the PandaControlServer object.
@@ -140,47 +126,20 @@ class PandaControlServer(object):
             autofill_traj_positions (bool, optional): Whether you want to automatically
                 set the current states as positions when the positions field of the
                 joint trajectory message is left empty. Defaults to ``False``.
-            create_extra_services (bool, optional): Specifies whether the extra services
-                should also be created. Defaults to ``False``.
             connection_timeout (int, optional): The timeout for connecting to the
                 controller_manager services. Defaults to 3 sec.
         """
-        self.joint_positions_setpoint = []
-        self.joint_efforts_setpoint = []
+        self.arm_joint_positions_setpoint = []
+        self.arm_joint_efforts_setpoint = []
+        self.gripper_width_setpoint = None
         self.joint_positions_threshold = 0.01
         self.joint_efforts_threshold = 0.01
         self.autofill_traj_positions = autofill_traj_positions
         self._wait_till_done_timeout = rospy.Duration(8)
         self._joint_efforts_grad_threshold = 0.01
         self._joint_positions_grad_threshold = 0.01
-        self._joint_state_topic = "/joint_states"
-        self._full_joint_traj_control = False
-        self._as_arm_feedback = FollowJointTrajectoryFeedback()
-        self._as_hand_feedback = FollowJointTrajectoryFeedback()
-        self._as_feedback = FollowJointTrajectoryFeedback()
-
-        # Try to load package parameters from the package configuration file
-        try:
-            with open(PARAMS_CONFIG_PATH, "r") as stream:
-                try:
-                    parms_config = yaml.safe_load(stream)
-                except yaml.YAMLError as e:
-                    rospy.logwarn(
-                        "Shutting down '%s' as the 'panda_gazebo' parameters "
-                        "could not be loaded from the parameter configuration '%s' "
-                        "as the following error was thrown: %s"
-                        % (rospy.get_name(), PARAMS_CONFIG_PATH, e)
-                    )
-                    sys.exit(0)
-        except FileNotFoundError:
-            rospy.logwarn(
-                "Shutting down '%s' as the 'panda_gazebo' package parameters "
-                "could not be loaded since the required parameter configuration file "
-                "'%s' was not found. Please make sure the configuration file is "
-                "present." % (rospy.get_name(), PARAMS_CONFIG_PATH)
-            )
-            sys.exit(0)
-        panda_joints = parms_config["panda_joints"]
+        self._gripper_move_client_connected = False
+        self._arm_joint_traj_client_connected = False
 
         ########################################
         # Create Panda control services ########
@@ -188,68 +147,57 @@ class PandaControlServer(object):
 
         # Create main PandaControlServer services
         rospy.loginfo("Creating '%s' services." % rospy.get_name())
-        rospy.logdebug("Creating '%s/set_joint_positions' service." % rospy.get_name())
-        self._set_joint_positions_srv = rospy.Service(
-            "%s/set_joint_positions" % rospy.get_name()[1:],
-            SetJointPositions,
-            self._set_joint_positions_cb,
-        )
-        rospy.logdebug("Creating '%s/set_joint_efforts' service." % rospy.get_name())
-        self._set_joint_efforts_srv = rospy.Service(
-            "%s/set_joint_efforts" % rospy.get_name()[1:],
-            SetJointEfforts,
-            self._set_joint_efforts_cb,
-        )
         rospy.logdebug(
             "Creating '%s/get_controlled_joints' service." % rospy.get_name()
         )
         self._get_controlled_joints_srv = rospy.Service(
-            "%s/get_controlled_joints" % rospy.get_name()[1:],
+            "%s/get_controlled_joints" % rospy.get_name().split("/")[-1],
             GetControlledJoints,
             self._get_controlled_joints_cb,
         )
-
-        # Create extra services
-        if create_extra_services:
-            rospy.logdebug(
-                "Creating '%s/panda_arm/set_joint_positions' service."
-                % rospy.get_name()
-            )
-            self._set_arm_joint_positions_srv = rospy.Service(
-                "%s/panda_arm/set_joint_positions" % rospy.get_name()[1:],
-                SetJointPositions,
-                self._arm_set_joint_positions_cb,
-            )
-            rospy.logdebug(
-                "Creating '%s/panda_arm/set_joint_efforts' service." % rospy.get_name()
-            )
-            self._set_arm_joint_efforts_srv = rospy.Service(
-                "%s/panda_arm/set_joint_efforts" % rospy.get_name()[1:],
-                SetJointEfforts,
-                self._arm_set_joint_efforts_cb,
-            )
-            rospy.logdebug(
-                "Creating '%s/panda_hand/set_joint_positions' service."
-                % rospy.get_name()
-            )
-            self._set_hand_joint_positions_srv = rospy.Service(
-                "%s/panda_hand/set_joint_positions" % rospy.get_name()[1:],
-                SetJointPositions,
-                self._hand_set_joint_positions_cb,
-            )
-            rospy.logdebug(
-                "Creating '%s/panda_hand/set_joint_efforts' service." % rospy.get_name()
-            )
-            self._set_hand_joint_efforts_srv = rospy.Service(
-                "%s/panda_hand/set_joint_efforts" % rospy.get_name()[1:],
-                SetJointEfforts,
-                self._hand_set_joint_efforts_cb,
-            )
+        rospy.logdebug("Creating '%s/set_joint_commands' service." % rospy.get_name())
+        self._set_joint_commands_srv = rospy.Service(
+            "%s/set_joint_commands" % rospy.get_name().split("/")[-1],
+            SetJointCommands,
+            self._set_joint_commands_cb,
+        )
+        rospy.logdebug(
+            "Creating '%s/panda_arm/set_joint_efforts' service." % rospy.get_name()
+        )
+        rospy.logdebug(
+            "Creating '%s/panda_arm/set_joint_positions' service." % rospy.get_name()
+        )
+        self._set_arm_joint_positions_srv = rospy.Service(
+            "%s/panda_arm/set_joint_positions" % rospy.get_name().split("/")[-1],
+            SetJointPositions,
+            self._arm_set_joint_positions_cb,
+        )
+        rospy.logdebug(
+            "Creating '%s/panda_arm/set_joint_efforts' service." % rospy.get_name()
+        )
+        self._set_arm_joint_efforts_srv = rospy.Service(
+            "%s/panda_arm/set_joint_efforts" % rospy.get_name().split("/")[-1],
+            SetJointEfforts,
+            self._arm_set_joint_efforts_cb,
+        )
+        # NOTE: The service below serves as a wrapper around the original
+        # 'franka_gripper/move' action. It makes sure that users only need to set the
+        # gripper width while it automatically sets the speed to the maximum. It also
+        # clips gripper width that are not possible.
+        rospy.logdebug(
+            "Creating '%s/panda_hand/set_gripper_width' service." % rospy.get_name()
+        )
+        self._set_gripper_width_srv = rospy.Service(
+            "%s/panda_hand/set_gripper_width" % rospy.get_name().split("/")[-1],
+            SetGripperWidth,
+            self._set_gripper_width_cb,
+        )
         rospy.loginfo("'%s' services created successfully." % rospy.get_name())
 
         ########################################
         # Create panda_control publishers and ##
-        # and connect to required services.   ##
+        # and connect to required (action) #####
+        # services. ############################
         ########################################
 
         # Create arm joint position controller publishers
@@ -273,27 +221,6 @@ class PandaControlServer(object):
                     queue_size=10,
                 )
             )
-        # Create and joint position publishers
-        self._hand_joint_position_pub = GroupPublisher()
-        for position_controller in HAND_POSITION_CONTROLLERS:
-            self._hand_joint_position_pub.append(
-                rospy.Publisher(
-                    "%s/command" % (position_controller),
-                    Float64,
-                    queue_size=10,
-                )
-            )
-
-        # Create hand joint group effort publishers
-        self._hand_joint_effort_pub = GroupPublisher()
-        for effort_controller in HAND_EFFORT_CONTROLLERS:
-            self._hand_joint_effort_pub.append(
-                rospy.Publisher(
-                    "%s/command" % (effort_controller),
-                    Float64,
-                    queue_size=10,
-                )
-            )
 
         # Connect to controller_manager services
         try:
@@ -303,23 +230,47 @@ class PandaControlServer(object):
             rospy.wait_for_service(
                 "controller_manager/list_controllers", timeout=connection_timeout
             )
-            self.list_controllers_client = rospy.ServiceProxy(
+            self._list_controllers_client = rospy.ServiceProxy(
                 "controller_manager/list_controllers", ListControllers
             )
             rospy.logdebug(
                 "Connected to 'controller_manager/list_controllers' service!"
             )
-        except (rospy.ServiceException, ROSException, ROSInterruptException) as e:
+        except (rospy.ServiceException, ROSException, ROSInterruptException):
             rospy.logerr(
                 "Shutting down '%s' because no connection could be established "
-                "with the '%s' service and this service is needed "
-                "when using 'position_control'."
-                % (
-                    rospy.get_name(),
-                    e.args[0].strip("timeout exceeded while waiting for service"),
-                )
+                "with the 'controller_manager/list_controllers' service."
+                % (rospy.get_name(),)
             )
             sys.exit(0)
+
+        # Connect to the gripper command action server
+        rospy.logdebug("Connecting to '%s' action service." % "franka_gripper/move")
+        if action_server_exists("franka_gripper/move"):
+            # Connect to robot control action server
+            self._gripper_move_client = actionlib.SimpleActionClient(
+                "franka_gripper/move",
+                MoveAction,
+            )
+
+            # Waits until the action server has started up
+            retval = self._gripper_move_client.wait_for_server(
+                timeout=rospy.Duration(secs=5)
+            )
+            if not retval:
+                rospy.logwarn(
+                    "No connection could be established with the '%s' service. "
+                    "The Panda Robot Environment therefore can not use this action "
+                    "service to control the Panda Robot." % ("franka_gripper/move")
+                )
+            else:
+                self._gripper_move_client_connected = True
+        else:
+            rospy.logwarn(
+                "No connection could be established with the '%s' service. "
+                "The Panda Robot Environment therefore can not use this action "
+                "service to control the Panda Robot." % ("franka_gripper/move")
+            )
 
         ########################################
         # Connect joint state subscriber #######
@@ -330,87 +281,42 @@ class PandaControlServer(object):
         while self.joint_states is None and not rospy.is_shutdown():
             try:
                 self.joint_states = rospy.wait_for_message(
-                    self._joint_state_topic, JointState, timeout=1.0
+                    "joint_states", JointState, timeout=1.0
                 )
-
-                # Set joint setpoint to current position
-                self.joint_positions_setpoint = self.joint_states.position
-                self.joint_efforts_setpoint = self.joint_states.effort
             except ROSException:
                 rospy.logwarn(
-                    "Current /joint_states not ready yet, retrying for getting %s"
-                    % self._joint_state_topic
+                    "Current joint_states not ready yet, retrying for getting %s"
+                    % "joint_states"
                 )
 
         # Create joint_state subscriber
         self._joint_states_sub = rospy.Subscriber(
-            self._joint_state_topic, JointState, self._joints_cb
+            "joint_states", JointState, self._joints_cb
         )
-
-        ########################################
-        # Get controller information ###########
-        ########################################
-
-        # Set panda_control to right controller type (Group or individual)
-        self.arm_position_controllers = ARM_POSITION_CONTROLLERS
-        self.arm_effort_controllers = ARM_EFFORT_CONTROLLERS
-        self.hand_position_controllers = HAND_POSITION_CONTROLLERS
-        self.hand_effort_controllers = HAND_EFFORT_CONTROLLERS
-        self.arm_traj_controllers = ARM_TRAJ_CONTROLLERS
-        self.hand_traj_controllers = HAND_TRAJ_CONTROLLERS
-        self._arm_position_pub = self._arm_joint_position_pub
-        self._arm_effort_pub = self._arm_joint_effort_pub
-        self._hand_position_pub = self._hand_joint_position_pub
-        self._hand_effort_pub = self._hand_joint_effort_pub
-        self._arm_position_controller_msg_type = Float64
-        self._arm_effort_controller_msg_type = Float64
-        self._hand_position_controller_msg_type = Float64
-        self._hand_effort_controller_msg_type = Float64
-
-        # Create combined position/effort controllers lists
-        self._position_controllers = flatten_list(
-            [self.arm_position_controllers, self.hand_position_controllers]
-        )
-        self._effort_controllers = flatten_list(
-            [self.arm_effort_controllers, self.hand_effort_controllers]
-        )
-        self._traj_controllers = flatten_list(
-            [self.arm_traj_controllers, self.hand_traj_controllers]
-        )
-
-        # Retrieve the names of the joints that are controlled when we use joint
-        # trajectory control
-        try:
-            self._controlled_joints_traj_control = self._get_controlled_joints(
-                control_type="traj_control"
-            )
-        except InputMessageInvalidError:
-            self._controlled_joints_traj_control = panda_joints
 
         ########################################
         # Create joint trajectory action #######
         # servers ##############################
         ########################################
-        # NOTE: Here setup three new action services that serve as a wrapper around the
-        # original 'panda_arm_controller/follow_joint_trajectory' and
-        # 'panda_hand_controller/follow_joint_trajectory' action servers. By doing this
+        # NOTE: Here setup a new action service that serves as a wrapper around the
+        # original 'panda_arm_controller/follow_joint_trajectory'. By doing this
         # we add the following features to the original action servers.
         #   - The ability to send partial joint messages.
         #   - The ability to send joint trajectory messages that do not specify joints.
-        #   - The ability to send both arm and hand traj commands at the same time.
         #   - The ability to automatic generate a time axes when the create_time_axis
         #     field is set to True.
 
         # Connect to original 'panda_arm_controller/follow_joint_trajectory' action
         # server
         rospy.logdebug(
-            "Connecting to '%s' action service." % ARM_TRAJ_ACTION_SERVER_TOPIC
+            "Connecting to '%s' action service."
+            % "panda_arm_controller/follow_joint_trajectory"
         )
-        if action_server_exists(ARM_TRAJ_ACTION_SERVER_TOPIC):  # Check if exists
-
+        if action_server_exists("panda_arm_controller/follow_joint_trajectory"):
             # Connect to robot control action server
             self._arm_joint_traj_client = actionlib.SimpleActionClient(
-                ARM_TRAJ_ACTION_SERVER_TOPIC, control_msgs.FollowJointTrajectoryAction
+                "panda_arm_controller/follow_joint_trajectory",
+                control_msgs.FollowJointTrajectoryAction,
             )
 
             # Waits until the action server has started up
@@ -422,68 +328,17 @@ class PandaControlServer(object):
                     "No connection could be established with the '%s' service. "
                     "The Panda Robot Environment therefore can not use this action "
                     "service to control the Panda Robot."
-                    % (ARM_TRAJ_ACTION_SERVER_TOPIC)
+                    % ("panda_arm_controller/follow_joint_trajectory")
                 )
-                self._arm_joint_traj_connected = False
             else:
-                self._arm_joint_traj_connected = True
+                self._arm_joint_traj_client_connected = True
         else:
             rospy.logwarn(
                 "No connection could be established with the '%s' service. "
                 "The Panda Robot Environment therefore can not use this action "
-                "service to control the Panda Robot." % (ARM_TRAJ_ACTION_SERVER_TOPIC)
+                "service to control the Panda Robot."
+                % ("panda_arm_controller/follow_joint_trajectory")
             )
-            self._arm_joint_traj_connected = False
-
-        # Connect to original 'panda_hand_controller/follow_joint_trajectory' action
-        # server
-        rospy.logdebug(
-            "Connecting to '%s' action service." % HAND_TRAJ_ACTION_SERVER_TOPIC
-        )
-        if action_server_exists(HAND_TRAJ_ACTION_SERVER_TOPIC):  # Check if exists
-
-            # Connect to robot control action server
-            self._hand_joint_traj_client = actionlib.SimpleActionClient(
-                HAND_TRAJ_ACTION_SERVER_TOPIC, control_msgs.FollowJointTrajectoryAction
-            )
-
-            # Waits until the action server has started up
-            retval = self._hand_joint_traj_client.wait_for_server(
-                timeout=rospy.Duration(secs=5)
-            )
-            if not retval:
-                rospy.logwarn(
-                    "No connection could be established with the '%s' service. "
-                    "The Panda Robot Environment therefore can not use this action "
-                    "service to control the Panda Robot."
-                    % (HAND_TRAJ_ACTION_SERVER_TOPIC)
-                )
-                self._hand_joint_traj_connected = False
-            else:
-                self._hand_joint_traj_connected = True
-        else:
-            rospy.logwarn(
-                "No connection could be established with the '%s' service. "
-                "The Panda Robot Environment therefore can not use this action "
-                "service to control the Panda Robot." % (HAND_TRAJ_ACTION_SERVER_TOPIC)
-            )
-            self._hand_joint_traj_connected = False
-
-        # Setup a new Panda joint trajectory action server
-        rospy.loginfo(
-            "Creating '%s' joint trajectory action services." % rospy.get_name()
-        )
-        rospy.logdebug(
-            "Creating '%s/follow_joint_trajectory' service." % rospy.get_name()
-        )
-        self._joint_traj_as = actionlib.SimpleActionServer(
-            "%s/follow_joint_trajectory" % rospy.get_name()[1:],
-            FollowJointTrajectoryAction,
-            execute_cb=self._joint_traj_execute_cb,
-            auto_start=False,
-        )
-        self._joint_traj_as.register_preempt_callback(self._joint_traj_preempt_cb)
-        self._joint_traj_as.start()
 
         # Setup a new Panda arm joint trajectory action server
         rospy.logdebug(
@@ -491,7 +346,7 @@ class PandaControlServer(object):
             % rospy.get_name()
         )
         self._arm_joint_traj_as = actionlib.SimpleActionServer(
-            "%s/panda_arm/follow_joint_trajectory" % rospy.get_name()[1:],
+            "%s/panda_arm/follow_joint_trajectory" % rospy.get_name().split("/")[-1],
             FollowJointTrajectoryAction,
             execute_cb=self._arm_joint_traj_execute_cb,
             auto_start=False,
@@ -501,242 +356,9 @@ class PandaControlServer(object):
         )
         self._arm_joint_traj_as.start()
 
-        # Setup a new Panda hand joint trajectory action server
-        rospy.logdebug(
-            "Creating '%s/panda_hand/follow_joint_trajectory' service."
-            % rospy.get_name()
-        )
-        self._hand_joint_traj_as = actionlib.SimpleActionServer(
-            "%s/panda_hand/follow_joint_trajectory" % rospy.get_name()[1:],
-            FollowJointTrajectoryAction,
-            execute_cb=self._hand_joint_traj_execute_cb,
-            auto_start=False,
-        )
-        self._hand_joint_traj_as.register_preempt_callback(
-            self._hand_joint_traj_preempt_cb
-        )
-        self._hand_joint_traj_as.start()
-        rospy.loginfo(
-            "'%s' joint trajectory action services created successfully."
-            % rospy.get_name()
-        )
-
-        # Initialize joint trajectory feedback messages
-        self._init_action_servers_fb_msgs()
-
     ################################################
     # Panda control member functions ###############
     ################################################
-    def _init_action_servers_fb_msgs(self):
-        """Initiate the ``panda_control_server/panda_arm/follow_joint_trajectory`` and
-        ``panda_control_server/panda_hand/follow_joint_trajectory`` feedback messages
-        with the current robot states.
-        """
-        header = Header()
-        header.stamp = rospy.get_rostime()
-
-        # Get current robot state ditionary
-        state_dict = self._retrieve_state_dict(self._controlled_joints_traj_control)
-        arm_state_dict = state_dict["arm"]
-        hand_state_dict = state_dict["hand"]
-
-        # Fill arm feedback message
-        self._as_arm_feedback.joint_names = self._controlled_joints_traj_control["arm"]
-        self._as_arm_feedback.header = header
-        self._as_arm_feedback.actual.positions = arm_state_dict["positions"].values()
-        self._as_arm_feedback.actual.velocities = arm_state_dict["velocities"].values()
-        self._as_arm_feedback.actual.effort = arm_state_dict["efforts"].values()
-
-        # Fill hand feedback message
-        self._as_hand_feedback.joint_names = self._controlled_joints_traj_control[
-            "hand"
-        ]
-        self._as_hand_feedback.header = header
-        self._as_hand_feedback.actual.positions = hand_state_dict["positions"].values()
-        self._as_hand_feedback.actual.velocities = hand_state_dict[
-            "velocities"
-        ].values()
-        self._as_hand_feedback.actual.effort = hand_state_dict["efforts"].values()
-        self._as_feedback.joint_names = self._controlled_joints_traj_control["both"]
-        self._as_hand_feedback.header = header
-
-        # Fill combined feedback message
-        self._as_feedback.actual.positions = list(self.joint_states.position)
-        self._as_feedback.actual.velocities = list(self.joint_states.velocity)
-        self._as_feedback.actual.effort = list(self.joint_states.effort)
-
-    def _get_combined_action_server_fb_msg(self):
-        """Combine the action server feedback messages from the original
-        ``panda_arm_controller/follow_joint_trajectory`` and
-        ``panda_hand_controller/follow_joint_trajectory`` action servers so that they
-        can be used as a feedback message to the
-        ``panda_control_server/follow_joint_trajectory`` wrapper action server.
-
-        Returns:
-            :obj:`panda_gazebo.msg.FollowJointTrajectoryFeedback`: New combined action
-                server feedback message.
-        """
-        # Use newest message as starting point
-        if self._as_arm_feedback.header.stamp >= self._as_hand_feedback.header.stamp:
-            feedback_combined = copy.deepcopy(self._as_arm_feedback)
-        else:
-            feedback_combined = copy.deepcopy(self._as_hand_feedback)
-
-        # Combine feedback messages
-        if self.joint_states.name[0] in self._controlled_joints_traj_control["arm"]:
-            feedback_combined.joint_names = flatten_list(
-                [self._as_arm_feedback.joint_names, self._as_hand_feedback.joint_names]
-            )
-            feedback_combined.actual.positions = flatten_list(
-                [
-                    list(self._as_arm_feedback.actual.positions),
-                    list(self._as_hand_feedback.actual.positions),
-                ]
-            )
-            feedback_combined.actual.velocities = flatten_list(
-                [
-                    list(self._as_arm_feedback.actual.velocities),
-                    list(self._as_hand_feedback.actual.velocities),
-                ]
-            )
-            feedback_combined.actual.accelerations = flatten_list(
-                [
-                    list(self._as_arm_feedback.actual.accelerations),
-                    list(self._as_hand_feedback.actual.accelerations),
-                ]
-            )
-            feedback_combined.actual.effort = flatten_list(
-                [
-                    list(self._as_arm_feedback.actual.effort),
-                    list(self._as_hand_feedback.actual.effort),
-                ]
-            )
-            feedback_combined.desired.positions = flatten_list(
-                [
-                    list(self._as_arm_feedback.desired.positions),
-                    list(self._as_hand_feedback.desired.positions),
-                ]
-            )
-            feedback_combined.desired.velocities = flatten_list(
-                [
-                    list(self._as_arm_feedback.desired.velocities),
-                    list(self._as_hand_feedback.desired.velocities),
-                ]
-            )
-            feedback_combined.desired.accelerations = flatten_list(
-                [
-                    list(self._as_arm_feedback.desired.accelerations),
-                    list(self._as_hand_feedback.desired.accelerations),
-                ]
-            )
-            feedback_combined.desired.effort = flatten_list(
-                [
-                    list(self._as_arm_feedback.desired.effort),
-                    list(self._as_hand_feedback.desired.effort),
-                ]
-            )
-            feedback_combined.error.positions = flatten_list(
-                [
-                    list(self._as_arm_feedback.error.positions),
-                    list(self._as_hand_feedback.error.positions),
-                ]
-            )
-            feedback_combined.error.velocities = flatten_list(
-                [
-                    list(self._as_arm_feedback.error.velocities),
-                    list(self._as_hand_feedback.error.velocities),
-                ]
-            )
-            feedback_combined.error.accelerations = flatten_list(
-                [
-                    list(self._as_arm_feedback.error.accelerations),
-                    list(self._as_hand_feedback.error.accelerations),
-                ]
-            )
-            feedback_combined.error.effort = flatten_list(
-                [
-                    list(self._as_arm_feedback.error.effort),
-                    list(self._as_hand_feedback.error.effort),
-                ]
-            )
-        else:
-            feedback_combined.joint_names = flatten_list(
-                [self._as_hand_feedback.joint_names, self._as_arm_feedback.joint_names]
-            )
-            feedback_combined.actual.positions = flatten_list(
-                [
-                    list(self._as_hand_feedback.actual.positions),
-                    list(self._as_arm_feedback.actual.positions),
-                ]
-            )
-            feedback_combined.actual.velocities = flatten_list(
-                [
-                    list(self._as_hand_feedback.actual.velocities),
-                    list(self._as_arm_feedback.actual.velocities),
-                ]
-            )
-            feedback_combined.actual.accelerations = flatten_list(
-                [
-                    list(self._as_hand_feedback.actual.accelerations),
-                    list(self._as_arm_feedback.actual.accelerations),
-                ]
-            )
-            feedback_combined.actual.effort = flatten_list(
-                [
-                    list(self._as_hand_feedback.actual.effort),
-                    list(self._as_arm_feedback.actual.effort),
-                ]
-            )
-            feedback_combined.desired.positions = flatten_list(
-                [
-                    list(self._as_hand_feedback.desired.positions),
-                    list(self._as_arm_feedback.desired.positions),
-                ]
-            )
-            feedback_combined.desired.velocities = flatten_list(
-                [
-                    list(self._as_hand_feedback.desired.velocities),
-                    list(self._as_arm_feedback.desired.velocities),
-                ]
-            )
-            feedback_combined.desired.accelerations = flatten_list(
-                [
-                    list(self._as_hand_feedback.desired.accelerations),
-                    list(self._as_arm_feedback.desired.accelerations),
-                ]
-            )
-            feedback_combined.desired.effort = flatten_list(
-                [
-                    list(self._as_hand_feedback.desired.effort),
-                    list(self._as_arm_feedback.desired.effort),
-                ]
-            )
-            feedback_combined.error.positions = flatten_list(
-                [
-                    list(self._as_hand_feedback.error.positions),
-                    list(self._as_arm_feedback.error.positions),
-                ]
-            )
-            feedback_combined.error.velocities = flatten_list(
-                [
-                    list(self._as_hand_feedback.error.velocities),
-                    list(self._as_arm_feedback.error.velocities),
-                ]
-            )
-            feedback_combined.error.accelerations = flatten_list(
-                [
-                    list(self._as_hand_feedback.error.accelerations),
-                    list(self._as_arm_feedback.error.accelerations),
-                ]
-            )
-            feedback_combined.error.effort = flatten_list(
-                [
-                    list(self._as_hand_feedback.error.effort),
-                    list(self._as_arm_feedback.error.effort),
-                ]
-            )
-        return feedback_combined
-
     def _retrieve_state_dict(self, controlled_joints_dict):
         """Retrieves the current Panda arm and hand position, velocity and effort states
         in dictionary form.
@@ -899,22 +521,26 @@ class PandaControlServer(object):
         }
 
     def _wait_till_done(  # noqa: C901
-        self, control_type, control_group="both", timeout=None, controlled_joints=None
+        self,
+        control_type,
+        controlled_joints=None,
+        timeout=None,
+        check_gradient=True,
     ):
         """Wait control is finished. Meaning the robot state is within range of the
-        Joint position and joint effort setpoints.
+        Joint position and joint effort setpoints (or the velocity is zero).
 
         Args:
             control_type (str): The type of control that is being executed and on which
                 we should wait. Options are ``effort_control`` and
                 ``position_control``.
-            control_group (str, optional): The control group  for which the control is
-                being performed. Defaults to "both".
-            controlled_joints (dict, optional): A dictionary containing the joints that
+            controlled_joints (list, optional): A dictionary containing the joints that
                 are currently being controlled, these joints will be determined if no
                 dictionary is given.
-            connection_timeout (int, optional): The timeout when waiting for the control
+            timeout (int, optional): The timeout when waiting for the control
                 to be done. Defaults to :attr:`_wait_till_done_timeout`.
+            check_gradient (boolean, optional): If enabled the script will also return
+                when the gradients become zero. Defaults to ``True``.
         """
         # Validate control type and control group
         if control_type not in ["position_control", "effort_control"]:
@@ -925,22 +551,11 @@ class PandaControlServer(object):
             return False
         else:
             control_type = control_type.lower()
-        if control_group not in ["arm", "hand", "both"]:
-            rospy.logwarn(
-                "The control group '%s' you specified is not valid. Valid values are "
-                "%s. Control group 'both' used instead." % ("['arm', 'hand', 'both']")
-            )
-            control_group = "both"
-        else:
-            control_group = control_group.lower()
 
         # Compute the state masks
         if controlled_joints:
             arm_states_mask = [
-                joint in controlled_joints["arm"] for joint in self.joint_states.name
-            ]
-            hand_states_mask = [
-                joint in controlled_joints["hand"] for joint in self.joint_states.name
+                joint in controlled_joints for joint in self.joint_states.name
             ]
         else:  # Try to determine the controlled joints and state mask
             try:
@@ -951,19 +566,31 @@ class PandaControlServer(object):
                     joint in controlled_joints["arm"]
                     for joint in self.joint_states.name
                 ]
-                hand_states_mask = [
-                    joint in controlled_joints["hand"]
-                    for joint in self.joint_states.name
-                ]
-            except InputMessageInvalidError as e:
-                rospy.loginfo(
+            except InputMessageInvalidError:
+                rospy.logwarn(
                     "Not waiting for control to be completed as no information could "
                     "be retrieved about which joints are controlled when using '%s' "
                     "control. Please make sure the '%s' controllers that are needed "
                     "for '%s' control are initialized."
                     % (
                         control_type,
-                        e.details["controlled_joints"],
+                        ARM_POSITION_CONTROLLERS
+                        if control_type == "position_control"
+                        else ARM_EFFORT_CONTROLLERS,
+                        control_type,
+                    )
+                )
+                return False
+            if not any(arm_states_mask):
+                rospy.logwarn(
+                    "Not waiting for control to be completed as no joints appear to be "
+                    "controlled when using '%s' control. Please make sure the '%s' "
+                    "controllers that are needed for '%s' control are initialized."
+                    % (
+                        control_type,
+                        ARM_POSITION_CONTROLLERS
+                        if control_type == "position_control"
+                        else ARM_EFFORT_CONTROLLERS,
                         control_type,
                     )
                 )
@@ -975,138 +602,75 @@ class PandaControlServer(object):
         else:
             timeout = self._wait_till_done_timeout
 
-        # Select the right mask for the control_group
-        if control_group == "arm":
-            states_mask = arm_states_mask
-        elif control_group == "hand":
-            states_mask = hand_states_mask
-        else:
-            states_mask = [
-                any(bool_tuple) for bool_tuple in zip(arm_states_mask, hand_states_mask)
-            ]
-
-        # Wait till robot positions/efforts are not changing anymore
-        # NOTE: We have to use the std to determine whether the control was finished
-        # as the velocity in the joint_states topic is wrong (see issue 14)
-        # Improve: We can use real gazebo velocity if issue 14 is fixed.
+        # Wait till robot positions/efforts reach the setpoint or the velocities are
+        # not changing anymore
         timeout_time = rospy.get_rostime() + timeout
-        positions_buffer = np.full((2, len(self.joint_states.position)), np.nan)
-        positions_grad = np.full((2, len(self.joint_states.position)), np.nan)
-        efforts_buffer = np.full((2, len(self.joint_states.effort)), np.nan)
-        efforts_grad = np.full((2, len(self.joint_states.effort)), np.nan)
+        state_buffer = np.full((2, len(self.joint_states.position)), np.nan)
+        grad_buffer = np.full((2, len(self.joint_states.position)), np.nan)
         while not rospy.is_shutdown() and rospy.get_rostime() < timeout_time:
-
             # Wait till joint positions are within range or arm not changing anymore
             if control_type == "position_control":
-
-                # Retrieve positions setpoint
-                joint_positions_setpoint = flatten_list(
-                    [
-                        self.joint_positions_setpoint["hand"],
-                        self.joint_positions_setpoint["arm"],
-                    ]
-                    if hand_states_mask[0]
-                    else [
-                        self.joint_positions_setpoint["arm"],
-                        self.joint_positions_setpoint["hand"],
-                    ]
-                )
-
-                # Add state to position to buffer
-                positions_buffer = np.append(
-                    positions_buffer, [self.joint_states.position], axis=0
-                )
-                positions_buffer = np.delete(
-                    positions_buffer, 0, axis=0
-                )  # Delete oldest entry
-                positions_grad = np.gradient(positions_buffer, axis=0)
-
-                # Check if joint states are within setpoints
-                if (
-                    np.linalg.norm(
-                        np.array(
-                            list(compress(self.joint_states.position, states_mask))
-                        )
-                        - np.array(
-                            list(compress(joint_positions_setpoint, states_mask))
-                        )
-                    )
-                    <= self.joint_positions_threshold
-                ) or all(
-                    [
-                        (
-                            np.abs(val) <= self._joint_positions_grad_threshold
-                            and val != 0.0
-                        )
-                        for val in list(compress(positions_grad[-1], states_mask))
-                    ]
-                ):  # Check if difference norm is within threshold
-                    break
-
+                joint_setpoint = self.arm_joint_positions_setpoint
+                joint_states = self.joint_states.position
+                state_threshold = self.joint_positions_threshold
+                grad_threshold = self._joint_positions_grad_threshold
             # Check if joint effort states are within setpoint
             elif control_type == "effort_control":
+                joint_setpoint = self.arm_joint_efforts_setpoint
+                joint_states = self.joint_states.effort
+                state_threshold = self.joint_efforts_threshold
+                grad_threshold = self._joint_efforts_grad_threshold
 
-                # Retrieve positions setpoint
-                joint_efforts_setpoint = flatten_list(
-                    [
-                        self.joint_efforts_setpoint["hand"],
-                        self.joint_efforts_setpoint["arm"],
-                    ]
-                    if hand_states_mask[0]
-                    else [
-                        self.joint_efforts_setpoint["arm"],
-                        self.joint_efforts_setpoint["hand"],
-                    ]
-                )
+            # Add current state to state_buffer and delete oldest entry
+            state_buffer = np.delete(
+                np.append(state_buffer, [joint_states], axis=0), 0, axis=0
+            )
+            grad_buffer = np.gradient(state_buffer, axis=0)
 
-                # Add state to effort to buffer
-                efforts_buffer = np.append(
-                    efforts_buffer, [self.joint_states.effort], axis=0
-                )
-                efforts_buffer = np.delete(
-                    efforts_buffer, 0, axis=0
-                )  # Delete oldest entry
-                efforts_grad = np.gradient(efforts_buffer, axis=0)
+            # Check if setpoint is reached
+            if check_gradient:  # Check position/effort and gradients
                 if (
                     np.linalg.norm(
-                        np.array(list(compress(self.joint_states.effort, states_mask)))
-                        - np.array(list(compress(joint_efforts_setpoint, states_mask)))
+                        np.array(list(compress(joint_states, arm_states_mask)))
+                        - np.array(list(compress(joint_setpoint, arm_states_mask)))
                     )
-                    <= self.joint_efforts_threshold
+                    <= state_threshold  # Check if difference norm is within threshold
                 ) or all(
                     [
-                        (
-                            np.abs(val) <= self._joint_efforts_grad_threshold
-                            and val != 0.0
-                        )
-                        for val in list(compress(efforts_grad[-1], states_mask))
-                    ]
-                ):  # Check if difference norm is within threshold
+                        (np.abs(val) <= grad_threshold and val != 0.0)
+                        for val in list(compress(grad_buffer[-1], arm_states_mask))
+                    ]  # Check if all velocities are close to zero
+                ):
                     break
-            else:
-                rospy.loginfo(
-                    "Not waiting for control to be completed as '%s' is not "
-                    "a valid control type."
-                )
+            else:  # Only check position/effort
+                if (
+                    np.linalg.norm(
+                        np.array(list(compress(joint_states, arm_states_mask)))
+                        - np.array(list(compress(joint_setpoint, arm_states_mask)))
+                    )
+                    <= state_threshold  # Check if difference norm is within threshold
+                ):
+                    break
 
+        # Reset setpoints and return result
+        if control_type == "position_control":
+            self.arm_joint_positions_setpoint = []
+        else:
+            self.arm_joint_efforts_setpoint = []
         return True
 
-    def _create_traj_action_server_msg(  # noqa: C901
-        self, input_msg, control_group, verbose=False
+    def _create_arm_traj_action_server_msg(  # noqa: C901
+        self, input_msg, verbose=False
     ):
-        """Converts the ``panda_gazebo.msg.FollowJointTrajectoryGoal`` message that
+        """Converts the ``control_msgs.msg.FollowJointTrajectoryGoal`` message that
         is received by the ``panda_control_server`` follow joint trajectory wrapper
         action servers into the right format for the original ``panda_arm_controller``
-        and ``panda_hand_controller``
         `follow_joint_trajectory <https://wiki.ros.org/joint_trajectory_action/>`_
-        action servers.
+        action server.
 
         Args:
             input_msg (:obj:`trajectory_msgs/JointTrajectory`): The service input
                 message we want to validate.
-            control_type (str): The type of control that is being executed and on which
-                we should wait. Options are ``effort_control`` and
-                ``position_control``.
             verbose (bool): Boolean specifying whether you want to send a warning
                 message to the ROSlogger.
 
@@ -1120,56 +684,19 @@ class PandaControlServer(object):
                 input_msg could not be converted into panda_arm_controller control
                 messages.
         """  # noqa: E501
-        # Validate control_group argument
-        if control_group.lower() not in ["arm", "hand", "both"]:
-            logwarn_message = (
-                "Control group '%s' does not exist. Please specify a valid control "
-                "group. Valid values are %s."
-                % (control_group.lower(), "['arm', 'hand', 'both']")
-            )
-            if verbose:
-                rospy.logwarn(logwarn_message)
-            raise InputMessageInvalidError(
-                message="Control_group '%s' invalid." % control_group.lower(),
-                log_message=logwarn_message,
-            )
-        else:
-            control_group = control_group.lower()
-
         # Retrieve controlled joints
-        try:
-            controlled_joints_dict = self._get_controlled_joints(
-                control_type="traj_control", verbose=verbose
-            )
-        except InputMessageInvalidError:
-            logwarn_message = (
-                "The joint trajectory publisher message could not be created as the "
-                "'%s' are not initialized." % (self._traj_controllers)
-            )
-            if verbose:
-                rospy.logwarn(logwarn_message)
-            raise InputMessageInvalidError(
-                message="Required controllers not initialised.",
-                details={"controlled_joints": self._effort_controllers},
-                log_message=logwarn_message,
-            )
+        controlled_joints_dict = self._get_controlled_joints(
+            control_type="traj_control", verbose=verbose
+        )
 
-        # Get needed contolled joints information out of dictionary
-        if control_group == "arm":
-            controlled_joints = controlled_joints_dict["arm"]
-        elif control_group == "hand":
-            controlled_joints = controlled_joints_dict["hand"]
-        else:
-            controlled_joints = controlled_joints_dict["both"]
+        # Get controlled joints, arm_state and joint_names
+        controlled_joints = controlled_joints_dict["arm"]
         controlled_joints_size = len(controlled_joints)
-
-        # Retrieve joint names and current robot states
         state_dict = self._retrieve_state_dict(controlled_joints_dict)
         arm_state_dict = state_dict["arm"]
-        hand_state_dict = state_dict["hand"]
         joint_names = input_msg.trajectory.joint_names
 
-        # Initiate new arm and hand action server messages using the current robot state
+        # Initiate new arm action server messages using the current robot state
         arm_control_msg = copy.deepcopy(input_msg)
         arm_control_msg.trajectory.joint_names = controlled_joints_dict["arm"]
         for idx, waypoint in enumerate(input_msg.trajectory.points):
@@ -1179,26 +706,11 @@ class PandaControlServer(object):
             arm_control_msg.trajectory.points[idx].velocities = list(
                 arm_state_dict["velocities"].values()
             )
-            arm_control_msg.trajectory.points[idx].effort = list(
-                arm_state_dict["efforts"].values()
-            )
             arm_control_msg.trajectory.points[idx].accelerations = [0.0] * len(
                 arm_control_msg.trajectory.joint_names
             )
-        hand_control_msg = copy.deepcopy(input_msg)
-        hand_control_msg.trajectory.joint_names = controlled_joints_dict["hand"]
-        for idx, waypoint in enumerate(input_msg.trajectory.points):
-            hand_control_msg.trajectory.points[idx].positions = list(
-                hand_state_dict["positions"].values()
-            )
-            hand_control_msg.trajectory.points[idx].velocities = list(
-                hand_state_dict["velocities"].values()
-            )
-            hand_control_msg.trajectory.points[idx].effort = list(
-                hand_state_dict["efforts"].values()
-            )
-            hand_control_msg.trajectory.points[idx].accelerations = [0.0] * len(
-                hand_control_msg.trajectory.joint_names
+            arm_control_msg.trajectory.points[idx].effort = list(
+                arm_state_dict["efforts"].values()
             )
 
         # Retrieve the length of the positions/velocities/accelerations and efforts in
@@ -1227,10 +739,9 @@ class PandaControlServer(object):
 
         # Check action server goal request message
         if len(joint_names) == 0:  # If not joint_names were given
-
             # Check if the number of joint positions/velocities/accelerations or
             # efforts is unequal to the the number of joints
-            waypoints_length_not_equal = [
+            waypoints_lengths_not_equal_to_joints = [
                 any(
                     [
                         length != controlled_joints_size and length != 0
@@ -1258,11 +769,10 @@ class PandaControlServer(object):
             ]
 
             # Check if trajectory message is valid
-            if any(waypoints_length_not_equal):
-
+            if any(waypoints_lengths_not_equal_to_joints):
                 # Check if the number of joint positions/velocities/accelerations or
                 # efforts exceeds the number of joints
-                waypoints_length_to_big = {
+                waypoints_lengths_to_big = {
                     "positions": any(
                         [
                             length > controlled_joints_size
@@ -1290,21 +800,16 @@ class PandaControlServer(object):
                 }
 
                 # Throw error if aforementioned is the case
-                if any(waypoints_length_to_big.values()):
+                if any(waypoints_lengths_to_big.values()):
                     invalid_fields_string = list_2_human_text(
-                        [key for key, val in waypoints_length_to_big.items() if val]
+                        [key for key, val in waypoints_lengths_to_big.items() if val]
                     )
                     logwarn_message = (
                         "Your joint trajectory goal message contains more joint %s "
-                        "than the %s joints that are found in the %s."
+                        "than the %s joints that are found in the arm control group."
                         % (
                             invalid_fields_string,
                             controlled_joints_size,
-                            (
-                                "arm and hand control groups"
-                                if control_group == "both"
-                                else control_group + "control group"
-                            ),
                         )
                     )
                     if verbose:
@@ -1322,17 +827,10 @@ class PandaControlServer(object):
                 ):  # Show warning if less control commands are given than joints
                     logwarn_message = (
                         "Some of the trajectory waypoints contain less position "
-                        "commands than %s joints that are found in the %s. When "
-                        "this is the case the current joint states will be used for "
-                        "the joints without a position command."
-                        % (
-                            controlled_joints_size,
-                            (
-                                "arm and hand control groups"
-                                if control_group == "both"
-                                else control_group + "control group"
-                            ),
-                        )
+                        "commands than %s joints that are found in the arm control "
+                        "group. When this is the case the current joint states will be "
+                        "used for the joints without a position command."
+                        % (controlled_joints_size,)
                     )
                     if verbose:
                         rospy.logwarn(logwarn_message)
@@ -1345,350 +843,54 @@ class PandaControlServer(object):
             # autofill_traj_positions ROS parameter to True. In this case the position
             # field will always be filled with the current joint states.
             for idx, waypoint in enumerate(input_msg.trajectory.points):
+                # Add time_from_start variable if create_time_axis == TRUE
+                if input_msg.create_time_axis:
+                    time_axis_tmp = rospy.Duration.from_sec(
+                        (idx * input_msg.time_axis_step) + input_msg.time_axis_step
+                    )
+                    arm_control_msg.trajectory.points[
+                        idx
+                    ].time_from_start = time_axis_tmp
 
-                # Add position/velocity/acceleration and effort control commands
-                if control_group == "arm":
-                    # Add time_from_start variable if create_time_axis == TRUE
-                    if input_msg.create_time_axis:
-                        time_axis_tmp = rospy.Duration.from_sec(
-                            (idx * input_msg.time_axis_step) + input_msg.time_axis_step
-                        )
-                        arm_control_msg.trajectory.points[
-                            idx
-                        ].time_from_start = time_axis_tmp
-
-                    # Add joint position commands
-                    if len(waypoint.positions) != 0:
-                        arm_control_msg.trajectory.points[idx].positions[
-                            : len(waypoint.positions)
-                        ] = list(waypoint.positions)
-                    else:
-                        # Make sure empty position field stays empty
-                        if not self.autofill_traj_positions:
-                            arm_control_msg.trajectory.points[idx].positions = []
-
-                    # Add joint velocity commands
-                    if len(waypoint.velocities) != 0:
-                        arm_control_msg.trajectory.points[idx].velocities[
-                            : len(waypoint.velocities)
-                        ] = list(waypoint.velocities)
-                    else:
-                        # Make sure empty velocity field stays empty
-                        arm_control_msg.trajectory.points[idx].velocities = []
-
-                    # Add joint acceleration commands
-                    if len(waypoint.accelerations) != 0:
-                        arm_control_msg.trajectory.points[idx].accelerations[
-                            : len(waypoint.accelerations)
-                        ] = list(waypoint.accelerations)
-                    else:
-                        # Make sure empty acceleration field stays empty
-                        arm_control_msg.trajectory.points[idx].accelerations = []
-
-                    # Add joint effort commands
-                    if len(waypoint.effort) != 0:
-                        arm_control_msg.trajectory.points[idx].effort[
-                            : len(waypoint.effort)
-                        ] = list(waypoint.effort)
-                    else:
-                        # Make sure empty effort field stays empty
-                        arm_control_msg.trajectory.points[idx].effort = []
-                elif control_group == "hand":
-
-                    # Add time_from_start variable if create_time_axis == TRUE
-                    if input_msg.create_time_axis:
-                        time_axis_tmp = rospy.Duration.from_sec(
-                            (idx * input_msg.time_axis_step) + input_msg.time_axis_step
-                        )
-                        hand_control_msg.trajectory.points[
-                            idx
-                        ].time_from_start = time_axis_tmp
-
-                    # Add joint position commands
-                    if len(waypoint.positions) != 0:
-                        hand_control_msg.trajectory.points[idx].positions[
-                            : len(waypoint.positions)
-                        ] = list(waypoint.positions)
-                    else:
-                        # Make sure empty position field stays empty
-                        if not self.autofill_traj_positions:
-                            hand_control_msg.trajectory.points[idx].positions = []
-
-                    # Add joint velocity commands
-                    if len(waypoint.velocities) != 0:
-                        hand_control_msg.trajectory.points[idx].velocities[
-                            : len(waypoint.velocities)
-                        ] = list(waypoint.velocities)
-                    else:
-                        # Make sure empty velocity field stays empty
-                        hand_control_msg.trajectory.points[idx].velocities = []
-
-                    # Add joint acceleration commands
-                    if len(waypoint.accelerations) != 0:
-                        hand_control_msg.trajectory.points[idx].accelerations[
-                            : len(waypoint.accelerations)
-                        ] = list(waypoint.accelerations)
-                    else:
-                        # Make sure empty acceleration field stays empty
-                        hand_control_msg.trajectory.points[idx].accelerations = []
-
-                    # Add joint effort commands
-                    if len(waypoint.effort) != 0:
-                        hand_control_msg.trajectory.points[idx].effort[
-                            : len(waypoint.effort)
-                        ] = list(waypoint.effort)
-                    else:
-                        # Make sure empty effort field stays empty
-                        hand_control_msg.trajectory.points[idx].effort = []
+                # Add joint position commands
+                if len(waypoint.positions) != 0:
+                    arm_control_msg.trajectory.points[idx].positions[
+                        : len(waypoint.positions)
+                    ] = list(waypoint.positions)
                 else:
+                    # Make sure empty position field stays empty
+                    if not self.autofill_traj_positions:
+                        arm_control_msg.trajectory.points[idx].positions = []
 
-                    # Add time_from_start variable if create_time_axis == TRUE
-                    if input_msg.create_time_axis:
-                        time_axis_tmp = rospy.Duration.from_sec(
-                            (idx * input_msg.time_axis_step) + input_msg.time_axis_step
-                        )
-                        arm_control_msg.trajectory.points[
-                            idx
-                        ].time_from_start = time_axis_tmp
+                # Add joint velocity commands
+                if len(waypoint.velocities) != 0:
+                    arm_control_msg.trajectory.points[idx].velocities[
+                        : len(waypoint.velocities)
+                    ] = list(waypoint.velocities)
+                else:
+                    # Make sure empty velocity field stays empty
+                    arm_control_msg.trajectory.points[idx].velocities = []
 
-                    # Add time_from_start variable if create_time_axis == TRUE
-                    if input_msg.create_time_axis:
-                        time_axis_tmp = rospy.Duration.from_sec(
-                            (idx * input_msg.time_axis_step) + input_msg.time_axis_step
-                        )
-                        hand_control_msg.trajectory.points[
-                            idx
-                        ].time_from_start = time_axis_tmp
+                # Add joint acceleration commands
+                if len(waypoint.accelerations) != 0:
+                    arm_control_msg.trajectory.points[idx].accelerations[
+                        : len(waypoint.accelerations)
+                    ] = list(waypoint.accelerations)
+                else:
+                    # Make sure empty acceleration field stays empty
+                    arm_control_msg.trajectory.points[idx].accelerations = []
 
-                    # Check joint state order (hand,arm) or (arm, hand) and add control
-                    # commands accordingly
-                    if self.joint_states.name[0] in controlled_joints_dict["arm"]:
+                # Add joint effort commands
+                if len(waypoint.effort) != 0:
+                    arm_control_msg.trajectory.points[idx].effort[
+                        : len(waypoint.effort)
+                    ] = list(waypoint.effort)
+                else:
+                    # Make sure empty effort field stays empty
+                    arm_control_msg.trajectory.points[idx].effort = []
 
-                        # Add joint position commands
-                        if len(waypoint.positions) != 0:
-                            if len(waypoint.positions) <= len(
-                                arm_control_msg.trajectory.joint_names
-                            ):  # If less commands than there are arm joints
-                                arm_control_msg.trajectory.points[idx].positions[
-                                    : len(waypoint.positions)
-                                ] = list(waypoint.positions)
-                            else:
-                                arm_control_msg.trajectory.points[idx].positions[
-                                    :
-                                ] = waypoint.positions[
-                                    : len(arm_control_msg.trajectory.joint_names)
-                                ]
-                                hand_control_msg.trajectory.points[idx].positions[
-                                    : (
-                                        len(waypoint.positions)
-                                        - len(arm_control_msg.trajectory.joint_names)
-                                    )
-                                ] = waypoint.positions[
-                                    len(arm_control_msg.trajectory.joint_names) :
-                                ]
-                        else:
-                            # Make sure empty position field stays empty
-                            if not self.autofill_traj_positions:
-                                arm_control_msg.trajectory.points[idx].positions = []
-                                hand_control_msg.trajectory.points[idx].positions = []
-
-                        # Add joint velocity commands
-                        if len(waypoint.velocities) != 0:
-                            if len(waypoint.velocities) <= len(
-                                arm_control_msg.trajectory.joint_names
-                            ):  # If less commands than there are arm joints
-                                arm_control_msg.trajectory.points[idx].velocities[
-                                    : len(waypoint.velocities)
-                                ] = list(waypoint.velocities)
-                            else:
-                                arm_control_msg.trajectory.points[idx].velocities[
-                                    :
-                                ] = waypoint.velocities[
-                                    : len(arm_control_msg.trajectory.joint_names)
-                                ]
-                                hand_control_msg.trajectory.points[idx].velocities[
-                                    : (
-                                        len(waypoint.velocities)
-                                        - len(arm_control_msg.trajectory.joint_names)
-                                    )
-                                ] = waypoint.velocities[
-                                    len(arm_control_msg.trajectory.joint_names) :
-                                ]
-                        else:
-                            # Make sure empty velocity field stays empty
-                            arm_control_msg.trajectory.points[idx].velocities = []
-                            hand_control_msg.trajectory.points[idx].velocities = []
-
-                        # Add joint acceleration commands
-                        if len(waypoint.accelerations) != 0:
-                            if len(waypoint.accelerations) <= len(
-                                arm_control_msg.trajectory.joint_names
-                            ):  # If less commands than there are arm joints
-                                arm_control_msg.trajectory.points[idx].accelerations[
-                                    : len(waypoint.accelerations)
-                                ] = list(waypoint.accelerations)
-                            else:
-                                arm_control_msg.trajectory.points[idx].accelerations[
-                                    :
-                                ] = waypoint.accelerations[
-                                    : len(arm_control_msg.trajectory.joint_names)
-                                ]
-                                hand_control_msg.trajectory.points[idx].accelerations[
-                                    : (
-                                        len(waypoint.accelerations)
-                                        - len(arm_control_msg.trajectory.joint_names)
-                                    )
-                                ] = waypoint.accelerations[
-                                    len(arm_control_msg.trajectory.joint_names) :
-                                ]
-                        else:
-                            # Make sure empty acceleration field stays empty
-                            arm_control_msg.trajectory.points[idx].accelerations = []
-                            hand_control_msg.trajectory.points[idx].accelerations = []
-
-                        # Add joint effort commands
-                        if len(waypoint.effort) != 0:
-                            if len(waypoint.effort) <= len(
-                                arm_control_msg.trajectory.joint_names
-                            ):  # If less commands than there are arm joints
-                                arm_control_msg.trajectory.points[idx].effort[
-                                    : len(waypoint.effort)
-                                ] = list(waypoint.effort)
-                            else:
-                                arm_control_msg.trajectory.points[idx].effort[
-                                    :
-                                ] = waypoint.effort[
-                                    : len(arm_control_msg.trajectory.joint_names)
-                                ]
-                                hand_control_msg.trajectory.points[idx].effort[
-                                    : (
-                                        len(waypoint.effort)
-                                        - len(arm_control_msg.trajectory.joint_names)
-                                    )
-                                ] = waypoint.effort[
-                                    len(arm_control_msg.trajectory.joint_names) :
-                                ]
-                        else:
-                            # Make sure empty effort field stays empty
-                            arm_control_msg.trajectory.points[idx].effort = []
-                            hand_control_msg.trajectory.points[idx].effort = []
-                    else:
-
-                        # Add joint position commands
-                        if len(waypoint.positions) != 0:
-                            if len(waypoint.positions) <= len(
-                                hand_control_msg.trajectory.joint_names
-                            ):  # If less commands than there are hand joints
-                                hand_control_msg.trajectory.points[idx].positions[
-                                    : len(waypoint.positions)
-                                ] = list(waypoint.positions)
-                            else:
-                                hand_control_msg.trajectory.points[idx].positions[
-                                    :
-                                ] = waypoint.positions[
-                                    : len(hand_control_msg.trajectory.joint_names)
-                                ]
-                                arm_control_msg.trajectory.points[idx].positions[
-                                    : (
-                                        len(waypoint.positions)
-                                        - len(hand_control_msg.trajectory.joint_names)
-                                    )
-                                ] = waypoint.positions[
-                                    len(hand_control_msg.trajectory.joint_names) :
-                                ]
-                        else:
-                            # Make sure empty position field stays empty
-                            if not self.autofill_traj_positions:
-                                arm_control_msg.trajectory.points[idx].positions = []
-                                hand_control_msg.trajectory.points[idx].positions = []
-
-                        # Add joint velocity commands
-                        if len(waypoint.velocities) != 0:
-                            if len(waypoint.velocities) <= len(
-                                hand_control_msg.trajectory.joint_names
-                            ):  # If less commands than there are hand joints
-                                hand_control_msg.trajectory.points[idx].velocities[
-                                    : len(waypoint.velocities)
-                                ] = list(waypoint.velocities)
-                            else:
-                                hand_control_msg.trajectory.points[idx].velocities[
-                                    :
-                                ] = waypoint.velocities[
-                                    : len(hand_control_msg.trajectory.joint_names)
-                                ]
-                                arm_control_msg.trajectory.points[idx].velocities[
-                                    : (
-                                        len(waypoint.velocities)
-                                        - len(hand_control_msg.trajectory.joint_names)
-                                    )
-                                ] = waypoint.velocities[
-                                    len(hand_control_msg.trajectory.joint_names) :
-                                ]
-                        else:
-                            # Make sure empty velocity field stays empty
-                            arm_control_msg.trajectory.points[idx].velocities = []
-                            hand_control_msg.trajectory.points[idx].velocities = []
-
-                        # Add joint acceleration commands
-                        if len(waypoint.accelerations) != 0:
-                            if len(waypoint.accelerations) <= len(
-                                hand_control_msg.trajectory.joint_names
-                            ):  # If less commands than there are hand joints
-                                hand_control_msg.trajectory.points[idx].accelerations[
-                                    : len(waypoint.accelerations)
-                                ] = list(waypoint.accelerations)
-                            else:
-                                hand_control_msg.trajectory.points[idx].accelerations[
-                                    :
-                                ] = waypoint.accelerations[
-                                    : len(hand_control_msg.trajectory.joint_names)
-                                ]
-                                arm_control_msg.trajectory.points[idx].accelerations[
-                                    : (
-                                        len(waypoint.accelerations)
-                                        - len(hand_control_msg.trajectory.joint_names)
-                                    )
-                                ] = waypoint.accelerations[
-                                    len(hand_control_msg.trajectory.joint_names) :
-                                ]
-                        else:
-                            # Make sure empty acceleration field stays empty
-                            arm_control_msg.trajectory.points[idx].accelerations = []
-                            hand_control_msg.trajectory.points[idx].accelerations = []
-
-                        # Add joint effort commands
-                        if len(waypoint.effort) != 0:
-                            if len(waypoint.effort) <= len(
-                                hand_control_msg.trajectory.joint_names
-                            ):  # If less commands than there are hand joints
-                                hand_control_msg.trajectory.points[idx].effort[
-                                    : len(waypoint.effort)
-                                ] = list(waypoint.effort)
-                            else:
-                                hand_control_msg.trajectory.points[idx].effort[
-                                    :
-                                ] = waypoint.effort[
-                                    : len(hand_control_msg.trajectory.joint_names)
-                                ]
-                                arm_control_msg.trajectory.points[idx].effort[
-                                    : (
-                                        len(waypoint.effort)
-                                        - len(hand_control_msg.trajectory.joint_names)
-                                    )
-                                ] = waypoint.effort[
-                                    len(hand_control_msg.trajectory.joint_names) :
-                                ]
-                        else:
-                            # Make sure empty effort field stays empty
-                            arm_control_msg.trajectory.points[idx].effort = []
-                            hand_control_msg.trajectory.points[idx].effort = []
-
-            return {
-                "arm": panda_action_msg_2_control_msgs_action_msg(arm_control_msg),
-                "hand": panda_action_msg_2_control_msgs_action_msg(hand_control_msg),
-            }
+            return panda_action_msg_2_control_msgs_action_msg(arm_control_msg)
         else:  # If joints were specified
-
             # Check if the number of joint positions/velocities/accelerations or
             # efforts is unequal to the the number of joints
             waypoints_length_not_equal = {
@@ -1750,20 +952,17 @@ class PandaControlServer(object):
                     logwarn_msg_strings = [
                         "Joint" if len(invalid_joint_names) == 1 else "Joints",
                         "was" if len(invalid_joint_names) == 1 else "were",
-                        "panda_gazebo/SetJointPositions",
+                        "panda_gazebo/SetJointPositions",  # NOTE: Why?
                     ]
                     logwarn_message = (
                         "%s that %s specified in the 'joint_names' field of the '%s' "
                         "message %s invalid. Valid joint names for controlling the "
-                        "Panda %s are %s."
+                        "Panda arm are %s."
                         % (
                             "%s %s" % (logwarn_msg_strings[0], invalid_joint_names),
                             logwarn_msg_strings[1],
                             logwarn_msg_strings[2],
                             logwarn_msg_strings[1],
-                            control_group
-                            if control_group in ["hand", "arm"]
-                            else "arm & hand",
                             controlled_joints,
                         )
                     )
@@ -1784,8 +983,6 @@ class PandaControlServer(object):
                     # case the position field will always be filled with the current
                     # joint states.
                     for idx, waypoint in enumerate(input_msg.trajectory.points):
-
-                        # Create input control command dictionary
                         input_command_dict = {
                             "positions": OrderedDict(
                                 zip(joint_names, waypoint.positions)
@@ -1799,454 +996,124 @@ class PandaControlServer(object):
                             "efforts": OrderedDict(zip(joint_names, waypoint.effort)),
                         }
 
-                        # Create position/velocity/acceleration and effort control
-                        # command arrays
-                        if control_group == "arm":
+                        # Add time_from_start variable if create_time_axis == TRUE
+                        if input_msg.create_time_axis:
+                            time_axis_tmp = rospy.Duration.from_sec(
+                                (idx * input_msg.time_axis_step)
+                                + input_msg.time_axis_step
+                            )
+                            arm_control_msg.trajectory.points[
+                                idx
+                            ].time_from_start = time_axis_tmp
 
-                            # Add time_from_start variable if create_time_axis == TRUE
-                            if input_msg.create_time_axis:
-                                time_axis_tmp = rospy.Duration.from_sec(
-                                    (idx * input_msg.time_axis_step)
-                                    + input_msg.time_axis_step
-                                )
-                                arm_control_msg.trajectory.points[
-                                    idx
-                                ].time_from_start = time_axis_tmp
-
-                            # Create position command array
-                            if len(waypoint.positions) != 0:
-                                arm_position_commands_dict = copy.deepcopy(
-                                    arm_state_dict["positions"]
-                                )  # Start from the current states
-                                for (joint, position,) in input_command_dict[
-                                    "positions"
-                                ].items():  # Add control commands
-                                    if joint in arm_state_dict["positions"]:
-                                        arm_position_commands_dict[joint] = position
-                                arm_position_commands = (
-                                    arm_position_commands_dict.values()
-                                )
-                                hand_position_commands = hand_state_dict[
-                                    "positions"
-                                ].values()
-                            else:
-                                # Make sure empty position field stays empty
-                                if not self.autofill_traj_positions:
-                                    arm_position_commands = []
-                                    hand_position_commands = []
-
-                            # Create velocity command array
-                            if len(waypoint.velocities) != 0:
-                                arm_velocity_commands_dict = copy.deepcopy(
-                                    arm_state_dict["velocities"]
-                                )  # Start from the current states
-                                for (joint, velocity,) in input_command_dict[
-                                    "velocities"
-                                ].items():  # Add control commands
-                                    if joint in arm_state_dict["velocities"]:
-                                        arm_velocity_commands_dict[joint] = velocity
-                                arm_velocity_commands = (
-                                    arm_velocity_commands_dict.values()
-                                )
-                                hand_velocity_commands = hand_state_dict[
-                                    "velocities"
-                                ].values()
-                            else:
-                                # Make sure empty velocity field stays empty
-                                arm_velocity_commands = []
-                                hand_velocity_commands = []
-
-                            # Create acceleration command array
-                            if len(waypoint.accelerations) != 0:
-                                arm_acceleration_commands_dict = OrderedDict(
-                                    zip(
-                                        arm_state_dict["velocities"].keys(),
-                                        [0.0]
-                                        * len(arm_state_dict["velocities"].keys()),
-                                    )
-                                )  # Initiate at 0 as accelerations are unknown
-                                for (joint, acceleration,) in input_command_dict[
-                                    "accelerations"
-                                ].items():  # Add control commands
-                                    if joint in arm_state_dict["velocities"]:
-                                        arm_acceleration_commands_dict[
-                                            joint
-                                        ] = acceleration
-                                arm_acceleration_commands = (
-                                    arm_acceleration_commands_dict.values()
-                                )
-                                hand_acceleration_commands = [0.0] * len(
-                                    hand_control_msg.trajectory.joint_names
-                                )  # Initiate at 0 as accelerations are unknown
-                            else:
-                                # Make sure empty acceleration field stays empty
-                                arm_acceleration_commands = []
-                                hand_acceleration_commands = []
-
-                            # Create effort command array
-                            if len(waypoint.effort) != 0:
-                                arm_effort_commands_dict = copy.deepcopy(
-                                    arm_state_dict["efforts"]
-                                )  # Start from the current states
-                                for (joint, effort,) in input_command_dict[
-                                    "efforts"
-                                ].items():  # Add control commands
-                                    if joint in arm_state_dict["efforts"]:
-                                        arm_effort_commands_dict[joint] = effort
-                                arm_effort_commands = arm_effort_commands_dict.values()
-                                hand_effort_commands = hand_state_dict[
-                                    "efforts"
-                                ].values()
-                            else:
-                                # Make sure empty effort field stays empty
-                                arm_effort_commands = []
-                                hand_effort_commands = []
-                        elif control_group == "hand":
-
-                            # Add time_from_start variable if create_time_axis == TRUE
-                            if input_msg.create_time_axis:
-                                time_axis_tmp = rospy.Duration.from_sec(
-                                    (idx * input_msg.time_axis_step)
-                                    + input_msg.time_axis_step
-                                )
-                                hand_control_msg.trajectory.points[
-                                    idx
-                                ].time_from_start = time_axis_tmp
-
-                            # Create position command array
-                            if len(waypoint.positions) != 0:
-                                hand_position_commands_dict = copy.deepcopy(
-                                    hand_state_dict["positions"]
-                                )  # Start from the current states
-                                for (joint, position,) in input_command_dict[
-                                    "positions"
-                                ].items():  # Add control commands
-                                    if joint in hand_state_dict["positions"]:
-                                        hand_position_commands_dict[joint] = position
-                                arm_position_commands = arm_state_dict[
-                                    "positions"
-                                ].values()
-                                hand_position_commands = (
-                                    hand_position_commands_dict.values()
-                                )
-                            else:
-                                # Make sure empty position field stays empty
-                                if not self.autofill_traj_positions:
-                                    arm_position_commands = []
-                                    hand_position_commands = []
-
-                            # Create velocity command array
-                            if len(waypoint.velocities) != 0:
-                                hand_velocity_commands_dict = copy.deepcopy(
-                                    hand_state_dict["velocities"]
-                                )  # Start from the current states
-                                for (joint, velocity,) in input_command_dict[
-                                    "velocities"
-                                ].items():  # Add control commands
-                                    if joint in hand_state_dict["velocities"]:
-                                        hand_velocity_commands_dict[joint] = velocity
-                                arm_velocity_commands = arm_state_dict[
-                                    "velocities"
-                                ].values()
-                                hand_velocity_commands = (
-                                    hand_velocity_commands_dict.values()
-                                )
-                            else:
-                                # Make sure empty velocity field stays empty
-                                arm_velocity_commands = []
-                                hand_velocity_commands = []
-
-                            # Create acceleration command array
-                            if len(waypoint.accelerations) != 0:
-                                hand_acceleration_commands_dict = OrderedDict(
-                                    zip(
-                                        hand_state_dict["velocities"].keys(),
-                                        [0.0]
-                                        * len(hand_state_dict["velocities"].keys()),
-                                    )
-                                )  # Initiate at 0 as accelerations are unknown
-                                for (joint, acceleration,) in input_command_dict[
-                                    "accelerations"
-                                ].items():  # Add control commands
-                                    if joint in hand_state_dict["velocities"]:
-                                        hand_acceleration_commands_dict[
-                                            joint
-                                        ] = acceleration
-                                arm_acceleration_commands = [0.0] * len(
-                                    arm_control_msg.trajectory.joint_names
-                                )  # Initiate at 0 as accelerations are unknown
-                                hand_acceleration_commands = (
-                                    hand_acceleration_commands_dict.values()
-                                )
-                            else:
-                                # Make sure empty acceleration field stays empty
-                                arm_acceleration_commands = []
-                                hand_acceleration_commands = []
-
-                            # Create effort command array
-                            if len(waypoint.effort) != 0:
-                                hand_effort_commands_dict = copy.deepcopy(
-                                    hand_state_dict["efforts"]
-                                )  # Start from the current states
-                                for (joint, effort,) in input_command_dict[
-                                    "efforts"
-                                ].items():  # Add control commands
-                                    if joint in hand_state_dict["efforts"]:
-                                        hand_effort_commands_dict[joint] = effort
-                                arm_effort_commands = arm_state_dict["efforts"].values()
-                                hand_effort_commands = (
-                                    hand_effort_commands_dict.values()
-                                )
-                            else:
-                                # Make sure empty effort field stays empty
-                                arm_effort_commands = []
-                                hand_effort_commands = []
+                        # Create position command array
+                        if len(waypoint.positions) != 0:
+                            arm_position_commands_dict = copy.deepcopy(
+                                arm_state_dict["positions"]
+                            )  # Start from the current states
+                            for (joint, position,) in input_command_dict[
+                                "positions"
+                            ].items():  # Add control commands
+                                if joint in arm_state_dict["positions"]:
+                                    arm_position_commands_dict[joint] = position
+                            arm_position_commands = arm_position_commands_dict.values()
                         else:
+                            # Make sure empty position field stays empty
+                            if not self.autofill_traj_positions:
+                                arm_position_commands = []
 
-                            # Add time_from_start variable if create_time_axis == TRUE
-                            if input_msg.create_time_axis:
-                                time_axis_tmp = rospy.Duration.from_sec(
-                                    (idx * input_msg.time_axis_step)
-                                    + input_msg.time_axis_step
+                        # Create velocity command array
+                        if len(waypoint.velocities) != 0:
+                            arm_velocity_commands_dict = copy.deepcopy(
+                                arm_state_dict["velocities"]
+                            )  # Start from the current states
+                            for (joint, velocity,) in input_command_dict[
+                                "velocities"
+                            ].items():  # Add control commands
+                                if joint in arm_state_dict["velocities"]:
+                                    arm_velocity_commands_dict[joint] = velocity
+                            arm_velocity_commands = arm_velocity_commands_dict.values()
+                        else:
+                            # Make sure empty velocity field stays empty
+                            arm_velocity_commands = []
+
+                        # Create acceleration command array
+                        if len(waypoint.accelerations) != 0:
+                            arm_acceleration_commands_dict = OrderedDict(
+                                zip(
+                                    arm_state_dict["velocities"].keys(),
+                                    [0.0] * len(arm_state_dict["velocities"].keys()),
                                 )
-                                arm_control_msg.trajectory.points[
-                                    idx
-                                ].time_from_start = time_axis_tmp
+                            )  # Initiate at 0 as accelerations are unknown
+                            for (joint, acceleration,) in input_command_dict[
+                                "accelerations"
+                            ].items():  # Add control commands
+                                if joint in arm_state_dict["velocities"]:
+                                    arm_acceleration_commands_dict[joint] = acceleration
+                            arm_acceleration_commands = (
+                                arm_acceleration_commands_dict.values()
+                            )
+                        else:
+                            # Make sure empty acceleration field stays empty
+                            arm_acceleration_commands = []
 
-                            # Add time_from_start variable if create_time_axis == TRUE
-                            if input_msg.create_time_axis:
-                                time_axis_tmp = rospy.Duration.from_sec(
-                                    (idx * input_msg.time_axis_step)
-                                    + input_msg.time_axis_step
-                                )
-                                hand_control_msg.trajectory.points[
-                                    idx
-                                ].time_from_start = time_axis_tmp
-
-                            # Create arm position control message
-                            if len(waypoint.positions) != 0:
-                                arm_position_commands_dict = copy.deepcopy(
-                                    arm_state_dict["positions"]
-                                )  # Start from the current states
-                                for (joint, position,) in input_command_dict[
-                                    "positions"
-                                ].items():  # Add control commands
-                                    if joint in arm_state_dict["positions"]:
-                                        arm_position_commands_dict[joint] = position
-
-                                # Create hand position control message
-                                hand_position_commands_dict = copy.deepcopy(
-                                    hand_state_dict["positions"]
-                                )  # Start from the current states
-                                for (joint, position,) in input_command_dict[
-                                    "positions"
-                                ].items():  # Add control commands
-                                    if joint in hand_state_dict["positions"]:
-                                        hand_position_commands_dict[joint] = position
-
-                                # Retrieve commands from dictionaries
-                                arm_position_commands = (
-                                    arm_position_commands_dict.values()
-                                )
-                                hand_position_commands = (
-                                    hand_position_commands_dict.values()
-                                )
-                            else:
-                                # Make sure empty position field stays empty
-                                if not self.autofill_traj_positions:
-                                    arm_position_commands = []
-                                    hand_position_commands = []
-
-                            # Create arm velocity control message
-                            if len(waypoint.velocities) != 0:
-                                arm_velocity_commands_dict = copy.deepcopy(
-                                    arm_state_dict["velocities"]
-                                )  # Start from the current states
-                                for (joint, velocity,) in input_command_dict[
-                                    "velocities"
-                                ].items():  # Add control commands
-                                    if joint in arm_state_dict["velocities"]:
-                                        arm_velocity_commands_dict[joint] = velocity
-
-                                # Create hand velocity control message
-                                hand_velocity_commands_dict = copy.deepcopy(
-                                    hand_state_dict["velocities"]
-                                )  # Start from the current states
-                                for (joint, velocity,) in input_command_dict[
-                                    "velocities"
-                                ].items():  # Add control commands
-                                    if joint in hand_state_dict["velocities"]:
-                                        hand_velocity_commands_dict[joint] = velocity
-
-                                # Retrieve commands from dictionaries
-                                arm_velocity_commands = (
-                                    arm_velocity_commands_dict.values()
-                                )
-                                hand_velocity_commands = (
-                                    hand_velocity_commands_dict.values()
-                                )
-                            else:
-                                # Make sure empty velocity field stays empty
-                                arm_velocity_commands = []
-                                hand_velocity_commands = []
-
-                            # Create arm acceleration control message
-                            if len(waypoint.accelerations) != 0:
-                                arm_acceleration_commands_dict = OrderedDict(
-                                    zip(
-                                        arm_state_dict["velocities"].keys(),
-                                        [0.0]
-                                        * len(arm_state_dict["velocities"].keys()),
-                                    )
-                                )  # Initiate at 0 as accelerations are unknown
-                                for (joint, acceleration,) in input_command_dict[
-                                    "accelerations"
-                                ].items():  # Add control commands
-                                    if joint in arm_state_dict["velocities"]:
-                                        arm_acceleration_commands_dict[
-                                            joint
-                                        ] = acceleration
-
-                                # Create hand acceleration control message
-                                hand_acceleration_commands_dict = OrderedDict(
-                                    zip(
-                                        hand_state_dict["velocities"].keys(),
-                                        [0.0]
-                                        * len(hand_state_dict["velocities"].keys()),
-                                    )
-                                )  # Initiate at 0 as accelerations are unknown
-                                for (joint, acceleration,) in input_command_dict[
-                                    "accelerations"
-                                ].items():  # Add control commands
-                                    if joint in hand_state_dict["velocities"]:
-                                        hand_acceleration_commands_dict[
-                                            joint
-                                        ] = acceleration
-
-                                # Retrieve commands from dictionaries
-                                arm_acceleration_commands = (
-                                    arm_acceleration_commands_dict.values()
-                                )
-                                hand_acceleration_commands = (
-                                    hand_acceleration_commands_dict.values()
-                                )
-                            else:
-                                # Make sure empty acceleration field stays empty
-                                arm_acceleration_commands = []
-                                hand_acceleration_commands = []
-
-                            # Create arm effort control message
-                            if len(waypoint.effort) != 0:
-                                arm_effort_commands_dict = copy.deepcopy(
-                                    arm_state_dict["efforts"]
-                                )  # Start from the current states
-                                for (joint, effort,) in input_command_dict[
-                                    "efforts"
-                                ].items():  # Add control commands
-                                    if joint in arm_state_dict["efforts"]:
-                                        arm_effort_commands_dict[joint] = effort
-
-                                # Create hand effort control message
-                                hand_effort_commands_dict = copy.deepcopy(
-                                    hand_state_dict["efforts"]
-                                )  # Start from the current states
-                                for (joint, effort,) in input_command_dict[
-                                    "efforts"
-                                ].items():  # Add control commands
-                                    if joint in hand_state_dict["efforts"]:
-                                        hand_effort_commands_dict[joint] = effort
-                                arm_effort_commands = arm_effort_commands_dict.values()
-                                hand_effort_commands = (
-                                    hand_effort_commands_dict.values()
-                                )
-                            else:
-                                # Make sure empty effort field stays empty
-                                arm_effort_commands = []
-                                hand_effort_commands = []
+                        # Create effort command array
+                        if len(waypoint.effort) != 0:
+                            arm_effort_commands_dict = copy.deepcopy(
+                                arm_state_dict["efforts"]
+                            )  # Start from the current states
+                            for (joint, effort,) in input_command_dict[
+                                "efforts"
+                            ].items():  # Add control commands
+                                if joint in arm_state_dict["efforts"]:
+                                    arm_effort_commands_dict[joint] = effort
+                            arm_effort_commands = arm_effort_commands_dict.values()
+                        else:
+                            # Make sure empty effort field stays empty
+                            arm_effort_commands = []
 
                         # Add new control commands to joint trajectory control message
                         # waypoint
                         arm_control_msg.trajectory.points[
                             idx
                         ].positions = arm_position_commands
-                        hand_control_msg.trajectory.points[
-                            idx
-                        ].positions = hand_position_commands
                         arm_control_msg.trajectory.points[
                             idx
                         ].velocities = arm_velocity_commands
-                        hand_control_msg.trajectory.points[
-                            idx
-                        ].velocities = hand_velocity_commands
                         arm_control_msg.trajectory.points[
                             idx
                         ].accelerations = arm_acceleration_commands
-                        hand_control_msg.trajectory.points[
-                            idx
-                        ].accelerations = hand_acceleration_commands
                         arm_control_msg.trajectory.points[
                             idx
                         ].effort = arm_effort_commands
-                        hand_control_msg.trajectory.points[
-                            idx
-                        ].effort = hand_effort_commands
 
-                    return {
-                        "arm": panda_action_msg_2_control_msgs_action_msg(
-                            arm_control_msg
-                        ),
-                        "hand": panda_action_msg_2_control_msgs_action_msg(
-                            hand_control_msg
-                        ),
-                    }
+                    return panda_action_msg_2_control_msgs_action_msg(arm_control_msg)
 
     def _create_control_publisher_msg(  # noqa: C901
-        self, input_msg, control_type, control_group, verbose=False
+        self, input_msg, control_type, verbose=False
     ):
-        """Converts the service input message into a control commands that is used by
-        the control publishers. While doing this it also verifies whether the given
-        input message is valid.
+        """Converts the input message of the position/effort control service into a
+        control commands that is used by the control publishers. While doing this it
+        also verifies whether the given input message is valid.
 
         Args:
-            input_msg (:obj:`trajectory_msgs/JointTrajectory`): The service input
-                message we want to validate.
+            input_msg (union[:obj:`panda_gazebo.msgs.SetJointPositions`,:obj:`panda_gazebo.msgs.SetJointEfforts`]):
+                The service input message we want to convert and validate.
             control_type (str): The type of control that is being executed and on which
                 we should wait. Options are ``effort_control`` and
                 ``position_control``.
-            control_group (str): The robot control group which is being controlled.
-                Options are ``arm``, ``hand`` or ``both``.
-            verbose (bool, optional): Boolean specifying whether you want to send a
-                warning message to the ROSlogger. Defaults to ``False``.
+            verbose (bool, optional): Boolean specifying whether you want to send
+                warning and error message to the ROSlogger. Defaults to ``False``.
 
         Returns:
-            (tuple): tuple containing:
-
-                - :obj:`dict`: The Panda arm and hand control commands in the order
-                    which is are required by the publishers.
-                - :obj:`dict`: The joints that are being controlled.
+            dict: The Panda arm control commands in the order which is are required by
+                the publishers.
 
         Raises:
             :obj:`panda_gazebo.exceptions.InputMessageInvalidError`: Raised when the
-                input_msg could not be converted into ``moveit_commander`` arm hand
-                joint position/effort commands.
-        """
-        # Validate control_group argument
-        if control_group.lower() not in ["arm", "hand", "both"]:
-            logwarn_message = (
-                "Control group '%s' does not exist. Please specify a valid control "
-                "group. Valid values are %s."
-                % (control_group.lower(), "['arm', 'hand', 'both']")
-            )
-            if verbose:
-                rospy.logwarn(logwarn_message)
-            raise InputMessageInvalidError(
-                message="Control_group '%s' invalid." % control_group.lower(),
-                log_message=logwarn_message,
-            )
-        else:
-            control_group = control_group.lower()
-            control_type = control_type.lower()
-
+                input_msg could not be converted into ``moveit_commander`` arm joint
+                position/effort commands.
+        """  # noqa: E501
         # Validate control_type argument and extract information from input message
         if control_type == "position_control":
             joint_names = input_msg.joint_names
@@ -2267,59 +1134,23 @@ class PandaControlServer(object):
             )
 
         # Retrieve controlled joints
-        try:
-            controlled_joints_dict = self._get_controlled_joints(
-                control_type=control_type, verbose=verbose
-            )
-        except InputMessageInvalidError:
-            logwarn_message = (
-                "The '%s' publisher messages could not be created as the '%s' %s "
-                "are not initialized."
-                % (
-                    "effort control"
-                    if control_type == "effort_control"
-                    else "position control",
-                    self._effort_controllers
-                    if control_type == "effort_control"
-                    else self._position_controllers,
-                    "joint effort controllers"
-                    if control_type == "effort_control"
-                    else "joint position controllers",
-                )
-            )
-            if verbose:
-                rospy.logwarn(logwarn_message)
-            raise InputMessageInvalidError(
-                message="Required controllers not initialised.",
-                details={"controlled_joints": self._effort_controllers},
-                log_message=logwarn_message,
-            )
+        controlled_joints_dict = self._get_controlled_joints(
+            control_type=control_type, verbose=verbose
+        )
 
-        # Get controlled joints and robot state
-        if control_group == "arm":
-            controlled_joints = controlled_joints_dict["arm"]
-        elif control_group == "hand":
-            controlled_joints = controlled_joints_dict["hand"]
-        else:
-            controlled_joints = controlled_joints_dict["both"]
+        # Get controlled joints and arm state
+        controlled_joints = controlled_joints_dict["arm"]
         controlled_joints_size = len(controlled_joints)
         state_dict = self._retrieve_state_dict(controlled_joints_dict)
 
         # Get control publisher message type and current joint states
         if control_type == "position_control":
             arm_state_dict = state_dict["arm"]["positions"]
-            hand_state_dict = state_dict["hand"]["positions"]
-            arm_msg_type = self._arm_position_controller_msg_type
-            hand_msg_type = self._hand_position_controller_msg_type
         elif control_type == "effort_control":
             arm_state_dict = state_dict["arm"]["efforts"]
-            hand_state_dict = state_dict["hand"]["efforts"]
-            arm_msg_type = self._arm_effort_controller_msg_type
-            hand_msg_type = self._hand_effort_controller_msg_type
 
         # Check service request input
         if len(joint_names) == 0:  # If not joint_names were given
-
             # Check if enough joint position commands were given otherwise give warning
             if len(control_input) != controlled_joints_size:
                 if control_type == "position_control":
@@ -2337,12 +1168,12 @@ class PandaControlServer(object):
 
                 # Check if control input is bigger than controllable joints
                 if len(control_input) > controlled_joints_size:
-                    logwarn_message = "You specified %s while the Panda %s %s." % (
-                        "%s %s" % (len(control_input), logwarn_msg_strings[0]),
-                        control_group + " control group has"
-                        if control_group in ["arm", "hand"]
-                        else "arm and hand control groups have",
-                        "%s %s" % (controlled_joints_size, logwarn_msg_strings[1]),
+                    logwarn_message = (
+                        "You specified %s while the Panda arm control group has %s."
+                        % (
+                            "%s %s" % (len(control_input), logwarn_msg_strings[0]),
+                            "%s %s" % (controlled_joints_size, logwarn_msg_strings[1]),
+                        )
                     )
                     if verbose:
                         rospy.logwarn(logwarn_message)
@@ -2355,55 +1186,24 @@ class PandaControlServer(object):
                         },
                     )
                 elif len(control_input) < controlled_joints_size:
-                    logwarn_message = "You specified %s while the Panda %s %s." % (
-                        "%s %s" % (len(control_input), logwarn_msg_strings[0]),
-                        control_group + " control group has"
-                        if control_group in ["arm", "hand"]
-                        else "arm and hand control groups have",
-                        "%s %s" % (controlled_joints_size, logwarn_msg_strings[1]),
-                    ) + " As a result only joints %s will be controlled." % (
-                        controlled_joints[: len(control_input)]
+                    logwarn_message = (
+                        "You specified %s while the Panda arm control group has %s."
+                        % (
+                            "%s %s" % (len(control_input), logwarn_msg_strings[0]),
+                            "%s %s" % (controlled_joints_size, logwarn_msg_strings[1]),
+                        )
+                        + " As a result only joints %s will be controlled."
+                        % (controlled_joints[: len(control_input)])
                     )
                     rospy.logwarn(logwarn_message)
 
             # Update current state dictionary with given joint_position commands
-            if control_group == "arm":
-                arm_position_commands = list(arm_state_dict.values())
-                arm_position_commands[: len(control_input)] = control_input
-                hand_position_commands = list(hand_state_dict.values())
-            elif control_group == "hand":
-                hand_position_commands = list(hand_state_dict)
-                arm_position_commands = list(arm_state_dict.values())
-            else:
-                arm_position_commands = list(arm_state_dict.values())
-                hand_position_commands = list(hand_state_dict.values())
-                if self.joint_states.name[0] in controlled_joints_dict["arm"]:
-                    if len(control_input) <= len(arm_position_commands):
-                        arm_position_commands[: len(control_input)] = control_input
-                    else:
-                        arm_position_commands[:] = control_input[
-                            : len(arm_position_commands)
-                        ]
-                        hand_position_commands[
-                            : len(control_input) - len(arm_position_commands)
-                        ] = control_input[len(arm_position_commands) :]
-                else:
-                    if len(control_input) <= len(hand_position_commands):
-                        hand_position_commands[: len(control_input)] = control_input
-                    else:
-                        hand_position_commands[:] = control_input[
-                            : len(hand_position_commands)
-                        ]
-                        arm_position_commands[
-                            : len(control_input) - len(hand_position_commands)
-                        ] = control_input[len(hand_position_commands) :]
+            arm_position_commands = list(arm_state_dict.values())
+            arm_position_commands[: len(control_input)] = control_input
 
             # Return publishers command dictionary
-            control_commands = {
-                "arm": [arm_msg_type(item) for item in arm_position_commands],
-                "hand": [hand_msg_type(item) for item in hand_position_commands],
-            }
-            return control_commands, controlled_joints_dict
+            control_commands = [Float64(item) for item in arm_position_commands]
+            return control_commands
         else:
             # Check if enough control values were given
             if len(joint_names) != len(control_input):
@@ -2475,15 +1275,12 @@ class PandaControlServer(object):
                     logwarn_message = (
                         "%s that %s specified in the 'joint_names' field of the '%s' "
                         "message %s invalid. Valid joint names for controlling the "
-                        "Panda %s are %s."
+                        "Panda arm are %s."
                         % (
                             "%s %s" % (logwarn_msg_strings[0], invalid_joint_names),
                             logwarn_msg_strings[1],
                             logwarn_msg_strings[2],
                             logwarn_msg_strings[1],
-                            control_group
-                            if control_group in ["hand", "arm"]
-                            else "arm & hand",
                             controlled_joints,
                         )
                     )
@@ -2501,72 +1298,99 @@ class PandaControlServer(object):
                     input_command_dict = OrderedDict(zip(joint_names, control_input))
 
                     # Update current state dictionary with given joint_position commands
-                    if control_group == "arm":
-                        arm_position_commands_dict = copy.deepcopy(
-                            arm_state_dict
-                        )  # Start from the current state
-                        for (
-                            joint,
-                            position,
-                        ) in input_command_dict.items():  # Add control commands
-                            if joint in arm_state_dict:
-                                arm_position_commands_dict[joint] = position
-                        arm_position_commands = arm_position_commands_dict.values()
-                        hand_position_commands = hand_state_dict.values()
-                    elif control_group == "hand":
-                        hand_position_commands_dict = copy.deepcopy(
-                            hand_state_dict
-                        )  # Start from the current state
-                        for (
-                            joint,
-                            position,
-                        ) in input_command_dict.items():  # Add control commands
-                            if joint in hand_state_dict:
-                                hand_position_commands_dict[joint] = position
-                        arm_position_commands = arm_state_dict.values()
-                        hand_position_commands = hand_position_commands_dict.values()
-                    else:
-
-                        # Create arm control message
-                        arm_position_commands_dict = copy.deepcopy(
-                            arm_state_dict
-                        )  # Start from the current state
-                        for (
-                            joint,
-                            position,
-                        ) in input_command_dict.items():  # Add control commands
-                            if joint in arm_state_dict:
-                                arm_position_commands_dict[joint] = position
-
-                        # Create hand control message
-                        hand_position_commands_dict = copy.deepcopy(
-                            hand_state_dict
-                        )  # Start from the current state
-                        for (
-                            joint,
-                            position,
-                        ) in input_command_dict.items():  # Add control commands
-                            if joint in hand_state_dict:
-                                hand_position_commands_dict[joint] = position
-                        arm_position_commands = arm_position_commands_dict.values()
-                        hand_position_commands = hand_position_commands_dict.values()
+                    arm_position_commands_dict = copy.deepcopy(
+                        arm_state_dict
+                    )  # Start from the current state
+                    for (
+                        joint,
+                        position,
+                    ) in input_command_dict.items():  # Add control commands
+                        if joint in arm_state_dict:
+                            arm_position_commands_dict[joint] = position
+                    arm_position_commands = arm_position_commands_dict.values()
 
                     # Return publishers command dictionary
-                    control_commands = {
-                        "arm": [arm_msg_type(item) for item in arm_position_commands],
-                        "hand": [
-                            hand_msg_type(item) for item in hand_position_commands
-                        ],
-                    }
-                    return control_commands, controlled_joints_dict
+                    control_commands = [Float64(item) for item in arm_position_commands]
+                    return control_commands
+
+    def _split_joint_commands_req(
+        self, joint_commands_req, control_type, verbose=False
+    ):
+        """Splits the combined :obj:`~panda_gazebo.msg.SetJointControlCommandRequest`
+        message into separate arm and gripper messages.
+
+        Args:
+            joint_commands_req :obj:`~panda_gazebo.msg.SetJointControlCommandRequest`):
+                The joint control command message.
+            control_type (str): The type of control that is being executed. Options
+                are ``effort_control``, ``position_control`` and ``traj_control``.
+            verbose (bool, optional): Boolean specifying whether you want to send a
+                warning message to the ROS logger. Defaults to ``False``.
+
+        Returns:
+            (tuple): tuple containing:
+                - union[:obj:`~panda_gazebo.msg.SetJointPositionsRequest`, :obj:`~panda_gazebo.msg.SetJointEffortsRequest`, ``None``]:
+                    The arm set joint position/effort message or ``None`` if no
+                    joint positions/efforts were found in the joint control command.
+                - union[:obj:`~franka_gripper.msg.MoveGoal`, ``None``]: The gripper
+                    action goal message or ``None`` if 'gripper_width' was not found in
+                    the joint control command.
+        """  # noqa: E501
+        # Retrieve controlled joints
+        controlled_arm_joints = self._get_controlled_joints(
+            control_type=control_type, verbose=verbose
+        )["arm"]
+        controlled_arm_joints = (
+            PANDA_JOINTS["arm"] if not controlled_arm_joints else controlled_arm_joints
+        )
+
+        # Split control message
+        joint_commands_dict = dict(
+            zip(joint_commands_req.joint_names, joint_commands_req.joint_commands)
+        )
+        arm_joint_commands_dict = {
+            key: val
+            for key, val in joint_commands_dict.items()
+            if key in controlled_arm_joints
+        }
+        gripper_width_command = [
+            val
+            for key, val in joint_commands_dict.items()
+            if key.lower() == "gripper_width"
+        ]
+
+        # Create arm control message
+        if arm_joint_commands_dict:
+            if control_type == "position_control":
+                arm_req = SetJointPositions()
+                arm_req.joint_names = list(arm_joint_commands_dict.keys())
+                arm_req.joint_positions = list(arm_joint_commands_dict.values())
+                arm_req.wait = joint_commands_req.wait
+            else:
+                arm_req = SetJointEfforts()
+                arm_req.joint_names = list(arm_joint_commands_dict.keys())
+                arm_req.joint_efforts = list(arm_joint_commands_dict.values())
+                arm_req.wait = joint_commands_req.wait
+        else:
+            arm_req = None
+
+        # Create hand control message
+        # NOTE: Use 'kDefaultGripperActionSpeed' see 'franka_gripper.sim.h'
+        if gripper_width_command:
+            gripper_req = MoveGoal()
+            gripper_req.width = gripper_width_command[0]
+            gripper_req.speed = 0.1
+        else:
+            gripper_req = None
+
+        return arm_req, gripper_req
 
     def _get_controlled_joints(self, control_type, verbose=False):  # noqa: C901
         """Returns the joints that can be controlled by a given control type.
 
         Args:
-            control_type (str): The type of control that is being executed and on which
-                we should wait. Options are ``effort_control`` and
-                ``position_control``.
+            control_type (str): The type of control that is being executed. Options
+                are ``effort_control``, ``position_control`` and ``traj_control``.
             verbose (bool, optional): Boolean specifying whether you want to send a
                 warning message to the ROS logger. Defaults to ``False``.
 
@@ -2576,48 +1400,48 @@ class PandaControlServer(object):
 
         Raises:
             :obj:`panda_gazebo.exceptions.InputMessageInvalidError`: Raised when the
-                the control_type is invalid.
+                the ``control_type`` is invalid.
         """
         control_type = control_type.lower()
 
         # Get the joints which are contolled by a given control type
         controlled_joints_dict = OrderedDict(zip(["arm", "hand", "both"], [[], [], []]))
         if control_type == "position_control":
-            for position_controller in self._position_controllers:
+            for controller in ARM_POSITION_CONTROLLERS + HAND_CONTROLLERS:
                 try:
                     for claimed_resources in self.controllers[
-                        position_controller
+                        controller
                     ].claimed_resources:
                         for resource in claimed_resources.resources:
-                            if position_controller in self.arm_position_controllers:
+                            if controller in ARM_POSITION_CONTROLLERS:
                                 controlled_joints_dict["arm"].append(resource)
-                            elif position_controller in self.hand_position_controllers:
+                            elif controller in HAND_CONTROLLERS:
                                 controlled_joints_dict["hand"].append(resource)
                 except KeyError:  # Controller not initialized
                     pass
         elif control_type == "effort_control":
-            for effort_controller in self._effort_controllers:
+            for controller in ARM_EFFORT_CONTROLLERS + HAND_CONTROLLERS:
                 try:
                     for claimed_resources in self.controllers[
-                        effort_controller
+                        controller
                     ].claimed_resources:
                         for resource in claimed_resources.resources:
-                            if effort_controller in self.arm_effort_controllers:
+                            if controller in ARM_EFFORT_CONTROLLERS:
                                 controlled_joints_dict["arm"].append(resource)
-                            elif effort_controller in self.hand_effort_controllers:
+                            elif controller in HAND_CONTROLLERS:
                                 controlled_joints_dict["hand"].append(resource)
                 except KeyError:  # Controller not initialized
                     pass
         elif control_type == "traj_control" or control_type == "ee_control":
-            for traj_controller in self._traj_controllers:
+            for controller in ARM_TRAJ_CONTROLLERS + HAND_CONTROLLERS:
                 try:
                     for claimed_resources in self.controllers[
-                        traj_controller
+                        controller
                     ].claimed_resources:
                         for resource in claimed_resources.resources:
-                            if traj_controller in self.arm_traj_controllers:
+                            if controller in ARM_TRAJ_CONTROLLERS:
                                 controlled_joints_dict["arm"].append(resource)
-                            elif traj_controller in self.hand_traj_controllers:
+                            elif controller in HAND_CONTROLLERS:
                                 controlled_joints_dict["hand"].append(resource)
                 except KeyError:  # Controller not initialized
                     pass
@@ -2634,8 +1458,6 @@ class PandaControlServer(object):
             )
 
         # Return controlled joints dict
-        controlled_joints_dict["arm"] = flatten_list(controlled_joints_dict["arm"])
-        controlled_joints_dict["hand"] = flatten_list(controlled_joints_dict["hand"])
         controlled_joints_dict["both"] = (
             flatten_list(
                 [controlled_joints_dict["hand"], controlled_joints_dict["arm"]]
@@ -2667,11 +1489,37 @@ class PandaControlServer(object):
 
         return joint_controllers_dict
 
+    def _controllers_running(self, controllers):
+        """Check if all controllers that are needed for controlling a given control
+        group are running.
+
+        Args:
+            controllers (list): A list of controllers for which you want to check if
+                they are running.
+
+        Returns:
+            (tuple): tuple containing:
+
+                - missing_controllers (:obj:`list`): The controllers that are not
+                    loaded.
+                - stopped_controllers (:obj:`list`): The controllers that are loaded but
+                    not started.
+        """
+        missing_controllers = []
+        stopped_controllers = []
+        for controller in ARM_POSITION_CONTROLLERS:
+            try:
+                if self.controllers[controller].state != "running":
+                    stopped_controllers.append(controller)
+            except KeyError:
+                missing_controllers.append(controller)
+        return missing_controllers, stopped_controllers
+
     @property
     def controllers(self):
         """Retrieves information about the currently running controllers."""
         return controller_list_array_2_dict(
-            self.list_controllers_client.call(ListControllersRequest())
+            self._list_controllers_client.call(ListControllersRequest())
         )
 
     ################################################
@@ -2684,326 +1532,64 @@ class PandaControlServer(object):
     ################################################
     # Control services callback functions ##########
     ################################################
-    def _set_joint_positions_cb(self, set_joint_positions_req):  # noqa: C901
-        """Request arm and hand joint position control.
+    def _set_joint_commands_cb(self, set_joint_commands_req):  # noqa: C901
+        """Request arm and hand joint command control.
 
         Args:
-            set_joint_positions_req (:obj:`panda_gazebo.srv.SetJointPositionsRequest`:
-                Service request message specifying the positions for the robot arm and
-                hand joints.
+            set_joint_commands_req (:obj:`panda_gazebo.srv.SetJointPositionsRequest`):
+                Service request message specifying the joint position/effort commands
+                for the robot arm and hand joints.
 
         Returns:
-            :obj:`panda_gazebo.srv.SetJointPositionsResponse`: Service response.
+            :obj:`panda_gazebo.srv.SetJointCommandsResponse`: Service response.
         """
-        # Check if set_joint_efforts_req.joint_names contains duplicates
-        duplicate_list = get_duplicate_list(set_joint_positions_req.joint_names)
-        if duplicate_list:
+        # Validate the control type
+        resp = SetJointCommandsResponse()
+        if set_joint_commands_req.control_type not in [
+            "position_control",
+            "effort_control",
+        ]:
             rospy.logwarn(
-                "Multiple entries were found for %s '%s' in the '%s' message. "
-                "Consequently, only the last occurrence was used in setting the joint "
-                "positions."
-                % (
-                    "joints" if len(duplicate_list) > 1 else "joint",
-                    duplicate_list,
-                    "%s/set_joint_positions" % rospy.get_name(),
-                )
-            )
-
-        # Create required variables and messages
-        controllers_missing = {"arm": False, "hand": False}
-        resp = SetJointPositionsResponse()
-
-        # Check if all controllers are available and running
-        stopped_controllers = {"arm": [], "hand": []}
-        missing_controllers = {"arm": [], "hand": []}
-        for (group, position_controllers) in {
-            "arm": self.arm_position_controllers,
-            "hand": self.hand_position_controllers,
-        }.items():
-            for position_controller in position_controllers:
-                try:
-                    if self.controllers[position_controller].state != "running":
-                        stopped_controllers[group].append(position_controller)
-                except KeyError:
-                    missing_controllers[group].append(position_controller)
-
-        # Return failed result if we miss a controller
-        if len(flatten_list(missing_controllers.values())) >= 1:
-            rospy.logwarn(
-                "Panda arm and hand joint position command could not be send as the %s "
-                "%s not initialized. Please make sure you load the controller "
-                "parameters onto the ROS parameter server."
-                % (
-                    flatten_list(missing_controllers.values()),
-                    "joint position controller is"
-                    if len(flatten_list(missing_controllers.values())) == 1
-                    else "joint position controllers are",
-                )
-            )
-            missing_controllers_group_string = (
-                "Arm and hand"
-                if all(
-                    [values != [] for (group, values) in missing_controllers.items()]
-                )
-                else ("Arm" if "arm" in dict_clean(missing_controllers) else "Hand")
+                "Please specify a valid control type. Valid values are %s."
+                % ("['position_control', 'effort_control']")
             )
             resp.success = False
-            resp.message = (
-                "%s controllers not initialised." % missing_controllers_group_string
-            )
+            resp.message = "Specified 'control_type' invalid."
             return resp
+        else:
+            control_type = set_joint_commands_req.control_type.lower()
 
-        # Validate request and create control publisher message
-        try:
-            control_pub_msgs, controlled_joints = self._create_control_publisher_msg(
-                input_msg=set_joint_positions_req,
-                control_type="position_control",
-                control_group="both",
-            )
-        except InputMessageInvalidError as e:
-            logwarn_msg = "Panda arm joint positions not set as " + lower_first_char(
-                e.log_message
-            )
-            rospy.logwarn(logwarn_msg)
-            resp.success = False
-            resp.message = e.message
-            return resp
+        # Split input message and send arm and gripper control commands
+        arm_command_msg, gripper_command_msg = self._split_joint_commands_req(
+            set_joint_commands_req, control_type
+        )
 
-        # Check if required joints are running
-        if len(flatten_list(stopped_controllers.values())) >= 1:
-
-            # Check from which group the controllers are missing
-            controllers_missing = {
-                group: (True if (position_controllers) else False)
-                for (group, position_controllers) in stopped_controllers.items()
-            }
-
-            # Check if these controllers are required for the current command
-            joint_controllers_dict = self._get_joint_controllers()
-            req_missing_controllers = []
-            if not set_joint_positions_req.joint_names:
-                log_warning = True
-                req_missing_controllers = flatten_list(stopped_controllers.values())
+        # Send control commands
+        if gripper_command_msg is not None:
+            self._gripper_move_client.send_goal(gripper_command_msg)
+        if arm_command_msg is not None:
+            if control_type == "position_control":
+                arm_resp = self._arm_set_joint_positions_cb(arm_command_msg)
             else:
-                for joint in set_joint_positions_req.joint_names:
-                    if joint in joint_controllers_dict.keys():
-                        req_missing_controllers.append(
-                            [
-                                stopped_controller
-                                for stopped_controller in flatten_list(
-                                    stopped_controllers.values()
-                                )
-                                if stopped_controller in joint_controllers_dict[joint]
-                            ]
-                        )
-                req_missing_controllers = flatten_list(req_missing_controllers)
-                if req_missing_controllers:
-                    log_warning = True
-                else:
-                    log_warning = False
+                arm_resp = self._arm_set_joint_efforts_cb(arm_command_msg)
+        if set_joint_commands_req.wait:
+            if gripper_command_msg is not None:
+                gripper_result = self._gripper_move_client.wait_for_result()
 
-            if log_warning:
-                rospy.logwarn(
-                    "Panda %s joint positions command send but probably not executed "
-                    "as the %s %s not running."
-                    % (
-                        "arm and hand"
-                        if all(controllers_missing.values())
-                        else ("arm" if controllers_missing["arm"] else "hand"),
-                        flatten_list(stopped_controllers.values()),
-                        "joint position controller is"
-                        if len(flatten_list(stopped_controllers.values())) == 1
-                        else "joint position controllers are",
-                    )
-                )
-
-        # Save position control setpoint
-        self.joint_positions_setpoint = {
-            group: [command.data for command in control_list]
-            for (group, control_list) in control_pub_msgs.items()
-        }
-
-        # Publish request
-        rospy.logdebug("Publishing Panda arm and hand joint positions control message.")
-        self._arm_position_pub.publish(control_pub_msgs["arm"])
-        self._hand_position_pub.publish(control_pub_msgs["hand"])
-
-        # Wait till control is finished or timeout has been reached
-        if set_joint_positions_req.wait and not all(controllers_missing.values()):
-            wait_control_group = (
-                "both"
-                if all([not bool_val for bool_val in controllers_missing.values()])
-                else ("arm" if not controllers_missing["arm"] else "hand")
-            )
-            self._wait_till_done(
-                control_type="position_control",
-                control_group=wait_control_group,
-                controlled_joints=controlled_joints,
-            )
-
-        resp.success = True
-        resp.message = "Everything went OK"
-        return resp
-
-    def _set_joint_efforts_cb(self, set_joint_efforts_req):  # noqa: C901
-        """Request arm and hand joint effort control.
-
-        Args:
-            set_joint_efforts_req (:obj:`panda_gazebo.srv.SetJointEffortsRequest`):
-            Service request message specifying the efforts for the robot arm and hand
-            joints.
-
-        Returns:
-            :obj:`panda_gazebo.srv.SetJointEffortsResponse`: Service response.
-        """
-        # Check if set_joint_efforts_req.joint_names contains duplicates
-        duplicate_list = get_duplicate_list(set_joint_efforts_req.joint_names)
-        if duplicate_list:
-            rospy.logwarn(
-                "Multiple entries were found for %s '%s' in the '%s' message. "
-                "Consequently, only the last occurrence was used in setting the joint "
-                "efforts."
-                % (
-                    "joints" if len(duplicate_list) > 1 else "joint",
-                    duplicate_list,
-                    "%s/set_joint_efforts" % rospy.get_name(),
-                )
-            )
-
-        # Create required variables and messages
-        controllers_missing = {"arm": False, "hand": False}
-        resp = SetJointEffortsResponse()
-
-        # Check if all controllers are available and running
-        stopped_controllers = {"arm": [], "hand": []}
-        missing_controllers = {"arm": [], "hand": []}
-        for (group, effort_controllers) in {
-            "arm": self.arm_effort_controllers,
-            "hand": self.hand_effort_controllers,
-        }.items():
-            for effort_controller in effort_controllers:
-                try:
-                    if self.controllers[effort_controller].state != "running":
-                        stopped_controllers[group].append(effort_controller)
-                except KeyError:
-                    missing_controllers[group].append(effort_controller)
-
-        # Return failed result if we miss a controller
-        if len(flatten_list(missing_controllers.values())) >= 1:
-            rospy.logwarn(
-                "Panda arm and hand joint effort command could not be send as the %s "
-                "%s not initialized. Please make sure you load the controller "
-                "parameters onto the ROS parameter server."
-                % (
-                    flatten_list(missing_controllers.values()),
-                    "joint effort controller is"
-                    if len(flatten_list(missing_controllers.values())) == 1
-                    else "joint effort controllers are",
-                )
-            )
-            missing_controllers_group_string = (
-                "Arm and hand"
-                if all(
-                    [values != [] for (group, values) in missing_controllers.items()]
-                )
-                else ("Arm" if "arm" in dict_clean(missing_controllers) else "Hand")
-            )
+        # Return result
+        resp = SetJointCommandsResponse()
+        if all([gripper_result, arm_resp.success]):
+            resp.success = True
+            resp.message = "Everything went OK"
+        elif all([not item for item in [gripper_result, arm_resp.success]]):
             resp.success = False
-            resp.message = (
-                "%s controllers not initialised." % missing_controllers_group_string
-            )
-            return resp
-
-        # Validate request and create control publisher message
-        try:
-            control_pub_msgs, controlled_joints = self._create_control_publisher_msg(
-                input_msg=set_joint_efforts_req,
-                control_type="effort_control",
-                control_group="both",
-            )
-        except InputMessageInvalidError as e:
-            logwarn_msg = "Panda arm joint efforts not set as " + lower_first_char(
-                e.log_message
-            )
-            rospy.logwarn(logwarn_msg)
+            resp.message = "Joint control failed"
+        elif not arm_resp.success:
             resp.success = False
-            resp.message = e.message
-            return resp
-
-        # Check if required joints are running
-        if len(flatten_list(stopped_controllers.values())) >= 1:
-
-            # Check from which group the controllers are missing
-            controllers_missing = {
-                group: (True if (effort_controllers) else False)
-                for (group, effort_controllers) in stopped_controllers.items()
-            }
-
-            # Check if these controllers are required for the current command
-            joint_controllers_dict = self._get_joint_controllers()
-            req_missing_controllers = []
-            if not set_joint_efforts_req.joint_names:
-                log_warning = True
-                req_missing_controllers = flatten_list(stopped_controllers.values())
-            else:
-                for joint in set_joint_efforts_req.joint_names:
-                    if joint in joint_controllers_dict.keys():
-                        req_missing_controllers.append(
-                            [
-                                stopped_controller
-                                for stopped_controller in flatten_list(
-                                    stopped_controllers.values()
-                                )
-                                if stopped_controller in joint_controllers_dict[joint]
-                            ]
-                        )
-                req_missing_controllers = flatten_list(req_missing_controllers)
-                if req_missing_controllers:
-                    log_warning = True
-                else:
-                    log_warning = False
-
-            if log_warning:
-                rospy.logwarn(
-                    "Panda %s joint efforts command send but probably not executed as "
-                    "the %s %s not running."
-                    % (
-                        "arm and hand"
-                        if all(controllers_missing.values())
-                        else ("arm" if controllers_missing["arm"] else "hand"),
-                        req_missing_controllers,
-                        "joint effort controller is"
-                        if len(req_missing_controllers) == 1
-                        else "joint effort controllers are",
-                    )
-                )
-
-        # Save effort control setpoint
-        self.joint_efforts_setpoint = {
-            group: [command.data for command in control_list]
-            for (group, control_list) in control_pub_msgs.items()
-        }
-
-        # Publish request
-        rospy.logdebug("Publishing Panda arm and hand joint efforts control message.")
-        self._arm_effort_pub.publish(control_pub_msgs["arm"])
-        self._hand_effort_pub.publish(control_pub_msgs["hand"])
-
-        # Wait till control is finished or timeout has been reached
-        if set_joint_efforts_req.wait and not all(controllers_missing.values()):
-            wait_control_group = (
-                "both"
-                if all([not bool_val for bool_val in controllers_missing.values()])
-                else ("arm" if not controllers_missing["arm"] else "hand")
-            )
-            self._wait_till_done(
-                control_type="effort_control",
-                control_group=wait_control_group,
-                controlled_joints=controlled_joints,
-            )
-
-        resp.success = True
-        resp.message = "Everything went OK"
+            resp.message = "Arm control failed"
+        elif not gripper_result:
+            resp.success = False
+            resp.message = "Gripper control failed"
         return resp
 
     def _arm_set_joint_positions_cb(self, set_joint_positions_req):  # noqa: C901
@@ -3017,7 +1603,7 @@ class PandaControlServer(object):
         Returns:
             :obj:`panda_gazebo.srv.SetJointPositionsResponse`: Service response.
         """
-        # Check if set_joint_efforts_req.joint_names contains duplicates
+        # Check if set_joint_positions_req.joint_names contains duplicates
         duplicate_list = get_duplicate_list(set_joint_positions_req.joint_names)
         if duplicate_list:
             rospy.logwarn(
@@ -3031,19 +1617,11 @@ class PandaControlServer(object):
                 )
             )
 
-        # Create required variables and messages
-        controllers_missing = False
-        resp = SetJointPositionsResponse()
-
         # Check if all controllers are available and running
-        stopped_controllers = []
-        missing_controllers = []
-        for position_controller in self.arm_position_controllers:
-            try:
-                if self.controllers[position_controller].state != "running":
-                    stopped_controllers.append(position_controller)
-            except KeyError:
-                missing_controllers.append(position_controller)
+        resp = SetJointPositionsResponse()
+        missing_controllers, stopped_controllers = self._controllers_running(
+            ARM_POSITION_CONTROLLERS
+        )
 
         # Return failed result if we miss a controller
         if len(missing_controllers) >= 1:
@@ -3064,10 +1642,9 @@ class PandaControlServer(object):
 
         # Validate request and create control publisher message
         try:
-            control_pub_msgs, controlled_joints = self._create_control_publisher_msg(
+            control_pub_msgs = self._create_control_publisher_msg(
                 input_msg=set_joint_positions_req,
                 control_type="position_control",
-                control_group="arm",
             )
         except InputMessageInvalidError as e:
             logwarn_msg = "Panda arm joint positions not set as " + lower_first_char(
@@ -3080,10 +1657,6 @@ class PandaControlServer(object):
 
         # Check if required joints are running
         if len(stopped_controllers) >= 1:
-
-            # Set controllers missing boolean
-            controllers_missing = True
-
             # Check if these controllers are required for the current command
             joint_controllers_dict = self._get_joint_controllers()
             req_missing_controllers = []
@@ -3119,22 +1692,18 @@ class PandaControlServer(object):
                         else "joint position controllers are",
                     )
                 )
-        # Save position control setpoint
-        self.joint_positions_setpoint = {
-            group: [command.data for command in control_list]
-            for (group, control_list) in control_pub_msgs.items()
-        }
 
-        # Publish request
+        # Save setpoint and publish request
+        self.arm_joint_positions_setpoint = [
+            command.data for command in control_pub_msgs
+        ]
         rospy.logdebug("Publishing Panda arm joint positions control message.")
-        self._arm_position_pub.publish(control_pub_msgs["arm"])
+        self._arm_joint_position_pub.publish(control_pub_msgs)
 
         # Wait till control is finished or timeout has been reached
-        if set_joint_positions_req.wait and not controllers_missing:
+        if set_joint_positions_req.wait and not len(stopped_controllers) >= 1:
             self._wait_till_done(
                 control_type="position_control",
-                control_group="arm",
-                controlled_joints=controlled_joints,
             )
 
         resp.success = True
@@ -3165,19 +1734,11 @@ class PandaControlServer(object):
                 )
             )
 
-        # Create required variables and messages
-        controllers_missing = False
-        resp = SetJointEffortsResponse()
-
         # Check if all controllers are available and running
-        stopped_controllers = []
-        missing_controllers = []
-        for effort_controller in self.arm_effort_controllers:
-            try:
-                if self.controllers[effort_controller].state != "running":
-                    stopped_controllers.append(effort_controller)
-            except KeyError:
-                missing_controllers.append(effort_controller)
+        resp = SetJointEffortsResponse()
+        missing_controllers, stopped_controllers = self._controllers_running(
+            ARM_EFFORT_CONTROLLERS
+        )
 
         # Return failed result if we miss a controller
         if len(missing_controllers) >= 1:
@@ -3198,10 +1759,9 @@ class PandaControlServer(object):
 
         # Validate request and create control publisher message
         try:
-            control_pub_msgs, controlled_joints = self._create_control_publisher_msg(
+            control_pub_msgs = self._create_control_publisher_msg(
                 input_msg=set_joint_efforts_req,
                 control_type="effort_control",
-                control_group="arm",
             )
         except InputMessageInvalidError as e:
             logwarn_msg = "Panda arm joint efforts not set as " + lower_first_char(
@@ -3214,10 +1774,6 @@ class PandaControlServer(object):
 
         # Check if required controllers are running
         if len(stopped_controllers) >= 1:
-
-            # Set controllers missing boolean
-            controllers_missing = True
-
             # Check if these controllers are required for the current command
             joint_controllers_dict = self._get_joint_controllers()
             req_missing_controllers = []
@@ -3254,297 +1810,60 @@ class PandaControlServer(object):
                     )
                 )
 
-        # Save effort control setpoint
-        self.joint_efforts_setpoint = {
-            group: [command.data for command in control_list]
-            for (group, control_list) in control_pub_msgs.items()
-        }
-
-        # Publish request
+        # Save setpoint and publish request
+        self.arm_joint_efforts_setpoint = [command.data for command in control_pub_msgs]
         rospy.logdebug("Publishing Panda arm joint efforts control message.")
-        self._arm_effort_pub.publish(control_pub_msgs["arm"])
+        self._arm_joint_effort_pub.publish(control_pub_msgs)
 
         # Wait till control is finished or timeout has been reached
-        if set_joint_efforts_req.wait and not controllers_missing:
+        if set_joint_efforts_req.wait and not len(stopped_controllers) >= 1:
             self._wait_till_done(
                 control_type="effort_control",
-                control_group="arm",
-                controlled_joints=controlled_joints,
             )
 
         resp.success = True
         resp.message = "Everything went OK"
         return resp
 
-    def _hand_set_joint_positions_cb(self, set_joint_positions_req):  # noqa: C901
-        """Request hand joint position control
+    def _set_gripper_width_cb(self, set_gripper_width_req):
+        """Request gripper width.
 
         Args:
-            set_joint_positions_req (:obj:`panda_gazebo.srv.SetJointPositionsRequest`):
-                Service request message specifying the positions for the robot hand
-                joints.
+            set_gripper_width_req (:obj:`panda_gazebo.srv.SetGripperWidth`):
+                Service request message specifying the gripper width for the robot hand.
 
         Returns:
-            :obj:`panda_gazebo.srv.SetJointPositionsResponse`: Service response.
+            :obj:`panda_gazebo.srv.SetGripperWidthReponse`: Service response.
         """
-        # Check if set_joint_efforts_req.joint_names contains duplicates
-        duplicate_list = get_duplicate_list(set_joint_positions_req.joint_names)
-        if duplicate_list:
+        # Check if gripper width is within boundaries
+        if set_gripper_width_req.width < 0.0 or set_gripper_width_req.width > 0.08:
             rospy.logwarn(
-                "Multiple entries were found for %s '%s' in the '%s' message. "
-                "Consequently, only the last occurrence was used in setting the joint "
-                "positions."
-                % (
-                    "joints" if len(duplicate_list) > 1 else "joint",
-                    duplicate_list,
-                    "%s/panda_hand/set_joint_positions" % rospy.get_name(),
-                )
+                "Gripper width was clipped as it was not within bounds [0, 0.8]."
             )
+            gripper_width = np.clip(set_gripper_width_req.width, 0, 0.08)
+        else:
+            gripper_width = set_gripper_width_req.width
 
-        # Create required variables and messages
-        controllers_missing = False
-        resp = SetJointPositionsResponse()
+        # Create 'franka_gripper/move' action request message
+        # NOTE: Use 'kDefaultGripperActionSpeed' see 'franka_gripper.sim.h'
+        req = MoveGoal()
+        req.width = gripper_width
+        req.speed = 0.1
 
-        # Check if all controllers are available and running
-        stopped_controllers = []
-        missing_controllers = []
-        for position_controller in self.hand_position_controllers:
-            try:
-                if self.controllers[position_controller].state != "running":
-                    stopped_controllers.append(position_controller)
-            except KeyError:
-                missing_controllers.append(position_controller)
+        # Invoke 'franka_gripper/move' aciton server
+        self._gripper_move_client.send_goal(req)
 
-        # Return failed result if we miss a controller
-        if len(missing_controllers) >= 1:
-            rospy.logwarn(
-                "Panda hand joint position command could not be send as the %s %s "
-                "not initialized. Please make sure you load the controller parameters "
-                "onto the ROS parameter server."
-                % (
-                    missing_controllers,
-                    "joint position controller is"
-                    if len(missing_controllers) == 1
-                    else "joint position controllers are",
-                )
-            )
-            resp.success = False
-            resp.message = "Hand controllers not initialised."
-            return resp
-
-        # Validate request and create control publisher message
-        try:
-            control_pub_msgs, controlled_joints = self._create_control_publisher_msg(
-                input_msg=set_joint_positions_req,
-                control_type="position_control",
-                control_group="hand",
-            )
-        except InputMessageInvalidError as e:
-            logwarn_msg = "Panda hand joint positions not set as " + lower_first_char(
-                e.log_message
-            )
-            rospy.logwarn(logwarn_msg)
-            resp.success = False
-            resp.message = e.message
-            return resp
-
-        # Check if required joints are running
-        if len(stopped_controllers) >= 1:
-
-            # Set controllers missing boolean
-            controllers_missing = True
-
-            # Check if these controllers are required for the current command
-            joint_controllers_dict = self._get_joint_controllers()
-            req_missing_controllers = []
-            if not set_joint_positions_req.joint_names:
-                log_warning = True
-                req_missing_controllers = flatten_list(stopped_controllers)
-            else:
-                for joint in set_joint_positions_req.joint_names:
-                    if joint in joint_controllers_dict.keys():
-                        req_missing_controllers.append(
-                            [
-                                stopped_controller
-                                for stopped_controller in flatten_list(
-                                    stopped_controllers
-                                )
-                                if stopped_controller in joint_controllers_dict[joint]
-                            ]
-                        )
-                req_missing_controllers = flatten_list(req_missing_controllers)
-                if req_missing_controllers:
-                    log_warning = True
-                else:
-                    log_warning = False
-
-            if log_warning:
-                rospy.logwarn(
-                    "Panda hand joint positions command send but probably not executed "
-                    "as the %s %s not running."
-                    % (
-                        stopped_controllers,
-                        "joint position controller is"
-                        if len(stopped_controllers) == 1
-                        else "joint position controllers are",
-                    )
-                )
-        # Save position control setpoint
-        self.joint_positions_setpoint = {
-            group: [command.data for command in control_list]
-            for (group, control_list) in control_pub_msgs.items()
-        }
-
-        # Publish request
-        rospy.logdebug("Publishing Panda hand joint positions control message.")
-        self._hand_position_pub.publish(control_pub_msgs["hand"])
-
-        # Wait till control is finished or timeout has been reached
-        if set_joint_positions_req.wait and not controllers_missing:
-            self._wait_till_done(
-                control_type="position_control",
-                control_group="hand",
-                controlled_joints=controlled_joints,
-            )
-
-        resp.success = True
-        resp.message = "Everything went OK"
-        return resp
-
-    def _hand_set_joint_efforts_cb(self, set_joint_efforts_req):  # noqa: C901
-        """Request hand joint effort control.
-
-        Args:
-            set_joint_efforts_req (:obj:`panda_gazebo.srv.SetJointEffortsRequest`):
-                Service request message specifying the efforts for the robot hand
-                joints.
-
-        Returns:
-            :obj:`panda_gazebo.srv.SetJointEffortsResponse`: Service response.
-        """
-        # Check if set_joint_efforts_req.joint_names contains duplicates
-        duplicate_list = get_duplicate_list(set_joint_efforts_req.joint_names)
-        if duplicate_list:
-            rospy.logwarn(
-                "Multiple entries were found for %s '%s' in the '%s' message. "
-                "Consequently, only the last occurrence was used in setting the joint "
-                "efforts."
-                % (
-                    "joints" if len(duplicate_list) > 1 else "joint",
-                    duplicate_list,
-                    "%s/panda_hand/set_joint_efforts" % rospy.get_name(),
-                )
-            )
-
-        # Create required variables and messages
-        controllers_missing = False
-        resp = SetJointEffortsResponse()
-
-        # Check if all controllers are available and running
-        stopped_controllers = []
-        missing_controllers = []
-        for effort_controller in self.hand_effort_controllers:
-            try:
-                if self.controllers[effort_controller].state != "running":
-                    stopped_controllers.append(effort_controller)
-            except KeyError:
-                missing_controllers.append(effort_controller)
-
-        # Return failed result if we miss a controller
-        if len(missing_controllers) >= 1:
-            rospy.logwarn(
-                "Panda hand joint efforts command could not be send as the %s %s "
-                "not initialized. Please make sure you load the controller parameters "
-                "onto the ROS parameter server."
-                % (
-                    missing_controllers,
-                    "joint effort controller is"
-                    if len(missing_controllers) == 1
-                    else "joint effort controllers are",
-                )
-            )
-            resp.success = False
-            resp.message = "Hand controllers not initialised."
-            return resp
-
-        # Validate request and create control publisher message
-        try:
-            control_pub_msgs, controlled_joints = self._create_control_publisher_msg(
-                input_msg=set_joint_efforts_req,
-                control_type="effort_control",
-                control_group="hand",
-            )
-        except InputMessageInvalidError as e:
-            logwarn_msg = "Panda hand joint efforts not set as " + lower_first_char(
-                e.log_message
-            )
-            rospy.logwarn(logwarn_msg)
-            resp.success = False
-            resp.message = e.message
-            return resp
-
-        # Check if required controllers are running
-        if len(stopped_controllers) >= 1:
-
-            # Set controllers missing boolean
-            controllers_missing = True
-
-            # Check if these controllers are required for the current command
-            joint_controllers_dict = self._get_joint_controllers()
-            req_missing_controllers = []
-            if not set_joint_efforts_req.joint_names:
-                log_warning = True
-                req_missing_controllers = flatten_list(stopped_controllers)
-            else:
-                for joint in set_joint_efforts_req.joint_names:
-                    if joint in joint_controllers_dict.keys():
-                        req_missing_controllers.append(
-                            [
-                                stopped_controller
-                                for stopped_controller in flatten_list(
-                                    stopped_controllers
-                                )
-                                if stopped_controller in joint_controllers_dict[joint]
-                            ]
-                        )
-                req_missing_controllers = flatten_list(req_missing_controllers)
-                if req_missing_controllers:
-                    log_warning = True
-                else:
-                    log_warning = False
-
-            if log_warning:
-                rospy.logwarn(
-                    "Panda hand joint efforts command send but probably not executed "
-                    "as the %s %s not running."
-                    % (
-                        stopped_controllers,
-                        "joint effort controller is"
-                        if len(stopped_controllers) == 1
-                        else "joint effort controllers are",
-                    )
-                )
-
-        # Save effort control setpoint
-        self.joint_efforts_setpoint = {
-            group: [command.data for command in control_list]
-            for (group, control_list) in control_pub_msgs.items()
-        }
-
-        # Publish request
-        rospy.logdebug("Publishing Panda hand joint efforts control message.")
-        self._hand_effort_pub.publish(control_pub_msgs["hand"])
-
-        # Wait till control is finished or timeout has been reached
-        if set_joint_efforts_req.wait and not controllers_missing:
-            self._wait_till_done(
-                control_type="effort_control",
-                control_group="hand",
-                controlled_joints=controlled_joints,
-            )
-
-        resp.success = True
-        resp.message = "Everything went OK"
+        # Return result
+        resp = SetGripperWidthResponse()
+        if set_gripper_width_req.wait:
+            gripper_result = self._gripper_move_client.wait_for_result()
+            resp.success = gripper_result
+        else:
+            resp.success = True
+        if resp.success:
+            resp.message = "Everything went OK"
+        else:
+            resp.message = "Gripper width could not be set"
         return resp
 
     def _get_controlled_joints_cb(self, get_controlled_joints_req):
@@ -3583,7 +1902,7 @@ class PandaControlServer(object):
             Goal (:obj:`control_msgs.msg.FollowJointTrajectoryGoal`): Goal execution
                 action server goal message.
         """
-        # Check if set_joint_efforts_req.joint_names contains duplicates
+        # Check if joint goal.joint_names contains duplicates
         duplicate_list = get_duplicate_list(goal.trajectory.joint_names)
         if duplicate_list:
             rospy.logwarn(
@@ -3602,9 +1921,7 @@ class PandaControlServer(object):
         # the right format for the original panda joint trajectory action servers.
         try:
             # Convert input goal message to the right format
-            goal_msg_dict = self._create_traj_action_server_msg(
-                goal, control_group="arm"
-            )
+            goal_msg_dict = self._create_arm_traj_action_server_msg(goal)
         except InputMessageInvalidError as e:
             self._result = FollowJointTrajectoryResult()
             self._result.error_code = (
@@ -3616,7 +1933,7 @@ class PandaControlServer(object):
 
         # Abort joint trajectory control if original panda arm control server is not
         # available
-        if not self._arm_joint_traj_connected:
+        if not self._arm_joint_traj_client_connected:
             self._result = FollowJointTrajectoryResult()
             self._result.error_code = -7
             self._result.error_string = (
@@ -3626,10 +1943,9 @@ class PandaControlServer(object):
 
         # Execute joint trajectory goal
         if not error_occurred:
-
             # Send goal to the original Panda arm action servers
             self._arm_joint_traj_client.send_goal(
-                goal_msg_dict["arm"], feedback_cb=self._arm_joint_traj_feedback_cb
+                goal_msg_dict, feedback_cb=self._arm_joint_traj_feedback_cb
             )
 
             # Wait for the server to finish performing the action
@@ -3652,212 +1968,6 @@ class PandaControlServer(object):
                 else:  # If not successful
                     self._arm_joint_traj_as.set_aborted(self._result)
 
-    def _hand_joint_traj_execute_cb(self, goal):
-        """Goal execution callback function for the Panda hand joint trajectory action
-        server.
-
-        Args:
-            Goal (:obj:`control_msgs.msg.FollowJointTrajectoryGoal`): Goal execution
-                action server goal message.
-        """
-        # Check if set_joint_efforts_req.joint_names contains duplicates
-        duplicate_list = get_duplicate_list(goal.trajectory.joint_names)
-        if duplicate_list:
-            rospy.logwarn(
-                "Multiple entries were found for %s '%s' in the '%s' message. "
-                "Consequently, only the last occurrence was used in setting the joint "
-                "trajectory."
-                % (
-                    "joints" if len(duplicate_list) > 1 else "joint",
-                    duplicate_list,
-                    "%s/panda_hand/follow_joint_trajectory" % rospy.get_name(),
-                )
-            )
-        error_occurred = False
-
-        # Check the input goal message for errors and if valid convert it to
-        # the right format for the original panda joint trajectory action servers.
-        try:
-            # Convert input goal message to the right format
-            goal_msg_dict = self._create_traj_action_server_msg(
-                goal, control_group="hand"
-            )
-        except InputMessageInvalidError as e:
-            self._result = FollowJointTrajectoryResult()
-            self._result.error_code = (
-                -2 if e.args[0] == "Invalid joint_names were given." else -6
-            )
-            self._result.error_string = e.log_message
-            self._hand_joint_traj_as.set_aborted(result=self._result)
-            error_occurred = True
-
-        # Abort joint trajectory control if original panda hand control server is not
-        # available
-        if not self._hand_joint_traj_connected:
-            self._result = FollowJointTrajectoryResult()
-            self._result.error_code = -7
-            self._result.error_string = (
-                "Could not connect to original Panda hand action server."
-            )
-            self._hand_joint_traj_as.set_aborted(result=self._result)
-
-        # Execute joint trajectory goal
-        if not error_occurred:
-
-            # Send goal to the original Panda hand action servers
-            self._hand_joint_traj_client.send_goal(
-                goal_msg_dict["hand"], feedback_cb=self._hand_joint_traj_feedback_cb
-            )
-
-            # Wait for the server to finish performing the action
-            self._hand_joint_traj_client.wait_for_result()
-
-            # Get result from action server
-            self._result = self._hand_joint_traj_client.get_result()
-            self._state = ActionClientState(self._hand_joint_traj_client)
-            self._result.error_string = translate_actionclient_result_error_code(
-                self._result
-            )
-
-            # Set result
-            if not (
-                self._hand_joint_traj_as.is_preempt_requested()
-                or self._state.state == self._state.state_dict["PREEMPTED"]
-            ):
-                if self._result.error_code == self._result.SUCCESSFUL:  # If successful
-                    self._hand_joint_traj_as.set_succeeded(self._result)
-                else:  # If not successful
-                    self._hand_joint_traj_as.set_aborted(self._result)
-
-    def _joint_traj_execute_cb(self, goal):
-        """Goal execution callback function for the combined Panda arm and hand joint
-        trajectory action server.
-
-        Args:
-            Goal (:obj:`control_msgs.msg.FollowJointTrajectoryGoal`): Goal execution
-                action server goal message.
-        """
-        # Check if set_joint_efforts_req.joint_names contains duplicates
-        duplicate_list = get_duplicate_list(goal.trajectory.joint_names)
-        if duplicate_list:
-            rospy.logwarn(
-                "Multiple entries were found for %s '%s' in the '%s' message. "
-                "Consequently, only the last occurrence was used in setting the joint "
-                "trajectory."
-                % (
-                    "joints" if len(duplicate_list) > 1 else "joint",
-                    duplicate_list,
-                    "%s/panda_arm/follow_joint_trajectory" % rospy.get_name(),
-                )
-            )
-        error_occurred = False
-
-        # Check the input goal message for errors and if valid convert it to
-        # the right format for the original panda joint trajectory action servers.
-        try:
-            # Convert input goal message to the right format
-            goal_msg_dict = self._create_traj_action_server_msg(
-                goal, control_group="both"
-            )
-        except InputMessageInvalidError as e:
-            self._result = FollowJointTrajectoryResult()
-            self._result.error_code = (
-                -2 if e.args[0] == "Invalid joint_names were given." else -6
-            )
-            self._result.error_string = e.log_message
-            self._joint_traj_as.set_aborted(result=self._result)
-            error_occurred = True
-
-        # Abort joint trajectory control if original panda control servers are not
-        # available
-        if any(
-            [not self._arm_joint_traj_connected, not self._hand_joint_traj_connected]
-        ):
-            self._result = FollowJointTrajectoryResult()
-            self._result.error_code = -7
-            self._result.error_string = (
-                "Could not connect to original Panda arm and hand action servers."
-            )
-            self._joint_traj_as.set_aborted(result=self._result)
-
-        # Execute joint trajectory goal
-        if not error_occurred:
-
-            # Send goal to the original Panda arm and hand action servers
-            self._full_joint_traj_control = True
-            self._arm_joint_traj_client.send_goal(
-                goal_msg_dict["arm"], feedback_cb=self._arm_joint_traj_feedback_cb
-            )
-            self._hand_joint_traj_client.send_goal(
-                goal_msg_dict["hand"], feedback_cb=self._hand_joint_traj_feedback_cb
-            )
-
-            # Wait for the server to finish performing the action
-            self._arm_joint_traj_client.wait_for_result()
-            self._hand_joint_traj_client.wait_for_result()
-            self._full_joint_traj_control = False
-
-            # Get result and state from action server
-            self._arm_result = self._arm_joint_traj_client.get_result()
-            self._hand_result = self._hand_joint_traj_client.get_result()
-            self._arm_result.error_string = translate_actionclient_result_error_code(
-                self._arm_result
-            )
-            self._hand_result.error_string = translate_actionclient_result_error_code(
-                self._hand_result
-            )
-            self._arm_state = ActionClientState(self._arm_joint_traj_client)
-            self._hand_state = ActionClientState(self._hand_joint_traj_client)
-
-            # Create combined result message
-            self._result = FollowJointTrajectoryResult()
-            self._result.error_code = int(
-                "-"
-                + "".join(
-                    [
-                        str(-1 * self._arm_result.error_code),
-                        str(-1 * self._hand_result.error_code),
-                    ]
-                )
-            )
-            self._result.error_string = (
-                "Arm: "
-                + "status="
-                + self._arm_state.state_value_dict[self._arm_state.state]
-                + ", result="
-                + self._arm_result.error_string
-                + " Hand: "
-                + "status="
-                + self._hand_state.state_value_dict[self._hand_state.state]
-                + ", result="
-                + self._hand_result.error_string
-            )
-
-            # Set result
-            if not (
-                any(
-                    [
-                        self._arm_joint_traj_as.is_preempt_requested(),
-                        self._hand_joint_traj_as.is_preempt_requested(),
-                    ]
-                )
-                or any(
-                    [
-                        self._arm_state.state
-                        == self._arm_state.state_dict["PREEMPTED"],
-                        self._hand_state.state
-                        == self._hand_state.state_dict["PREEMPTED"],
-                    ]
-                )
-            ):
-                if (
-                    self._arm_result == self._arm_result.SUCCESSFUL
-                    and self._hand_result == self._hand_result.SUCCESSFUL
-                ):  # If successful
-                    self._joint_traj_as.set_succeeded(self._result)
-                else:  # If not successful
-                    self._joint_traj_as.set_aborted(self._result)
-
     def _arm_joint_traj_feedback_cb(self, feedback):
         """Relays the feedback messages from the original
         ``panda_arm_controller/follow_joint_trajectory`` server to our to our
@@ -3868,41 +1978,7 @@ class PandaControlServer(object):
             feedback (:obj:`control_msgs.msg.FollowJointTrajectoryFeedback`): Goal
                 execution action server feedback message.
         """
-        self._as_arm_feedback = feedback
-
-        # Check if callback was called from the combined action server
-        if self._full_joint_traj_control:
-            # Combine feedback with hand feedback
-            combined_feedback = self._get_combined_action_server_fb_msg()
-
-            # Publish feedback to the combined action server
-            self._joint_traj_as.publish_feedback(combined_feedback)
-        else:
-            # Publish feedback to hand action server
-            self._arm_joint_traj_as.publish_feedback(feedback)
-
-    def _hand_joint_traj_feedback_cb(self, feedback):
-        """Relays the feedback messages from the original
-        ``panda_hand_controller/follow_joint_trajectory`` server to our to our
-        ``panda_control_server/panda_hand/follow_joint_trajectory`` wrapper action
-        server.
-
-        Args:
-            feedback :obj:`control_msgs.msg.FollowJointTrajectoryFeedback`): Goal
-                execution action server feedback message.
-        """
-        self._as_hand_feedback = feedback
-
-        # Check if callback was called from the combined action server
-        if self._full_joint_traj_control:
-            # Combine feedback with arm feedback
-            combined_feedback = self._get_combined_action_server_fb_msg()
-
-            # Publish feedback to the combined action server
-            self._joint_traj_as.publish_feedback(combined_feedback)
-        else:
-            # Publish feedback to hand action server
-            self._hand_joint_traj_as.publish_feedback(feedback)
+        self._arm_joint_traj_as.publish_feedback(feedback)
 
     def _arm_joint_traj_preempt_cb(self):
         """Relays the preempt request made to the
@@ -3912,27 +1988,3 @@ class PandaControlServer(object):
         # Stop panda_arm_controller action server
         self._arm_joint_traj_client.cancel_goal()
         self._arm_joint_traj_as.set_preempted()
-        self._full_joint_traj_control = False
-
-    def _hand_joint_traj_preempt_cb(self):
-        """Relays the preempt request made to the
-        ``panda_control_server/panda_hand/follow_joint_trajectory`` action server
-        wrapper to the original ``panda_hand_controller/follow_joint_trajectory``
-        action server.
-        """
-        # Stop panda_hand_controller action server
-        self._hand_joint_traj_client.cancel_goal()
-        self._hand_joint_traj_as.set_preempted()
-        self._full_joint_traj_control = False
-
-    def _joint_traj_preempt_cb(self):
-        """Relays the preempt request made to the
-        ``panda_control_server/follow_joint_trajectory`` action server wrapper
-        to the original ``panda_arm_controller/follow_joint_trajectory`` and
-        ``panda_hand_controller/follow_joint_trajectory`` action servers.
-        """
-        # Stop panda_arm_controller and panda_hand_controller action servers
-        self._arm_joint_traj_client.cancel_goal()
-        self._hand_joint_traj_client.cancel_goal()
-        self._joint_traj_as.set_preempted()
-        self._full_joint_traj_control = False

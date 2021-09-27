@@ -7,8 +7,7 @@ import copy
 import control_msgs.msg as control_msgs
 import rospy
 from actionlib_msgs.msg import GoalStatusArray
-from panda_gazebo.msg import FollowJointTrajectoryGoal
-from panda_gazebo.srv import SetJointPositionsRequest
+from control_msgs.msg import FollowJointTrajectoryGoal
 from rospy.exceptions import ROSException
 from sensor_msgs.msg import JointState
 from trajectory_msgs.msg import JointTrajectoryPoint
@@ -48,7 +47,7 @@ def action_dict_2_joint_trajectory_msg(action_dict):
         action_dict (dict): Dictionary containing actions and joints.
 
     Returns:
-        :obj:`panda_gazebo.msg.FollowJointTrajectoryGoal`: New FollowJointTrajectoryGoal
+        :obj:`control_msgs.msg.FollowJointTrajectoryGoal`: New FollowJointTrajectoryGoal
             message.
     """
     # Initiate waypoints and new trajectory message
@@ -72,7 +71,7 @@ def panda_action_msg_2_control_msgs_action_msg(panda_action_msg):
     <html/action/FollowJointTrajectory.html>` action message.
 
     Args:
-        panda_action_msg :obj:`panda_gazebo.msg.FollowJointTrajectoryGoal`: Panda_gazebo
+        panda_action_msg :obj:`control_msgs.msg.FollowJointTrajectoryGoal`: Panda_gazebo
             follow joint trajectory goal message.
 
     Returns:
@@ -85,46 +84,6 @@ def panda_action_msg_2_control_msgs_action_msg(panda_action_msg):
     control_msgs_action_msg.goal_tolerance = panda_action_msg.goal_tolerance
     control_msgs_action_msg.path_tolerance = panda_action_msg.path_tolerance
     return control_msgs_action_msg
-
-
-def joint_positions_2_follow_joint_trajectory_goal(joint_positions, time_from_start=1):
-    """Converts a dictionary of joint_positions into a FollowJointTrajectoryGoal
-    msgs.
-
-    Args:
-        joint_positions (union[dict, :obj:`panda_gazebo.msg.SetJointPositionsRequest`]):
-            Dictionary or message containing the joint positions of each of the robot
-            joints.
-        time_from_start (dict, optional): The time from the start at which the joint
-            position has to be achieved. Defaults to  1 sec.
-
-    Returns:
-        :obj:`panda_gazebo.msg.FollowJointTrajectoryGoal`):New FollowJointTrajectoryGoal
-            message.
-    """
-    # Initiate waypoints and new trajectory message
-    goal_msg = FollowJointTrajectoryGoal()
-    waypoint = JointTrajectoryPoint()
-    waypoint.time_from_start.secs = time_from_start
-
-    # creates waypoint from joint_posisitions
-    if isinstance(joint_positions, SetJointPositionsRequest):
-        waypoint.positions = joint_positions.joint_positions
-        goal_msg.trajectory.joint_names = joint_positions.joint_names
-    elif isinstance(joint_positions, dict):
-        waypoint.positions = list(joint_positions.values())
-        goal_msg.trajectory.joint_names = list(joint_positions.keys())
-    else:
-        TypeError(
-            "FollowJointTrajectory message could not be created since the "
-            "joint_positions argument has the %s type while the "
-            "'joint_positions_2_follow_joint_trajectory_goal' function only accepts "
-            "a dictionary or a SetJointPositions message." % type(joint_positions)
-        )
-
-    # Add waypoint to trajectory message and return goal msgs
-    goal_msg.trajectory.points.append(waypoint)
-    return goal_msg
 
 
 def controller_list_array_2_dict(controller_list_msgs):
@@ -174,48 +133,26 @@ def translate_actionclient_result_error_code(actionclient_retval):
     )
 
 
-def translate_gripper_width_2_finger_joint_commands(input_dict):
-    """Translate any ``gripper_width`` keys that are present in the action dictionary
-    into the corresponding finger joint control commands which are used by the
-    controllers.
+def translate_moveit_error_code(moveit_error_code):
+    """Translates a MoveIt error code object into a human readable error message.
 
     Args:
-        input_dict (dict): Dictionary containing the desired actions.
+        moveit_error_code (:obj:`~moveit_msgs.msg._MoveItErrorCodes.MoveItErrorCodes`):
+            The MoveIt error code object
 
     Returns:
-        dict: Action dictionary in which the gripper_width is translated to finger joint
-            commands.
+        str: Error string that corresponds to the error code.
     """
-    input_dict = input_dict.copy()  # Ensure that changes stay within this scope
-
-    # Translate any 'gripper_width' keys into Panda finger joint command keys
-    if isinstance(input_dict, dict):
-        if "gripper_width" in input_dict.keys():  # If dictionary contains commands
-            finger_position = input_dict["gripper_width"] / 2.0
-            del input_dict["gripper_width"]
-            input_dict["panda_finger_joint1"] = finger_position
-            input_dict["panda_finger_joint2"] = finger_position
-        elif (
-            "gripper_width_min" in input_dict.keys()
-            or "gripper_width_max" in input_dict.keys()
-        ):  # If dictionary contains bounds commands
-            if "gripper_width_min" in input_dict.keys():  # Translate min
-                finger_position_min = input_dict["gripper_width_min"] / 2.0
-                del input_dict["gripper_width_min"]
-                input_dict["panda_finger_joint1_min"] = finger_position_min
-                input_dict["panda_finger_joint2_min"] = finger_position_min
-            if "gripper_width_max" in input_dict.keys():  # Translate max
-                finger_position_max = input_dict["gripper_width_max"] / 2.0
-                del input_dict["gripper_width_max"]
-                input_dict["panda_finger_joint1_max"] = finger_position_max
-                input_dict["panda_finger_joint2_max"] = finger_position_max
-    else:
-        raise TypeError(
-            "Input argument has the wrong type the"
-            "'translate_gripper_width_2_finger_joint_commands'"
-            "function only takes a dictionary."
-        )
-    return input_dict
+    error_dict = {
+        value: attr
+        for attr, value in moveit_error_code.__class__.__dict__.items()
+        if attr[0] != "_" and all(map(str.isupper, attr.replace("_", "")))
+    }
+    return (
+        error_dict[moveit_error_code.val].lower().capitalize().replace("_", " ") + "."
+        if error_dict[moveit_error_code.val] != "SUCCESSFUL"
+        else ""
+    )
 
 
 #################################################

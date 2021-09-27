@@ -3,8 +3,8 @@
     <!--Simulation arguments-->
     <arg name="world_name" default="$(find panda_gazebo)/resources/worlds/empty.world" />
     <arg name="paused" default="true" />
+    <arg name="verbose" default="false"/>
     <arg name="gazebo_gui" default="true"/>
-    <arg name="verbose" default="true"/>
 
     <!--Start the gazebo world-->
     <include file="$(find gazebo_ros)/launch/empty_world.launch">

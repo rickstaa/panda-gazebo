@@ -21,10 +21,3 @@ panda_arm_joint6_position_controller:
 panda_arm_joint7_position_controller:
   type: position_controllers/JointPositionController
   joint: panda_joint7
-
-panda_hand_finger1_position_controller:
-  type: position_controllers/JointPositionController
-  joint: panda_finger_joint1
-panda_hand_finger2_position_controller:
-  type: position_controllers/JointPositionController
-  joint: panda_finger_joint2

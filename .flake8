@@ -1,0 +1,14 @@
+[flake8]
+max-line-length = 89
+extend-ignore = E203
+exclude =
+    .git,
+    __pycache__,
+    sandbox,
+    docs,
+    tests,
+    franka_ros,
+    panda_moveit_config
+per-file-ignores =
+    __init__.py: F401, E501
+max-complexity = 10

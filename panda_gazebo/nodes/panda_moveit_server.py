@@ -21,15 +21,14 @@ if __name__ == "__main__":
     try:
         arm_ee_link = rospy.get_param("~end_effector")
     except KeyError:
-        # arm_ee_link = "panda_hand"
         arm_ee_link = "panda_link8"
-    try:  # Check required services
-        create_extra_services = rospy.get_param("~create_extra_services")
+    try:
+        load_gripper = rospy.get_param("~load_gripper")
     except KeyError:
-        create_extra_services = False
+        load_gripper = True
 
     # Start MoveIt planner server
     moveit_planner_server = PandaMoveitPlannerServer(
-        arm_ee_link=arm_ee_link, create_extra_services=create_extra_services
+        arm_ee_link=arm_ee_link, load_gripper=load_gripper
     )
     rospy.spin()  # Maintain the service open

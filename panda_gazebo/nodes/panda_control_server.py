@@ -22,14 +22,9 @@ if __name__ == "__main__":
         autofill_traj_positions = rospy.get_param("~autofill_traj_positions")
     except KeyError:
         autofill_traj_positions = False
-    try:  # Check required services
-        create_extra_services = rospy.get_param("~create_extra_services")
-    except KeyError:
-        create_extra_services = False
 
     # Start control server
     control_server = PandaControlServer(
         autofill_traj_positions=autofill_traj_positions,
-        create_extra_services=create_extra_services,
     )
     rospy.spin()  # Maintain the service open

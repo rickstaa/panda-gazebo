@@ -1,30 +1,13 @@
 <!-- Launch file for launching the robot controllers -->
 <launch>
-    <arg name="moveit" default="true" />
-    <arg name="ros_control" default="true" />
-    <arg name="gazebo" default="true" />
-    <arg name="load_gripper" default="true" />
-    <arg name="joint_state_controller" default="true"/>
     <arg name="stopped" default="false"/>
 
     <!--Load controller parameters-->
-    <!--    Load Moveit control configuration values-->
-    <rosparam if="$(arg moveit)" file="$(find panda_gazebo)/cfg/controllers/moveit_ros_control.yaml" command="load" />
-    <!--    Load general ros_control configuration values-->
-    <rosparam if="$(arg ros_control)" file="$(find panda_gazebo)/cfg/controllers/ros_control.yaml" command="load" />
-    <!--    Load general Gazebo control configuration values-->
-    <rosparam if="$(arg gazebo)" file="$(find panda_gazebo)/cfg/controllers/gazebo_ros_control.yaml" command="load" />
-    <!--    Load the controller configuration values-->
-    <rosparam if="$(arg joint_state_controller)" file="$(find panda_gazebo)/cfg/controllers/joint_state_controller.yaml" command="load" />
     <rosparam file="$(find panda_gazebo)/cfg/controllers/joint_position_controllers.yaml" command="load" />
 
     <!--Load the controllers-->
     <arg if="$(arg stopped)" name="command_args" value="--stopped" />
     <arg unless="$(arg stopped)" name="command_args" value="" />
-    <node if="$(arg joint_state_controller)" name="joint_state_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="joint_state_controller" />
-    <node name="joint_position_controller_spawner_arm" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="$(arg command_args) panda_arm_joint1_position_controller panda_arm_joint2_position_controller
+    <node name="joint_position_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="$(arg command_args) panda_arm_joint1_position_controller panda_arm_joint2_position_controller
         panda_arm_joint3_position_controller panda_arm_joint4_position_controller panda_arm_joint5_position_controller panda_arm_joint6_position_controller panda_arm_joint7_position_controller" />
-    <group if="$(arg load_gripper)">
-        <node name="joint_position_controller_spawner_hand" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="$(arg command_args) panda_hand_finger1_position_controller panda_hand_finger2_position_controller" />
-    </group>
 </launch>

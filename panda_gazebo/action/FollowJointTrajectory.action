@@ -1,8 +1,6 @@
 # Follow_joint_trajectory action
-# NOTE: This action is a direct copy of the action found in the control_msgs package. It
-# was created to provide a better distinction between the messages of the
-# panda_gazebo/follow_joint_trajectory action server and the
-# panda_arm_controller/follow_joint_trajectory action serer.
+# NOTE: This action extends the control_msgs/FollowJointTrajectoryAction such that
+# it also contains values to automatically generate the time axis
 
 # The joint trajectory to follow
 trajectory_msgs/JointTrajectory trajectory
@@ -30,6 +28,9 @@ control_msgs/JointTolerance[] path_tolerance
 # GOAL_TOLERANCE_VIOLATED
 control_msgs/JointTolerance[] goal_tolerance
 duration goal_time_tolerance
+
+# Extra time axis attributes
+# NOTE: Used for automatic time axis generation
 bool create_time_axis  # Automatically create a time axis
 float64 time_axis_step  # Time axis step size
 
