@@ -12,7 +12,6 @@ Main services:
     * panda_arm/follow_joint_trajectory
     * panda_hand/set_gripper_width
 """
-# TODO: Add gravity compensation effort control.
 
 import copy
 import os
@@ -952,7 +951,7 @@ class PandaControlServer(object):
                     logwarn_msg_strings = [
                         "Joint" if len(invalid_joint_names) == 1 else "Joints",
                         "was" if len(invalid_joint_names) == 1 else "were",
-                        "panda_gazebo/SetJointPositions",  # NOTE: Why?
+                        "panda_gazebo/SetJointPositions",
                     ]
                     logwarn_message = (
                         "%s that %s specified in the 'joint_names' field of the '%s' "

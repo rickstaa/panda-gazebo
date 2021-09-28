@@ -54,14 +54,13 @@
     </include>
 
     <!--Load Moveit control services-->
-    <!--FIXME: Load gripper false not working-->
-    <!-- <node ns="panda" if="$(arg moveit)" pkg="panda_gazebo" type="panda_moveit_server.py" name="panda_moveit_planner_server" required="true">
+    <node ns="panda" if="$(arg moveit)" pkg="panda_gazebo" type="panda_moveit_server.py" name="panda_moveit_planner_server" required="true">
         <param name="max_velocity_scaling_factor" value="$(arg max_velocity_scaling_factor)"/>
         <param name="max_acceleration_scaling_factor" value="$(arg max_acceleration_scaling_factor)"/>
-    </node> -->
+    </node>
 
     <!--Load ros_control service-->
-    <!-- <node ns="panda" pkg="panda_gazebo" type="panda_control_server.py" name="panda_control_server" required="true"/> -->
+    <node ns="panda" pkg="panda_gazebo" type="panda_control_server.py" name="panda_control_server" required="true"/>
 
     <!--Load RViz-->
     <include ns="panda" if="$(arg rviz)" file="$(find panda_gazebo)/launch/panda_rviz.launch">

@@ -68,7 +68,6 @@ if __name__ == "__main__":
 
     # -- Test set panda_hand robot joint positions service --
     req = SetJointPositionsRequest()
-    # req.joint_positions = [0.23, 0.03] # NOTE:: Should fail
     req.joint_positions = [0.0, 0.0]
     # req.joint_positions = [0.03]
     # req.joint_names = ["panda_finger_joint1"]
