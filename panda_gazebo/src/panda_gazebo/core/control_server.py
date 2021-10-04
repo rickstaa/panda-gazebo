@@ -541,6 +541,7 @@ class PandaControlServer(object):
             check_gradient (boolean, optional): If enabled the script will also return
                 when the gradients become zero. Defaults to ``True``.
         """
+        # TODO: Improve check velocities for multiple seconds!
         # Validate control type and control group
         if control_type not in ["position_control", "effort_control"]:
             rospy.logwarn(
@@ -1506,7 +1507,7 @@ class PandaControlServer(object):
         """
         missing_controllers = []
         stopped_controllers = []
-        for controller in ARM_POSITION_CONTROLLERS:
+        for controller in controllers:
             try:
                 if self.controllers[controller].state != "running":
                     stopped_controllers.append(controller)
@@ -1544,7 +1545,7 @@ class PandaControlServer(object):
         """
         # Validate the control type
         resp = SetJointCommandsResponse()
-        if set_joint_commands_req.control_type not in [
+        if set_joint_commands_req.control_type.lower() not in [
             "position_control",
             "effort_control",
         ]:
@@ -1574,6 +1575,8 @@ class PandaControlServer(object):
         if set_joint_commands_req.wait:
             if gripper_command_msg is not None:
                 gripper_result = self._gripper_move_client.wait_for_result()
+            else:
+                gripper_result = True
 
         # Return result
         resp = SetJointCommandsResponse()
@@ -1898,7 +1901,7 @@ class PandaControlServer(object):
         server.
 
         Args:
-            Goal (:obj:`control_msgs.msg.FollowJointTrajectoryGoal`): Goal execution
+            Goal (:obj:`panda_gazebo.msg.FollowJointTrajectoryGoal`): Goal execution
                 action server goal message.
         """
         # Check if joint goal.joint_names contains duplicates

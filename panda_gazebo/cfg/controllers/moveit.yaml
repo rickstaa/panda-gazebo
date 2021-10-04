@@ -9,3 +9,4 @@ move_group:
   trajectory_execution:
     allowed_execution_duration_scaling: 5.0
     # allowed_goal_duration_margin: 2.5
+    # execution_duration_monitoring: false

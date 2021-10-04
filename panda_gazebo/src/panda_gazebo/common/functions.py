@@ -7,7 +7,7 @@ import copy
 import control_msgs.msg as control_msgs
 import rospy
 from actionlib_msgs.msg import GoalStatusArray
-from control_msgs.msg import FollowJointTrajectoryGoal
+from panda_gazebo.msg import FollowJointTrajectoryGoal
 from rospy.exceptions import ROSException
 from sensor_msgs.msg import JointState
 from trajectory_msgs.msg import JointTrajectoryPoint
@@ -39,21 +39,27 @@ def joint_state_dict_2_joint_state_msg(joint_state_dict, type="position"):
     return resp
 
 
-def action_dict_2_joint_trajectory_msg(action_dict):
-    """Converts an action dictionary into a FollowJointTrajectoryGoal
+def action_dict_2_joint_trajectory_msg(
+    action_dict, create_time_axis=True, time_axis_step=0.01
+):
+    """Converts an action dictionary into a panda_Gazebo ``FollowJointTrajectoryGoal``
     msgs.
 
     Args:
         action_dict (dict): Dictionary containing actions and joints.
+        create_time_axis (bool): Whether you want to automatically create a joint
+            trajectory time axis if it is not yet present.
+        time_axis_step (float): The size of the time steps used for generating the time
+            axis.
 
     Returns:
-        :obj:`control_msgs.msg.FollowJointTrajectoryGoal`: New FollowJointTrajectoryGoal
+        :obj:`panda_gazebo.msg.FollowJointTrajectoryGoal`: New FollowJointTrajectoryGoal
             message.
     """
     # Initiate waypoints and new trajectory message
     goal_msg = FollowJointTrajectoryGoal()
-    goal_msg.create_time_axis = True
-    goal_msg.time_axis_step = 0.01
+    goal_msg.create_time_axis = create_time_axis
+    goal_msg.time_axis_step = time_axis_step
     waypoint = JointTrajectoryPoint()
 
     # creates waypoint from joint_positions

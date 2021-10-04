@@ -2,18 +2,25 @@
 <launch>
     <arg name="rviz" default="true"/>
     <arg name="load_gripper" default="true"/>
-    <!--Here-->
     <arg name="debug" default="false"/>
     <!--Moveit arguments-->
     <arg name="moveit" default="true"/>
     <arg name="rviz_file" default=""/>
     <arg name="pipeline" default="ompl"/>
+    <arg name="end_effector" default="panda_link8"/>
     <arg name="max_velocity_scaling_factor" default="1.0"/>
     <arg name="max_acceleration_scaling_factor" default="1.0"/>
     <!-- Gazebo specific options -->
+    <arg name="world" default="$(find panda_gazebo)/resources/worlds/empty.world"/>
     <arg name="gazebo" default="false"/>
     <arg name="gazebo_gui" default="true"/>
     <arg name="paused" default="false"/>
+    <arg name="x" default="0"/>
+    <arg name="y" default="0"/>
+    <arg name="z" default="0"/>
+    <arg name="roll" default="0"/>
+    <arg name="pitch" default="0"/>
+    <arg name="yaw" default="0"/>
     <!--Control arguments-->
     <!--    The control type used for controlling the robot (Options: Trajectory, position, effort)-->
     <arg name="control_type" default="trajectory"/>
@@ -28,8 +35,15 @@
         <arg unless="$(arg gazebo_gui)" name="headless" value="true"/>
         <arg if="$(arg gazebo_gui)" name="headless" value="false"/>
         <arg name="paused" value="$(arg paused)"/>
+        <arg name="world" value="$(arg world)"/>
         <arg name="use_gripper" default="$(arg load_gripper)"/>
-        <arg name="transmission" value="hardware_interface/$(arg hardware_interface)"/>
+        <!-- <arg name="transmission" value="hardware_interface/$(arg hardware_interface)"/> -->
+        <arg name="x" value="$(arg x)"/>
+        <arg name="y" value="$(arg y)"/>
+        <arg name="z" value="$(arg z)"/>
+        <arg name="roll" value="$(arg roll)"/>
+        <arg name="pitch" value="$(arg pitch)"/>
+        <arg name="yaw" value="$(arg yaw)" />
     </include>
 
     <!--Run the main MoveIt! executable without trajectory execution (we do not have controllers configured by default)-->
@@ -54,7 +68,8 @@
     </include>
 
     <!--Load Moveit control services-->
-    <node ns="panda" if="$(arg moveit)" pkg="panda_gazebo" type="panda_moveit_server.py" name="panda_moveit_planner_server" required="true">
+    <node ns="panda" if="$(arg moveit)" pkg="panda_gazebo" type="panda_moveit_server.py" name="panda_moveit_planner_server" required="true" args="">
+        <param name="end_effector" value="$(arg end_effector)"/>
         <param name="max_velocity_scaling_factor" value="$(arg max_velocity_scaling_factor)"/>
         <param name="max_acceleration_scaling_factor" value="$(arg max_acceleration_scaling_factor)"/>
     </node>

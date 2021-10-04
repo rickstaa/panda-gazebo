@@ -3,11 +3,11 @@
     <arg name="stopped" default="false"/>
 
     <!--Load controller parameters-->
-    <rosparam file="$(find panda_gazebo)/cfg/controllers/joint_effort_controllers.yaml" command="load" />
+    <rosparam file="$(find panda_gazebo)/cfg/controllers/joint_effort_controllers.yaml" command="load"/>
 
     <!--Load the controllers-->
-    <arg if="$(arg stopped)" name="command_args" value="--stopped" />
+    <arg if="$(arg stopped)" name="command_args" value="--stopped"/>
     <arg unless="$(arg stopped)" name="command_args" value="" />
     <node name="joint_effort_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="$(arg command_args) panda_arm_joint1_effort_controller panda_arm_joint2_effort_controller
-        panda_arm_joint3_effort_controller panda_arm_joint4_effort_controller panda_arm_joint5_effort_controller panda_arm_joint6_effort_controller panda_arm_joint7_effort_controller" />
+        panda_arm_joint3_effort_controller panda_arm_joint4_effort_controller panda_arm_joint5_effort_controller panda_arm_joint6_effort_controller panda_arm_joint7_effort_controller"/>
 </launch>

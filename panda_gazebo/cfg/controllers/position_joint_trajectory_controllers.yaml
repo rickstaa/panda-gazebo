@@ -12,25 +12,18 @@ panda_arm_controller:
     - panda_joint7
   constraints:
     goal_time: 0.5
-    panda_joint1:
-      goal: 0.05
-    panda_joint2:
-      goal: 0.05
-    panda_joint3:
-      goal: 0.05
-    panda_joint4:
-      goal: 0.05
-    panda_joint5:
-      goal: 0.05
-    panda_joint6:
-      goal: 0.05
-    panda_joint7:
-      goal: 0.05
+    panda_joint1: { goal: 0.05 }
+    panda_joint2: { goal: 0.05 }
+    panda_joint3: { goal: 0.05 }
+    panda_joint4: { goal: 0.05 }
+    panda_joint5: { goal: 0.05 }
+    panda_joint6: { goal: 0.05 }
+    panda_joint7: { goal: 0.05 }
   gains:
-    panda_joint1: { p: 12000, d: 50, i: 0.0, i_clamp: 10000 }
-    panda_joint2: { p: 30000, d: 100, i: 0.02, i_clamp: 10000 }
-    panda_joint3: { p: 18000, d: 50, i: 0.01, i_clamp: 1 }
-    panda_joint4: { p: 18000, d: 70, i: 0.01, i_clamp: 10000 }
-    panda_joint5: { p: 12000, d: 70, i: 0.01, i_clamp: 1 }
-    panda_joint6: { p: 7000, d: 50, i: 0.01, i_clamp: 1 }
-    panda_joint7: { p: 2000, d: 20, i: 0.0, i_clamp: 1 }
+    panda_joint1: { p: 600, d: 30, i: 0 }
+    panda_joint2: { p: 600, d: 30, i: 0 }
+    panda_joint3: { p: 600, d: 30, i: 0 }
+    panda_joint4: { p: 600, d: 30, i: 0 }
+    panda_joint5: { p: 250, d: 10, i: 0 }
+    panda_joint6: { p: 150, d: 10, i: 0 }
+    panda_joint7: { p: 50, d: 5, i: 0 }

@@ -49,14 +49,8 @@ ARM_CONTROLLERS = {
     ],
 }
 HAND_CONTROLLERS = {
-    "trajectory_control": "panda_hand_controller",
     "position_control": [
-        "panda_hand_finger1_position_controller",
-        "panda_hand_finger2_position_controller",
-    ],
-    "effort_control": [
-        "panda_hand_finger1_effort_controller",
-        "panda_hand_finger2_effort_controller",
+        "franka_gripper",
     ],
 }
 CONTROLLER_DICT = {"arm": ARM_CONTROLLERS, "hand": HAND_CONTROLLERS}
@@ -91,7 +85,7 @@ class PandaControlSwitcher(object):
             Boolean specifying whether we want to display log messages during switching.
     """
 
-    def __init__(self, connection_timeout=10, verbose=True):
+    def __init__(self, connection_timeout=10, verbose=True, robot_name_space=""):
         """Initializes the PandaControlSwitcher object.
 
         Args:
@@ -99,6 +93,8 @@ class PandaControlSwitcher(object):
                 controller_manager services. Defaults to `10` sec.
             verbose (bool, optional): Whether to display debug log messages. Defaults to
                 ``True``.
+            robot_name_space (string, optional): The namespace the robot, and thus the
+                'controller_manager' is on. Defaults to ``""``.
         """
         self.verbose = verbose
         self._controller_manager_response_timeout = 3
@@ -106,40 +102,41 @@ class PandaControlSwitcher(object):
 
         # Connect to controller_manager services
         try:
+            switch_controller_srv_topic = "%s/controller_manager/switch_controller" % (
+                robot_name_space
+            )
             rospy.logdebug(
-                "Connecting to 'controller_manager/switch_controller' service."
+                "Connecting to '%s' service." % (switch_controller_srv_topic)
             )
             rospy.wait_for_service(
-                "controller_manager/switch_controller", timeout=connection_timeout
+                switch_controller_srv_topic, timeout=connection_timeout
             )
             self._switch_controller_client = rospy.ServiceProxy(
-                "controller_manager/switch_controller", SwitchController
+                switch_controller_srv_topic, SwitchController
             )
-            rospy.logdebug(
-                "Connected to 'controller_manager/switch_controller' service!"
+            rospy.logdebug("Connected to '%s' service!" % switch_controller_srv_topic)
+            list_controllers_srv_topic = "%s/controller_manager/list_controllers" % (
+                robot_name_space
             )
-            rospy.logdebug(
-                "Connecting to 'controller_manager/list_controllers' service."
-            )
+            rospy.logdebug("Connecting to '%s' service." % list_controllers_srv_topic)
             rospy.wait_for_service(
-                "controller_manager/list_controllers", timeout=connection_timeout
+                list_controllers_srv_topic, timeout=connection_timeout
             )
             self._list_controller_client = rospy.ServiceProxy(
-                "controller_manager/list_controllers", ListControllers
+                list_controllers_srv_topic, ListControllers
             )
-            rospy.logdebug(
-                "Connected to 'controller_manager/list_controllers' service!"
+            rospy.logdebug("Connected to '%s' service!" % list_controllers_srv_topic)
+            load_controller_srv_topic = "%s/controller_manager/load_controller" % (
+                robot_name_space
             )
-            rospy.logdebug(
-                "Connecting to 'controller_manager/load_controller' service."
-            )
+            rospy.logdebug("Connecting to '%s' service." % load_controller_srv_topic)
             rospy.wait_for_service(
-                "controller_manager/load_controller", timeout=connection_timeout
+                load_controller_srv_topic, timeout=connection_timeout
             )
             self._load_controller_client = rospy.ServiceProxy(
-                "controller_manager/load_controller", LoadController
+                load_controller_srv_topic, LoadController
             )
-            rospy.logdebug("Connected to 'controller_manager/load_controller' service!")
+            rospy.logdebug("Connected to '%s' service!" % load_controller_srv_topic)
         except (rospy.ServiceException, ROSException, ROSInterruptException) as e:
             rospy.logerr(
                 "Shutting down '%s' because no connection could be established "
@@ -257,12 +254,12 @@ class PandaControlSwitcher(object):
         control type is enabled.
         """
         try:
-            arm_control_type = list(
-                self._list_controllers_state()["arm"]["running"].keys()
+            hand_control_type = list(
+                self._list_controllers_state()["hand"]["running"].keys()
             )[0]
         except KeyError:
-            arm_control_type = ""
-        return arm_control_type
+            hand_control_type = ""
+        return hand_control_type
 
     def wait_for_control_type(self, control_group, control_type, timeout=None, rate=10):
         """Function that can be used to wait till all the controllers used for a given

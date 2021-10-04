@@ -10,10 +10,10 @@
     <!--    Load general Gazebo control configuration values-->
     <rosparam file="$(find panda_gazebo)/cfg/controllers/gazebo_ros_control.yaml" command="load" />
     <!--    Load general ros_control configuration values-->
-    <rosparam file="$(find panda_gazebo)/cfg/controllers/ros_control.yaml" command="load" />
+    <rosparam file="$(find panda_gazebo)/cfg/controllers/ros_control.yaml" command="load"/>
     <!--    Load Moveit control configuration values-->
-    <rosparam if="$(eval arg('moveit') and arg('load_gripper'))" file="$(find panda_gazebo)/cfg/controllers/moveit_ros_control_gripper.yaml" command="load" />
-    <rosparam unless="$(eval arg('moveit') and arg('load_gripper'))" file="$(find panda_gazebo)/cfg/controllers/moveit_ros_control.yaml" command="load" />
+    <rosparam if="$(eval arg('moveit') and arg('load_gripper'))" file="$(find panda_gazebo)/cfg/controllers/moveit_ros_control_gripper.yaml" command="load"/>
+    <rosparam unless="$(eval arg('moveit') and arg('load_gripper'))" file="$(find panda_gazebo)/cfg/controllers/moveit_ros_control.yaml" command="load"/>
 
     <!--Load controllers-->
     <!--Joint position controllers-->

@@ -1,10 +1,10 @@
 <!--Starts the panda gazebo simulation-->
 <launch>
-    <arg name="rviz" default="true" />
+    <arg name="rviz" default="true"/>
     <arg name="moveit" default="true"/>
     <!--Simulation arguments-->
-    <arg name="world_name" default="$(find panda_gazebo)/resources/worlds/empty.world" />
-    <arg name="paused" default="true" />
+    <arg name="world" default="$(find panda_gazebo)/resources/worlds/empty.world"/>
+    <arg name="paused" default="true"/>
     <arg name="gazebo_gui" default="true"/>
     <!--Control arguments-->
     <!--    The control type used for controlling the robot (Options: Trajectory, position, effort)-->
@@ -12,15 +12,15 @@
 
     <!--Launch gazebo environment-->
     <include file="$(find panda_gazebo)/launch/start_world.launch">
-        <arg name="world_name" value="$(arg world_name)"/>
+        <arg name="world" value="$(arg world)"/>
         <arg name="paused" value="$(arg paused)"/>
         <arg name="gazebo_gui" value="$(arg gazebo_gui)"/>
     </include>
 
     <!--Put the robot into the simulation-->
     <include file="$(find panda_gazebo)/launch/put_robot_in_world.launch">
-        <arg name="rviz" value="$(arg rviz)" />
-        <arg name="moveit" value="$(arg moveit)" />
+        <arg name="rviz" value="$(arg rviz)"/>
+        <arg name="moveit" value="$(arg moveit)"/>
         <arg name="control_type" value="$(arg control_type)"/>
     </include>
 </launch>

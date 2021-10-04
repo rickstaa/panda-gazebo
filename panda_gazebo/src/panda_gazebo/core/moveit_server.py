@@ -350,7 +350,7 @@ class PandaMoveitPlannerServer(object):
                     self.move_group_arm.stop()
             else:
                 rospy.logwarn(
-                    "No plan found for the current hand setpoints since '%s'"
+                    "No plan found for the current arm setpoints since '%s'"
                     % translate_moveit_error_code(error_code)
                 )
                 arm_retval = False
