@@ -58,7 +58,7 @@ if __name__ == "__main__":
     #     "gripper_width",
     # ]
     # set_joint_commands_msg.wait = True
-    # set_joint_commands_msg.control_type = "position_control"
+    # set_joint_commands_msg.control_type = "position"
     # set_joint_commands_msg.joint_commands = [1, 2, 3, 0.08]
     # retval = set_arm_joint_effort_srv.call(set_joint_commands_msg)
     # print(retval)
@@ -200,7 +200,7 @@ if __name__ == "__main__":
 
     # -- Test get controlled joints service --
     # req = GetControlledJointsRequest()
-    # req.control_type = "position_control"
+    # req.control_type = "position"
     # get_controlled_joints_srv = rospy.ServiceProxy(
     #     "/panda/panda_control_server/get_controlled_joints",
     #     GetControlledJoints,

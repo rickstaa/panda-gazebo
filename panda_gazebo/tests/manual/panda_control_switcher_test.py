@@ -9,10 +9,10 @@ if __name__ == "__main__":
 
     # Switch controllers
     arm_switch_resp = control_switcher.switch(
-        control_group="arm", control_type="effort_control"
+        control_group="arm", control_type="effort"
     )
     hand_switch_resp = control_switcher.switch(
-        control_group="hand", control_type="effort_control"
+        control_group="hand", control_type="effort"
     )
 
     print("You can put your debug point here")

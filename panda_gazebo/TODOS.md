@@ -1,4 +1,4 @@
 # TODOS
 
-- [ ] Update grasp world to the one provided by franka emika!
+- [ ] Improve effort drift.
 - [ ] Improve wait for function!

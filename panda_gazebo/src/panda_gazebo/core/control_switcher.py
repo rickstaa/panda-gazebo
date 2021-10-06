@@ -3,9 +3,9 @@ controlling the Panda Robot robot ``arm``. It serves as a wrapper aroundthe serv
 created by the ROS `controller_manager <https://wiki.ros.orgcontroller_manager>`_ class.
 
 Control types:
-    * `trajectory_control <https://wiki.ros.org/joint_trajectory_controller/>`_
-    * `position_control <https://wiki.ros.org/position_controllers/>`_
-    * `effort_control <https://wiki.ros.org/effort_controllers/>`_
+    * `trajectory <https://wiki.ros.org/joint_trajectory_controller/>`_
+    * `position <https://wiki.ros.org/position_controllers/>`_
+    * `effort <https://wiki.ros.org/effort_controllers/>`_
 """
 
 import sys
@@ -27,9 +27,9 @@ from rospy.exceptions import ROSException, ROSInterruptException
 
 # Global script vars
 ARM_CONTROLLERS = {
-    "ee_control": "panda_arm_controller",
-    "trajectory_control": "panda_arm_controller",
-    "position_control": [
+    "end_effector": "panda_arm_controller",
+    "trajectory": "panda_arm_controller",
+    "position": [
         "panda_arm_joint1_position_controller",
         "panda_arm_joint2_position_controller",
         "panda_arm_joint3_position_controller",
@@ -38,7 +38,7 @@ ARM_CONTROLLERS = {
         "panda_arm_joint6_position_controller",
         "panda_arm_joint7_position_controller",
     ],
-    "effort_control": [
+    "effort": [
         "panda_arm_joint1_effort_controller",
         "panda_arm_joint2_effort_controller",
         "panda_arm_joint3_effort_controller",
@@ -49,7 +49,7 @@ ARM_CONTROLLERS = {
     ],
 }
 HAND_CONTROLLERS = {
-    "position_control": [
+    "position": [
         "franka_gripper",
     ],
 }
@@ -141,7 +141,7 @@ class PandaControlSwitcher(object):
             rospy.logerr(
                 "Shutting down '%s' because no connection could be established "
                 "with the '%s' service and this service is needed "
-                "when using 'position_control'."
+                "when using 'position'."
                 % (
                     rospy.get_name(),
                     "/" + e.args[0].split(" /")[1],
@@ -270,8 +270,8 @@ class PandaControlSwitcher(object):
             control_group (str): The control group of which you want the switch the
                 control type. Options are 'hand' or 'arm'.
             control_type (str): The robot control type you want to switch to for the
-                given 'control_group'. Options are: ``trajectory_control``,
-                ``position_control`` and ``effort_control``.
+                given 'control_group'. Options are: ``trajectory``, ``position`` and
+                ``effort``.
             timeout (float, optional): The function timeout. Defaults to `None` meaning
                 the function will wait for ever.
             rate (int, optional): The 'control_type' check rate. Defaults to `10`
@@ -310,8 +310,8 @@ class PandaControlSwitcher(object):
             control_group (str): The control group of which you want the switch the
                 control type. Options are 'hand' or 'arm'.
             control_type (str): The robot control type you want to switch to for the
-                given 'control_group'. Options are: ``trajectory_control``,
-                ``position_control`` and ``effort_control``.
+                given 'control_group'. Options are: ``trajectory``, ``position``
+                and ``effort``.
             load_controllers (bool): Try to load the required controllers for a given
                 control_type if they are not yet loaded.
             timeout (int, optional): The timout for switching to a given controller.

@@ -4,7 +4,7 @@
 # the gripper  width to the 'franka_gripper/move' action service.
 string[] joint_names
 float64[] joint_commands
-string control_type # The control type you want to use for the robot arm. Options are "effort_control" and "position_control".
+string control_type # The control type you want to use for the robot arm. Options are "effort" and "position".
 bool wait
 ---
 bool success

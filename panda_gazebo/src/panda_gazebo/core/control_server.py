@@ -531,8 +531,7 @@ class PandaControlServer(object):
 
         Args:
             control_type (str): The type of control that is being executed and on which
-                we should wait. Options are ``effort_control`` and
-                ``position_control``.
+                we should wait. Options are ``effort`` and ``position``.
             controlled_joints (list, optional): A dictionary containing the joints that
                 are currently being controlled, these joints will be determined if no
                 dictionary is given.
@@ -543,10 +542,10 @@ class PandaControlServer(object):
         """
         # TODO: Improve check velocities for multiple seconds!
         # Validate control type and control group
-        if control_type not in ["position_control", "effort_control"]:
+        if control_type not in ["position", "effort"]:
             rospy.logwarn(
                 "Please specify a valid control type. Valid values are %s."
-                % ("['position_control', 'effort_control']")
+                % ("['position', 'effort']")
             )
             return False
         else:
@@ -575,7 +574,7 @@ class PandaControlServer(object):
                     % (
                         control_type,
                         ARM_POSITION_CONTROLLERS
-                        if control_type == "position_control"
+                        if control_type == "position"
                         else ARM_EFFORT_CONTROLLERS,
                         control_type,
                     )
@@ -589,7 +588,7 @@ class PandaControlServer(object):
                     % (
                         control_type,
                         ARM_POSITION_CONTROLLERS
-                        if control_type == "position_control"
+                        if control_type == "position"
                         else ARM_EFFORT_CONTROLLERS,
                         control_type,
                     )
@@ -609,13 +608,13 @@ class PandaControlServer(object):
         grad_buffer = np.full((2, len(self.joint_states.position)), np.nan)
         while not rospy.is_shutdown() and rospy.get_rostime() < timeout_time:
             # Wait till joint positions are within range or arm not changing anymore
-            if control_type == "position_control":
+            if control_type == "position":
                 joint_setpoint = self.arm_joint_positions_setpoint
                 joint_states = self.joint_states.position
                 state_threshold = self.joint_positions_threshold
                 grad_threshold = self._joint_positions_grad_threshold
             # Check if joint effort states are within setpoint
-            elif control_type == "effort_control":
+            elif control_type == "effort":
                 joint_setpoint = self.arm_joint_efforts_setpoint
                 joint_states = self.joint_states.effort
                 state_threshold = self.joint_efforts_threshold
@@ -653,7 +652,7 @@ class PandaControlServer(object):
                     break
 
         # Reset setpoints and return result
-        if control_type == "position_control":
+        if control_type == "position":
             self.arm_joint_positions_setpoint = []
         else:
             self.arm_joint_efforts_setpoint = []
@@ -686,7 +685,7 @@ class PandaControlServer(object):
         """  # noqa: E501
         # Retrieve controlled joints
         controlled_joints_dict = self._get_controlled_joints(
-            control_type="traj_control", verbose=verbose
+            control_type="trajectory", verbose=verbose
         )
 
         # Get controlled joints, arm_state and joint_names
@@ -1100,8 +1099,7 @@ class PandaControlServer(object):
             input_msg (union[:obj:`panda_gazebo.msgs.SetJointPositions`,:obj:`panda_gazebo.msgs.SetJointEfforts`]):
                 The service input message we want to convert and validate.
             control_type (str): The type of control that is being executed and on which
-                we should wait. Options are ``effort_control`` and
-                ``position_control``.
+                we should wait. Options are ``effort`` and ``position``.
             verbose (bool, optional): Boolean specifying whether you want to send
                 warning and error message to the ROSlogger. Defaults to ``False``.
 
@@ -1115,16 +1113,16 @@ class PandaControlServer(object):
                 position/effort commands.
         """  # noqa: E501
         # Validate control_type argument and extract information from input message
-        if control_type == "position_control":
+        if control_type == "position":
             joint_names = input_msg.joint_names
             control_input = input_msg.joint_positions
-        elif control_type == "effort_control":
+        elif control_type == "effort":
             joint_names = input_msg.joint_names
             control_input = input_msg.joint_efforts
         else:
             logwarn_message = (
                 "Please specify a valid control type. Valid values are %s."
-                % ("['position_control', 'effort_control']")
+                % ("['position', 'effort']")
             )
             if verbose:
                 rospy.logwarn(logwarn_message)
@@ -1144,16 +1142,16 @@ class PandaControlServer(object):
         state_dict = self._retrieve_state_dict(controlled_joints_dict)
 
         # Get control publisher message type and current joint states
-        if control_type == "position_control":
+        if control_type == "position":
             arm_state_dict = state_dict["arm"]["positions"]
-        elif control_type == "effort_control":
+        elif control_type == "effort":
             arm_state_dict = state_dict["arm"]["efforts"]
 
         # Check service request input
         if len(joint_names) == 0:  # If not joint_names were given
             # Check if enough joint position commands were given otherwise give warning
             if len(control_input) != controlled_joints_size:
-                if control_type == "position_control":
+                if control_type == "position":
                     logwarn_msg_strings = [
                         "joint position"
                         if len(control_input) == 1
@@ -1207,7 +1205,7 @@ class PandaControlServer(object):
         else:
             # Check if enough control values were given
             if len(joint_names) != len(control_input):
-                if control_type == "position_control":
+                if control_type == "position":
                     logwarn_msg_strings = [
                         "joint position"
                         if len(control_input) == 1
@@ -1260,7 +1258,7 @@ class PandaControlServer(object):
                     if joint_name not in controlled_joints
                 ]
                 if len(invalid_joint_names) != 0:  # Joint names invalid
-                    if control_type == "position_control":
+                    if control_type == "position":
                         logwarn_msg_strings = [
                             "Joint" if len(invalid_joint_names) == 1 else "Joints",
                             "was" if len(invalid_joint_names) == 1 else "were",
@@ -1323,7 +1321,7 @@ class PandaControlServer(object):
             joint_commands_req :obj:`~panda_gazebo.msg.SetJointControlCommandRequest`):
                 The joint control command message.
             control_type (str): The type of control that is being executed. Options
-                are ``effort_control``, ``position_control`` and ``traj_control``.
+                are ``effort``, ``position`` and ``trajectory``.
             verbose (bool, optional): Boolean specifying whether you want to send a
                 warning message to the ROS logger. Defaults to ``False``.
 
@@ -1361,7 +1359,7 @@ class PandaControlServer(object):
 
         # Create arm control message
         if arm_joint_commands_dict:
-            if control_type == "position_control":
+            if control_type == "position":
                 arm_req = SetJointPositions()
                 arm_req.joint_names = list(arm_joint_commands_dict.keys())
                 arm_req.joint_positions = list(arm_joint_commands_dict.values())
@@ -1390,7 +1388,7 @@ class PandaControlServer(object):
 
         Args:
             control_type (str): The type of control that is being executed. Options
-                are ``effort_control``, ``position_control`` and ``traj_control``.
+                are ``effort``, ``position`` and ``trajectory``.
             verbose (bool, optional): Boolean specifying whether you want to send a
                 warning message to the ROS logger. Defaults to ``False``.
 
@@ -1406,7 +1404,7 @@ class PandaControlServer(object):
 
         # Get the joints which are contolled by a given control type
         controlled_joints_dict = OrderedDict(zip(["arm", "hand", "both"], [[], [], []]))
-        if control_type == "position_control":
+        if control_type == "position":
             for controller in ARM_POSITION_CONTROLLERS + HAND_CONTROLLERS:
                 try:
                     for claimed_resources in self.controllers[
@@ -1419,7 +1417,7 @@ class PandaControlServer(object):
                                 controlled_joints_dict["hand"].append(resource)
                 except KeyError:  # Controller not initialized
                     pass
-        elif control_type == "effort_control":
+        elif control_type == "effort":
             for controller in ARM_EFFORT_CONTROLLERS + HAND_CONTROLLERS:
                 try:
                     for claimed_resources in self.controllers[
@@ -1432,7 +1430,7 @@ class PandaControlServer(object):
                                 controlled_joints_dict["hand"].append(resource)
                 except KeyError:  # Controller not initialized
                     pass
-        elif control_type == "traj_control" or control_type == "ee_control":
+        elif control_type == "trajectory" or control_type == "end_effector":
             for controller in ARM_TRAJ_CONTROLLERS + HAND_CONTROLLERS:
                 try:
                     for claimed_resources in self.controllers[
@@ -1448,7 +1446,7 @@ class PandaControlServer(object):
         else:
             logwarn_message = (
                 "Please specify a valid control type. Valid values are %s."
-                % ("['position_control', 'effort_control', 'traj_control']")
+                % ("['position', 'effort', 'trajectory']")
             )
             if verbose:
                 rospy.logwarn(logwarn_message)
@@ -1546,12 +1544,12 @@ class PandaControlServer(object):
         # Validate the control type
         resp = SetJointCommandsResponse()
         if set_joint_commands_req.control_type.lower() not in [
-            "position_control",
-            "effort_control",
+            "position",
+            "effort",
         ]:
             rospy.logwarn(
                 "Please specify a valid control type. Valid values are %s."
-                % ("['position_control', 'effort_control']")
+                % ("['position', 'effort']")
             )
             resp.success = False
             resp.message = "Specified 'control_type' invalid."
@@ -1568,7 +1566,7 @@ class PandaControlServer(object):
         if gripper_command_msg is not None:
             self._gripper_move_client.send_goal(gripper_command_msg)
         if arm_command_msg is not None:
-            if control_type == "position_control":
+            if control_type == "position":
                 arm_resp = self._arm_set_joint_positions_cb(arm_command_msg)
             else:
                 arm_resp = self._arm_set_joint_efforts_cb(arm_command_msg)
@@ -1646,7 +1644,7 @@ class PandaControlServer(object):
         try:
             control_pub_msgs = self._create_control_publisher_msg(
                 input_msg=set_joint_positions_req,
-                control_type="position_control",
+                control_type="position",
             )
         except InputMessageInvalidError as e:
             logwarn_msg = "Panda arm joint positions not set as " + lower_first_char(
@@ -1705,7 +1703,7 @@ class PandaControlServer(object):
         # Wait till control is finished or timeout has been reached
         if set_joint_positions_req.wait and not len(stopped_controllers) >= 1:
             self._wait_till_done(
-                control_type="position_control",
+                control_type="position",
             )
 
         resp.success = True
@@ -1763,7 +1761,7 @@ class PandaControlServer(object):
         try:
             control_pub_msgs = self._create_control_publisher_msg(
                 input_msg=set_joint_efforts_req,
-                control_type="effort_control",
+                control_type="effort",
             )
         except InputMessageInvalidError as e:
             logwarn_msg = "Panda arm joint efforts not set as " + lower_first_char(
@@ -1820,7 +1818,7 @@ class PandaControlServer(object):
         # Wait till control is finished or timeout has been reached
         if set_joint_efforts_req.wait and not len(stopped_controllers) >= 1:
             self._wait_till_done(
-                control_type="effort_control",
+                control_type="effort",
             )
 
         resp.success = True
