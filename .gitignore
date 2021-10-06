@@ -7,6 +7,8 @@ _autosummary/
 # Cache
 __pycache__/
 *.pyc
+slprj/
+matlab_msg_gen_ros1/
 
 # Tests
 pytest/

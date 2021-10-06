@@ -37,7 +37,7 @@
         <arg name="paused" value="$(arg paused)"/>
         <arg name="world" value="$(arg world)"/>
         <arg name="use_gripper" default="$(arg load_gripper)"/>
-        <!-- <arg name="transmission" value="hardware_interface/$(arg hardware_interface)"/> -->
+        <arg name="transmission" value="hardware_interface/$(arg hardware_interface)"/>
         <arg name="x" value="$(arg x)"/>
         <arg name="y" value="$(arg y)"/>
         <arg name="z" value="$(arg z)"/>

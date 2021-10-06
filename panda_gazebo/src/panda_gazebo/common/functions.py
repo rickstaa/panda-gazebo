@@ -5,6 +5,7 @@
 import copy
 
 import control_msgs.msg as control_msgs
+import numpy as np
 import rospy
 from actionlib_msgs.msg import GoalStatusArray
 from panda_gazebo.msg import FollowJointTrajectoryGoal
@@ -42,7 +43,7 @@ def joint_state_dict_2_joint_state_msg(joint_state_dict, type="position"):
 def action_dict_2_joint_trajectory_msg(
     action_dict, create_time_axis=True, time_axis_step=0.01
 ):
-    """Converts an action dictionary into a panda_Gazebo ``FollowJointTrajectoryGoal``
+    """Converts an action dictionary into a panda_gazebo ``FollowJointTrajectoryGoal``
     msgs.
 
     Args:
@@ -55,19 +56,45 @@ def action_dict_2_joint_trajectory_msg(
     Returns:
         :obj:`panda_gazebo.msg.FollowJointTrajectoryGoal`: New FollowJointTrajectoryGoal
             message.
+
+    Raises:
+        ValuesError: When the action_dict is invalid.
     """
-    # Initiate waypoints and new trajectory message
     goal_msg = FollowJointTrajectoryGoal()
     goal_msg.create_time_axis = create_time_axis
     goal_msg.time_axis_step = time_axis_step
-    waypoint = JointTrajectoryPoint()
 
-    # creates waypoint from joint_positions
-    waypoint.positions = list(action_dict.values())
-    goal_msg.trajectory.joint_names = list(action_dict.keys())
+    # Handle multiple waypoints
+    if all([np.isscalar(item) for item in list(action_dict.values())]):
+        waypoints_actions = np.array(
+            [
+                list(action_dict.values()),
+            ]
+        )
+    elif (
+        all([isinstance(item, np.ndarray) for item in action_dict.values()])
+        and all([item.ndim == 1 for item in action_dict.values()])
+        and all(
+            [
+                item.shape == list(action_dict.values())[0].shape
+                for item in action_dict.values()
+            ]
+        )
+    ):
+        waypoints_actions = np.transpose(list(action_dict.values()))
+    else:
+        raise ValueError(
+            "Joint trajectory message could not be created since the action values "
+            "in the action dict are invalid. Please make sure that each joint contains "
+            "an equal amount of joint commands, one for each waypoint."
+        )
 
-    # Add waypoint to trajectory message and return goal msgs
-    goal_msg.trajectory.points.append(waypoint)
+    # Create and return joint trajectory message
+    for waypoint in waypoints_actions:
+        wp = JointTrajectoryPoint()
+        wp.positions = list(waypoint)
+        goal_msg.trajectory.joint_names = list(action_dict.keys())
+        goal_msg.trajectory.points.append(wp)
     return goal_msg
 
 

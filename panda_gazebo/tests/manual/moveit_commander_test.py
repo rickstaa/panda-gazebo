@@ -107,7 +107,7 @@ if __name__ == "__main__":
     # move_group.clear_pose_targets()
 
     # -- Plan hand goal --
-    hand_move_group.set_joint_value_target([0.02, 0.02])
+    hand_move_group.set_joint_value_target([0.04, 0.04])
     (hand_plan_retval, plan, _, error_code) = hand_move_group.plan()
     retval = hand_move_group.execute(plan, wait=True)
 
