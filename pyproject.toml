@@ -1,0 +1,5 @@
+[tool.black]
+force-exclude = '''
+franka_ros
+| panda_moveit_config
+'''

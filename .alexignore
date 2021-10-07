@@ -1,2 +1,4 @@
 CHANGELOG.md
 CONTRIBUTING.md
+franka_ros/
+panda_moveit_config/
