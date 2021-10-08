@@ -1,10 +1,9 @@
-# MATLAB/Simulink scripts
+# Panda_gazebo
 
-This folder contains several useful MATLAB and Simulink scripts.
+This package contains all the ROS packages needed for creating a Panda Emika Franka
+Gazebo simulation. It is used by the [openai_ros](https://bitbucket.org/rickstaa/openai_ros/src/noetic/)
+ROS RL package to create the openai_ros panda task environments.
 
-## Use custom messages
+## Installation and Usage
 
-To use the custom messages found in the catkin workspace in MATLAB or Simulink you have to run the
-`rosgenmsg` command while passing it the path of the folder that contains the messages. You then
-have to add the output folder of this command to the MATLAB path. This is done using
-the `addpath` and `savepath` commands.
+Please see the [docs](https://rickstaa.github.io/panda-gazebo/) for installation and usage instructions.
