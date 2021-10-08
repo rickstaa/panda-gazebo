@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.10](https://github.com/rickstaa/panda-gazebo/compare/v2.0.9...v2.0.10) (2021-10-08)
+
+
+### Bug Fixes
+
+* **readme.md:** restores readme ([2db1f36](https://github.com/rickstaa/panda-gazebo/commit/2db1f36fec8c989fcbfa3d45cdf74369381f88c9))
+
 ### [2.0.9](https://github.com/rickstaa/panda-gazebo/compare/v2.0.8...v2.0.9) (2021-10-08)
 
 ### [2.0.7](https://github.com/rickstaa/panda-gazebo/compare/v2.0.6...v2.0.7) (2021-10-07)
