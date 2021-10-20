@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>panda_gazebo.core.control_switcher &mdash; panda-gazebo 2.0.1 documentation</title>
+  <title>panda_gazebo.core.control_switcher &mdash; panda-gazebo 2.0.16 documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.0.1
+                2.0.16
               </div>
             
           
@@ -174,9 +174,9 @@
 <span class="sd">created by the ROS `controller_manager &lt;https://wiki.ros.orgcontroller_manager&gt;`_ class.</span>
 
 <span class="sd">Control types:</span>
-<span class="sd">    * `trajectory_control &lt;https://wiki.ros.org/joint_trajectory_controller/&gt;`_</span>
-<span class="sd">    * `position_control &lt;https://wiki.ros.org/position_controllers/&gt;`_</span>
-<span class="sd">    * `effort_control &lt;https://wiki.ros.org/effort_controllers/&gt;`_</span>
+<span class="sd">    * `trajectory &lt;https://wiki.ros.org/joint_trajectory_controller/&gt;`_</span>
+<span class="sd">    * `position &lt;https://wiki.ros.org/position_controllers/&gt;`_</span>
+<span class="sd">    * `effort &lt;https://wiki.ros.org/effort_controllers/&gt;`_</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">sys</span>
@@ -198,9 +198,9 @@
 
 <span class="c1"># Global script vars</span>
 <span class="n">ARM_CONTROLLERS</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;ee_control&quot;</span><span class="p">:</span> <span class="s2">&quot;panda_arm_controller&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;trajectory_control&quot;</span><span class="p">:</span> <span class="s2">&quot;panda_arm_controller&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;position_control&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;end_effector&quot;</span><span class="p">:</span> <span class="s2">&quot;panda_arm_controller&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;trajectory&quot;</span><span class="p">:</span> <span class="s2">&quot;panda_arm_controller&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;position&quot;</span><span class="p">:</span> <span class="p">[</span>
         <span class="s2">&quot;panda_arm_joint1_position_controller&quot;</span><span class="p">,</span>
         <span class="s2">&quot;panda_arm_joint2_position_controller&quot;</span><span class="p">,</span>
         <span class="s2">&quot;panda_arm_joint3_position_controller&quot;</span><span class="p">,</span>
@@ -209,7 +209,7 @@
         <span class="s2">&quot;panda_arm_joint6_position_controller&quot;</span><span class="p">,</span>
         <span class="s2">&quot;panda_arm_joint7_position_controller&quot;</span><span class="p">,</span>
     <span class="p">],</span>
-    <span class="s2">&quot;effort_control&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;effort&quot;</span><span class="p">:</span> <span class="p">[</span>
         <span class="s2">&quot;panda_arm_joint1_effort_controller&quot;</span><span class="p">,</span>
         <span class="s2">&quot;panda_arm_joint2_effort_controller&quot;</span><span class="p">,</span>
         <span class="s2">&quot;panda_arm_joint3_effort_controller&quot;</span><span class="p">,</span>
@@ -220,14 +220,8 @@
     <span class="p">],</span>
 <span class="p">}</span>
 <span class="n">HAND_CONTROLLERS</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;trajectory_control&quot;</span><span class="p">:</span> <span class="s2">&quot;panda_hand_controller&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;position_control&quot;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="s2">&quot;panda_hand_finger1_position_controller&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;panda_hand_finger2_position_controller&quot;</span><span class="p">,</span>
-    <span class="p">],</span>
-    <span class="s2">&quot;effort_control&quot;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="s2">&quot;panda_hand_finger1_effort_controller&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;panda_hand_finger2_effort_controller&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;position&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;franka_gripper&quot;</span><span class="p">,</span>
     <span class="p">],</span>
 <span class="p">}</span>
 <span class="n">CONTROLLER_DICT</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;arm&quot;</span><span class="p">:</span> <span class="n">ARM_CONTROLLERS</span><span class="p">,</span> <span class="s2">&quot;hand&quot;</span><span class="p">:</span> <span class="n">HAND_CONTROLLERS</span><span class="p">}</span>
@@ -262,7 +256,7 @@
 <span class="sd">            Boolean specifying whether we want to display log messages during switching.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="PandaControlSwitcher.__init__"><a class="viewcode-back" href="../../../api/_autosummary/panda_gazebo.core.control_switcher.PandaControlSwitcher.html#panda_gazebo.core.control_switcher.PandaControlSwitcher.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection_timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="PandaControlSwitcher.__init__"><a class="viewcode-back" href="../../../api/_autosummary/panda_gazebo.core.control_switcher.PandaControlSwitcher.html#panda_gazebo.core.control_switcher.PandaControlSwitcher.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection_timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">robot_name_space</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initializes the PandaControlSwitcher object.</span>
 
 <span class="sd">        Args:</span>
@@ -270,6 +264,8 @@
 <span class="sd">                controller_manager services. Defaults to `10` sec.</span>
 <span class="sd">            verbose (bool, optional): Whether to display debug log messages. Defaults to</span>
 <span class="sd">                ``True``.</span>
+<span class="sd">            robot_name_space (string, optional): The namespace the robot, and thus the</span>
+<span class="sd">                &#39;controller_manager&#39; is on. Defaults to ``&quot;&quot;``.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_controller_manager_response_timeout</span> <span class="o">=</span> <span class="mi">3</span>
@@ -277,45 +273,46 @@
 
         <span class="c1"># Connect to controller_manager services</span>
         <span class="k">try</span><span class="p">:</span>
+            <span class="n">switch_controller_srv_topic</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/controller_manager/switch_controller&quot;</span> <span class="o">%</span> <span class="p">(</span>
+                <span class="n">robot_name_space</span>
+            <span class="p">)</span>
             <span class="n">rospy</span><span class="o">.</span><span class="n">logdebug</span><span class="p">(</span>
-                <span class="s2">&quot;Connecting to &#39;controller_manager/switch_controller&#39; service.&quot;</span>
+                <span class="s2">&quot;Connecting to &#39;</span><span class="si">%s</span><span class="s2">&#39; service.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">switch_controller_srv_topic</span><span class="p">)</span>
             <span class="p">)</span>
             <span class="n">rospy</span><span class="o">.</span><span class="n">wait_for_service</span><span class="p">(</span>
-                <span class="s2">&quot;controller_manager/switch_controller&quot;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">connection_timeout</span>
+                <span class="n">switch_controller_srv_topic</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">connection_timeout</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_switch_controller_client</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">ServiceProxy</span><span class="p">(</span>
-                <span class="s2">&quot;controller_manager/switch_controller&quot;</span><span class="p">,</span> <span class="n">SwitchController</span>
+                <span class="n">switch_controller_srv_topic</span><span class="p">,</span> <span class="n">SwitchController</span>
             <span class="p">)</span>
-            <span class="n">rospy</span><span class="o">.</span><span class="n">logdebug</span><span class="p">(</span>
-                <span class="s2">&quot;Connected to &#39;controller_manager/switch_controller&#39; service!&quot;</span>
+            <span class="n">rospy</span><span class="o">.</span><span class="n">logdebug</span><span class="p">(</span><span class="s2">&quot;Connected to &#39;</span><span class="si">%s</span><span class="s2">&#39; service!&quot;</span> <span class="o">%</span> <span class="n">switch_controller_srv_topic</span><span class="p">)</span>
+            <span class="n">list_controllers_srv_topic</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/controller_manager/list_controllers&quot;</span> <span class="o">%</span> <span class="p">(</span>
+                <span class="n">robot_name_space</span>
             <span class="p">)</span>
-            <span class="n">rospy</span><span class="o">.</span><span class="n">logdebug</span><span class="p">(</span>
-                <span class="s2">&quot;Connecting to &#39;controller_manager/list_controllers&#39; service.&quot;</span>
-            <span class="p">)</span>
+            <span class="n">rospy</span><span class="o">.</span><span class="n">logdebug</span><span class="p">(</span><span class="s2">&quot;Connecting to &#39;</span><span class="si">%s</span><span class="s2">&#39; service.&quot;</span> <span class="o">%</span> <span class="n">list_controllers_srv_topic</span><span class="p">)</span>
             <span class="n">rospy</span><span class="o">.</span><span class="n">wait_for_service</span><span class="p">(</span>
-                <span class="s2">&quot;controller_manager/list_controllers&quot;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">connection_timeout</span>
+                <span class="n">list_controllers_srv_topic</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">connection_timeout</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_list_controller_client</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">ServiceProxy</span><span class="p">(</span>
-                <span class="s2">&quot;controller_manager/list_controllers&quot;</span><span class="p">,</span> <span class="n">ListControllers</span>
+                <span class="n">list_controllers_srv_topic</span><span class="p">,</span> <span class="n">ListControllers</span>
             <span class="p">)</span>
-            <span class="n">rospy</span><span class="o">.</span><span class="n">logdebug</span><span class="p">(</span>
-                <span class="s2">&quot;Connected to &#39;controller_manager/list_controllers&#39; service!&quot;</span>
+            <span class="n">rospy</span><span class="o">.</span><span class="n">logdebug</span><span class="p">(</span><span class="s2">&quot;Connected to &#39;</span><span class="si">%s</span><span class="s2">&#39; service!&quot;</span> <span class="o">%</span> <span class="n">list_controllers_srv_topic</span><span class="p">)</span>
+            <span class="n">load_controller_srv_topic</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/controller_manager/load_controller&quot;</span> <span class="o">%</span> <span class="p">(</span>
+                <span class="n">robot_name_space</span>
             <span class="p">)</span>
-            <span class="n">rospy</span><span class="o">.</span><span class="n">logdebug</span><span class="p">(</span>
-                <span class="s2">&quot;Connecting to &#39;controller_manager/load_controller&#39; service.&quot;</span>
-            <span class="p">)</span>
+            <span class="n">rospy</span><span class="o">.</span><span class="n">logdebug</span><span class="p">(</span><span class="s2">&quot;Connecting to &#39;</span><span class="si">%s</span><span class="s2">&#39; service.&quot;</span> <span class="o">%</span> <span class="n">load_controller_srv_topic</span><span class="p">)</span>
             <span class="n">rospy</span><span class="o">.</span><span class="n">wait_for_service</span><span class="p">(</span>
-                <span class="s2">&quot;controller_manager/load_controller&quot;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">connection_timeout</span>
+                <span class="n">load_controller_srv_topic</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">connection_timeout</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_load_controller_client</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">ServiceProxy</span><span class="p">(</span>
-                <span class="s2">&quot;controller_manager/load_controller&quot;</span><span class="p">,</span> <span class="n">LoadController</span>
+                <span class="n">load_controller_srv_topic</span><span class="p">,</span> <span class="n">LoadController</span>
             <span class="p">)</span>
-            <span class="n">rospy</span><span class="o">.</span><span class="n">logdebug</span><span class="p">(</span><span class="s2">&quot;Connected to &#39;controller_manager/load_controller&#39; service!&quot;</span><span class="p">)</span>
+            <span class="n">rospy</span><span class="o">.</span><span class="n">logdebug</span><span class="p">(</span><span class="s2">&quot;Connected to &#39;</span><span class="si">%s</span><span class="s2">&#39; service!&quot;</span> <span class="o">%</span> <span class="n">load_controller_srv_topic</span><span class="p">)</span>
         <span class="k">except</span> <span class="p">(</span><span class="n">rospy</span><span class="o">.</span><span class="n">ServiceException</span><span class="p">,</span> <span class="n">ROSException</span><span class="p">,</span> <span class="n">ROSInterruptException</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="n">rospy</span><span class="o">.</span><span class="n">logerr</span><span class="p">(</span>
                 <span class="s2">&quot;Shutting down &#39;</span><span class="si">%s</span><span class="s2">&#39; because no connection could be established &quot;</span>
                 <span class="s2">&quot;with the &#39;</span><span class="si">%s</span><span class="s2">&#39; service and this service is needed &quot;</span>
-                <span class="s2">&quot;when using &#39;position_control&#39;.&quot;</span>
+                <span class="s2">&quot;when using &#39;position&#39;.&quot;</span>
                 <span class="o">%</span> <span class="p">(</span>
                     <span class="n">rospy</span><span class="o">.</span><span class="n">get_name</span><span class="p">(),</span>
                     <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; /&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span>
@@ -428,12 +425,12 @@
 <span class="sd">        control type is enabled.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">arm_control_type</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_list_controllers_state</span><span class="p">()[</span><span class="s2">&quot;arm&quot;</span><span class="p">][</span><span class="s2">&quot;running&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="n">hand_control_type</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_list_controllers_state</span><span class="p">()[</span><span class="s2">&quot;hand&quot;</span><span class="p">][</span><span class="s2">&quot;running&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
             <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="n">arm_control_type</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">arm_control_type</span>
+            <span class="n">hand_control_type</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">hand_control_type</span>
 
 <div class="viewcode-block" id="PandaControlSwitcher.wait_for_control_type"><a class="viewcode-back" href="../../../api/_autosummary/panda_gazebo.core.control_switcher.PandaControlSwitcher.html#panda_gazebo.core.control_switcher.PandaControlSwitcher.wait_for_control_type">[docs]</a>    <span class="k">def</span> <span class="nf">wait_for_control_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">control_group</span><span class="p">,</span> <span class="n">control_type</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Function that can be used to wait till all the controllers used for a given</span>
@@ -444,8 +441,8 @@
 <span class="sd">            control_group (str): The control group of which you want the switch the</span>
 <span class="sd">                control type. Options are &#39;hand&#39; or &#39;arm&#39;.</span>
 <span class="sd">            control_type (str): The robot control type you want to switch to for the</span>
-<span class="sd">                given &#39;control_group&#39;. Options are: ``trajectory_control``,</span>
-<span class="sd">                ``position_control`` and ``effort_control``.</span>
+<span class="sd">                given &#39;control_group&#39;. Options are: ``trajectory``, ``position`` and</span>
+<span class="sd">                ``effort``.</span>
 <span class="sd">            timeout (float, optional): The function timeout. Defaults to `None` meaning</span>
 <span class="sd">                the function will wait for ever.</span>
 <span class="sd">            rate (int, optional): The &#39;control_type&#39; check rate. Defaults to `10`</span>
@@ -484,8 +481,8 @@
 <span class="sd">            control_group (str): The control group of which you want the switch the</span>
 <span class="sd">                control type. Options are &#39;hand&#39; or &#39;arm&#39;.</span>
 <span class="sd">            control_type (str): The robot control type you want to switch to for the</span>
-<span class="sd">                given &#39;control_group&#39;. Options are: ``trajectory_control``,</span>
-<span class="sd">                ``position_control`` and ``effort_control``.</span>
+<span class="sd">                given &#39;control_group&#39;. Options are: ``trajectory``, ``position``</span>
+<span class="sd">                and ``effort``.</span>
 <span class="sd">            load_controllers (bool): Try to load the required controllers for a given</span>
 <span class="sd">                control_type if they are not yet loaded.</span>
 <span class="sd">            timeout (int, optional): The timout for switching to a given controller.</span>

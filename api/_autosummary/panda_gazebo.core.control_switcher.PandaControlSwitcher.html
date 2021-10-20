@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>panda_gazebo.core.control_switcher.PandaControlSwitcher &mdash; panda-gazebo 2.0.1 documentation</title>
+  <title>panda_gazebo.core.control_switcher.PandaControlSwitcher &mdash; panda-gazebo 2.0.16 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.0.1
+                2.0.16
               </div>
             
           
@@ -199,7 +199,7 @@
 <h1>panda_gazebo.core.control_switcher.PandaControlSwitcher<a class="headerlink" href="#panda-gazebo-core-control-switcher-pandacontrolswitcher" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="panda_gazebo.core.control_switcher.PandaControlSwitcher">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">panda_gazebo.core.control_switcher.</span></span><span class="sig-name descname"><span class="pre">PandaControlSwitcher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connection_timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/panda_gazebo/core/control_switcher.html#PandaControlSwitcher"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.core.control_switcher.PandaControlSwitcher" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">panda_gazebo.core.control_switcher.</span></span><span class="sig-name descname"><span class="pre">PandaControlSwitcher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connection_timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">robot_name_space</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/panda_gazebo/core/control_switcher.html#PandaControlSwitcher"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.core.control_switcher.PandaControlSwitcher" title="Permalink to this definition">¶</a></dt>
 <dd><p>Used for switching the Panda robot controllers.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="panda_gazebo.core.control_switcher.PandaControlSwitcher.verbose">
@@ -210,15 +210,17 @@ Boolean specifying whether we want to display log messages during switching.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="panda_gazebo.core.control_switcher.PandaControlSwitcher.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connection_timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/panda_gazebo/core/control_switcher.html#PandaControlSwitcher.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.core.control_switcher.PandaControlSwitcher.__init__" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connection_timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">robot_name_space</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/panda_gazebo/core/control_switcher.html#PandaControlSwitcher.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.core.control_switcher.PandaControlSwitcher.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initializes the PandaControlSwitcher object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>connection_timeout</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>optional</em>) – The timeout for connecting to the
+<li><p><strong>connection_timeout</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>optional</em>) – The timeout for connecting to the
 controller_manager services. Defaults to <cite>10</cite> sec.</p></li>
-<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to display debug log messages. Defaults to
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to display debug log messages. Defaults to
 <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>robot_name_space</strong> (<em>string</em><em>, </em><em>optional</em>) – The namespace the robot, and thus the
+‘controller_manager’ is on. Defaults to <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -231,7 +233,7 @@ controller_manager services. Defaults to <cite>10</cite> sec.</p></li>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#panda_gazebo.core.control_switcher.PandaControlSwitcher.__init__" title="panda_gazebo.core.control_switcher.PandaControlSwitcher.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>([connection_timeout, verbose])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#panda_gazebo.core.control_switcher.PandaControlSwitcher.__init__" title="panda_gazebo.core.control_switcher.PandaControlSwitcher.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>([connection_timeout, verbose, …])</p></td>
 <td><p>Initializes the PandaControlSwitcher object.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#panda_gazebo.core.control_switcher.PandaControlSwitcher.switch" title="panda_gazebo.core.control_switcher.PandaControlSwitcher.switch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">switch</span></code></a>(control_group, control_type[, …])</p></td>
@@ -280,19 +282,19 @@ launch file to load certain controllers.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>control_group</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – The control group of which you want the switch the
+<li><p><strong>control_group</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – The control group of which you want the switch the
 control type. Options are ‘hand’ or ‘arm’.</p></li>
-<li><p><strong>control_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – The robot control type you want to switch to for the
-given ‘control_group’. Options are: <code class="docutils literal notranslate"><span class="pre">trajectory_control</span></code>,
-<code class="docutils literal notranslate"><span class="pre">position_control</span></code> and <code class="docutils literal notranslate"><span class="pre">effort_control</span></code>.</p></li>
-<li><p><strong>timeout</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em>, </em><em>optional</em>) – The function timeout. Defaults to <cite>None</cite> meaning
+<li><p><strong>control_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – The robot control type you want to switch to for the
+given ‘control_group’. Options are: <code class="docutils literal notranslate"><span class="pre">trajectory</span></code>, <code class="docutils literal notranslate"><span class="pre">position</span></code> and
+<code class="docutils literal notranslate"><span class="pre">effort</span></code>.</p></li>
+<li><p><strong>timeout</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>, </em><em>optional</em>) – The function timeout. Defaults to <cite>None</cite> meaning
 the function will wait for ever.</p></li>
-<li><p><strong>rate</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – The ‘control_type’ check rate. Defaults to <cite>10</cite>
+<li><p><strong>rate</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>optional</em>) – The ‘control_type’ check rate. Defaults to <cite>10</cite>
 hz.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TimeoutError" title="(in Python v3.9)"><strong>TimeoutError</strong></a> – Thrown when the set timeout has passed.</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TimeoutError" title="(in Python v3.10)"><strong>TimeoutError</strong></a> – Thrown when the set timeout has passed.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -305,16 +307,16 @@ controllers and starts the required controllers for a given control type.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>control_group</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – The control group of which you want the switch the
+<li><p><strong>control_group</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – The control group of which you want the switch the
 control type. Options are ‘hand’ or ‘arm’.</p></li>
-<li><p><strong>control_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – The robot control type you want to switch to for the
-given ‘control_group’. Options are: <code class="docutils literal notranslate"><span class="pre">trajectory_control</span></code>,
-<code class="docutils literal notranslate"><span class="pre">position_control</span></code> and <code class="docutils literal notranslate"><span class="pre">effort_control</span></code>.</p></li>
-<li><p><strong>load_controllers</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Try to load the required controllers for a given
+<li><p><strong>control_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – The robot control type you want to switch to for the
+given ‘control_group’. Options are: <code class="docutils literal notranslate"><span class="pre">trajectory</span></code>, <code class="docutils literal notranslate"><span class="pre">position</span></code>
+and <code class="docutils literal notranslate"><span class="pre">effort</span></code>.</p></li>
+<li><p><strong>load_controllers</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – Try to load the required controllers for a given
 control_type if they are not yet loaded.</p></li>
-<li><p><strong>timeout</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – The timout for switching to a given controller.
+<li><p><strong>timeout</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>optional</em>) – The timout for switching to a given controller.
 Defaults to <code class="xref py py-attr docutils literal notranslate"><span class="pre">self._controller_manager_response_timeout</span></code>.</p></li>
-<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to display debug log messages. Defaults
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to display debug log messages. Defaults
 to verbose value set during the class initiation.</p></li>
 </ul>
 </dd>

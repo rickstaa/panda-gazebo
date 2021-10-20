@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>panda_gazebo.common.functions &mdash; panda-gazebo 2.0.1 documentation</title>
+  <title>panda_gazebo.common.functions &mdash; panda-gazebo 2.0.16 documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.0.1
+                2.0.16
               </div>
             
           
@@ -176,9 +176,10 @@
 <span class="kn">import</span> <span class="nn">copy</span>
 
 <span class="kn">import</span> <span class="nn">control_msgs.msg</span> <span class="k">as</span> <span class="nn">control_msgs</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">rospy</span>
 <span class="kn">from</span> <span class="nn">actionlib_msgs.msg</span> <span class="k">import</span> <span class="n">GoalStatusArray</span>
-<span class="kn">from</span> <span class="nn">control_msgs.msg</span> <span class="k">import</span> <span class="n">FollowJointTrajectoryGoal</span>
+<span class="kn">from</span> <span class="nn">panda_gazebo.msg</span> <span class="k">import</span> <span class="n">FollowJointTrajectoryGoal</span>
 <span class="kn">from</span> <span class="nn">rospy.exceptions</span> <span class="k">import</span> <span class="n">ROSException</span>
 <span class="kn">from</span> <span class="nn">sensor_msgs.msg</span> <span class="k">import</span> <span class="n">JointState</span>
 <span class="kn">from</span> <span class="nn">trajectory_msgs.msg</span> <span class="k">import</span> <span class="n">JointTrajectoryPoint</span>
@@ -210,29 +211,61 @@
     <span class="k">return</span> <span class="n">resp</span></div>
 
 
-<div class="viewcode-block" id="action_dict_2_joint_trajectory_msg"><a class="viewcode-back" href="../../../api/_autosummary/panda_gazebo.common.functions.action_dict_2_joint_trajectory_msg.html#panda_gazebo.common.functions.action_dict_2_joint_trajectory_msg">[docs]</a><span class="k">def</span> <span class="nf">action_dict_2_joint_trajectory_msg</span><span class="p">(</span><span class="n">action_dict</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Converts an action dictionary into a FollowJointTrajectoryGoal</span>
+<div class="viewcode-block" id="action_dict_2_joint_trajectory_msg"><a class="viewcode-back" href="../../../api/_autosummary/panda_gazebo.common.functions.action_dict_2_joint_trajectory_msg.html#panda_gazebo.common.functions.action_dict_2_joint_trajectory_msg">[docs]</a><span class="k">def</span> <span class="nf">action_dict_2_joint_trajectory_msg</span><span class="p">(</span>
+    <span class="n">action_dict</span><span class="p">,</span> <span class="n">create_time_axis</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">time_axis_step</span><span class="o">=</span><span class="mf">0.01</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Converts an action dictionary into a panda_gazebo ``FollowJointTrajectoryGoal``</span>
 <span class="sd">    msgs.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        action_dict (dict): Dictionary containing actions and joints.</span>
+<span class="sd">        create_time_axis (bool): Whether you want to automatically create a joint</span>
+<span class="sd">            trajectory time axis if it is not yet present.</span>
+<span class="sd">        time_axis_step (float): The size of the time steps used for generating the time</span>
+<span class="sd">            axis.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        :obj:`control_msgs.msg.FollowJointTrajectoryGoal`: New FollowJointTrajectoryGoal</span>
+<span class="sd">        :obj:`panda_gazebo.msg.FollowJointTrajectoryGoal`: New FollowJointTrajectoryGoal</span>
 <span class="sd">            message.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValuesError: When the action_dict is invalid.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Initiate waypoints and new trajectory message</span>
     <span class="n">goal_msg</span> <span class="o">=</span> <span class="n">FollowJointTrajectoryGoal</span><span class="p">()</span>
-    <span class="n">goal_msg</span><span class="o">.</span><span class="n">create_time_axis</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="n">goal_msg</span><span class="o">.</span><span class="n">time_axis_step</span> <span class="o">=</span> <span class="mf">0.01</span>
-    <span class="n">waypoint</span> <span class="o">=</span> <span class="n">JointTrajectoryPoint</span><span class="p">()</span>
+    <span class="n">goal_msg</span><span class="o">.</span><span class="n">create_time_axis</span> <span class="o">=</span> <span class="n">create_time_axis</span>
+    <span class="n">goal_msg</span><span class="o">.</span><span class="n">time_axis_step</span> <span class="o">=</span> <span class="n">time_axis_step</span>
 
-    <span class="c1"># creates waypoint from joint_positions</span>
-    <span class="n">waypoint</span><span class="o">.</span><span class="n">positions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">action_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-    <span class="n">goal_msg</span><span class="o">.</span><span class="n">trajectory</span><span class="o">.</span><span class="n">joint_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">action_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="c1"># Handle multiple waypoints</span>
+    <span class="k">if</span> <span class="nb">all</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">action_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())]):</span>
+        <span class="n">waypoints_actions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="nb">list</span><span class="p">(</span><span class="n">action_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="p">(</span>
+        <span class="nb">all</span><span class="p">([</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">action_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()])</span>
+        <span class="ow">and</span> <span class="nb">all</span><span class="p">([</span><span class="n">item</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">action_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()])</span>
+        <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">item</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="nb">list</span><span class="p">(</span><span class="n">action_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
+                <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">action_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+    <span class="p">):</span>
+        <span class="n">waypoints_actions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">action_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Joint trajectory message could not be created since the action values &quot;</span>
+            <span class="s2">&quot;in the action dict are invalid. Please make sure that each joint contains &quot;</span>
+            <span class="s2">&quot;an equal amount of joint commands, one for each waypoint.&quot;</span>
+        <span class="p">)</span>
 
-    <span class="c1"># Add waypoint to trajectory message and return goal msgs</span>
-    <span class="n">goal_msg</span><span class="o">.</span><span class="n">trajectory</span><span class="o">.</span><span class="n">points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">waypoint</span><span class="p">)</span>
+    <span class="c1"># Create and return joint trajectory message</span>
+    <span class="k">for</span> <span class="n">waypoint</span> <span class="ow">in</span> <span class="n">waypoints_actions</span><span class="p">:</span>
+        <span class="n">wp</span> <span class="o">=</span> <span class="n">JointTrajectoryPoint</span><span class="p">()</span>
+        <span class="n">wp</span><span class="o">.</span><span class="n">positions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">waypoint</span><span class="p">)</span>
+        <span class="n">goal_msg</span><span class="o">.</span><span class="n">trajectory</span><span class="o">.</span><span class="n">joint_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">action_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">goal_msg</span><span class="o">.</span><span class="n">trajectory</span><span class="o">.</span><span class="n">points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">goal_msg</span></div>
 
 

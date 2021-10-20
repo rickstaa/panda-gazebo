@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>panda_gazebo.core.moveit_server &mdash; panda-gazebo 2.0.1 documentation</title>
+  <title>panda_gazebo.core.moveit_server &mdash; panda-gazebo 2.0.16 documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.0.1
+                2.0.16
               </div>
             
           
@@ -521,7 +521,7 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">move_group_arm</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">rospy</span><span class="o">.</span><span class="n">logwarn</span><span class="p">(</span>
-                    <span class="s2">&quot;No plan found for the current hand setpoints since &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span>
+                    <span class="s2">&quot;No plan found for the current arm setpoints since &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span>
                     <span class="o">%</span> <span class="n">translate_moveit_error_code</span><span class="p">(</span><span class="n">error_code</span><span class="p">)</span>
                 <span class="p">)</span>
                 <span class="n">arm_retval</span> <span class="o">=</span> <span class="kc">False</span>
