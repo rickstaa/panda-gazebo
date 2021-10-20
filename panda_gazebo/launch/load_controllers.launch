@@ -17,7 +17,6 @@
 
     <!--Load controllers-->
     <!--Joint position controllers-->
-    <!--FIXME: Currently not working due to wrong gazebo PID gains-->
     <group if="$(eval arg('control_type') == 'position')">
         <include file="$(find panda_gazebo)/launch/load_joint_position_controllers.launch"/>
         <!--Load joint_trajectory controller in stopped mode
@@ -32,7 +31,6 @@
         <include file="$(find panda_gazebo)/launch/load_joint_effort_controllers.launch"/>
     </group>
     <!--Joint_trajectory controller-->
-    <!--FIXME: PID gains can be improved. Give offset in the simulation and are dangerous on the real robot-->
     <include unless="$(eval arg('control_type') == 'position')" file="$(find panda_gazebo)/launch/load_effort_joint_trajectory_controllers.launch">
         <arg name="stopped" value="$(eval arg('control_type') == 'effort')"/>
     </include>
