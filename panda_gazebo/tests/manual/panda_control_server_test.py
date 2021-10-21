@@ -189,7 +189,7 @@ if __name__ == "__main__":
 
     # -- Test set gripper width service --
     req = SetGripperWidthRequest()
-    req.width = -0.09
+    req.width = 0.04
     req.wait = True
     get_controlled_joints_srv = rospy.ServiceProxy(
         "/panda/panda_control_server/panda_hand/set_gripper_width",
