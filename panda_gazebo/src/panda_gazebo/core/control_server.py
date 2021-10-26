@@ -93,6 +93,8 @@ ARM_EFFORT_CONTROLLERS = [
 ARM_TRAJ_CONTROLLERS = ["panda_arm_controller"]
 HAND_CONTROLLERS = ["franka_gripper"]
 
+USE_GRAVITY_COMPENSATION_FIX = True
+
 
 class PandaControlServer(object):
     """Controller server used to send control commands to the simulated Panda Robot.
@@ -356,6 +358,22 @@ class PandaControlServer(object):
             self._arm_joint_traj_preempt_cb
         )
         self._arm_joint_traj_as.start()
+
+        # Add a effort publisher
+        # FIXME: Can be removed if https://github.com/frankaemika/franka_ros/issues/160
+        # is fixed
+        if USE_GRAVITY_COMPENSATION_FIX:
+            controlled_joints_dict = self._get_controlled_joints(control_type="effort")
+            self._arm_joint_efforts_setpoint_msg = [
+                Float64(val)
+                for key, val in dict(
+                    zip(self.joint_states.name, self.joint_states.effort)
+                ).items()
+                if key in controlled_joints_dict["arm"]
+            ]
+            self._effort_command_lock = False
+            PUBLISH_RATE = 1000
+            rospy.Timer(rospy.Duration(1.0 / PUBLISH_RATE), self._effort_publisher_cb)
 
     ################################################
     # Panda control member functions ###############
@@ -1886,7 +1904,9 @@ class PandaControlServer(object):
 
         # Save setpoint and publish request
         self.arm_joint_efforts_setpoint = [command.data for command in control_pub_msgs]
+        self._arm_joint_efforts_setpoint_msg = control_pub_msgs
         rospy.logdebug("Publishing Panda arm joint efforts control message.")
+        self._effort_command_lock = True
         self._arm_joint_effort_pub.publish(control_pub_msgs)
 
         # Wait till control is finished or timeout has been reached
@@ -1895,6 +1915,7 @@ class PandaControlServer(object):
                 control_type="effort",
             )
 
+        self._effort_command_lock = False
         resp.success = True
         resp.message = "Everything went OK"
         return resp
@@ -1907,7 +1928,7 @@ class PandaControlServer(object):
                 Service request message specifying the gripper width for the robot hand.
 
         Returns:
-            :obj:`panda_gazebo.srv.SetGripperWidthReponse`: Service response.
+            :obj:`panda_gazebo.srv.SetGripperWidthResponse`: Service response.
         """
         # Check if gripper width is within boundaries
         if set_gripper_width_req.width < 0.0 or set_gripper_width_req.width > 0.08:
@@ -1970,6 +1991,18 @@ class PandaControlServer(object):
             resp.success = False
         return resp
 
+    def _effort_publisher_cb(self, event=None):
+        """Publishes the joint effort commands at a given rate. This is done since
+        there is a bug in the gravity compensation see
+        https://github.com/frankaemika/franka_ros/issues/160. As a result this method
+        can be removed if this issue is fixed.
+
+        Args:
+            event (:obj:`rospy.TimerEvent`): The timer event object.
+        """
+        if not self._effort_command_lock:
+            self._arm_joint_effort_pub.publish(self._arm_joint_efforts_setpoint_msg)
+
     ################################################
     # Action server callback functions #############
     ################################################
@@ -1978,7 +2011,7 @@ class PandaControlServer(object):
         server.
 
         Args:
-            Goal (:obj:`panda_gazebo.msg.FollowJointTrajectoryGoal`): Goal execution
+            goal (:obj:`panda_gazebo.msg.FollowJointTrajectoryGoal`): Goal execution
                 action server goal message.
         """
         # Check if joint goal.joint_names contains duplicates
