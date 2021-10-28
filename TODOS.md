@@ -1,4 +1,4 @@
 # TODOS
 
 *   \[ ] Improve effort drift.
-*   \[ ] Improve wait for function!
+*   \[ ] Cleanup code when panda_moveit_config noetic branch is ready.
