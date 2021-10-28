@@ -363,14 +363,7 @@ class PandaControlServer(object):
         # FIXME: Can be removed if https://github.com/frankaemika/franka_ros/issues/160
         # is fixed
         if USE_GRAVITY_COMPENSATION_FIX:
-            controlled_joints_dict = self._get_controlled_joints(control_type="effort")
-            self._arm_joint_efforts_setpoint_msg = [
-                Float64(val)
-                for key, val in dict(
-                    zip(self.joint_states.name, self.joint_states.effort)
-                ).items()
-                if key in controlled_joints_dict["arm"]
-            ]
+            self._arm_joint_efforts_setpoint_msg = []
             self._effort_command_lock = False
             PUBLISH_RATE = 1000
             rospy.Timer(rospy.Duration(1.0 / PUBLISH_RATE), self._effort_publisher_cb)
@@ -2001,6 +1994,20 @@ class PandaControlServer(object):
             event (:obj:`rospy.TimerEvent`): The timer event object.
         """
         if not self._effort_command_lock:
+            if not self._arm_joint_efforts_setpoint_msg:
+                controlled_joints_dict = self._get_controlled_joints(
+                    control_type="effort"
+                )
+                if controlled_joints_dict["arm"]:
+                    self._arm_joint_efforts_setpoint_msg = [
+                        Float64(val)
+                        for key, val in dict(
+                            zip(self.joint_states.name, self.joint_states.effort)
+                        ).items()
+                        if key in controlled_joints_dict["arm"]
+                    ]
+                else:
+                    return
             self._arm_joint_effort_pub.publish(self._arm_joint_efforts_setpoint_msg)
 
     ################################################
