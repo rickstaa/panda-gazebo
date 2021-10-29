@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>panda_gazebo.core.control_server &mdash; panda-gazebo 2.0.16 documentation</title>
+  <title>panda_gazebo.core.control_server &mdash; panda-gazebo 2.0.20 documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.0.16
+                2.0.20
               </div>
             
           
@@ -264,6 +264,8 @@
 <span class="n">ARM_TRAJ_CONTROLLERS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;panda_arm_controller&quot;</span><span class="p">]</span>
 <span class="n">HAND_CONTROLLERS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;franka_gripper&quot;</span><span class="p">]</span>
 
+<span class="n">USE_GRAVITY_COMPENSATION_FIX</span> <span class="o">=</span> <span class="kc">True</span>
+
 
 <div class="viewcode-block" id="PandaControlServer"><a class="viewcode-back" href="../../../api/_autosummary/panda_gazebo.core.control_server.PandaControlServer.html#panda_gazebo.core.control_server.PandaControlServer">[docs]</a><span class="k">class</span> <span class="nc">PandaControlServer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Controller server used to send control commands to the simulated Panda Robot.</span>
@@ -302,12 +304,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">arm_joint_positions_setpoint</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">arm_joint_efforts_setpoint</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gripper_width_setpoint</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">joint_positions_threshold</span> <span class="o">=</span> <span class="mf">0.01</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">joint_efforts_threshold</span> <span class="o">=</span> <span class="mf">0.01</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arm_joint_positions_threshold</span> <span class="o">=</span> <span class="mf">0.01</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hand_joint_positions_threshold</span> <span class="o">=</span> <span class="mf">0.001</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arm_joint_efforts_threshold</span> <span class="o">=</span> <span class="mf">0.01</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">autofill_traj_positions</span> <span class="o">=</span> <span class="n">autofill_traj_positions</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_wait_till_done_timeout</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Duration</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_joint_efforts_grad_threshold</span> <span class="o">=</span> <span class="mf">0.01</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_joint_positions_grad_threshold</span> <span class="o">=</span> <span class="mf">0.01</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_positions_grad_threshold</span> <span class="o">=</span> <span class="mf">0.01</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hand_joint_positions_grad_threshold</span> <span class="o">=</span> <span class="mf">0.001</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_efforts_grad_threshold</span> <span class="o">=</span> <span class="mf">0.01</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_gripper_move_client_connected</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_traj_client_connected</span> <span class="o">=</span> <span class="kc">False</span>
 
@@ -524,7 +528,16 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_traj_as</span><span class="o">.</span><span class="n">register_preempt_callback</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_traj_preempt_cb</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_traj_as</span><span class="o">.</span><span class="n">start</span><span class="p">()</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_traj_as</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+        <span class="c1"># Add a effort publisher</span>
+        <span class="c1"># FIXME: Can be removed if https://github.com/frankaemika/franka_ros/issues/160</span>
+        <span class="c1"># is fixed</span>
+        <span class="k">if</span> <span class="n">USE_GRAVITY_COMPENSATION_FIX</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_efforts_setpoint_msg</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_effort_command_lock</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">PUBLISH_RATE</span> <span class="o">=</span> <span class="mi">1000</span>
+            <span class="n">rospy</span><span class="o">.</span><span class="n">Timer</span><span class="p">(</span><span class="n">rospy</span><span class="o">.</span><span class="n">Duration</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">PUBLISH_RATE</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_effort_publisher_cb</span><span class="p">)</span></div>
 
     <span class="c1">################################################</span>
     <span class="c1"># Panda control member functions ###############</span>
@@ -697,8 +710,8 @@
         <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">check_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Wait control is finished. Meaning the robot state is within range of the</span>
-<span class="sd">        Joint position and joint effort setpoints (or the velocity is zero).</span>
+        <span class="sd">&quot;&quot;&quot;Wait till arm control is finished. Meaning the robot state is within range</span>
+<span class="sd">        of the joint position and joint effort setpoints (or the velocity is zero).</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            control_type (str): The type of control that is being executed and on which</span>
@@ -711,7 +724,6 @@
 <span class="sd">            check_gradient (boolean, optional): If enabled the script will also return</span>
 <span class="sd">                when the gradients become zero. Defaults to ``True``.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># TODO: Improve check velocities for multiple seconds!</span>
         <span class="c1"># Validate control type and control group</span>
         <span class="k">if</span> <span class="n">control_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;position&quot;</span><span class="p">,</span> <span class="s2">&quot;effort&quot;</span><span class="p">]:</span>
             <span class="n">rospy</span><span class="o">.</span><span class="n">logwarn</span><span class="p">(</span>
@@ -782,14 +794,14 @@
             <span class="k">if</span> <span class="n">control_type</span> <span class="o">==</span> <span class="s2">&quot;position&quot;</span><span class="p">:</span>
                 <span class="n">joint_setpoint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">arm_joint_positions_setpoint</span>
                 <span class="n">joint_states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">joint_states</span><span class="o">.</span><span class="n">position</span>
-                <span class="n">state_threshold</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">joint_positions_threshold</span>
-                <span class="n">grad_threshold</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_joint_positions_grad_threshold</span>
+                <span class="n">state_threshold</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">arm_joint_positions_threshold</span>
+                <span class="n">grad_threshold</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_positions_grad_threshold</span>
             <span class="c1"># Check if joint effort states are within setpoint</span>
             <span class="k">elif</span> <span class="n">control_type</span> <span class="o">==</span> <span class="s2">&quot;effort&quot;</span><span class="p">:</span>
                 <span class="n">joint_setpoint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">arm_joint_efforts_setpoint</span>
                 <span class="n">joint_states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">joint_states</span><span class="o">.</span><span class="n">effort</span>
-                <span class="n">state_threshold</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">joint_efforts_threshold</span>
-                <span class="n">grad_threshold</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_joint_efforts_grad_threshold</span>
+                <span class="n">state_threshold</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">arm_joint_efforts_threshold</span>
+                <span class="n">grad_threshold</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_efforts_grad_threshold</span>
 
             <span class="c1"># Add current state to state_buffer and delete oldest entry</span>
             <span class="n">state_buffer</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span>
@@ -827,6 +839,65 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">arm_joint_positions_setpoint</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">arm_joint_efforts_setpoint</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">_wait_till_gripper_done</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">check_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Wait till gripper control is finished. Meaning the gripper_width is within</span>
+<span class="sd">        the setpoint (or the velocity is zero).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            timeout (int, optional): The timeout when waiting for the control</span>
+<span class="sd">                to be done. Defaults to :attr:`_wait_till_done_timeout`.</span>
+<span class="sd">            check_gradient (boolean, optional): If enabled the script will also return</span>
+<span class="sd">                when the gradients become zero. Defaults to ``True``.</span>
+
+<span class="sd">        .. attention::</span>
+<span class="sd">            This method was added since there is a bug in the gripper action (see</span>
+<span class="sd">            `franka_ros #173 &lt;https://github.com/frankaemika/franka_ros/pull/173&gt;`_).</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># FIXME: Can be removed if https://github.com/frankaemika/franka_ros/pull/173</span>
+        <span class="c1"># is merged</span>
+        <span class="c1"># Get set input arguments</span>
+        <span class="k">if</span> <span class="n">timeout</span><span class="p">:</span>
+            <span class="n">timeout</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Duration</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">timeout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wait_till_done_timeout</span>
+
+        <span class="c1"># Wait till gripper width reaches the setpoint or the velocities are not</span>
+        <span class="c1"># changing anymore</span>
+        <span class="n">timeout_time</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_rostime</span><span class="p">()</span> <span class="o">+</span> <span class="n">timeout</span>
+        <span class="n">state_buffer</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+        <span class="n">grad_buffer</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">rospy</span><span class="o">.</span><span class="n">is_shutdown</span><span class="p">()</span> <span class="ow">and</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_rostime</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">timeout_time</span><span class="p">:</span>
+            <span class="c1"># Wait till joint positions are within range or arm not changing anymore</span>
+            <span class="n">gripper_width_setpoint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gripper_width_setpoint</span>
+            <span class="n">state_threshold</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hand_joint_positions_threshold</span>
+            <span class="n">grad_threshold</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hand_joint_positions_grad_threshold</span>
+
+            <span class="c1"># Add curent state to state_buffer and delete oldest entry</span>
+            <span class="n">state_buffer</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">state_buffer</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gripper_width</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span>
+            <span class="p">)</span>
+            <span class="n">grad_buffer</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">state_buffer</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+            <span class="c1"># Check if setpoint is reached</span>
+            <span class="k">if</span> <span class="n">check_gradient</span><span class="p">:</span>  <span class="c1"># Check position/effort and gradients</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gripper_width</span> <span class="o">-</span> <span class="n">gripper_width_setpoint</span><span class="p">)</span>
+                    <span class="o">&lt;=</span> <span class="n">state_threshold</span>  <span class="c1"># Check if gripper width is within threshold</span>
+                <span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">grad_buffer</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="n">grad_threshold</span>
+                    <span class="ow">and</span> <span class="n">grad_buffer</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="o">!=</span> <span class="mf">0.0</span>  <span class="c1"># Check if gripper velocities us  close to zero</span>
+                <span class="p">):</span>
+                    <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>  <span class="c1"># Only check position/effort</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gripper_width</span> <span class="o">-</span> <span class="n">gripper_width_setpoint</span><span class="p">)</span>
+                    <span class="o">&lt;=</span> <span class="n">state_threshold</span>  <span class="c1"># Check if gripper width is within threshold</span>
+                <span class="p">):</span>
+                    <span class="k">break</span>
         <span class="k">return</span> <span class="kc">True</span>
 
     <span class="k">def</span> <span class="nf">_create_arm_traj_action_server_msg</span><span class="p">(</span>  <span class="c1"># noqa: C901</span>
@@ -1691,6 +1762,20 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_list_controllers_client</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">ListControllersRequest</span><span class="p">())</span>
         <span class="p">)</span>
 
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">gripper_width</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the gripper width as calculated based on the Panda finger joints.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: The gripper width.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">joint_states</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">joint_states</span><span class="o">.</span><span class="n">position</span><span class="p">))[</span>
+                <span class="s2">&quot;panda_finger_joint1&quot;</span>
+            <span class="p">]</span>
+            <span class="o">*</span> <span class="mi">2</span>
+        <span class="p">)</span>
+
     <span class="c1">################################################</span>
     <span class="c1"># Subscribers callback functions ###############</span>
     <span class="c1">################################################</span>
@@ -1983,7 +2068,9 @@
 
         <span class="c1"># Save setpoint and publish request</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">arm_joint_efforts_setpoint</span> <span class="o">=</span> <span class="p">[</span><span class="n">command</span><span class="o">.</span><span class="n">data</span> <span class="k">for</span> <span class="n">command</span> <span class="ow">in</span> <span class="n">control_pub_msgs</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_efforts_setpoint_msg</span> <span class="o">=</span> <span class="n">control_pub_msgs</span>
         <span class="n">rospy</span><span class="o">.</span><span class="n">logdebug</span><span class="p">(</span><span class="s2">&quot;Publishing Panda arm joint efforts control message.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_effort_command_lock</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_effort_pub</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">control_pub_msgs</span><span class="p">)</span>
 
         <span class="c1"># Wait till control is finished or timeout has been reached</span>
@@ -1992,6 +2079,7 @@
                 <span class="n">control_type</span><span class="o">=</span><span class="s2">&quot;effort&quot;</span><span class="p">,</span>
             <span class="p">)</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">_effort_command_lock</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="n">resp</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="n">resp</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Everything went OK&quot;</span>
         <span class="k">return</span> <span class="n">resp</span>
@@ -2004,7 +2092,7 @@
 <span class="sd">                Service request message specifying the gripper width for the robot hand.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            :obj:`panda_gazebo.srv.SetGripperWidthReponse`: Service response.</span>
+<span class="sd">            :obj:`panda_gazebo.srv.SetGripperWidthResponse`: Service response.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Check if gripper width is within boundaries</span>
         <span class="k">if</span> <span class="n">set_gripper_width_req</span><span class="o">.</span><span class="n">width</span> <span class="o">&lt;</span> <span class="mf">0.0</span> <span class="ow">or</span> <span class="n">set_gripper_width_req</span><span class="o">.</span><span class="n">width</span> <span class="o">&gt;</span> <span class="mf">0.08</span><span class="p">:</span>
@@ -2022,13 +2110,18 @@
         <span class="n">req</span><span class="o">.</span><span class="n">speed</span> <span class="o">=</span> <span class="mf">0.1</span>
 
         <span class="c1"># Invoke &#39;franka_gripper/move&#39; aciton server</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gripper_width_setpoint</span> <span class="o">=</span> <span class="n">gripper_width</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_gripper_move_client</span><span class="o">.</span><span class="n">send_goal</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
 
         <span class="c1"># Return result</span>
         <span class="n">resp</span> <span class="o">=</span> <span class="n">SetGripperWidthResponse</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">set_gripper_width_req</span><span class="o">.</span><span class="n">wait</span><span class="p">:</span>
-            <span class="n">gripper_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gripper_move_client</span><span class="o">.</span><span class="n">wait_for_result</span><span class="p">()</span>
+            <span class="c1"># FIXME: Wait_for_result not working due to bug. Quickfix below can be</span>
+            <span class="c1"># removed when https://github.com/frankaemika/franka_ros/pull/173 is merged.</span>
+            <span class="n">gripper_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wait_till_gripper_done</span><span class="p">()</span>
+            <span class="c1"># gripper_result = self._gripper_move_client.wait_for_result()</span>
             <span class="n">resp</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="n">gripper_result</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gripper_width_setpoint</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">resp</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">if</span> <span class="n">resp</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
@@ -2062,6 +2155,32 @@
             <span class="n">resp</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">return</span> <span class="n">resp</span>
 
+    <span class="k">def</span> <span class="nf">_effort_publisher_cb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Publishes the joint effort commands at a given rate. This is done since</span>
+<span class="sd">        there is a bug in the gravity compensation see</span>
+<span class="sd">        https://github.com/frankaemika/franka_ros/issues/160. As a result this method</span>
+<span class="sd">        can be removed if this issue is fixed.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            event (:obj:`rospy.TimerEvent`): The timer event object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_effort_command_lock</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_efforts_setpoint_msg</span><span class="p">:</span>
+                <span class="n">controlled_joints_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_controlled_joints</span><span class="p">(</span>
+                    <span class="n">control_type</span><span class="o">=</span><span class="s2">&quot;effort&quot;</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">controlled_joints_dict</span><span class="p">[</span><span class="s2">&quot;arm&quot;</span><span class="p">]:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_efforts_setpoint_msg</span> <span class="o">=</span> <span class="p">[</span>
+                        <span class="n">Float64</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">dict</span><span class="p">(</span>
+                            <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">joint_states</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">joint_states</span><span class="o">.</span><span class="n">effort</span><span class="p">)</span>
+                        <span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">controlled_joints_dict</span><span class="p">[</span><span class="s2">&quot;arm&quot;</span><span class="p">]</span>
+                    <span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_effort_pub</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_efforts_setpoint_msg</span><span class="p">)</span>
+
     <span class="c1">################################################</span>
     <span class="c1"># Action server callback functions #############</span>
     <span class="c1">################################################</span>
@@ -2070,7 +2189,7 @@
 <span class="sd">        server.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            Goal (:obj:`panda_gazebo.msg.FollowJointTrajectoryGoal`): Goal execution</span>
+<span class="sd">            goal (:obj:`panda_gazebo.msg.FollowJointTrajectoryGoal`): Goal execution</span>
 <span class="sd">                action server goal message.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Check if joint goal.joint_names contains duplicates</span>

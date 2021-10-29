@@ -25,5 +25,6 @@ panda\_gazebo.core.control\_server.PandaControlServer
    .. autosummary::
    
       ~PandaControlServer.controllers
+      ~PandaControlServer.gripper_width
    
    
