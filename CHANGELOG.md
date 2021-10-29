@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.20](https://github.com/rickstaa/panda-gazebo/compare/v2.0.19...v2.0.20) (2021-10-29)
+
+
+### Bug Fixes
+
+* add gravity compensation hotfix ([6113c9f](https://github.com/rickstaa/panda-gazebo/commit/6113c9f045468da34ba1759db07a9dae52028b61))
+* fix gravity compensation fix ([6c4bbb5](https://github.com/rickstaa/panda-gazebo/commit/6c4bbb5d65734326a393f34360ad7627887d7b44))
+
 ### [2.0.12](https://github.com/rickstaa/panda-gazebo/compare/v2.0.11...v2.0.12) (2021-10-20)
 
 ### [2.0.11](https://github.com/rickstaa/panda-gazebo/compare/v2.0.10...v2.0.11) (2021-10-08)
