@@ -1,3 +1,0 @@
-# TODOS
-
-*   \[ ] Improve effort drift.
