@@ -1,47 +1,35 @@
 <?xml version='1.0'?>
 <sdf version='1.7'>
-  <model name='grasp_cube'>
-    <link name='cube::cube'>
+  <model name='long platform'>
+    <link name='link'>
       <inertial>
-        <pose>0 0 0 0 -0 0</pose>
-        <mass>0.25</mass>
+        <mass>10</mass>
         <inertia>
-          <ixx>0.001</ixx>
+          <ixx>0.166667</ixx>
           <ixy>0</ixy>
           <ixz>0</ixz>
-          <iyy>0.001</iyy>
+          <iyy>0.166667</iyy>
           <iyz>0</iyz>
-          <izz>0.001</izz>
+          <izz>0.166667</izz>
         </inertia>
       </inertial>
-      <gravity>1</gravity>
-      <velocity_decay>
-        <linear>0</linear>
-        <angular>0</angular>
-      </velocity_decay>
       <self_collide>0</self_collide>
       <enable_wind>0</enable_wind>
       <kinematic>0</kinematic>
       <pose>0 0 0 0 -0 0</pose>
       <visual name='visual'>
-        <pose>0.03 0.03 0.03 0 -0 0</pose>
+        <pose>0 0 0 0 -0 0</pose>
         <geometry>
           <box>
-            <size>0.06 0.06 0.06</size>
+            <size>1.1328925 0.642049 0.419823</size>
           </box>
         </geometry>
         <material>
           <script>
-            <name>Gazebo/Green</name>
             <uri>file://media/materials/scripts/gazebo.material</uri>
+            <name>Gazebo/White</name>
           </script>
-          <shader type='pixel'>
-            <normal_map>__default__</normal_map>
-          </shader>
-          <ambient>0 1 0 1</ambient>
-          <diffuse>0 1 0 1</diffuse>
-          <specular>0.1 0.1 0.1 1</specular>
-          <emissive>0 0 0 1</emissive>
+          <shader type='pixel'/>
         </material>
         <transparency>0</transparency>
         <cast_shadows>1</cast_shadows>
@@ -49,17 +37,17 @@
       <collision name='collision'>
         <laser_retro>0</laser_retro>
         <max_contacts>10</max_contacts>
-        <pose>0.03 0.03 0.03 0 -0 0</pose>
+        <pose>0 0 0 0 -0 0</pose>
         <geometry>
           <box>
-            <size>0.06 0.06 0.06</size>
+            <size>1.1328925 0.642049 0.419823</size>
           </box>
         </geometry>
         <surface>
           <friction>
             <ode>
-              <mu>30</mu>
-              <mu2>30</mu2>
+              <mu>1</mu>
+              <mu2>1</mu2>
               <fdir1>0 0 0</fdir1>
               <slip1>0</slip1>
               <slip2>0</slip2>
@@ -85,24 +73,24 @@
             <ode>
               <soft_cfm>0</soft_cfm>
               <soft_erp>0.2</soft_erp>
-              <kp>1e+06</kp>
-              <kd>1e+06</kd>
-              <max_vel>1</max_vel>
-              <min_depth>0.002</min_depth>
+              <kp>1e+13</kp>
+              <kd>1</kd>
+              <max_vel>0.01</max_vel>
+              <min_depth>0</min_depth>
             </ode>
             <bullet>
               <split_impulse>1</split_impulse>
               <split_impulse_penetration_threshold>-0.01</split_impulse_penetration_threshold>
               <soft_cfm>0</soft_cfm>
               <soft_erp>0.2</soft_erp>
-              <kp>1e+06</kp>
-              <kd>1e+06</kd>
+              <kp>1e+13</kp>
+              <kd>1</kd>
             </bullet>
           </contact>
         </surface>
       </collision>
     </link>
-    <static>0</static>
+    <static>1</static>
     <allow_auto_disable>1</allow_auto_disable>
   </model>
 </sdf>

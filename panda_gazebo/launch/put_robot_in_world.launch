@@ -1,4 +1,5 @@
 <!--Launch file for adding the panda robot to the gazebo world-->
+<!--TODO: Cleanup when panda_moveit_config noetic-branch is released-->
 <launch>
     <arg name="rviz" default="true"/>
     <arg name="load_gripper" default="true"/>

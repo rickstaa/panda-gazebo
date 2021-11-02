@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+<sdf version="1.5">
+  <world name="panda_pick_and_place">
+    <!--A global light source-->
+    <include>
+      <uri>model://sun</uri>
+    </include>
+    <!--A ground plane-->
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
+    <!--A platform-->
+    <include>
+      <uri>model://platform</uri>
+      <pose>0.4 0 0.209911 0 0 0</pose>
+    </include>
+    <!--A cube-->
+    <include>
+      <uri>model://cube</uri>
+      <pose>0.4 0 0.419088 0 0 0</pose>
+    </include>
+  </world>
+</sdf>
