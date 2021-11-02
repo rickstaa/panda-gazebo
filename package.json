@@ -1,6 +1,6 @@
 {
   "name": "panda-gazebo",
-  "version": "2.0.20",
+  "version": "2.0.21",
   "description": "Gazebo panda simulation created for the Panda environment that is found in the 'openai_ros' ROS package.",
   "keywords": [
     "reinforcement-learning",
@@ -46,8 +46,8 @@
     }
   },
   "devDependencies": {
-    "@commitlint/cli": "13.2.1",
-    "@commitlint/config-conventional": "13.2.0",
+    "@commitlint/cli": "14.1.0",
+    "@commitlint/config-conventional": "14.1.0",
     "commitizen": "4.2.4",
     "cz-conventional-changelog": "3.3.0",
     "husky": "7.0.4",
