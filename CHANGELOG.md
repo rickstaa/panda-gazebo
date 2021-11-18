@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.1.1](https://github.com/rickstaa/panda-gazebo/compare/v2.1.0...v2.1.1) (2021-11-18)
+
+
+### Bug Fixes
+
+* fix slide world puck z-position ([6e3b8e0](https://github.com/rickstaa/panda-gazebo/commit/6e3b8e03e7c66470bc155600f43c47f82fe534f3))
+
 ## [2.1.0](https://github.com/rickstaa/panda-gazebo/compare/v2.0.24...v2.1.0) (2021-11-18)
 
 
