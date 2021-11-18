@@ -3,15 +3,18 @@
   <model name='cube'>
     <link name='link'>
       <inertial>
-        <pose>0 0 0 0 -0 0</pose>
-        <mass>0.25</mass>
+        <pose>0.03 0.03 0.03 0 -0 0</pose>
+        <!--NOTE: Uses Polyethylene density to calculate the mass
+        see https://en.wikipedia.org/wiki/Polyethylene
+        -->
+        <mass>0.20735999999999996</mass>
         <inertia>
-          <ixx>0.001</ixx>
+          <ixx>0.00012442</ixx>
           <ixy>0</ixy>
           <ixz>0</ixz>
-          <iyy>0.001</iyy>
+          <iyy>0.00012442</iyy>
           <iyz>0</iyz>
-          <izz>0.001</izz>
+          <izz>0.00012442</izz>
         </inertia>
       </inertial>
       <visual name='visual'>
@@ -37,10 +40,13 @@
           </box>
         </geometry>
         <surface>
+          <!--NOTE: Used dynamic friction of clean dry plastic cube on a plastic surface
+          (i.e. Polyethylene) see https://www.engineeringtoolbox.com/friction-coefficients-d_778.html
+          -->
           <friction>
             <ode>
-              <mu>30</mu>
-              <mu2>30</mu2>
+              <mu>0.2</mu>
+              <mu2>0.2</mu2>
             </ode>
           </friction>
           <contact>
