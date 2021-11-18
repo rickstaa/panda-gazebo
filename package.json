@@ -36,8 +36,8 @@
   "lint-staged": {
     "*.md": "./node_modules/.bin/remark -o .",
     "!(**/(tests)/**)*.py": [
-      "flake8",
-      "black"
+      "black",
+      "flake8"
     ]
   },
   "config": {
