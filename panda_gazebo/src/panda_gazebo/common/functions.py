@@ -8,6 +8,7 @@ import control_msgs.msg as control_msgs
 import numpy as np
 import rospy
 from actionlib_msgs.msg import GoalStatusArray
+from numpy import linalg, nan
 from panda_gazebo.msg import FollowJointTrajectoryGoal
 from rospy.exceptions import ROSException
 from sensor_msgs.msg import JointState
@@ -372,3 +373,49 @@ def action_server_exists(topic_name):
             else:
                 exists = False
     return exists
+
+
+def quaternion_norm(quaternion):
+    """Calculates the norm of a quaternion.
+
+    Args:
+        Quaternion (:obj:`geometry_msgs.msg.Quaternion`): A quaternion.
+
+    Returns:
+        float: The norm of the quaternion.
+    """
+    return linalg.norm([quaternion.x, quaternion.y, quaternion.z, quaternion.w])
+
+
+def normalize_quaternion(quaternion):
+    """Normalizes a given quaternion.
+
+    Args:
+        quaternion (:obj:`geometry_msgs.msg.Quaternion`): A quaternion.
+
+    Returns:
+        :obj:`geometry_msgs.msg.Quaternion`: The normalized quaternion.
+    """
+    quaternion = copy.deepcopy(
+        quaternion
+    )  # Make sure the original object is not changed
+    norm = quaternion_norm(quaternion)
+
+    # Normalize quaternion
+    if norm == nan:
+        # test
+        rospy.logwarn(
+            "Quaternion could not be normalized since the norm could not be "
+            "calculated."
+        )
+    elif norm == 0.0:  # Transform to identity
+        quaternion.x = 0.0
+        quaternion.y = 0.0
+        quaternion.z = 0.0
+        quaternion.w = 1.0
+    else:
+        quaternion.x = quaternion.x / norm
+        quaternion.y = quaternion.y / norm
+        quaternion.z = quaternion.z / norm
+        quaternion.w = quaternion.w / norm
+    return quaternion
