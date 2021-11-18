@@ -36,7 +36,7 @@ import moveit_commander
 import numpy as np
 import rospy
 from dynamic_reconfigure.server import Server
-from geometry_msgs.msg import Pose
+from geometry_msgs.msg import Pose, PoseStamped
 from moveit_commander.exception import MoveItCommanderException
 from moveit_msgs.msg import DisplayTrajectory
 from panda_gazebo.cfg import MoveitServerConfig
@@ -46,11 +46,14 @@ from panda_gazebo.common.functions import (
     get_unique_list,
     joint_state_dict_2_joint_state_msg,
     lower_first_char,
+    normalize_quaternion,
+    quaternion_norm,
     translate_moveit_error_code,
 )
-from panda_gazebo.common.quaternion import Quaternion
 from panda_gazebo.exceptions import InputMessageInvalidError
 from panda_gazebo.srv import (
+    AddBox,
+    AddBoxResponse,
     GetEe,
     GetEePose,
     GetEePoseResponse,
@@ -72,6 +75,7 @@ from panda_gazebo.srv import (
 )
 from rospy.exceptions import ROSException
 from sensor_msgs.msg import JointState
+from std_msgs.msg import Header
 
 # The maximum number times the get_random_ee_pose service tries to sample from the
 # bounding region before ignoring it.
@@ -265,6 +269,16 @@ class PandaMoveitPlannerServer(object):
                     SetJointPositions,
                     self._hand_set_joint_positions_callback,
                 )
+
+        # Planning scene services
+        rospy.logdebug(
+            "Creating '%s/planning_scene/add_box' service." % rospy.get_name()
+        )
+        self._scene_add_box_srv = rospy.Service(
+            "%s/planning_scene/add_box" % rospy.get_name().split("/")[-1],
+            AddBox,
+            self._scene_add_box_callback,
+        )
 
         rospy.loginfo("'%s' services created successfully." % rospy.get_name())
 
@@ -783,12 +797,12 @@ class PandaMoveitPlannerServer(object):
         """
 
         # Make sure quaternion is normalized
-        if Quaternion.quaternion_norm(set_ee_pose_req.pose.orientation) != 1.0:
+        if quaternion_norm(set_ee_pose_req.pose.orientation) != 1.0:
             rospy.logwarn(
                 "The quaternion in the set ee pose was normalized since moveit expects "
                 "normalized quaternions."
             )
-            set_ee_pose_req.pose.orientation = Quaternion.normalize_quaternion(
+            set_ee_pose_req.pose.orientation = normalize_quaternion(
                 set_ee_pose_req.pose.orientation
             )
 
@@ -1543,4 +1557,40 @@ class PandaMoveitPlannerServer(object):
             resp.controlled_joints_hand = self._controlled_joints_dict["hand"]
         except InputMessageInvalidError:
             resp.success = False
+        return resp
+
+    def _scene_add_box_callback(self, add_box_req):
+        """Add box to planning scene
+
+        Args:
+            add_box_req (:obj:`panda_gazebo.srv.AddBoxRequest`): The add box request.
+
+        Returns:
+            bool: Whether the box was successfully added.
+        """
+        pose_header = Header(
+            frame_id=add_box_req.frame_id if add_box_req.frame_id else "world"
+        )
+        box_pose = Pose(
+            position=add_box_req.pose.position,
+            orientation=normalize_quaternion(add_box_req.pose.orientation),
+        )
+
+        # Send request
+        resp = AddBoxResponse()
+        try:
+            self.scene.add_box(
+                name=add_box_req.name if add_box_req.name else "box",
+                pose=PoseStamped(header=pose_header, pose=box_pose)
+                if add_box_req.pose
+                else None,
+                size=add_box_req.size if add_box_req.size else None,
+            )
+        except Exception:
+            resp.success = False
+            resp.message = "Box could not be added"
+
+        # Return response
+        resp.success = True
+        resp.message = "Everything went OK"
         return resp

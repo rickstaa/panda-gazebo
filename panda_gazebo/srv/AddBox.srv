@@ -1,0 +1,8 @@
+# Service that can be used to add a box to the planning scene.
+string name
+string frame_id
+geometry_msgs/Pose pose
+float64[] size
+---
+bool success
+string message
