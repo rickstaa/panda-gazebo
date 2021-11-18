@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.1.0](https://github.com/rickstaa/panda-gazebo/compare/v2.0.24...v2.1.0) (2021-11-18)
+
+
+### Features
+
+* add `planning_scene/add_box` service ([0a6c432](https://github.com/rickstaa/panda-gazebo/commit/0a6c4324aaba15a4b697be189068a1978c5ab743))
+* add ability to disable extra services ([2692b48](https://github.com/rickstaa/panda-gazebo/commit/2692b48cb9a9986860c17e8bcd4e9897e8367f08))
+* add panda slide env launch script ([9a3da80](https://github.com/rickstaa/panda-gazebo/commit/9a3da8023a24c3693e8763484e9fe1b3d2db4511))
+
+
+### Bug Fixes
+
+* improve cube/puck models ([bac3a12](https://github.com/rickstaa/panda-gazebo/commit/bac3a12c5b23f63c66fa83905949e4c491a30486))
+* remove gravity compensation hotfix ([30adcfe](https://github.com/rickstaa/panda-gazebo/commit/30adcfecf741a124273cbb7e70c1216fb1622fff))
+* remove unused Quaternion class ([652cc7b](https://github.com/rickstaa/panda-gazebo/commit/652cc7be6e333204dfc3d7b78812ff09ff7f4090))
+
 ### [2.0.20](https://github.com/rickstaa/panda-gazebo/compare/v2.0.19...v2.0.20) (2021-10-29)
 
 
