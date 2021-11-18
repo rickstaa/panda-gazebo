@@ -22,9 +22,11 @@ from collections import OrderedDict
 from itertools import compress
 
 import actionlib
+import control_msgs.msg as control_msgs
 import numpy as np
 import rospy
 from controller_manager_msgs.srv import ListControllers, ListControllersRequest
+from franka_gripper.msg import MoveAction, MoveGoal
 from panda_gazebo.common import ActionClientState
 from panda_gazebo.common.functions import (
     action_server_exists,
@@ -38,12 +40,7 @@ from panda_gazebo.common.functions import (
 )
 from panda_gazebo.core.group_publisher import GroupPublisher
 from panda_gazebo.exceptions import InputMessageInvalidError
-import control_msgs.msg as control_msgs
-from franka_gripper.msg import MoveAction, MoveGoal
-from panda_gazebo.msg import (
-    FollowJointTrajectoryAction,
-    FollowJointTrajectoryResult,
-)
+from panda_gazebo.msg import FollowJointTrajectoryAction, FollowJointTrajectoryResult
 from panda_gazebo.srv import (
     GetControlledJoints,
     GetControlledJointsResponse,
@@ -94,8 +91,6 @@ ARM_EFFORT_CONTROLLERS = [
 ]
 ARM_TRAJ_CONTROLLERS = ["panda_arm_controller"]
 HAND_CONTROLLERS = ["franka_gripper"]
-
-USE_GRAVITY_COMPENSATION_FIX = True
 
 
 class PandaControlServer(object):
@@ -363,15 +358,6 @@ class PandaControlServer(object):
             self._arm_joint_traj_preempt_cb
         )
         self._arm_joint_traj_as.start()
-
-        # Add a effort publisher
-        # FIXME: Can be removed if https://github.com/frankaemika/franka_ros/issues/160
-        # is fixed
-        if USE_GRAVITY_COMPENSATION_FIX:
-            self._arm_joint_efforts_setpoint_msg = []
-            self._effort_command_lock = False
-            PUBLISH_RATE = 1000
-            rospy.Timer(rospy.Duration(1.0 / PUBLISH_RATE), self._effort_publisher_cb)
 
     ################################################
     # Panda control member functions ###############
@@ -1902,9 +1888,7 @@ class PandaControlServer(object):
 
         # Save setpoint and publish request
         self.arm_joint_efforts_setpoint = [command.data for command in control_pub_msgs]
-        self._arm_joint_efforts_setpoint_msg = control_pub_msgs
         rospy.logdebug("Publishing Panda arm joint efforts control message.")
-        self._effort_command_lock = True
         self._arm_joint_effort_pub.publish(control_pub_msgs)
 
         # Wait till control is finished or timeout has been reached
@@ -1913,7 +1897,6 @@ class PandaControlServer(object):
                 control_type="effort",
             )
 
-        self._effort_command_lock = False
         resp.success = True
         resp.message = "Everything went OK"
         return resp
@@ -1988,32 +1971,6 @@ class PandaControlServer(object):
         except InputMessageInvalidError:
             resp.success = False
         return resp
-
-    def _effort_publisher_cb(self, event=None):
-        """Publishes the joint effort commands at a given rate. This is done since
-        there is a bug in the gravity compensation see
-        https://github.com/frankaemika/franka_ros/issues/160. As a result this method
-        can be removed if this issue is fixed.
-
-        Args:
-            event (:obj:`rospy.TimerEvent`): The timer event object.
-        """
-        if not self._effort_command_lock:
-            if not self._arm_joint_efforts_setpoint_msg:
-                controlled_joints_dict = self._get_controlled_joints(
-                    control_type="effort"
-                )
-                if controlled_joints_dict["arm"]:
-                    self._arm_joint_efforts_setpoint_msg = [
-                        Float64(val)
-                        for key, val in dict(
-                            zip(self.joint_states.name, self.joint_states.effort)
-                        ).items()
-                        if key in controlled_joints_dict["arm"]
-                    ]
-                else:
-                    return
-            self._arm_joint_effort_pub.publish(self._arm_joint_efforts_setpoint_msg)
 
     ################################################
     # Action server callback functions #############
