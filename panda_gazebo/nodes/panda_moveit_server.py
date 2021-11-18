@@ -26,9 +26,15 @@ if __name__ == "__main__":
         load_gripper = rospy.get_param("~load_gripper")
     except KeyError:
         load_gripper = True
+    try:  # Check if extra services should be loaded
+        load_extra_services = rospy.get_param("~load_extra_services")
+    except KeyError:
+        load_extra_services = False
 
     # Start MoveIt planner server
     moveit_planner_server = PandaMoveitPlannerServer(
-        arm_ee_link=arm_ee_link, load_gripper=load_gripper
+        arm_ee_link=arm_ee_link,
+        load_gripper=load_gripper,
+        load_extra_services=load_extra_services,
     )
     rospy.spin()  # Maintain the service open

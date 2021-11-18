@@ -4,13 +4,16 @@ the Panda robot or retrieve sensor data for the robot.
 
 Main services:
     * panda_arm/set_ee_pose
+    * get_random_joint_positions
+    * get_random_ee_pose
+    * planning_scene/add_box
+
+Extra services:
     * panda_arm/get_ee
     * panda_arm/set_ee
     * panda_arm/get_ee_pose
     * panda_arm/get_ee_rpy
     * set_joint_positions
-    * get_random_joint_positions
-    * get_random_ee_pose
     * get_controlled_joints
     * panda_arm/set_joint_positions
     * panda_hand/set_joint_positions
@@ -99,6 +102,7 @@ class PandaMoveitPlannerServer(object):
         arm_ee_link="panda_link8",
         hand_move_group="hand",
         load_gripper=True,
+        load_extra_services=False,
     ):
         """Initializes the PandaMoveitPlannerServer object.
 
@@ -111,6 +115,9 @@ class PandaMoveitPlannerServer(object):
                 for controlling the Panda hand. Defaults to ``hand``.
             load_gripper (boolean, optional): Whether we also want to load the gripper
                 control services.
+            load_extra_services (bool, optional): Whether to load extra services that
+                are not used by the `openai_ros <https://wiki.ros.org/openai_ros>`_
+                package.
         """
         self._load_gripper = load_gripper
 
@@ -179,38 +186,6 @@ class PandaMoveitPlannerServer(object):
             SetEePose,
             self._arm_set_ee_pose_callback,
         )
-        rospy.logdebug("Creating '%s/panda_arm/get_ee' service." % rospy.get_name())
-        self._arm_get_ee = rospy.Service(
-            "%s/panda_arm/get_ee" % rospy.get_name().split("/")[-1],
-            GetEe,
-            self._arm_get_ee_callback,
-        )
-        rospy.logdebug("Creating '%s/panda_arm/set_ee' service." % rospy.get_name())
-        self._arm_set_ee = rospy.Service(
-            "%s/panda_arm/set_ee" % rospy.get_name().split("/")[-1],
-            SetEe,
-            self._arm_set_ee_callback,
-        )
-        rospy.logdebug(
-            "Creating '%s/panda_arm/get_ee_pose' service." % rospy.get_name()
-        )
-        self._arm_get_ee_pose_srv = rospy.Service(
-            "%s/panda_arm/get_ee_pose" % rospy.get_name().split("/")[-1],
-            GetEePose,
-            self._arm_get_ee_pose_callback,
-        )
-        rospy.logdebug("Creating '%s/panda_arm/get_ee_rpy' service." % rospy.get_name())
-        self._arm_get_ee_rpy_srv = rospy.Service(
-            "%s/panda_arm/get_ee_rpy" % rospy.get_name().split("/")[-1],
-            GetEeRpy,
-            self._arm_get_ee_rpy_callback,
-        )
-        rospy.logdebug("Creating '%s/set_joint_positions' service." % rospy.get_name())
-        self._set_joint_positions_srv = rospy.Service(
-            "%s/set_joint_positions" % rospy.get_name().split("/")[-1],
-            SetJointPositions,
-            self._set_joint_positions_callback,
-        )
         rospy.logdebug(
             "Creating '%s/get_random_joint_positions' service." % rospy.get_name()
         )
@@ -225,32 +200,72 @@ class PandaMoveitPlannerServer(object):
             GetRandomEePose,
             self._get_random_ee_pose_callback,
         )
-        rospy.logdebug(
-            "Creating '%s/get_controlled_joints' service." % rospy.get_name()
-        )
-        self._get_controlled_joints_srv = rospy.Service(
-            "%s/get_controlled_joints" % rospy.get_name().split("/")[-1],
-            GetMoveItControlledJoints,
-            self._get_controlled_joints_cb,
-        )
-        rospy.logdebug(
-            "Creating '%s/panda_arm/set_joint_positions' service." % rospy.get_name()
-        )
-        self._arm_set_joint_positions_srv = rospy.Service(
-            "%s/panda_arm/set_joint_positions" % rospy.get_name().split("/")[-1],
-            SetJointPositions,
-            self._arm_set_joint_positions_callback,
-        )
-        if self._load_gripper:
+        if load_extra_services:
+            rospy.logdebug("Creating '%s/panda_arm/get_ee' service." % rospy.get_name())
+            self._arm_get_ee = rospy.Service(
+                "%s/panda_arm/get_ee" % rospy.get_name().split("/")[-1],
+                GetEe,
+                self._arm_get_ee_callback,
+            )
+            rospy.logdebug("Creating '%s/panda_arm/set_ee' service." % rospy.get_name())
+            self._arm_set_ee = rospy.Service(
+                "%s/panda_arm/set_ee" % rospy.get_name().split("/")[-1],
+                SetEe,
+                self._arm_set_ee_callback,
+            )
             rospy.logdebug(
-                "Creating '%s/panda_hand/set_joint_positions' service."
+                "Creating '%s/panda_arm/get_ee_pose' service." % rospy.get_name()
+            )
+            self._arm_get_ee_pose_srv = rospy.Service(
+                "%s/panda_arm/get_ee_pose" % rospy.get_name().split("/")[-1],
+                GetEePose,
+                self._arm_get_ee_pose_callback,
+            )
+            rospy.logdebug(
+                "Creating '%s/panda_arm/get_ee_rpy' service." % rospy.get_name()
+            )
+            self._arm_get_ee_rpy_srv = rospy.Service(
+                "%s/panda_arm/get_ee_rpy" % rospy.get_name().split("/")[-1],
+                GetEeRpy,
+                self._arm_get_ee_rpy_callback,
+            )
+            rospy.logdebug(
+                "Creating '%s/set_joint_positions' service." % rospy.get_name()
+            )
+            self._set_joint_positions_srv = rospy.Service(
+                "%s/set_joint_positions" % rospy.get_name().split("/")[-1],
+                SetJointPositions,
+                self._set_joint_positions_callback,
+            )
+            rospy.logdebug(
+                "Creating '%s/get_controlled_joints' service." % rospy.get_name()
+            )
+            self._get_controlled_joints_srv = rospy.Service(
+                "%s/get_controlled_joints" % rospy.get_name().split("/")[-1],
+                GetMoveItControlledJoints,
+                self._get_controlled_joints_cb,
+            )
+            rospy.logdebug(
+                "Creating '%s/panda_arm/set_joint_positions' service."
                 % rospy.get_name()
             )
-            self._hand_set_joint_positions_srv = rospy.Service(
-                "%s/panda_hand/set_joint_positions" % rospy.get_name().split("/")[-1],
+            self._arm_set_joint_positions_srv = rospy.Service(
+                "%s/panda_arm/set_joint_positions" % rospy.get_name().split("/")[-1],
                 SetJointPositions,
-                self._hand_set_joint_positions_callback,
+                self._arm_set_joint_positions_callback,
             )
+            if self._load_gripper:
+                rospy.logdebug(
+                    "Creating '%s/panda_hand/set_joint_positions' service."
+                    % rospy.get_name()
+                )
+                self._hand_set_joint_positions_srv = rospy.Service(
+                    "%s/panda_hand/set_joint_positions"
+                    % rospy.get_name().split("/")[-1],
+                    SetJointPositions,
+                    self._hand_set_joint_positions_callback,
+                )
+
         rospy.loginfo("'%s' services created successfully." % rospy.get_name())
 
         # Initiate service msgs
@@ -763,7 +778,7 @@ class PandaMoveitPlannerServer(object):
                 EE to follow.
 
         Returns:
-            :obj:`panda_train.srv.SetEePoseResponse`: Response message containing (
+            :obj:`panda_gazebo.srv.SetEePoseResponse`: Response message containing (
                 success bool, message).
         """
 
@@ -811,12 +826,12 @@ class PandaMoveitPlannerServer(object):
         """Request the Panda arm and hand to go to a given joint angle.
 
         Args:
-            set_joint_positions_req (:obj:`panda_train.srv.SetJointPositionRequest`):
+            set_joint_positions_req (:obj:`panda_gazebo.srv.SetJointPositionRequest`):
                 The joint positions you want to control the joints to.
 
         Returns:
-            :obj:`panda_train.srv.SetJointPositionResponse`: Response message containing
-                (success bool, message).
+            :obj:`panda_gazebo.srv.SetJointPositionResponse`: Response message
+                 containing (success bool, message).
         """
         rospy.logdebug("Setting joint position targets.")
 
@@ -930,11 +945,11 @@ class PandaMoveitPlannerServer(object):
         """Request the Panda arm to go to a given joint angle.
 
         Args:
-            set_joint_positions_req (:obj:`panda_train.srv.SetJointPositionRequest`):
+            set_joint_positions_req (:obj:`panda_gazebo.srv.SetJointPositionRequest`):
                 The joint positions you want to control the joints to.
 
         Returns:
-            :obj:`panda_train.srv.SetJointPositionResponse`: Response message
+            :obj:`panda_gazebo.srv.SetJointPositionResponse`: Response message
                 containing (success bool, message).
         """
         rospy.logdebug("Setting arm joint position targets.")
@@ -1006,11 +1021,11 @@ class PandaMoveitPlannerServer(object):
         """Request the Panda arm to go to a given joint angle.
 
         Args:
-            set_joint_positions_req (:obj:`panda_train.srv.SetJointPositionRequest`):
+            set_joint_positions_req (:obj:`panda_gazebo.srv.SetJointPositionRequest`):
                 The joint positions you want to control the joints to.
 
         Returns:
-            :obj:`panda_train.srv.SetJointPositionResponse`: Response message
+            :obj:`panda_gazebo.srv.SetJointPositionResponse`: Response message
                 containing (success bool, message).
         """
         rospy.logdebug("Setting hand joint position targets.")
@@ -1102,7 +1117,7 @@ class PandaMoveitPlannerServer(object):
             get_ee_rpy_req (:obj:`std_srvs.srv.Empty`): Empty request.
 
         Returns:
-            :obj:`panda_train.srv.GetEeResponse`: Response message containing
+            :obj:`panda_gazebo.srv.GetEeResponse`: Response message containing
                 containing the roll (x), yaw (z), pitch (y) euler angles.
         """
         rospy.logdebug("Retrieving ee orientation.")
@@ -1120,7 +1135,7 @@ class PandaMoveitPlannerServer(object):
             get_ee_req (:obj:`std_srvs.srv.Empty`): Empty request.
 
         Returns:
-            :obj:`panda_train.srv.GetEeResponse`: Response message containing the name
+            :obj:`panda_gazebo.srv.GetEeResponse`: Response message containing the name
                 of the current EE.
         """
         rospy.logdebug("Retrieving ee name.")
@@ -1136,7 +1151,7 @@ class PandaMoveitPlannerServer(object):
                 containing the name of the end effector you want to be set.
 
         Returns:
-            :obj:`panda_train.srv.SetEeResponse`: Response message containing (success
+            :obj:`panda_gazebo.srv.SetEeResponse`: Response message containing (success
                 bool, message).
         """
         rospy.logdebug("Setting ee to '%s'." % set_ee_req.ee_name)
@@ -1167,7 +1182,7 @@ class PandaMoveitPlannerServer(object):
             get_random_position_req (:obj:`std_srvs.srv.Empty`): Empty request.
 
         Returns:
-            :obj:`panda_train.srv.GetRandomPositionsResponse`: Response message
+            :obj:`panda_gazebo.srv.GetRandomPositionsResponse`: Response message
                 containing the random joints positions.
         """
         # Retrieve possible joints
@@ -1396,7 +1411,7 @@ class PandaMoveitPlannerServer(object):
             get_random_ee_pose_req :obj:`std_srvs.srv.Empty`: Empty request.
 
         Returns:
-            :obj:`panda_train.srv.GetRandomEePoseResponse`: Response message containing
+            :obj:`panda_gazebo.srv.GetRandomEePoseResponse`: Response message containing
                 the random joints positions.
         """
         # Get a random ee pose

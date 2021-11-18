@@ -7,10 +7,12 @@ Main services:
     * get_controlled_joints
     * follow_joint_trajectory
     * set_joint_commands
-    * panda_arm/set_joint_positions
-    * panda_arm/set_joint_efforts
     * panda_arm/follow_joint_trajectory
     * panda_hand/set_gripper_width
+
+Extra services:
+    * panda_arm/set_joint_positions
+    * panda_arm/set_joint_efforts
 """
 
 import copy
@@ -120,6 +122,7 @@ class PandaControlServer(object):
         self,
         autofill_traj_positions=False,
         connection_timeout=10,
+        load_extra_services=False,
     ):
         """Initializes the PandaControlServer object.
 
@@ -129,6 +132,9 @@ class PandaControlServer(object):
                 joint trajectory message is left empty. Defaults to ``False``.
             connection_timeout (int, optional): The timeout for connecting to the
                 controller_manager services. Defaults to 3 sec.
+            load_extra_services (bool, optional): Whether to load extra services that
+                are not used by the `openai_ros <https://wiki.ros.org/openai_ros>`_
+                package.
         """
         self.arm_joint_positions_setpoint = []
         self.arm_joint_efforts_setpoint = []
@@ -164,25 +170,24 @@ class PandaControlServer(object):
             SetJointCommands,
             self._set_joint_commands_cb,
         )
-        rospy.logdebug(
-            "Creating '%s/panda_arm/set_joint_efforts' service." % rospy.get_name()
-        )
-        rospy.logdebug(
-            "Creating '%s/panda_arm/set_joint_positions' service." % rospy.get_name()
-        )
-        self._set_arm_joint_positions_srv = rospy.Service(
-            "%s/panda_arm/set_joint_positions" % rospy.get_name().split("/")[-1],
-            SetJointPositions,
-            self._arm_set_joint_positions_cb,
-        )
-        rospy.logdebug(
-            "Creating '%s/panda_arm/set_joint_efforts' service." % rospy.get_name()
-        )
-        self._set_arm_joint_efforts_srv = rospy.Service(
-            "%s/panda_arm/set_joint_efforts" % rospy.get_name().split("/")[-1],
-            SetJointEfforts,
-            self._arm_set_joint_efforts_cb,
-        )
+        if load_extra_services:
+            rospy.logdebug(
+                "Creating '%s/panda_arm/set_joint_positions' service."
+                % rospy.get_name()
+            )
+            self._set_arm_joint_positions_srv = rospy.Service(
+                "%s/panda_arm/set_joint_positions" % rospy.get_name().split("/")[-1],
+                SetJointPositions,
+                self._arm_set_joint_positions_cb,
+            )
+            rospy.logdebug(
+                "Creating '%s/panda_arm/set_joint_efforts' service." % rospy.get_name()
+            )
+            self._set_arm_joint_efforts_srv = rospy.Service(
+                "%s/panda_arm/set_joint_efforts" % rospy.get_name().split("/")[-1],
+                SetJointEfforts,
+                self._arm_set_joint_efforts_cb,
+            )
         # NOTE: The service below serves as a wrapper around the original
         # 'franka_gripper/move' action. It makes sure that users only need to set the
         # gripper width while it automatically sets the speed to the maximum. It also
@@ -294,7 +299,7 @@ class PandaControlServer(object):
 
         # Create joint_state subscriber
         self._joint_states_sub = rospy.Subscriber(
-            "joint_states", JointState, self._joints_cb
+            "joint_states", JointState, self._joints_cb, queue_size=1
         )
 
         ########################################
