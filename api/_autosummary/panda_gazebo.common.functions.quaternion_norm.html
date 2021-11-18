@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>panda_gazebo.common.quaternion &mdash; panda-gazebo 2.0.20 documentation</title>
+  <title>panda_gazebo.common.functions.quaternion_norm &mdash; panda-gazebo 2.1.0 documentation</title>
   
 
   
@@ -42,8 +42,8 @@
     
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="panda_gazebo.common.quaternion.Quaternion" href="panda_gazebo.common.quaternion.Quaternion.html" />
-    <link rel="prev" title="panda_gazebo.common.functions.wrap_space_around" href="panda_gazebo.common.functions.wrap_space_around.html" /> 
+    <link rel="next" title="panda_gazebo.common.functions.translate_actionclient_result_error_code" href="panda_gazebo.common.functions.translate_actionclient_result_error_code.html" />
+    <link rel="prev" title="panda_gazebo.common.functions.panda_action_msg_2_control_msgs_action_msg" href="panda_gazebo.common.functions.panda_action_msg_2_control_msgs_action_msg.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.0.20
+                2.1.0
               </div>
             
           
@@ -110,8 +110,7 @@
 <li class="toctree-l3 current"><a class="reference internal" href="panda_gazebo.common.html">panda_gazebo.common</a><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="panda_gazebo.common.action_client_state.html">panda_gazebo.common.action_client_state</a></li>
 <li class="toctree-l4"><a class="reference internal" href="panda_gazebo.common.controller_info_dict.html">panda_gazebo.common.controller_info_dict</a></li>
-<li class="toctree-l4"><a class="reference internal" href="panda_gazebo.common.functions.html">panda_gazebo.common.functions</a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="#">panda_gazebo.common.quaternion</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="panda_gazebo.common.functions.html">panda_gazebo.common.functions</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="panda_gazebo.exceptions.html">panda_gazebo.exceptions</a></li>
@@ -172,14 +171,16 @@
         
           <li><a href="panda_gazebo.common.html">panda_gazebo.common</a> &raquo;</li>
         
-      <li>panda_gazebo.common.quaternion</li>
+          <li><a href="panda_gazebo.common.functions.html">panda_gazebo.common.functions</a> &raquo;</li>
+        
+      <li>panda_gazebo.common.functions.quaternion_norm</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
           
             
-              <a href="https://github.com/rickstaa/panda-gazebo/blob/noetic-devel/docs/source/api/_autosummary/panda_gazebo.common.quaternion.rst" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/rickstaa/panda-gazebo/blob/noetic-devel/docs/source/api/_autosummary/panda_gazebo.common.functions.quaternion_norm.rst" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -193,22 +194,25 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-panda_gazebo.common.quaternion">
-<span id="panda-gazebo-common-quaternion"></span><h1>panda_gazebo.common.quaternion<a class="headerlink" href="#module-panda_gazebo.common.quaternion" title="Permalink to this headline">¶</a></h1>
-<p>Class used for storing and modifying quaternions. It is based on the geometry_msgs
-Quaternion class but adds some extra features.</p>
-<p class="rubric">Classes</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="panda_gazebo.common.quaternion.Quaternion.html#panda_gazebo.common.quaternion.Quaternion" title="panda_gazebo.common.quaternion.Quaternion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Quaternion</span></code></a>(*args, **kwds)</p></td>
-<td><p>Used for storing and modifying quaternions.</p></td>
-</tr>
-</tbody>
-</table>
+  <div class="section" id="panda-gazebo-common-functions-quaternion-norm">
+<h1>panda_gazebo.common.functions.quaternion_norm<a class="headerlink" href="#panda-gazebo-common-functions-quaternion-norm" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="panda_gazebo.common.functions.quaternion_norm">
+<span class="sig-prename descclassname"><span class="pre">panda_gazebo.common.functions.</span></span><span class="sig-name descname"><span class="pre">quaternion_norm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">quaternion</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/panda_gazebo/common/functions.html#quaternion_norm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.common.functions.quaternion_norm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the norm of a quaternion.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>Quaternion</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">geometry_msgs.msg.Quaternion</span></code>) – A quaternion.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The norm of the quaternion.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 
 
@@ -217,8 +221,8 @@ Quaternion class but adds some extra features.</p>
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="panda_gazebo.common.quaternion.Quaternion.html" class="btn btn-neutral float-right" title="panda_gazebo.common.quaternion.Quaternion" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="panda_gazebo.common.functions.wrap_space_around.html" class="btn btn-neutral float-left" title="panda_gazebo.common.functions.wrap_space_around" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="panda_gazebo.common.functions.translate_actionclient_result_error_code.html" class="btn btn-neutral float-right" title="panda_gazebo.common.functions.translate_actionclient_result_error_code" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="panda_gazebo.common.functions.panda_action_msg_2_control_msgs_action_msg.html" class="btn btn-neutral float-left" title="panda_gazebo.common.functions.panda_action_msg_2_control_msgs_action_msg" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>

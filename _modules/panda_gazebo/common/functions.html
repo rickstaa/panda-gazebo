@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>panda_gazebo.common.functions &mdash; panda-gazebo 2.0.20 documentation</title>
+  <title>panda_gazebo.common.functions &mdash; panda-gazebo 2.1.0 documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.0.20
+                2.1.0
               </div>
             
           
@@ -179,6 +179,7 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">rospy</span>
 <span class="kn">from</span> <span class="nn">actionlib_msgs.msg</span> <span class="k">import</span> <span class="n">GoalStatusArray</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">linalg</span><span class="p">,</span> <span class="n">nan</span>
 <span class="kn">from</span> <span class="nn">panda_gazebo.msg</span> <span class="k">import</span> <span class="n">FollowJointTrajectoryGoal</span>
 <span class="kn">from</span> <span class="nn">rospy.exceptions</span> <span class="k">import</span> <span class="n">ROSException</span>
 <span class="kn">from</span> <span class="nn">sensor_msgs.msg</span> <span class="k">import</span> <span class="n">JointState</span>
@@ -543,6 +544,52 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">exists</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="k">return</span> <span class="n">exists</span></div>
+
+
+<div class="viewcode-block" id="quaternion_norm"><a class="viewcode-back" href="../../../api/_autosummary/panda_gazebo.common.functions.quaternion_norm.html#panda_gazebo.common.functions.quaternion_norm">[docs]</a><span class="k">def</span> <span class="nf">quaternion_norm</span><span class="p">(</span><span class="n">quaternion</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculates the norm of a quaternion.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        Quaternion (:obj:`geometry_msgs.msg.Quaternion`): A quaternion.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float: The norm of the quaternion.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">([</span><span class="n">quaternion</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">quaternion</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">quaternion</span><span class="o">.</span><span class="n">z</span><span class="p">,</span> <span class="n">quaternion</span><span class="o">.</span><span class="n">w</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="normalize_quaternion"><a class="viewcode-back" href="../../../api/_autosummary/panda_gazebo.common.functions.normalize_quaternion.html#panda_gazebo.common.functions.normalize_quaternion">[docs]</a><span class="k">def</span> <span class="nf">normalize_quaternion</span><span class="p">(</span><span class="n">quaternion</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Normalizes a given quaternion.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        quaternion (:obj:`geometry_msgs.msg.Quaternion`): A quaternion.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :obj:`geometry_msgs.msg.Quaternion`: The normalized quaternion.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">quaternion</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span>
+        <span class="n">quaternion</span>
+    <span class="p">)</span>  <span class="c1"># Make sure the original object is not changed</span>
+    <span class="n">norm</span> <span class="o">=</span> <span class="n">quaternion_norm</span><span class="p">(</span><span class="n">quaternion</span><span class="p">)</span>
+
+    <span class="c1"># Normalize quaternion</span>
+    <span class="k">if</span> <span class="n">norm</span> <span class="o">==</span> <span class="n">nan</span><span class="p">:</span>
+        <span class="c1"># test</span>
+        <span class="n">rospy</span><span class="o">.</span><span class="n">logwarn</span><span class="p">(</span>
+            <span class="s2">&quot;Quaternion could not be normalized since the norm could not be &quot;</span>
+            <span class="s2">&quot;calculated.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">norm</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>  <span class="c1"># Transform to identity</span>
+        <span class="n">quaternion</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">quaternion</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">quaternion</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">quaternion</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">quaternion</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">quaternion</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="n">norm</span>
+        <span class="n">quaternion</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">quaternion</span><span class="o">.</span><span class="n">y</span> <span class="o">/</span> <span class="n">norm</span>
+        <span class="n">quaternion</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">quaternion</span><span class="o">.</span><span class="n">z</span> <span class="o">/</span> <span class="n">norm</span>
+        <span class="n">quaternion</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="n">quaternion</span><span class="o">.</span><span class="n">w</span> <span class="o">/</span> <span class="n">norm</span>
+    <span class="k">return</span> <span class="n">quaternion</span></div>
 </pre></div>
 
            </div>

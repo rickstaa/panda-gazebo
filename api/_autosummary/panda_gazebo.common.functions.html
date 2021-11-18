@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>panda_gazebo.common.functions &mdash; panda-gazebo 2.0.20 documentation</title>
+  <title>panda_gazebo.common.functions &mdash; panda-gazebo 2.1.0 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.0.20
+                2.1.0
               </div>
             
           
@@ -111,7 +111,6 @@
 <li class="toctree-l4"><a class="reference internal" href="panda_gazebo.common.action_client_state.html">panda_gazebo.common.action_client_state</a></li>
 <li class="toctree-l4"><a class="reference internal" href="panda_gazebo.common.controller_info_dict.html">panda_gazebo.common.controller_info_dict</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">panda_gazebo.common.functions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="panda_gazebo.common.quaternion.html">panda_gazebo.common.quaternion</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="panda_gazebo.exceptions.html">panda_gazebo.exceptions</a></li>
@@ -234,8 +233,14 @@
 <tr class="row-even"><td><p><a class="reference internal" href="panda_gazebo.common.functions.lower_first_char.html#panda_gazebo.common.functions.lower_first_char" title="panda_gazebo.common.functions.lower_first_char"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lower_first_char</span></code></a>(string)</p></td>
 <td><p>De-capitalize the first letter of a string.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="panda_gazebo.common.functions.panda_action_msg_2_control_msgs_action_msg.html#panda_gazebo.common.functions.panda_action_msg_2_control_msgs_action_msg" title="panda_gazebo.common.functions.panda_action_msg_2_control_msgs_action_msg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">panda_action_msg_2_control_msgs_action_msg</span></code></a>(…)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="panda_gazebo.common.functions.normalize_quaternion.html#panda_gazebo.common.functions.normalize_quaternion" title="panda_gazebo.common.functions.normalize_quaternion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalize_quaternion</span></code></a>(quaternion)</p></td>
+<td><p>Normalizes a given quaternion.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="panda_gazebo.common.functions.panda_action_msg_2_control_msgs_action_msg.html#panda_gazebo.common.functions.panda_action_msg_2_control_msgs_action_msg" title="panda_gazebo.common.functions.panda_action_msg_2_control_msgs_action_msg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">panda_action_msg_2_control_msgs_action_msg</span></code></a>(…)</p></td>
 <td><p>Converts a panda_gazebo FollowJointTrajectoryActionGoal action message into a <a class="reference external" href="https://docs.ros.org/api/control_msgs/html/action/FollowJointTrajectory.html">control_msgs/FollowJointTrajectoryGoal</a> action message.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="panda_gazebo.common.functions.quaternion_norm.html#panda_gazebo.common.functions.quaternion_norm" title="panda_gazebo.common.functions.quaternion_norm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quaternion_norm</span></code></a>(quaternion)</p></td>
+<td><p>Calculates the norm of a quaternion.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="panda_gazebo.common.functions.translate_actionclient_result_error_code.html#panda_gazebo.common.functions.translate_actionclient_result_error_code" title="panda_gazebo.common.functions.translate_actionclient_result_error_code"><code class="xref py py-obj docutils literal notranslate"><span class="pre">translate_actionclient_result_error_code</span></code></a>(…)</p></td>
 <td><p>Translates the error code returned by the SimpleActionClient.get_result() function into a human readable error message.</p></td>

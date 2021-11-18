@@ -31,5 +31,4 @@
    panda_gazebo.common.action_client_state
    panda_gazebo.common.controller_info_dict
    panda_gazebo.common.functions
-   panda_gazebo.common.quaternion
 

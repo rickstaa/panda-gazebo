@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>panda_gazebo.core.control_switcher &mdash; panda-gazebo 2.1.0 documentation</title>
+  <title>panda_gazebo.common.functions.normalize_quaternion &mdash; panda-gazebo 2.1.0 documentation</title>
   
 
   
@@ -42,8 +42,8 @@
     
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="panda_gazebo.core.control_switcher.ControllerSwitcherResponse" href="panda_gazebo.core.control_switcher.ControllerSwitcherResponse.html" />
-    <link rel="prev" title="panda_gazebo.core.control_server.PandaControlServer" href="panda_gazebo.core.control_server.PandaControlServer.html" /> 
+    <link rel="next" title="panda_gazebo.common.functions.panda_action_msg_2_control_msgs_action_msg" href="panda_gazebo.common.functions.panda_action_msg_2_control_msgs_action_msg.html" />
+    <link rel="prev" title="panda_gazebo.common.functions.lower_first_char" href="panda_gazebo.common.functions.lower_first_char.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -106,14 +106,13 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="../api.html">Code API</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="../api.html#modules">Modules</a><ul class="current">
-<li class="toctree-l3 current"><a class="reference internal" href="panda_gazebo.core.html">panda_gazebo.core</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="panda_gazebo.core.control_server.html">panda_gazebo.core.control_server</a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="#">panda_gazebo.core.control_switcher</a></li>
-<li class="toctree-l4"><a class="reference internal" href="panda_gazebo.core.group_publisher.html">panda_gazebo.core.group_publisher</a></li>
-<li class="toctree-l4"><a class="reference internal" href="panda_gazebo.core.moveit_server.html">panda_gazebo.core.moveit_server</a></li>
+<li class="toctree-l3"><a class="reference internal" href="panda_gazebo.core.html">panda_gazebo.core</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="panda_gazebo.common.html">panda_gazebo.common</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="panda_gazebo.common.action_client_state.html">panda_gazebo.common.action_client_state</a></li>
+<li class="toctree-l4"><a class="reference internal" href="panda_gazebo.common.controller_info_dict.html">panda_gazebo.common.controller_info_dict</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="panda_gazebo.common.functions.html">panda_gazebo.common.functions</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="panda_gazebo.common.html">panda_gazebo.common</a></li>
 <li class="toctree-l3"><a class="reference internal" href="panda_gazebo.exceptions.html">panda_gazebo.exceptions</a></li>
 </ul>
 </li>
@@ -170,16 +169,18 @@
         
           <li><a href="../api.html">Code API</a> &raquo;</li>
         
-          <li><a href="panda_gazebo.core.html">panda_gazebo.core</a> &raquo;</li>
+          <li><a href="panda_gazebo.common.html">panda_gazebo.common</a> &raquo;</li>
         
-      <li>panda_gazebo.core.control_switcher</li>
+          <li><a href="panda_gazebo.common.functions.html">panda_gazebo.common.functions</a> &raquo;</li>
+        
+      <li>panda_gazebo.common.functions.normalize_quaternion</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
           
             
-              <a href="https://github.com/rickstaa/panda-gazebo/blob/noetic-devel/docs/source/api/_autosummary/panda_gazebo.core.control_switcher.rst" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/rickstaa/panda-gazebo/blob/noetic-devel/docs/source/api/_autosummary/panda_gazebo.common.functions.normalize_quaternion.rst" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -193,34 +194,25 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-panda_gazebo.core.control_switcher">
-<span id="panda-gazebo-core-control-switcher"></span><h1>panda_gazebo.core.control_switcher<a class="headerlink" href="#module-panda_gazebo.core.control_switcher" title="Permalink to this headline">¶</a></h1>
-<p>This class is responsible for switching the control type that is used for
-controlling the Panda Robot robot <code class="docutils literal notranslate"><span class="pre">arm</span></code>. It serves as a wrapper aroundthe services
-created by the ROS <a class="reference external" href="https://wiki.ros.orgcontroller_manager">controller_manager</a> class.</p>
-<dl class="simple">
-<dt>Control types:</dt><dd><ul class="simple">
-<li><p><a class="reference external" href="https://wiki.ros.org/joint_trajectory_controller/">trajectory</a></p></li>
-<li><p><a class="reference external" href="https://wiki.ros.org/position_controllers/">position</a></p></li>
-<li><p><a class="reference external" href="https://wiki.ros.org/effort_controllers/">effort</a></p></li>
-</ul>
+  <div class="section" id="panda-gazebo-common-functions-normalize-quaternion">
+<h1>panda_gazebo.common.functions.normalize_quaternion<a class="headerlink" href="#panda-gazebo-common-functions-normalize-quaternion" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="panda_gazebo.common.functions.normalize_quaternion">
+<span class="sig-prename descclassname"><span class="pre">panda_gazebo.common.functions.</span></span><span class="sig-name descname"><span class="pre">normalize_quaternion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">quaternion</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/panda_gazebo/common/functions.html#normalize_quaternion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.common.functions.normalize_quaternion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Normalizes a given quaternion.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>quaternion</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">geometry_msgs.msg.Quaternion</span></code>) – A quaternion.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The normalized quaternion.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">geometry_msgs.msg.Quaternion</span></code></p>
 </dd>
 </dl>
-<p class="rubric">Classes</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="panda_gazebo.core.control_switcher.ControllerSwitcherResponse.html#panda_gazebo.core.control_switcher.ControllerSwitcherResponse" title="panda_gazebo.core.control_switcher.ControllerSwitcherResponse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ControllerSwitcherResponse</span></code></a>([success, …])</p></td>
-<td><p>Class used for returning the result of the ControllerSwitcher.switch method.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="panda_gazebo.core.control_switcher.PandaControlSwitcher.html#panda_gazebo.core.control_switcher.PandaControlSwitcher" title="panda_gazebo.core.control_switcher.PandaControlSwitcher"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PandaControlSwitcher</span></code></a>([connection_timeout, …])</p></td>
-<td><p>Used for switching the Panda robot controllers.</p></td>
-</tr>
-</tbody>
-</table>
+</dd></dl>
+
 </div>
 
 
@@ -229,8 +221,8 @@ created by the ROS <a class="reference external" href="https://wiki.ros.orgcontr
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="panda_gazebo.core.control_switcher.ControllerSwitcherResponse.html" class="btn btn-neutral float-right" title="panda_gazebo.core.control_switcher.ControllerSwitcherResponse" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="panda_gazebo.core.control_server.PandaControlServer.html" class="btn btn-neutral float-left" title="panda_gazebo.core.control_server.PandaControlServer" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="panda_gazebo.common.functions.panda_action_msg_2_control_msgs_action_msg.html" class="btn btn-neutral float-right" title="panda_gazebo.common.functions.panda_action_msg_2_control_msgs_action_msg" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="panda_gazebo.common.functions.lower_first_char.html" class="btn btn-neutral float-left" title="panda_gazebo.common.functions.lower_first_char" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>

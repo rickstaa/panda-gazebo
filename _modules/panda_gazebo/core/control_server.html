@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>panda_gazebo.core.control_server &mdash; panda-gazebo 2.0.20 documentation</title>
+  <title>panda_gazebo.core.control_server &mdash; panda-gazebo 2.1.0 documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.0.20
+                2.1.0
               </div>
             
           
@@ -178,10 +178,12 @@
 <span class="sd">    * get_controlled_joints</span>
 <span class="sd">    * follow_joint_trajectory</span>
 <span class="sd">    * set_joint_commands</span>
-<span class="sd">    * panda_arm/set_joint_positions</span>
-<span class="sd">    * panda_arm/set_joint_efforts</span>
 <span class="sd">    * panda_arm/follow_joint_trajectory</span>
 <span class="sd">    * panda_hand/set_gripper_width</span>
+
+<span class="sd">Extra services:</span>
+<span class="sd">    * panda_arm/set_joint_positions</span>
+<span class="sd">    * panda_arm/set_joint_efforts</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">copy</span>
@@ -191,9 +193,11 @@
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">compress</span>
 
 <span class="kn">import</span> <span class="nn">actionlib</span>
+<span class="kn">import</span> <span class="nn">control_msgs.msg</span> <span class="k">as</span> <span class="nn">control_msgs</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">rospy</span>
 <span class="kn">from</span> <span class="nn">controller_manager_msgs.srv</span> <span class="k">import</span> <span class="n">ListControllers</span><span class="p">,</span> <span class="n">ListControllersRequest</span>
+<span class="kn">from</span> <span class="nn">franka_gripper.msg</span> <span class="k">import</span> <span class="n">MoveAction</span><span class="p">,</span> <span class="n">MoveGoal</span>
 <span class="kn">from</span> <span class="nn">panda_gazebo.common</span> <span class="k">import</span> <span class="n">ActionClientState</span>
 <span class="kn">from</span> <span class="nn">panda_gazebo.common.functions</span> <span class="k">import</span> <span class="p">(</span>
     <span class="n">action_server_exists</span><span class="p">,</span>
@@ -207,12 +211,7 @@
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">panda_gazebo.core.group_publisher</span> <span class="k">import</span> <span class="n">GroupPublisher</span>
 <span class="kn">from</span> <span class="nn">panda_gazebo.exceptions</span> <span class="k">import</span> <span class="n">InputMessageInvalidError</span>
-<span class="kn">import</span> <span class="nn">control_msgs.msg</span> <span class="k">as</span> <span class="nn">control_msgs</span>
-<span class="kn">from</span> <span class="nn">franka_gripper.msg</span> <span class="k">import</span> <span class="n">MoveAction</span><span class="p">,</span> <span class="n">MoveGoal</span>
-<span class="kn">from</span> <span class="nn">panda_gazebo.msg</span> <span class="k">import</span> <span class="p">(</span>
-    <span class="n">FollowJointTrajectoryAction</span><span class="p">,</span>
-    <span class="n">FollowJointTrajectoryResult</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">panda_gazebo.msg</span> <span class="k">import</span> <span class="n">FollowJointTrajectoryAction</span><span class="p">,</span> <span class="n">FollowJointTrajectoryResult</span>
 <span class="kn">from</span> <span class="nn">panda_gazebo.srv</span> <span class="k">import</span> <span class="p">(</span>
     <span class="n">GetControlledJoints</span><span class="p">,</span>
     <span class="n">GetControlledJointsResponse</span><span class="p">,</span>
@@ -264,8 +263,6 @@
 <span class="n">ARM_TRAJ_CONTROLLERS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;panda_arm_controller&quot;</span><span class="p">]</span>
 <span class="n">HAND_CONTROLLERS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;franka_gripper&quot;</span><span class="p">]</span>
 
-<span class="n">USE_GRAVITY_COMPENSATION_FIX</span> <span class="o">=</span> <span class="kc">True</span>
-
 
 <div class="viewcode-block" id="PandaControlServer"><a class="viewcode-back" href="../../../api/_autosummary/panda_gazebo.core.control_server.PandaControlServer.html#panda_gazebo.core.control_server.PandaControlServer">[docs]</a><span class="k">class</span> <span class="nc">PandaControlServer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Controller server used to send control commands to the simulated Panda Robot.</span>
@@ -291,6 +288,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">autofill_traj_positions</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">connection_timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">load_extra_services</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initializes the PandaControlServer object.</span>
 
@@ -300,6 +298,9 @@
 <span class="sd">                joint trajectory message is left empty. Defaults to ``False``.</span>
 <span class="sd">            connection_timeout (int, optional): The timeout for connecting to the</span>
 <span class="sd">                controller_manager services. Defaults to 3 sec.</span>
+<span class="sd">            load_extra_services (bool, optional): Whether to load extra services that</span>
+<span class="sd">                are not used by the `openai_ros &lt;https://wiki.ros.org/openai_ros&gt;`_</span>
+<span class="sd">                package.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">arm_joint_positions_setpoint</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">arm_joint_efforts_setpoint</span> <span class="o">=</span> <span class="p">[]</span>
@@ -335,25 +336,24 @@
             <span class="n">SetJointCommands</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_set_joint_commands_cb</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">rospy</span><span class="o">.</span><span class="n">logdebug</span><span class="p">(</span>
-            <span class="s2">&quot;Creating &#39;</span><span class="si">%s</span><span class="s2">/panda_arm/set_joint_efforts&#39; service.&quot;</span> <span class="o">%</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
-        <span class="p">)</span>
-        <span class="n">rospy</span><span class="o">.</span><span class="n">logdebug</span><span class="p">(</span>
-            <span class="s2">&quot;Creating &#39;</span><span class="si">%s</span><span class="s2">/panda_arm/set_joint_positions&#39; service.&quot;</span> <span class="o">%</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_set_arm_joint_positions_srv</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Service</span><span class="p">(</span>
-            <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/panda_arm/set_joint_positions&quot;</span> <span class="o">%</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
-            <span class="n">SetJointPositions</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_arm_set_joint_positions_cb</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">rospy</span><span class="o">.</span><span class="n">logdebug</span><span class="p">(</span>
-            <span class="s2">&quot;Creating &#39;</span><span class="si">%s</span><span class="s2">/panda_arm/set_joint_efforts&#39; service.&quot;</span> <span class="o">%</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_set_arm_joint_efforts_srv</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Service</span><span class="p">(</span>
-            <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/panda_arm/set_joint_efforts&quot;</span> <span class="o">%</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
-            <span class="n">SetJointEfforts</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_arm_set_joint_efforts_cb</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">load_extra_services</span><span class="p">:</span>
+            <span class="n">rospy</span><span class="o">.</span><span class="n">logdebug</span><span class="p">(</span>
+                <span class="s2">&quot;Creating &#39;</span><span class="si">%s</span><span class="s2">/panda_arm/set_joint_positions&#39; service.&quot;</span>
+                <span class="o">%</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_arm_joint_positions_srv</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Service</span><span class="p">(</span>
+                <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/panda_arm/set_joint_positions&quot;</span> <span class="o">%</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                <span class="n">SetJointPositions</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_arm_set_joint_positions_cb</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">rospy</span><span class="o">.</span><span class="n">logdebug</span><span class="p">(</span>
+                <span class="s2">&quot;Creating &#39;</span><span class="si">%s</span><span class="s2">/panda_arm/set_joint_efforts&#39; service.&quot;</span> <span class="o">%</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_arm_joint_efforts_srv</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Service</span><span class="p">(</span>
+                <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/panda_arm/set_joint_efforts&quot;</span> <span class="o">%</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                <span class="n">SetJointEfforts</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_arm_set_joint_efforts_cb</span><span class="p">,</span>
+            <span class="p">)</span>
         <span class="c1"># NOTE: The service below serves as a wrapper around the original</span>
         <span class="c1"># &#39;franka_gripper/move&#39; action. It makes sure that users only need to set the</span>
         <span class="c1"># gripper width while it automatically sets the speed to the maximum. It also</span>
@@ -465,7 +465,7 @@
 
         <span class="c1"># Create joint_state subscriber</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_joint_states_sub</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Subscriber</span><span class="p">(</span>
-            <span class="s2">&quot;joint_states&quot;</span><span class="p">,</span> <span class="n">JointState</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_joints_cb</span>
+            <span class="s2">&quot;joint_states&quot;</span><span class="p">,</span> <span class="n">JointState</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_joints_cb</span><span class="p">,</span> <span class="n">queue_size</span><span class="o">=</span><span class="mi">1</span>
         <span class="p">)</span>
 
         <span class="c1">########################################</span>
@@ -528,16 +528,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_traj_as</span><span class="o">.</span><span class="n">register_preempt_callback</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_traj_preempt_cb</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_traj_as</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-
-        <span class="c1"># Add a effort publisher</span>
-        <span class="c1"># FIXME: Can be removed if https://github.com/frankaemika/franka_ros/issues/160</span>
-        <span class="c1"># is fixed</span>
-        <span class="k">if</span> <span class="n">USE_GRAVITY_COMPENSATION_FIX</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_efforts_setpoint_msg</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_effort_command_lock</span> <span class="o">=</span> <span class="kc">False</span>
-            <span class="n">PUBLISH_RATE</span> <span class="o">=</span> <span class="mi">1000</span>
-            <span class="n">rospy</span><span class="o">.</span><span class="n">Timer</span><span class="p">(</span><span class="n">rospy</span><span class="o">.</span><span class="n">Duration</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">PUBLISH_RATE</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_effort_publisher_cb</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_traj_as</span><span class="o">.</span><span class="n">start</span><span class="p">()</span></div>
 
     <span class="c1">################################################</span>
     <span class="c1"># Panda control member functions ###############</span>
@@ -2068,9 +2059,7 @@
 
         <span class="c1"># Save setpoint and publish request</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">arm_joint_efforts_setpoint</span> <span class="o">=</span> <span class="p">[</span><span class="n">command</span><span class="o">.</span><span class="n">data</span> <span class="k">for</span> <span class="n">command</span> <span class="ow">in</span> <span class="n">control_pub_msgs</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_efforts_setpoint_msg</span> <span class="o">=</span> <span class="n">control_pub_msgs</span>
         <span class="n">rospy</span><span class="o">.</span><span class="n">logdebug</span><span class="p">(</span><span class="s2">&quot;Publishing Panda arm joint efforts control message.&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_effort_command_lock</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_effort_pub</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">control_pub_msgs</span><span class="p">)</span>
 
         <span class="c1"># Wait till control is finished or timeout has been reached</span>
@@ -2079,7 +2068,6 @@
                 <span class="n">control_type</span><span class="o">=</span><span class="s2">&quot;effort&quot;</span><span class="p">,</span>
             <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_effort_command_lock</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="n">resp</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="n">resp</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Everything went OK&quot;</span>
         <span class="k">return</span> <span class="n">resp</span>
@@ -2154,32 +2142,6 @@
         <span class="k">except</span> <span class="n">InputMessageInvalidError</span><span class="p">:</span>
             <span class="n">resp</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">return</span> <span class="n">resp</span>
-
-    <span class="k">def</span> <span class="nf">_effort_publisher_cb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Publishes the joint effort commands at a given rate. This is done since</span>
-<span class="sd">        there is a bug in the gravity compensation see</span>
-<span class="sd">        https://github.com/frankaemika/franka_ros/issues/160. As a result this method</span>
-<span class="sd">        can be removed if this issue is fixed.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            event (:obj:`rospy.TimerEvent`): The timer event object.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_effort_command_lock</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_efforts_setpoint_msg</span><span class="p">:</span>
-                <span class="n">controlled_joints_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_controlled_joints</span><span class="p">(</span>
-                    <span class="n">control_type</span><span class="o">=</span><span class="s2">&quot;effort&quot;</span>
-                <span class="p">)</span>
-                <span class="k">if</span> <span class="n">controlled_joints_dict</span><span class="p">[</span><span class="s2">&quot;arm&quot;</span><span class="p">]:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_efforts_setpoint_msg</span> <span class="o">=</span> <span class="p">[</span>
-                        <span class="n">Float64</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
-                        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">dict</span><span class="p">(</span>
-                            <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">joint_states</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">joint_states</span><span class="o">.</span><span class="n">effort</span><span class="p">)</span>
-                        <span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-                        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">controlled_joints_dict</span><span class="p">[</span><span class="s2">&quot;arm&quot;</span><span class="p">]</span>
-                    <span class="p">]</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="k">return</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_effort_pub</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_efforts_setpoint_msg</span><span class="p">)</span>
 
     <span class="c1">################################################</span>
     <span class="c1"># Action server callback functions #############</span>
