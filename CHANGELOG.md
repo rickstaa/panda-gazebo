@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.1.3](https://github.com/rickstaa/panda-gazebo/compare/v2.1.2...v2.1.3) (2021-11-22)
+
+
+### Bug Fixes
+
+* add 'AddBox' srv to CMakeList ([a46eaeb](https://github.com/rickstaa/panda-gazebo/commit/a46eaeb8559e6195f6769c5244354e405e12c092))
+
 ### [2.1.1](https://github.com/rickstaa/panda-gazebo/compare/v2.1.0...v2.1.1) (2021-11-18)
 
 
