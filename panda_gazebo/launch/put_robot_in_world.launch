@@ -27,8 +27,8 @@
     <arg name="control_type" default="trajectory"/>
 
     <!--Retrieve the right hardware_interface for the control type-->
-    <arg if="$(eval arg('control_type') == 'position')" name="hardware_interface" value="PositionJointInterface"/>
-    <arg unless="$(eval arg('control_type') == 'position')" name="hardware_interface" value="EffortJointInterface"/>
+    <arg if="$(eval arg('control_type') == 'position')" name="hardware_interface" value="position"/>
+    <arg unless="$(eval arg('control_type') == 'position')" name="hardware_interface" value="effort"/>
 
     <!--Spawn the Panda robot-->
     <include file="$(find franka_gazebo)/launch/panda.launch">
@@ -38,7 +38,7 @@
         <arg name="paused" value="$(arg paused)"/>
         <arg name="world" value="$(arg world)"/>
         <arg name="use_gripper" default="$(arg load_gripper)"/>
-        <arg name="transmission" value="hardware_interface/$(arg hardware_interface)"/>
+        <arg name="transmission" value="$(arg hardware_interface)"/>
         <arg name="x" value="$(arg x)"/>
         <arg name="y" value="$(arg y)"/>
         <arg name="z" value="$(arg z)"/>
@@ -48,7 +48,7 @@
     </include>
 
     <!--Run the main MoveIt! executable without trajectory execution (we do not have controllers configured by default)-->
-    <include ns="panda" if="$(arg moveit)" file="$(find panda_moveit_config)/launch/move_group.launch">
+    <include if="$(arg moveit)" file="$(find panda_moveit_config)/launch/move_group.launch">
         <arg name="info" value="true"/>
         <arg name="debug" value="$(arg debug)"/>
         <arg name="pipeline" value="$(arg pipeline)" />
@@ -59,27 +59,27 @@
     </include>
 
     <!--Load Moveit configuration values-->
-    <rosparam ns="panda" if="$(arg moveit)" file="$(find panda_gazebo)/cfg/controllers/moveit.yaml" command="load" />
+    <rosparam if="$(arg moveit)" file="$(find panda_gazebo)/cfg/controllers/moveit.yaml" command="load" />
 
     <!--Load and start the controllers-->
-    <include ns="panda" file="$(find panda_gazebo)/launch/load_controllers.launch">
+    <include file="$(find panda_gazebo)/launch/load_controllers.launch">
         <arg name="moveit" default="$(arg moveit)"/>
         <arg name="control_type" value="$(arg control_type)"/>
         <arg name="load_gripper" value="$(arg load_gripper)"/>
     </include>
 
     <!--Load Moveit control services-->
-    <node ns="panda" if="$(arg moveit)" pkg="panda_gazebo" type="panda_moveit_server.py" name="panda_moveit_planner_server" required="true" args="">
+    <node if="$(arg moveit)" pkg="panda_gazebo" type="panda_moveit_server.py" name="panda_moveit_planner_server" required="true" args="">
         <param name="end_effector" value="$(arg end_effector)"/>
         <param name="max_velocity_scaling_factor" value="$(arg max_velocity_scaling_factor)"/>
         <param name="max_acceleration_scaling_factor" value="$(arg max_acceleration_scaling_factor)"/>
     </node>
 
     <!--Load ros_control service-->
-    <node ns="panda" pkg="panda_gazebo" type="panda_control_server.py" name="panda_control_server" required="true"/>
+    <node pkg="panda_gazebo" type="panda_control_server.py" name="panda_control_server" required="true"/>
 
     <!--Load RViz-->
-    <include ns="panda" if="$(arg rviz)" file="$(find panda_gazebo)/launch/panda_rviz.launch">
+    <include if="$(arg rviz)" file="$(find panda_gazebo)/launch/panda_rviz.launch">
         <arg name="debug" value="$(arg debug)"/>
         <arg name="moveit" value="$(arg moveit)"/>
         <arg if="$(eval arg('rviz_file') != '')" name="rviz_file" value="$(arg rviz_file)"/>
