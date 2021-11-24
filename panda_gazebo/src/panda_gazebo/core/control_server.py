@@ -661,65 +661,6 @@ class PandaControlServer(object):
             self.arm_joint_efforts_setpoint = []
         return True
 
-    def _wait_till_gripper_done(self, timeout=None, check_gradient=True):
-        """Wait till gripper control is finished. Meaning the gripper_width is within
-        the setpoint (or the velocity is zero).
-
-        Args:
-            timeout (int, optional): The timeout when waiting for the control
-                to be done. Defaults to :attr:`_wait_till_done_timeout`.
-            check_gradient (boolean, optional): If enabled the script will also return
-                when the gradients become zero. Defaults to ``True``.
-
-        .. attention::
-            This method was added since there is a bug in the gripper action (see
-            `franka_ros #173 <https://github.com/frankaemika/franka_ros/pull/173>`_).
-
-        """
-        # FIXME: Can be removed if https://github.com/frankaemika/franka_ros/pull/173
-        # is merged
-        # Get set input arguments
-        if timeout:
-            timeout = rospy.Duration(timeout)
-        else:
-            timeout = self._wait_till_done_timeout
-
-        # Wait till gripper width reaches the setpoint or the velocities are not
-        # changing anymore
-        timeout_time = rospy.get_rostime() + timeout
-        state_buffer = np.full((2, 1), np.nan)
-        grad_buffer = np.full((2, 1), np.nan)
-        while not rospy.is_shutdown() and rospy.get_rostime() < timeout_time:
-            # Wait till joint positions are within range or arm not changing anymore
-            gripper_width_setpoint = self.gripper_width_setpoint
-            state_threshold = self.hand_joint_positions_threshold
-            grad_threshold = self._hand_joint_positions_grad_threshold
-
-            # Add curent state to state_buffer and delete oldest entry
-            state_buffer = np.delete(
-                np.append(state_buffer, self.gripper_width), 0, axis=0
-            )
-            grad_buffer = np.gradient(state_buffer, axis=0)
-
-            # Check if setpoint is reached
-            if check_gradient:  # Check position/effort and gradients
-                if (
-                    np.abs(self.gripper_width - gripper_width_setpoint)
-                    <= state_threshold  # Check if gripper width is within threshold
-                ) or (
-                    np.abs(grad_buffer[-1]) <= grad_threshold
-                    and grad_buffer[-1]
-                    != 0.0  # Check if gripper velocities us  close to zero
-                ):
-                    break
-            else:  # Only check position/effort
-                if (
-                    np.abs(self.gripper_width - gripper_width_setpoint)
-                    <= state_threshold  # Check if gripper width is within threshold
-                ):
-                    break
-        return True
-
     def _create_arm_traj_action_server_msg(  # noqa: C901
         self, input_msg, verbose=False
     ):
@@ -1933,10 +1874,7 @@ class PandaControlServer(object):
         # Return result
         resp = SetGripperWidthResponse()
         if set_gripper_width_req.wait:
-            # FIXME: Wait_for_result not working due to bug. Quickfix below can be
-            # removed when https://github.com/frankaemika/franka_ros/pull/173 is merged.
-            gripper_result = self._wait_till_gripper_done()
-            # gripper_result = self._gripper_move_client.wait_for_result()
+            gripper_result = self._gripper_move_client.wait_for_result()
             resp.success = gripper_result
             self.gripper_width_setpoint = None
         else:
