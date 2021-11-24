@@ -7,14 +7,14 @@ import math
 import numpy as np
 
 # Script settings
-CUBE_HEIGHT = 0.06
-CUBE_WIDTH = 0.06
-CUBE_DEPTH = 0.06
+CUBE_WIDTH = 0.02
+CUBE_DEPTH = 0.032
+CUBE_HEIGHT = 0.064
 
 CYLINDER_RADIUS = 0.025
 CYLINDER_HEIGHT = 0.02
 
-MATERIAL_DENSITY = 960
+MATERIAL_DENSITY = 2000
 
 
 def get_cylinder_mass(radius, height, rho):
@@ -26,7 +26,7 @@ def get_cylinder_mass(radius, height, rho):
         rho (float): The material density [kg/m^3].
 
     Returns:
-        float: The mass in kg.
+        float: The mass [kg].
     """
     return rho * math.pi * radius ** 2 * height
 
@@ -41,7 +41,7 @@ def get_cube_inertia(height, width, depth, mass):
         mass (float): The mass of the cube [kg].
 
     Returns:
-        numpy.ndarray: The inertia matrix.
+        numpy.ndarray: The inertia matrix [kg*m^2].
     """
 
     return np.array(
@@ -59,10 +59,11 @@ def get_cube_mass(height, width, depth, rho):
     Args:
         radius (float): The radius of the cylinder [m].
         height (float): The height of the cylinder [m].
+        depth (float): The depth of the cylinder [m].
         rho (float): The material density [kg/m^3].
 
     Returns:
-        float: The mass in kg.
+        float: The mass [kg].
     """
     return rho * height * width * depth
 
@@ -76,7 +77,7 @@ def get_cylinder_inertia(radius, height, mass):
         mass (float): The mass of the cylinder [kg].
 
     Returns:
-        numpy.ndarray: The inertia matrix.
+        numpy.ndarray: The inertia matrix [kg*m^2].
     """
 
     return np.array(
