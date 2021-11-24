@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.1](https://github.com/rickstaa/panda-gazebo/compare/v2.2.0...v2.2.1) (2021-11-24)
+
+
+### Bug Fixes
+
+* **control_server:** move 'gripper_action' execution after other actions ([5c06047](https://github.com/rickstaa/panda-gazebo/commit/5c06047ae7cfa91581ee3a997b53e53d1deba0b0))
+
 ## [2.2.0](https://github.com/rickstaa/panda-gazebo/compare/v2.1.4...v2.2.0) (2021-11-24)
 
 
