@@ -1621,13 +1621,13 @@ class PandaControlServer(object):
         )
 
         # Send control commands
-        if gripper_command_msg is not None:
-            self._set_gripper_width_cb(gripper_command_msg)
         if arm_command_msg is not None:
             if control_type == "position":
                 arm_resp = self._arm_set_joint_positions_cb(arm_command_msg)
             else:
                 arm_resp = self._arm_set_joint_efforts_cb(arm_command_msg)
+        if gripper_command_msg is not None:
+            self._set_gripper_width_cb(gripper_command_msg)
         if set_joint_commands_req.wait:
             if gripper_command_msg is not None:
                 gripper_result = self._gripper_grasp_client.wait_for_result()
