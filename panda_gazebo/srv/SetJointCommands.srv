@@ -5,6 +5,7 @@
 string[] joint_names
 float64[] joint_commands
 string control_type # The control type you want to use for the robot arm. Options are "effort" and "position".
+bool grasping # The gripper simply moves if this is `false`.
 bool wait
 ---
 bool success

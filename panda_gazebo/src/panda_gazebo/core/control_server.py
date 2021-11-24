@@ -26,7 +26,7 @@ import control_msgs.msg as control_msgs
 import numpy as np
 import rospy
 from controller_manager_msgs.srv import ListControllers, ListControllersRequest
-from franka_gripper.msg import MoveAction, MoveGoal
+from franka_gripper.msg import GraspAction, GraspGoal, MoveAction, MoveGoal
 from panda_gazebo.common import ActionClientState
 from panda_gazebo.common.functions import (
     action_server_exists,
@@ -45,6 +45,7 @@ from panda_gazebo.srv import (
     GetControlledJoints,
     GetControlledJointsResponse,
     SetGripperWidth,
+    SetGripperWidthRequest,
     SetGripperWidthResponse,
     SetJointCommands,
     SetJointCommandsResponse,
@@ -58,6 +59,9 @@ from sensor_msgs.msg import JointState
 from std_msgs.msg import Float64
 
 # Global script variables
+GRASP_EPSILON = 0.003  # Uses 'kGraspRestingThreshold' from 'franka_gripper.sim.h'
+GRASP_SPEED = 0.1  # Uses 'kDefaultGripperActionSpeed' from 'franka_gripper.sim.h'
+GRASP_FORCE = 5
 DIRNAME = os.path.dirname(__file__)
 PANDA_JOINTS = {
     "arm": [
@@ -143,6 +147,7 @@ class PandaControlServer(object):
         self._hand_joint_positions_grad_threshold = 0.001
         self._arm_joint_efforts_grad_threshold = 0.01
         self._gripper_move_client_connected = False
+        self._gripper_grasp_client_connected = False
         self._arm_joint_traj_client_connected = False
 
         ########################################
@@ -184,9 +189,10 @@ class PandaControlServer(object):
                 self._arm_set_joint_efforts_cb,
             )
         # NOTE: The service below serves as a wrapper around the original
-        # 'franka_gripper/move' action. It makes sure that users only need to set the
-        # gripper width while it automatically sets the speed to the maximum. It also
-        # clips gripper width that are not possible.
+        # 'franka_gripper' grasp and move actions. It makes sure that the right action
+        # is called and that users only need to set the gripper width while it
+        # automatically sets the speed, epsilon and force. It also clips gripper width
+        # that are not possible.
         rospy.logdebug(
             "Creating '%s/panda_hand/set_gripper_width' service." % rospy.get_name()
         )
@@ -248,11 +254,16 @@ class PandaControlServer(object):
             sys.exit(0)
 
         # Connect to the gripper command action server
-        rospy.logdebug("Connecting to '%s' action service." % "franka_gripper/move")
-        if action_server_exists("franka_gripper/move"):
+        # IMPROVE: We currently need to use both the 'franka_gripper/grasp' and
+        # 'franka_gripper/move' actions since the 'franka_gripper/gripper_command'.
+        # We can replace these services by the 'franka_gripper/gripper_action' service
+        # if https://github.com/frankaemika/franka_ros/issues/172 is solved.
+        franka_gripper_move_topic = "franka_gripper/move"
+        rospy.logdebug("Connecting to '%s' action service." % franka_gripper_move_topic)
+        if action_server_exists(franka_gripper_move_topic):
             # Connect to robot control action server
             self._gripper_move_client = actionlib.SimpleActionClient(
-                "franka_gripper/move",
+                franka_gripper_move_topic,
                 MoveAction,
             )
 
@@ -264,7 +275,7 @@ class PandaControlServer(object):
                 rospy.logwarn(
                     "No connection could be established with the '%s' service. "
                     "The Panda Robot Environment therefore can not use this action "
-                    "service to control the Panda Robot." % ("franka_gripper/move")
+                    "service to control the Panda Robot." % (franka_gripper_move_topic)
                 )
             else:
                 self._gripper_move_client_connected = True
@@ -272,7 +283,36 @@ class PandaControlServer(object):
             rospy.logwarn(
                 "No connection could be established with the '%s' service. "
                 "The Panda Robot Environment therefore can not use this action "
-                "service to control the Panda Robot." % ("franka_gripper/move")
+                "service to control the Panda Robot." % (franka_gripper_move_topic)
+            )
+        franka_gripper_grasp_topic = "franka_gripper/grasp"
+        rospy.logdebug(
+            "Connecting to '%s' action service." % franka_gripper_grasp_topic
+        )
+        if action_server_exists(franka_gripper_grasp_topic):
+            # Connect to robot control action server
+            self._gripper_grasp_client = actionlib.SimpleActionClient(
+                franka_gripper_grasp_topic,
+                GraspAction,
+            )
+
+            # Waits until the action server has started up
+            retval = self._gripper_grasp_client.wait_for_server(
+                timeout=rospy.Duration(secs=5)
+            )
+            if not retval:
+                rospy.logwarn(
+                    "No connection could be established with the '%s' service. "
+                    "The Panda Robot Environment therefore can not use this action "
+                    "service to control the Panda Robot." % (franka_gripper_grasp_topic)
+                )
+            else:
+                self._gripper_grasp_client_connected = True
+        else:
+            rospy.logwarn(
+                "No connection could be established with the '%s' service. "
+                "The Panda Robot Environment therefore can not use this action "
+                "service to control the Panda Robot." % (franka_gripper_grasp_topic)
             )
 
         ########################################
@@ -1333,7 +1373,7 @@ class PandaControlServer(object):
                 - union[:obj:`~panda_gazebo.msg.SetJointPositionsRequest`, :obj:`~panda_gazebo.msg.SetJointEffortsRequest`, ``None``]:
                     The arm set joint position/effort message or ``None`` if no
                     joint positions/efforts were found in the joint control command.
-                - union[:obj:`~franka_gripper.msg.MoveGoal`, ``None``]: The gripper
+                - union[:obj:`~panda_gazebo.msg.SetGripperWidth`, ``None``]: The gripper
                     action goal message or ``None`` if 'gripper_width' was not found in
                     the joint control command.
         """  # noqa: E501
@@ -1378,9 +1418,10 @@ class PandaControlServer(object):
         # Create hand control message
         # NOTE: Use 'kDefaultGripperActionSpeed' see 'franka_gripper.sim.h'
         if gripper_width_command:
-            gripper_req = MoveGoal()
+            gripper_req = SetGripperWidthRequest()
             gripper_req.width = gripper_width_command[0]
-            gripper_req.speed = 0.1
+            gripper_req.grasping = joint_commands_req.grasping
+            gripper_req.wait = joint_commands_req.wait
         else:
             gripper_req = None
 
@@ -1581,7 +1622,7 @@ class PandaControlServer(object):
 
         # Send control commands
         if gripper_command_msg is not None:
-            self._gripper_move_client.send_goal(gripper_command_msg)
+            self._set_gripper_width_cb(gripper_command_msg)
         if arm_command_msg is not None:
             if control_type == "position":
                 arm_resp = self._arm_set_joint_positions_cb(arm_command_msg)
@@ -1589,7 +1630,7 @@ class PandaControlServer(object):
                 arm_resp = self._arm_set_joint_efforts_cb(arm_command_msg)
         if set_joint_commands_req.wait:
             if gripper_command_msg is not None:
-                gripper_result = self._gripper_move_client.wait_for_result()
+                gripper_result = self._gripper_grasp_client.wait_for_result()
             else:
                 gripper_result = True
 
@@ -1852,6 +1893,13 @@ class PandaControlServer(object):
         Returns:
             :obj:`panda_gazebo.srv.SetGripperWidthResponse`: Service response.
         """
+        resp = SetGripperWidthResponse()
+        franka_gripper_service_available = (
+            self._gripper_grasp_client_connected
+            if set_gripper_width_req.grasping
+            else self._gripper_move_client_connected
+        )
+
         # Check if gripper width is within boundaries
         if set_gripper_width_req.width < 0.0 or set_gripper_width_req.width > 0.08:
             rospy.logwarn(
@@ -1861,24 +1909,45 @@ class PandaControlServer(object):
         else:
             gripper_width = set_gripper_width_req.width
 
-        # Create 'franka_gripper/move' action request message
-        # NOTE: Use 'kDefaultGripperActionSpeed' see 'franka_gripper.sim.h'
-        req = MoveGoal()
-        req.width = gripper_width
-        req.speed = 0.1
-
-        # Invoke 'franka_gripper/move' aciton server
-        self.gripper_width_setpoint = gripper_width
-        self._gripper_move_client.send_goal(req)
-
-        # Return result
-        resp = SetGripperWidthResponse()
-        if set_gripper_width_req.wait:
-            gripper_result = self._gripper_move_client.wait_for_result()
-            resp.success = gripper_result
-            self.gripper_width_setpoint = None
+        # Create grasp/move message
+        if set_gripper_width_req.grasping:
+            req = GraspGoal()
+            req.width = gripper_width
+            req.epsilon.inner = GRASP_EPSILON
+            req.epsilon.outer = GRASP_EPSILON
+            req.speed = GRASP_SPEED
+            req.force = GRASP_FORCE if set_gripper_width_req.grasping else 0
         else:
-            resp.success = True
+            req = MoveGoal()
+            req.width = gripper_width
+            req.speed = GRASP_SPEED
+
+        # Invoke 'franka_gripper' action service
+        if franka_gripper_service_available:
+            franka_gripper_service = (
+                self._gripper_grasp_client
+                if set_gripper_width_req.grasping
+                else self._gripper_move_client
+            )
+            self.gripper_width_setpoint = gripper_width
+            franka_gripper_service.send_goal(req)
+
+            # Wait for result
+            if set_gripper_width_req.wait:
+                gripper_result = franka_gripper_service.wait_for_result()
+                resp.success = gripper_result
+                self.gripper_width_setpoint = None
+            else:
+                resp.success = True
+        else:
+            rospy.logwarn(
+                "Cloud not connect to franka_gripper/{} service.".format(
+                    "grasp" if set_gripper_width_req.grasping else "move"
+                )
+            )
+            resp.success = False
+
+        # Add result message and return result
         if resp.success:
             resp.message = "Everything went OK"
         else:
