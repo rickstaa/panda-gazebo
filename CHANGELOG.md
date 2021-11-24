@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.2.0](https://github.com/rickstaa/panda-gazebo/compare/v2.1.4...v2.2.0) (2021-11-24)
+
+
+### Features
+
+* **panda_control_service:** add gripper grasp feature ([820b176](https://github.com/rickstaa/panda-gazebo/commit/820b176f98052e36333b73403e55b6c513f2b3cf))
+
 ### [2.1.4](https://github.com/rickstaa/panda-gazebo/compare/v2.1.3...v2.1.4) (2021-11-23)
 
 
