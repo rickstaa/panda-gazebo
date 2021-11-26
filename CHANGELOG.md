@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.2](https://github.com/rickstaa/panda-gazebo/compare/v2.2.1...v2.2.2) (2021-11-26)
+
+
+### Bug Fixes
+
+* **control_server:** fix control server 'wait_till_done' method ([6f3153a](https://github.com/rickstaa/panda-gazebo/commit/6f3153a33da3fef0765f6c2a1ede66364c619170))
+
 ### [2.2.1](https://github.com/rickstaa/panda-gazebo/compare/v2.2.0...v2.2.1) (2021-11-24)
 
 
