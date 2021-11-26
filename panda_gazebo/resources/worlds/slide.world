@@ -19,5 +19,13 @@
       <uri>model://puck</uri>
       <pose>0.4 0 0.419672 0 0 0</pose>
     </include>
+    <!--Camera settings-->
+    <gui fullscreen='0'>
+      <camera name='user_camera'>
+        <pose>1.59801 -1.66211 1.29545 -0 0.419643 2.23219</pose>
+        <view_controller>orbit</view_controller>
+        <projection_type>perspective</projection_type>
+      </camera>
+    </gui>
   </world>
 </sdf>
