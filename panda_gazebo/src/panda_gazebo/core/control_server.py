@@ -27,6 +27,7 @@ import numpy as np
 import rospy
 from controller_manager_msgs.srv import ListControllers, ListControllersRequest
 from franka_gripper.msg import GraspAction, GraspGoal, MoveAction, MoveGoal
+from franka_msgs.msg import FrankaState
 from panda_gazebo.common import ActionClientState
 from panda_gazebo.common.functions import (
     action_server_exists,
@@ -59,9 +60,10 @@ from sensor_msgs.msg import JointState
 from std_msgs.msg import Float64
 
 # Global script variables
-GRASP_EPSILON = 0.003  # Uses 'kGraspRestingThreshold' from 'franka_gripper.sim.h'
-GRASP_SPEED = 0.1  # Uses 'kDefaultGripperActionSpeed' from 'franka_gripper.sim.h'
+GRASP_EPSILON = 0.003  # NOTE: Uses 'kGraspRestingThreshold' from 'franka_gripper.sim.h'
+GRASP_SPEED = 0.1  # NOTE: Uses 'kDefaultGripperActionSpeed' from 'franka_gripper.sim.h'
 GRASP_FORCE = 5
+ACTION_TIMEOUT = 5  # How long we should wait for a action.
 DIRNAME = os.path.dirname(__file__)
 PANDA_JOINTS = {
     "arm": [
@@ -142,7 +144,7 @@ class PandaControlServer(object):
         self.hand_joint_positions_threshold = 0.001
         self.arm_joint_efforts_threshold = 0.01
         self.autofill_traj_positions = autofill_traj_positions
-        self._wait_till_done_timeout = rospy.Duration(8)
+        self._wait_till_arm_control_done_timeout = rospy.Duration(ACTION_TIMEOUT)
         self._arm_joint_positions_grad_threshold = 0.01
         self._hand_joint_positions_grad_threshold = 0.001
         self._arm_joint_efforts_grad_threshold = 0.01
@@ -206,7 +208,7 @@ class PandaControlServer(object):
         ########################################
         # Create panda_control publishers and ##
         # and connect to required (action) #####
-        # services. ############################
+        # services and messages. ###############
         ########################################
 
         # Create arm joint position controller publishers
@@ -314,6 +316,25 @@ class PandaControlServer(object):
                 "The Panda Robot Environment therefore can not use this action "
                 "service to control the Panda Robot." % (franka_gripper_grasp_topic)
             )
+
+        # Connect to franka_state message
+        self._franka_states = None
+        while self._franka_states is None and not rospy.is_shutdown():
+            try:
+                self._franka_states = rospy.wait_for_message(
+                    "franka_state_controller/franka_states", FrankaState, timeout=1.0
+                )
+            except ROSException:
+                rospy.logwarn(
+                    "Current franka_states not ready yet, retrying for getting %s"
+                    % "franka_States"
+                )
+        self._franka_states_sub = rospy.Subscriber(
+            "franka_state_controller/franka_states",
+            FrankaState,
+            self._franka_states_cb,
+            queue_size=1,
+        )
 
         ########################################
         # Connect joint state subscriber #######
@@ -563,7 +584,7 @@ class PandaControlServer(object):
             },
         }
 
-    def _wait_till_done(  # noqa: C901
+    def _wait_till_arm_control_done(  # noqa: C901
         self,
         control_type,
         controlled_joints=None,
@@ -580,7 +601,7 @@ class PandaControlServer(object):
                 are currently being controlled, these joints will be determined if no
                 dictionary is given.
             timeout (int, optional): The timeout when waiting for the control
-                to be done. Defaults to :attr:`_wait_till_done_timeout`.
+                to be done. Defaults to :attr:`_wait_till_arm_control_done_timeout`.
             check_gradient (boolean, optional): If enabled the script will also return
                 when the gradients become zero. Defaults to ``True``.
         """
@@ -642,28 +663,30 @@ class PandaControlServer(object):
         if timeout:
             timeout = rospy.Duration(timeout)
         else:
-            timeout = self._wait_till_done_timeout
+            timeout = self._wait_till_arm_control_done_timeout
 
         # Wait till robot positions/efforts reach the setpoint or the velocities are
         # not changing anymore
         timeout_time = rospy.get_rostime() + timeout
-        state_buffer = np.full((2, len(self.joint_states.position)), np.nan)
-        grad_buffer = np.full((2, len(self.joint_states.position)), np.nan)
         while not rospy.is_shutdown() and rospy.get_rostime() < timeout_time:
             # Wait till joint positions are within range or arm not changing anymore
             if control_type == "position":
                 joint_setpoint = self.arm_joint_positions_setpoint
-                joint_states = self.joint_states.position
+                joint_states = np.array(
+                    list(compress(self.joint_states.position, arm_states_mask))
+                )
                 state_threshold = self.arm_joint_positions_threshold
                 grad_threshold = self._arm_joint_positions_grad_threshold
             # Check if joint effort states are within setpoint
             elif control_type == "effort":
                 joint_setpoint = self.arm_joint_efforts_setpoint
-                joint_states = self.joint_states.effort
+                joint_states = self.cur_command_torques
                 state_threshold = self.arm_joint_efforts_threshold
                 grad_threshold = self._arm_joint_efforts_grad_threshold
 
             # Add current state to state_buffer and delete oldest entry
+            state_buffer = np.full((2, len(joint_states)), np.nan)
+            grad_buffer = np.full((2, len(joint_states)), np.nan)
             state_buffer = np.delete(
                 np.append(state_buffer, [joint_states], axis=0), 0, axis=0
             )
@@ -1578,12 +1601,30 @@ class PandaControlServer(object):
             * 2
         )
 
+    @property
+    def cur_command_torques(self):
+        """Retrieve currently achieved torque commands. Calculated by subtracting the
+        external torque and gravity torque from the effort that is supplied by gazebo.
+
+        Returns:
+            np.ndarray: The current torque commands.
+        """
+        tau_tot = np.array(self._franka_states.tau_J)
+        tau_command = np.array(self._franka_states.tau_J_d)
+        tau_ext = np.array(self._franka_states.tau_ext_hat_filtered)
+        gravity_torque = tau_ext - tau_tot + tau_command
+        return tau_tot - gravity_torque - tau_ext
+
     ################################################
     # Subscribers callback functions ###############
     ################################################
     def _joints_cb(self, data):
         """Callback function for the joint data subscriber."""
         self.joint_states = data
+
+    def _franka_states_cb(self, data):
+        """Callback function for the franka states data subscriber."""
+        self._franka_states = data
 
     ################################################
     # Control services callback functions ##########
@@ -1627,12 +1668,7 @@ class PandaControlServer(object):
             else:
                 arm_resp = self._arm_set_joint_efforts_cb(arm_command_msg)
         if gripper_command_msg is not None:
-            self._set_gripper_width_cb(gripper_command_msg)
-        if set_joint_commands_req.wait:
-            if gripper_command_msg is not None:
-                gripper_result = self._gripper_grasp_client.wait_for_result()
-            else:
-                gripper_result = True
+            gripper_result = self._set_gripper_width_cb(gripper_command_msg)
 
         # Return result
         resp = SetJointCommandsResponse()
@@ -1760,7 +1796,7 @@ class PandaControlServer(object):
 
         # Wait till control is finished or timeout has been reached
         if set_joint_positions_req.wait and not len(stopped_controllers) >= 1:
-            self._wait_till_done(
+            self._wait_till_arm_control_done(
                 control_type="position",
             )
 
@@ -1874,10 +1910,14 @@ class PandaControlServer(object):
         self._arm_joint_effort_pub.publish(control_pub_msgs)
 
         # Wait till control is finished or timeout has been reached
-        if set_joint_efforts_req.wait and not len(stopped_controllers) >= 1:
-            self._wait_till_done(
-                control_type="effort",
-            )
+        # NOTE: We currently do not have to wait since the FrankaHWSim does not yet
+        # implement control latency. Torques are therefore applied instantly. A feature
+        # request for this can be found on
+        # https://github.com/frankaemika/franka_ros/issues/208.
+        # if set_joint_efforts_req.wait and not len(stopped_controllers) >= 1:
+        #     self._wait_till_arm_control_done(
+        #         control_type="effort",
+        #     )
 
         resp.success = True
         resp.message = "Everything went OK"
@@ -1934,7 +1974,9 @@ class PandaControlServer(object):
 
             # Wait for result
             if set_gripper_width_req.wait:
-                gripper_result = franka_gripper_service.wait_for_result()
+                gripper_result = franka_gripper_service.wait_for_result(
+                    timeout=rospy.Duration.from_sec(ACTION_TIMEOUT)
+                )
                 resp.success = gripper_result
                 self.gripper_width_setpoint = None
             else:
@@ -2037,7 +2079,9 @@ class PandaControlServer(object):
             )
 
             # Wait for the server to finish performing the action
-            self._arm_joint_traj_client.wait_for_result()
+            self._arm_joint_traj_client.wait_for_result(
+                timeout=rospy.Duration.from_sec(ACTION_TIMEOUT)
+            )  # TODO: Check return type
 
             # Get result from action server
             self._result = self._arm_joint_traj_client.get_result()
