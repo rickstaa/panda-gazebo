@@ -28,3 +28,4 @@ node_modules
 # IDE
 .vscode
 *.code-workspace
+compile_commands.json
