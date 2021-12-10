@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.3.0](https://github.com/rickstaa/panda-gazebo/compare/v2.2.4...v2.3.0) (2021-12-10)
+
+
+### Features
+
+* add brute force grasping ([e89ebd2](https://github.com/rickstaa/panda-gazebo/commit/e89ebd230c9fd00bb12bcf1a4dccb54c17e8dfb9))
+* change physics engine to DART ([25d1e61](https://github.com/rickstaa/panda-gazebo/commit/25d1e61aefc4f191ca33bc4b07e50785db461917)), closes [/github.com/frankaemika/franka_ros/issues/160#issuecomment-989173918](https://github.com/rickstaa//github.com/frankaemika/franka_ros/issues/160/issues/issuecomment-989173918)
+* **panda_control_server:** improve `set_gripper_width` action ([496332f](https://github.com/rickstaa/panda-gazebo/commit/496332fc8fa23a5266450c2ea1453bf9ca81a29c))
+
+
+### Bug Fixes
+
+* add franka_ros[#211](https://github.com/rickstaa/panda-gazebo/issues/211) ([0a21fb3](https://github.com/rickstaa/panda-gazebo/commit/0a21fb302303995928b8dec54cbf7424dc1f2a8f)), closes [/github.com/frankaemika/franka_ros/issues/160#issuecomment-989173918](https://github.com/rickstaa//github.com/frankaemika/franka_ros/issues/160/issues/issuecomment-989173918)
+
 ### [2.2.4](https://github.com/rickstaa/panda-gazebo/compare/v2.2.3...v2.2.4) (2021-11-26)
 
 ### [2.2.3](https://github.com/rickstaa/panda-gazebo/compare/v2.2.2...v2.2.3) (2021-11-26)
