@@ -124,6 +124,7 @@ class PandaControlServer(object):
         autofill_traj_positions=False,
         connection_timeout=10,
         load_extra_services=False,
+        brute_force_grasping=False,
     ):
         """Initializes the PandaControlServer object.
 
@@ -135,7 +136,9 @@ class PandaControlServer(object):
                 controller_manager services. Defaults to 3 sec.
             load_extra_services (bool, optional): Whether to load extra services that
                 are not used by the `openai_ros <https://wiki.ros.org/openai_ros>`_
-                package.
+                package. Defaults to ``False``.
+            brute_force_grasping (bool, optional): Disable the gripper width reached
+                check when grasping. Defaults to ``False``.
         """
         self.arm_joint_positions_setpoint = []
         self.arm_joint_efforts_setpoint = []
@@ -151,6 +154,11 @@ class PandaControlServer(object):
         self._gripper_move_client_connected = False
         self._gripper_grasp_client_connected = False
         self._arm_joint_traj_client_connected = False
+
+        # Disable the gripper width reached check used in the
+        # franka_gripper/gripper_action` when the `max_effort` is bigger than 0.0.
+        if brute_force_grasping:
+            rospy.set_param("/franka_gripper/gripper_action/width_tolerance", 0.1)
 
         ########################################
         # Create Panda control services ########
@@ -260,6 +268,7 @@ class PandaControlServer(object):
         rospy.logdebug(
             "Connecting to '%s' action service." % franka_gripper_command_topic
         )
+        self._gripper_command_client_connected = False
         if action_server_exists(franka_gripper_command_topic):
             # Connect to robot control action server
             self._gripper_command_client = actionlib.SimpleActionClient(

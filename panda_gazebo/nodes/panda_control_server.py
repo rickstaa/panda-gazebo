@@ -26,10 +26,15 @@ if __name__ == "__main__":
         load_extra_services = rospy.get_param("~load_extra_services")
     except KeyError:
         load_extra_services = False
+    try:  # Disables the gripper width reached check when grasping.
+        brute_force_grasping = rospy.get_param("~brute_force_grasping")
+    except KeyError:
+        brute_force_grasping = False
 
     # Start control server
     control_server = PandaControlServer(
         autofill_traj_positions=autofill_traj_positions,
         load_extra_services=load_extra_services,
+        brute_force_grasping=brute_force_grasping,
     )
     rospy.spin()  # Maintain the service open

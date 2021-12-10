@@ -25,6 +25,7 @@
     <!--Control arguments-->
     <!--    The control type used for controlling the robot (Options: Trajectory, position, effort)-->
     <arg name="control_type" default="trajectory"/>
+    <arg name="brute_force_grasping" default="false" doc="Disable the gripper width reached check when grasping."/>
 
     <!--Retrieve the right hardware_interface for the control type-->
     <arg if="$(eval arg('control_type') == 'position')" name="hardware_interface" value="position"/>
@@ -76,7 +77,9 @@
     </node>
 
     <!--Load ros_control service-->
-    <node pkg="panda_gazebo" type="panda_control_server.py" name="panda_control_server" required="true"/>
+    <node pkg="panda_gazebo" type="panda_control_server.py" name="panda_control_server" required="true">
+        <param name="brute_force_grasping" value="$(arg brute_force_grasping)"/>
+    </node>
 
     <!--Load RViz-->
     <include if="$(arg rviz)" file="$(find panda_gazebo)/launch/panda_rviz.launch">
