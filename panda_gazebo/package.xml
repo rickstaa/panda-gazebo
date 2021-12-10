@@ -84,6 +84,9 @@
   <exec_depend>actionlib_msgs</exec_depend>
   <exec_depend>control_msgs</exec_depend>
   <exec_depend>moveit</exec_depend>
+  <exec_depend>position_controllers</exec_depend>
+  <exec_depend>effort_controllers</exec_depend>
+  <exec_depend>joint_trajectory_controller</exec_depend>
 
   <!--Extra run dependencies
     NOTE: Disabled by default as they are only needed for some test scripts
