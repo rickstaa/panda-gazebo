@@ -1,16 +1,16 @@
 <!-- Launch file for starting the empty gazebo environment -->
 <launch>
-    <!--Simulation arguments-->
-    <arg name="world" default="$(find panda_gazebo)/resources/worlds/empty.world"/>
-    <arg name="paused" default="true"/>
-    <arg name="verbose" default="false"/>
-    <arg name="gazebo_gui" default="true"/>
+  <!--Simulation arguments-->
+  <arg name="world" default="$(find panda_gazebo)/resources/worlds/empty.world" doc="Path to the world file"/>
+  <arg name="paused" default="true" doc="Start gazebo paused"/>
+  <arg name="verbose" default="false" doc="Enable Gazebo verbose mode"/>
+  <arg name="gazebo_gui" default="true" doc="Start the gazebo GUI"/>
 
-    <!--Start the gazebo world-->
-    <include file="$(find gazebo_ros)/launch/empty_world.launch">
-        <arg name="world_name" value="$(arg world)"/>
-        <arg name="verbose" value="$(arg verbose)"/>
-        <arg name="paused" value="$(arg paused)"/>
-        <arg name="gui" value="$(arg gazebo_gui)"/>
-    </include>
+  <!--Start the gazebo world-->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(arg world)"/>
+    <arg name="verbose" value="$(arg verbose)"/>
+    <arg name="paused" value="$(arg paused)"/>
+    <arg name="gui" value="$(arg gazebo_gui)"/>
+  </include>
 </launch>

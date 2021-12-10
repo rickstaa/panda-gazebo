@@ -1,37 +1,37 @@
 <!--Launch file loads the control parameters and controllers-->
 <launch>
-    <arg name="moveit" default="true" />
-    <arg name="load_gripper" default="true"/>
-    <!--Control arguments-->
-    <!--    The control type used for controlling the robot (Options: Trajectory, position, effort)-->
-    <arg name="control_type" default="trajectory"/>
+  <arg name="moveit" default="true" doc="Start MoveIt"/>
+  <arg name="load_gripper" default="true" doc="Load the gripper"/>
+  <!--Control arguments-->
+  <!--    The control type used for controlling the robot (Options: Trajectory, position, effort)-->
+  <arg name="control_type" default="trajectory" doc="The type of control used for controlling the arm. Options: trajectory, position, effort"/>
 
-    <!--Load control parameters-->
-    <!--    Load general Gazebo control configuration values-->
-    <rosparam file="$(find panda_gazebo)/cfg/controllers/gazebo_ros_control.yaml" command="load" />
-    <!--    Load general ros_control configuration values-->
-    <rosparam file="$(find panda_gazebo)/cfg/controllers/ros_control.yaml" command="load"/>
-    <!--    Load Moveit control configuration values-->
-    <rosparam if="$(eval arg('moveit') and arg('load_gripper'))" file="$(find panda_gazebo)/cfg/controllers/moveit_ros_control_gripper.yaml" command="load"/>
-    <rosparam unless="$(eval arg('moveit') and arg('load_gripper'))" file="$(find panda_gazebo)/cfg/controllers/moveit_ros_control.yaml" command="load"/>
+  <!--Load control parameters-->
+  <!--    Load general Gazebo control configuration values-->
+  <rosparam file="$(find panda_gazebo)/cfg/controllers/gazebo_ros_control.yaml" command="load" />
+  <!--    Load general ros_control configuration values-->
+  <rosparam file="$(find panda_gazebo)/cfg/controllers/ros_control.yaml" command="load"/>
+  <!--    Load Moveit control configuration values-->
+  <rosparam if="$(eval arg('moveit') and arg('load_gripper'))" file="$(find panda_gazebo)/cfg/controllers/moveit_ros_control_gripper.yaml" command="load"/>
+  <rosparam unless="$(eval arg('moveit') and arg('load_gripper'))" file="$(find panda_gazebo)/cfg/controllers/moveit_ros_control.yaml" command="load"/>
 
-    <!--Load controllers-->
-    <!--Joint position controllers-->
-    <group if="$(eval arg('control_type') == 'position')">
-        <include file="$(find panda_gazebo)/launch/load_joint_position_controllers.launch"/>
-        <!--Load joint_trajectory controller in stopped mode
+  <!--Load controllers-->
+  <!--Joint position controllers-->
+  <group if="$(eval arg('control_type') == 'position')">
+    <include file="$(find panda_gazebo)/launch/load_joint_position_controllers.launch"/>
+    <!--Load joint_trajectory controller in stopped mode
             NOTE: This enabled us to set the initial robot pose using euclidean coordinates.
         -->
-        <include file="$(find panda_gazebo)/launch/load_position_joint_trajectory_controllers.launch">
-            <arg name="stopped" value="true"/>
-        </include>
-    </group>
-    <!--Joint effort controllers-->
-    <group if="$(eval arg('control_type') == 'effort')">
-        <include file="$(find panda_gazebo)/launch/load_joint_effort_controllers.launch"/>
-    </group>
-    <!--Joint_trajectory controller-->
-    <include unless="$(eval arg('control_type') == 'position')" file="$(find panda_gazebo)/launch/load_effort_joint_trajectory_controllers.launch">
-        <arg name="stopped" value="$(eval arg('control_type') == 'effort')"/>
+    <include file="$(find panda_gazebo)/launch/load_position_joint_trajectory_controllers.launch">
+      <arg name="stopped" value="true"/>
     </include>
+  </group>
+  <!--Joint effort controllers-->
+  <group if="$(eval arg('control_type') == 'effort')">
+    <include file="$(find panda_gazebo)/launch/load_joint_effort_controllers.launch"/>
+  </group>
+  <!--Joint_trajectory controller-->
+  <include unless="$(eval arg('control_type') == 'position')" file="$(find panda_gazebo)/launch/load_effort_joint_trajectory_controllers.launch">
+    <arg name="stopped" value="$(eval arg('control_type') == 'effort')"/>
+  </include>
 </launch>

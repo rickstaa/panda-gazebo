@@ -1,90 +1,89 @@
 <!--Launch file for adding the panda robot to the gazebo world-->
-<!--TODO: Cleanup when panda_moveit_config noetic-branch is released-->
 <launch>
-    <arg name="rviz" default="true"/>
-    <arg name="load_gripper" default="true"/>
-    <arg name="debug" default="false"/>
-    <!--Moveit arguments-->
-    <arg name="moveit" default="true"/>
-    <arg name="rviz_file" default=""/>
-    <arg name="pipeline" default="ompl"/>
-    <arg name="end_effector" default="panda_link8"/>
-    <arg name="max_velocity_scaling_factor" default="1.0"/>
-    <arg name="max_acceleration_scaling_factor" default="1.0"/>
-    <!-- Gazebo specific options -->
-    <arg name="world" default="$(find panda_gazebo)/resources/worlds/empty.world"/>
-    <arg name="gazebo" default="false"/>
-    <arg name="gazebo_gui" default="true"/>
-    <arg name="paused" default="false"/>
-    <arg name="x" default="0"/>
-    <arg name="y" default="0"/>
-    <arg name="z" default="0"/>
-    <arg name="roll" default="0"/>
-    <arg name="pitch" default="0"/>
-    <arg name="yaw" default="0"/>
-    <!--Control arguments-->
-    <!--    The control type used for controlling the robot (Options: Trajectory, position, effort)-->
-    <arg name="control_type" default="trajectory"/>
-    <arg name="brute_force_grasping" default="false" doc="Disable the gripper width reached check when grasping."/>
+  <arg name="rviz" default="true" doc="Start Rviz"/>
+  <arg name="load_gripper" default="true" doc="Load the gripper"/>
+  <arg name="debug" default="false" doc="Add gdb debug flag"/>
+  <!--Moveit arguments-->
+  <arg name="moveit" default="true" doc="Start MoveIt"/>
+  <arg name="rviz_file" default="" doc="Path to the Rviz configuration file"/>
+  <arg name="pipeline" default="ompl" doc="MoveIt planning pipeline"/>
+  <arg name="end_effector" default="panda_link8" doc="The end effector link"/>
+  <arg name="max_velocity_scaling_factor" default="1.0" doc="Factor used when scaling the MoveIt plan velocity"/>
+  <arg name="max_acceleration_scaling_factor" default="1.0" doc="Factor used when scaling the MoveIt plan acceleration"/>
+  <!-- Gazebo specific options -->
+  <arg name="world" default="$(find panda_gazebo)/resources/worlds/empty.world" doc="Path to the world file"/>
+  <arg name="gazebo" default="false" doc="Start Gazebo"/>
+  <arg name="paused" default="false" doc="Start gazebo paused"/>
+  <arg name="gazebo_gui" default="true" doc="Start the gazebo GUI"/>
+  <arg name="x" default="0" doc="How far forward to place the base of the robot in [m]?"/>
+  <arg name="y" default="0" doc="How far leftwards to place the base of the robot in [m]?"/>
+  <arg name="z" default="0" doc="How far upwards to place the base of the robot in [m]?"/>
+  <arg name="roll" default="0" doc="How much to rotate the base of the robot around its X-axis in [rad]?"/>
+  <arg name="pitch" default="0" doc="How much to rotate the base of the robot around its Y-axis in [rad]?"/>
+  <arg name="yaw" default="0" doc="How much to rotate the base of the robot around its Z-axis in [rad]?"/>
+  <!--Control arguments-->
+  <!--    The control type used for controlling the robot (Options: Trajectory, position, effort)-->
+  <arg name="control_type" default="trajectory" doc="The type of control used for controlling the arm. Options: trajectory, position, effort"/>
+  <arg name="brute_force_grasping" default="false" doc="Disable the gripper width reached check when grasping."/>
 
-    <!--Retrieve the right hardware_interface for the control type-->
-    <arg if="$(eval arg('control_type') == 'position')" name="hardware_interface" value="position"/>
-    <arg unless="$(eval arg('control_type') == 'position')" name="hardware_interface" value="effort"/>
+  <!--Retrieve the right transmission for the control type-->
+  <arg if="$(eval arg('control_type') == 'position')" name="transmission" value="position"/>
+  <arg unless="$(eval arg('control_type') == 'position')" name="transmission" value="effort"/>
 
-    <!--Spawn the Panda robot-->
-    <include file="$(find franka_gazebo)/launch/panda.launch">
-        <arg name="gazebo" value="$(arg gazebo)"/>
-        <arg unless="$(arg gazebo_gui)" name="headless" value="true"/>
-        <arg if="$(arg gazebo_gui)" name="headless" value="false"/>
-        <arg name="paused" value="$(arg paused)"/>
-        <arg name="world" value="$(arg world)"/>
-        <arg name="use_gripper" default="$(arg load_gripper)"/>
-        <arg name="transmission" value="$(arg hardware_interface)"/>
-        <arg name="x" value="$(arg x)"/>
-        <arg name="y" value="$(arg y)"/>
-        <arg name="z" value="$(arg z)"/>
-        <arg name="roll" value="$(arg roll)"/>
-        <arg name="pitch" value="$(arg pitch)"/>
-        <arg name="yaw" value="$(arg yaw)" />
-    </include>
+  <!--Spawn the Panda robot-->
+  <include file="$(find franka_gazebo)/launch/panda.launch">
+    <arg name="gazebo" value="$(arg gazebo)"/>
+    <arg unless="$(arg gazebo_gui)" name="headless" value="true"/>
+    <arg if="$(arg gazebo_gui)" name="headless" value="false"/>
+    <arg name="paused" value="$(arg paused)"/>
+    <arg name="world" value="$(arg world)"/>
+    <arg name="use_gripper" default="$(arg load_gripper)"/>
+    <arg name="transmission" value="$(arg transmission)"/>
+    <arg name="x" value="$(arg x)"/>
+    <arg name="y" value="$(arg y)"/>
+    <arg name="z" value="$(arg z)"/>
+    <arg name="roll" value="$(arg roll)"/>
+    <arg name="pitch" value="$(arg pitch)"/>
+    <arg name="yaw" value="$(arg yaw)" />
+  </include>
 
-    <!--Run the main MoveIt! executable without trajectory execution (we do not have controllers configured by default)-->
-    <include if="$(arg moveit)" file="$(find panda_moveit_config)/launch/move_group.launch">
-        <arg name="info" value="true"/>
-        <arg name="debug" value="$(arg debug)"/>
-        <arg name="pipeline" value="$(arg pipeline)" />
-        <arg name="allow_trajectory_execution" value="true"/>
-        <arg name="fake_execution" value="false"/>
-        <arg name="load_gripper" value="$(arg load_gripper)"/>
-        <arg name="load_robot_description" value="false"/>
-    </include>
+  <!--Run the main MoveIt! executable without trajectory execution (we do not have controllers configured by default)-->
+  <include if="$(arg moveit)" file="$(find panda_moveit_config)/launch/move_group.launch">
+    <arg name="info" value="true"/>
+    <arg name="debug" value="$(arg debug)"/>
+    <arg name="pipeline" value="$(arg pipeline)" />
+    <arg name="allow_trajectory_execution" value="true"/>
+    <arg name="fake_execution" value="false"/>
+    <arg name="load_gripper" value="$(arg load_gripper)"/>
+    <arg name="load_robot_description" value="false"/>
+  </include>
 
-    <!--Load Moveit configuration values-->
-    <rosparam if="$(arg moveit)" file="$(find panda_gazebo)/cfg/controllers/moveit.yaml" command="load" />
+  <!--Load Moveit configuration values-->
+  <rosparam if="$(arg moveit)" file="$(find panda_gazebo)/cfg/controllers/moveit.yaml" command="load" />
 
-    <!--Load and start the controllers-->
-    <include file="$(find panda_gazebo)/launch/load_controllers.launch">
-        <arg name="moveit" default="$(arg moveit)"/>
-        <arg name="control_type" value="$(arg control_type)"/>
-        <arg name="load_gripper" value="$(arg load_gripper)"/>
-    </include>
+  <!--Load and start the controllers-->
+  <include file="$(find panda_gazebo)/launch/load_controllers.launch">
+    <arg name="moveit" default="$(arg moveit)"/>
+    <arg name="control_type" value="$(arg control_type)"/>
+    <arg name="load_gripper" value="$(arg load_gripper)"/>
+  </include>
 
-    <!--Load Moveit control services-->
-    <node if="$(arg moveit)" pkg="panda_gazebo" type="panda_moveit_server.py" name="panda_moveit_planner_server" required="true" args="">
-        <param name="end_effector" value="$(arg end_effector)"/>
-        <param name="max_velocity_scaling_factor" value="$(arg max_velocity_scaling_factor)"/>
-        <param name="max_acceleration_scaling_factor" value="$(arg max_acceleration_scaling_factor)"/>
-    </node>
+  <!--Load Moveit control services-->
+  <node if="$(arg moveit)" pkg="panda_gazebo" type="panda_moveit_server.py" name="panda_moveit_planner_server" required="true" args="">
+    <param name="end_effector" value="$(arg end_effector)"/>
+    <param name="max_velocity_scaling_factor" value="$(arg max_velocity_scaling_factor)"/>
+    <param name="max_acceleration_scaling_factor" value="$(arg max_acceleration_scaling_factor)"/>
+  </node>
 
-    <!--Load ros_control service-->
-    <node pkg="panda_gazebo" type="panda_control_server.py" name="panda_control_server" required="true">
-        <param name="brute_force_grasping" value="$(arg brute_force_grasping)"/>
-    </node>
+  <!--Load ros_control service-->
+  <node pkg="panda_gazebo" type="panda_control_server.py" name="panda_control_server" required="true">
+    <param name="brute_force_grasping" value="$(arg brute_force_grasping)"/>
+  </node>
 
-    <!--Load RViz-->
-    <include if="$(arg rviz)" file="$(find panda_gazebo)/launch/panda_rviz.launch">
-        <arg name="debug" value="$(arg debug)"/>
-        <arg name="moveit" value="$(arg moveit)"/>
-        <arg if="$(eval arg('rviz_file') != '')" name="rviz_file" value="$(arg rviz_file)"/>
-    </include>
+  <!--Load RViz-->
+  <include if="$(arg rviz)" file="$(find panda_gazebo)/launch/panda_rviz.launch">
+    <arg name="debug" value="$(arg debug)"/>
+    <arg name="moveit" value="$(arg moveit)"/>
+    <arg if="$(eval arg('rviz_file') != '')" name="rviz_file" value="$(arg rviz_file)"/>
+  </include>
 </launch>

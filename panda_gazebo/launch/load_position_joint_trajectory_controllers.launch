@@ -1,12 +1,12 @@
 <!-- Launch file for launching the robot controllers -->
 <launch>
-    <arg name="stopped" default="false"/>
+  <arg name="stopped" default="false"/>
 
-    <!--Load controller parameters-->
-    <rosparam file="$(find panda_gazebo)/cfg/controllers/position_joint_trajectory_controllers.yaml" command="load"/>
+  <!--Load controller parameters-->
+  <rosparam file="$(find panda_gazebo)/cfg/controllers/position_joint_trajectory_controllers.yaml" command="load"/>
 
-    <!--Load the controllers-->
-    <arg if="$(arg stopped)" name="command_args" value="--stopped"/>
-    <arg unless="$(arg stopped)" name="command_args" value=""/>
-    <node name="position_joint_trajectory_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="$(arg command_args) panda_arm_controller"/>
+  <!--Load the controllers-->
+  <arg if="$(arg stopped)" name="command_args" value="--stopped"/>
+  <arg unless="$(arg stopped)" name="command_args" value=""/>
+  <node name="position_joint_trajectory_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="$(arg command_args) panda_arm_controller"/>
 </launch>
