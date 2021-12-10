@@ -26,7 +26,7 @@ import control_msgs.msg as control_msgs
 import numpy as np
 import rospy
 from controller_manager_msgs.srv import ListControllers, ListControllersRequest
-from franka_gripper.msg import GraspAction, GraspGoal, MoveAction, MoveGoal
+from control_msgs.msg import GripperCommandAction, GripperCommandGoal
 from franka_msgs.msg import FrankaState
 from panda_gazebo.common import ActionClientState
 from panda_gazebo.common.functions import (
@@ -62,7 +62,7 @@ from std_msgs.msg import Float64
 # Global script variables
 GRASP_EPSILON = 0.003  # NOTE: Uses 'kGraspRestingThreshold' from 'franka_gripper.sim.h'
 GRASP_SPEED = 0.1  # NOTE: Uses 'kDefaultGripperActionSpeed' from 'franka_gripper.sim.h'
-GRASP_FORCE = 5
+GRASP_FORCE = 10  # Panda force information: {Continious force: 70N, max_force: 140 N}
 ACTION_TIMEOUT = 5  # How long we should wait for a action.
 DIRNAME = os.path.dirname(__file__)
 PANDA_JOINTS = {
@@ -256,65 +256,35 @@ class PandaControlServer(object):
             sys.exit(0)
 
         # Connect to the gripper command action server
-        # IMPROVE: We currently need to use both the 'franka_gripper/grasp' and
-        # 'franka_gripper/move' actions since the 'franka_gripper/gripper_command'.
-        # We can replace these services by the 'franka_gripper/gripper_action' service
-        # if https://github.com/frankaemika/franka_ros/issues/172 is solved.
-        franka_gripper_move_topic = "franka_gripper/move"
-        rospy.logdebug("Connecting to '%s' action service." % franka_gripper_move_topic)
-        if action_server_exists(franka_gripper_move_topic):
-            # Connect to robot control action server
-            self._gripper_move_client = actionlib.SimpleActionClient(
-                franka_gripper_move_topic,
-                MoveAction,
-            )
-
-            # Waits until the action server has started up
-            retval = self._gripper_move_client.wait_for_server(
-                timeout=rospy.Duration(secs=5)
-            )
-            if not retval:
-                rospy.logwarn(
-                    "No connection could be established with the '%s' service. "
-                    "The Panda Robot Environment therefore can not use this action "
-                    "service to control the Panda Robot." % (franka_gripper_move_topic)
-                )
-            else:
-                self._gripper_move_client_connected = True
-        else:
-            rospy.logwarn(
-                "No connection could be established with the '%s' service. "
-                "The Panda Robot Environment therefore can not use this action "
-                "service to control the Panda Robot." % (franka_gripper_move_topic)
-            )
-        franka_gripper_grasp_topic = "franka_gripper/grasp"
+        franka_gripper_command_topic = "franka_gripper/gripper_action"
         rospy.logdebug(
-            "Connecting to '%s' action service." % franka_gripper_grasp_topic
+            "Connecting to '%s' action service." % franka_gripper_command_topic
         )
-        if action_server_exists(franka_gripper_grasp_topic):
+        if action_server_exists(franka_gripper_command_topic):
             # Connect to robot control action server
-            self._gripper_grasp_client = actionlib.SimpleActionClient(
-                franka_gripper_grasp_topic,
-                GraspAction,
+            self._gripper_command_client = actionlib.SimpleActionClient(
+                franka_gripper_command_topic,
+                GripperCommandAction,
             )
 
             # Waits until the action server has started up
-            retval = self._gripper_grasp_client.wait_for_server(
+            retval = self._gripper_command_client.wait_for_server(
                 timeout=rospy.Duration(secs=5)
             )
             if not retval:
                 rospy.logwarn(
                     "No connection could be established with the '%s' service. "
                     "The Panda Robot Environment therefore can not use this action "
-                    "service to control the Panda Robot." % (franka_gripper_grasp_topic)
+                    "service to control the Panda Robot."
+                    % (franka_gripper_command_topic)
                 )
             else:
-                self._gripper_grasp_client_connected = True
+                self._gripper_command_client_connected = True
         else:
             rospy.logwarn(
                 "No connection could be established with the '%s' service. "
                 "The Panda Robot Environment therefore can not use this action "
-                "service to control the Panda Robot." % (franka_gripper_grasp_topic)
+                "service to control the Panda Robot." % (franka_gripper_command_topic)
             )
 
         # Connect to franka_state message
@@ -1934,11 +1904,6 @@ class PandaControlServer(object):
             :obj:`panda_gazebo.srv.SetGripperWidthResponse`: Service response.
         """
         resp = SetGripperWidthResponse()
-        franka_gripper_service_available = (
-            self._gripper_grasp_client_connected
-            if set_gripper_width_req.grasping
-            else self._gripper_move_client_connected
-        )
 
         # Check if gripper width is within boundaries
         if set_gripper_width_req.width < 0.0 or set_gripper_width_req.width > 0.08:
@@ -1949,32 +1914,19 @@ class PandaControlServer(object):
         else:
             gripper_width = set_gripper_width_req.width
 
-        # Create grasp/move message
-        if set_gripper_width_req.grasping:
-            req = GraspGoal()
-            req.width = gripper_width
-            req.epsilon.inner = GRASP_EPSILON
-            req.epsilon.outer = GRASP_EPSILON
-            req.speed = GRASP_SPEED
-            req.force = GRASP_FORCE if set_gripper_width_req.grasping else 0
-        else:
-            req = MoveGoal()
-            req.width = gripper_width
-            req.speed = GRASP_SPEED
+        # Create gripper command message
+        req = GripperCommandGoal()
+        req.command.position = gripper_width
+        req.command.max_effort = GRASP_FORCE if set_gripper_width_req.grasping else 0
 
         # Invoke 'franka_gripper' action service
-        if franka_gripper_service_available:
-            franka_gripper_service = (
-                self._gripper_grasp_client
-                if set_gripper_width_req.grasping
-                else self._gripper_move_client
-            )
+        if self._gripper_command_client_connected:
             self.gripper_width_setpoint = gripper_width
-            franka_gripper_service.send_goal(req)
+            self._gripper_command_client.send_goal(req)
 
             # Wait for result
             if set_gripper_width_req.wait:
-                gripper_result = franka_gripper_service.wait_for_result(
+                gripper_result = self._gripper_command_client.wait_for_result(
                     timeout=rospy.Duration.from_sec(ACTION_TIMEOUT)
                 )
                 resp.success = gripper_result
@@ -2081,7 +2033,7 @@ class PandaControlServer(object):
             # Wait for the server to finish performing the action
             self._arm_joint_traj_client.wait_for_result(
                 timeout=rospy.Duration.from_sec(ACTION_TIMEOUT)
-            )  # TODO: Check return type
+            )
 
             # Get result from action server
             self._result = self._arm_joint_traj_client.get_result()
