@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>panda_control_server &mdash; panda-gazebo 2.1.4 documentation</title>
+  <title>panda_control_server &mdash; panda-gazebo 2.3.0 documentation</title>
   
 
   
@@ -41,9 +41,7 @@
 
     
     <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="panda_moveit_server" href="panda_moveit_server.html" />
-    <link rel="prev" title="panda_gazebo.exceptions.InputMessageInvalidError" href="panda_gazebo.exceptions.InputMessageInvalidError.html" /> 
+    <link rel="search" title="Search" href="../../search.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -67,7 +65,7 @@
             
             
               <div class="version">
-                2.1.4
+                2.3.0
               </div>
             
           
@@ -103,19 +101,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../dev/doc_dev.html">Release documentation</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
-<ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="../api.html">Code API</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../api.html#modules">Modules</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="../api.html#ros-nodes">ROS nodes</a><ul class="current">
-<li class="toctree-l3 current"><a class="current reference internal" href="#">panda_control_server</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#source-code">Source code</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="panda_moveit_server.html">panda_moveit_server</a></li>
-</ul>
-</li>
-</ul>
-</li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">Code API</a></li>
 </ul>
 
             
@@ -164,8 +151,6 @@
     
       <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
         
-          <li><a href="../api.html">Code API</a> &raquo;</li>
-        
       <li>panda_control_server</li>
     
     
@@ -187,37 +172,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-panda_control_server">
-<span id="panda-control-server"></span><h1>panda_control_server<a class="headerlink" href="#module-panda_control_server" title="Permalink to this headline">¶</a></h1>
-<p>This node sets up a number of services that can be used to control the Panda Emika
-Franka robot.</p>
-<div class="section" id="source-code">
-<h2>Source code<a class="headerlink" href="#source-code" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="lineno"> 1 </span><span class="kn">import</span> <span class="nn">rospy</span>
-<span class="lineno"> 2 </span><span class="kn">from</span> <span class="nn">panda_gazebo.core.control_server</span> <span class="kn">import</span> <span class="n">PandaControlServer</span>
-<span class="lineno"> 3 </span>
-<span class="lineno"> 4 </span><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-<span class="lineno"> 5 </span>    <span class="n">rospy</span><span class="o">.</span><span class="n">init_node</span><span class="p">(</span><span class="s2">&quot;panda_control_server&quot;</span><span class="p">)</span>
-<span class="lineno"> 6 </span>
-<span class="lineno"> 7 </span>    <span class="c1"># Get ROS parameters</span>
-<span class="lineno"> 8 </span>    <span class="k">try</span><span class="p">:</span>  <span class="c1"># Auto fill joint traj position field if left empty</span>
-<span class="lineno"> 9 </span>        <span class="n">autofill_traj_positions</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_param</span><span class="p">(</span><span class="s2">&quot;~autofill_traj_positions&quot;</span><span class="p">)</span>
-<span class="lineno">10 </span>    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-<span class="lineno">11 </span>        <span class="n">autofill_traj_positions</span> <span class="o">=</span> <span class="bp">False</span>
-<span class="lineno">12 </span>    <span class="k">try</span><span class="p">:</span>  <span class="c1"># Check if extra services should be loaded</span>
-<span class="lineno">13 </span>        <span class="n">load_extra_services</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_param</span><span class="p">(</span><span class="s2">&quot;~load_extra_services&quot;</span><span class="p">)</span>
-<span class="lineno">14 </span>    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-<span class="lineno">15 </span>        <span class="n">load_extra_services</span> <span class="o">=</span> <span class="bp">False</span>
-<span class="lineno">16 </span>
-<span class="lineno">17 </span>    <span class="c1"># Start control server</span>
-<span class="lineno">18 </span>    <span class="n">control_server</span> <span class="o">=</span> <span class="n">PandaControlServer</span><span class="p">(</span>
-<span class="lineno">19 </span>        <span class="n">autofill_traj_positions</span><span class="o">=</span><span class="n">autofill_traj_positions</span><span class="p">,</span>
-<span class="lineno">20 </span>        <span class="n">load_extra_services</span><span class="o">=</span><span class="n">load_extra_services</span><span class="p">,</span>
-<span class="lineno">21 </span>    <span class="p">)</span>
-<span class="lineno">22 </span>    <span class="n">rospy</span><span class="o">.</span><span class="n">spin</span><span class="p">()</span>  <span class="c1"># Maintain the service open</span>
-</pre></div>
-</div>
-</div>
+  <div class="section" id="panda-control-server">
+<h1>panda_control_server<a class="headerlink" href="#panda-control-server" title="Permalink to this headline">¶</a></h1>
 </div>
 
 
@@ -225,10 +181,6 @@ Franka robot.</p>
            
           </div>
           <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="panda_moveit_server.html" class="btn btn-neutral float-right" title="panda_moveit_server" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="panda_gazebo.exceptions.InputMessageInvalidError.html" class="btn btn-neutral float-left" title="panda_gazebo.exceptions.InputMessageInvalidError" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-    </div>
 
   <hr/>
 

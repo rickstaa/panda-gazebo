@@ -1,6 +1,0 @@
-panda\_gazebo.common.functions.action\_dict\_2\_joint\_trajectory\_msg
-======================================================================
-
-.. currentmodule:: panda_gazebo.common.functions
-
-.. autofunction:: action_dict_2_joint_trajectory_msg

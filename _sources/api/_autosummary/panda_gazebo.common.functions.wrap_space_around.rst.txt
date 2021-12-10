@@ -1,6 +1,0 @@
-panda\_gazebo.common.functions.wrap\_space\_around
-==================================================
-
-.. currentmodule:: panda_gazebo.common.functions
-
-.. autofunction:: wrap_space_around

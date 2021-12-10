@@ -1,6 +1,0 @@
-panda\_gazebo.common.functions.normalize\_quaternion
-====================================================
-
-.. currentmodule:: panda_gazebo.common.functions
-
-.. autofunction:: normalize_quaternion
