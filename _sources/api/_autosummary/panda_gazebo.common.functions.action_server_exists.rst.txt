@@ -1,0 +1,6 @@
+panda\_gazebo.common.functions.action\_server\_exists
+=====================================================
+
+.. currentmodule:: panda_gazebo.common.functions
+
+.. autofunction:: action_server_exists

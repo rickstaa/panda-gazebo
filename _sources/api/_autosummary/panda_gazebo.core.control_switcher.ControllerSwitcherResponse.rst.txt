@@ -1,0 +1,23 @@
+panda\_gazebo.core.control\_switcher.ControllerSwitcherResponse
+===============================================================
+
+.. currentmodule:: panda_gazebo.core.control_switcher
+
+.. autoclass:: ControllerSwitcherResponse
+   :members:
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~ControllerSwitcherResponse.__init__
+   
+   
+
+   
+   
+   
