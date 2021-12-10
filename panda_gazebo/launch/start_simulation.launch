@@ -7,6 +7,7 @@
   <arg name="paused" default="true" doc="Start gazebo paused"/>
   <arg name="verbose" default="false" doc="Enable Gazebo verbose mode"/>
   <arg name="gazebo_gui" default="true" doc="Start the gazebo GUI"/>
+  <arg name="physics" default="dart" doc="The physics engine used by gazebo"/> <!--Phyics engines: dart|ode-->
   <!--Control arguments-->
   <!--    The control type used for controlling the robot (Options: Trajectory, position, effort)-->
   <arg name="control_type" default="effort" doc="The type of control used for controlling the arm. Options: trajectory, position, effort"/>
@@ -17,6 +18,7 @@
     <arg name="paused" value="$(arg paused)"/>
     <arg name="verbose" value="$(arg verbose)"/>
     <arg name="gazebo_gui" value="$(arg gazebo_gui)"/>
+    <arg name="physics" value="$(arg physics)"/>
   </include>
 
   <!--Put the robot into the simulation-->

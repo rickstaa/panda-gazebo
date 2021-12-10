@@ -5,6 +5,7 @@
   <arg name="paused" default="true" doc="Start gazebo paused"/>
   <arg name="verbose" default="false" doc="Enable Gazebo verbose mode"/>
   <arg name="gazebo_gui" default="true" doc="Start the gazebo GUI"/>
+  <arg name="physics" default="dart" doc="The physics engine used by gazebo"/> <!--Phyics engines: dart|ode-->
 
   <!--Start the gazebo world-->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
@@ -12,5 +13,6 @@
     <arg name="verbose" value="$(arg verbose)"/>
     <arg name="paused" value="$(arg paused)"/>
     <arg name="gui" value="$(arg gazebo_gui)"/>
+    <arg name="physics" value="$(arg physics)"/>
   </include>
 </launch>
