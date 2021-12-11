@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Welcome to panda-gazebo documentation &mdash; panda-gazebo 2.3.0 documentation</title>
+  <title>Welcome to panda-gazebo documentation &mdash; panda-gazebo 2.3.1 documentation</title>
   
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                2.3.0
+                2.3.1
               </div>
             
           
@@ -175,10 +175,52 @@
             
   <div class="section" id="welcome-to-panda-gazebo-documentation">
 <h1>Welcome to panda-gazebo documentation<a class="headerlink" href="#welcome-to-panda-gazebo-documentation" title="Permalink to this headline">¶</a></h1>
-<p>Welcome to the API documentation for the <a class="reference external" href="https://github.com/rickstaa/panda-gazebo/">panda-gazebo</a> package. This package contains all
-the components for the <a class="reference external" href="http://gazebosim.org/">gazebo</a> panda simulation that is used in the <a class="reference external" href="https://wiki.ros.org/openai_ros">openai_ros</a> ROS package.
-Below you will find more information about all the modules and ROS nodes that are contained in
-this package.</p>
+<p>Welcome to the API documentation for the <a class="reference external" href="https://github.com/rickstaa/panda-gazebo/">panda-gazebo</a> package. This package contains all the ROS packages
+needed for creating a <a class="reference external" href="https://frankaemika.github.io/docs">Panda Emika Franka</a> Gazebo simulation. It is used by the <a class="reference external" href="https://wiki.ros.org/openai_ros">openai_ros</a> ROS RL package to create the
+openai_ros Panda task environments.</p>
+<p>The <a class="reference external" href="https://github.com/rickstaa/panda-gazebo/">panda-gazebo</a> package wraps the <a class="reference external" href="https://github.com/frankaemika/franka_ros">franka_ros</a> and <a class="reference external" href="https://github.com/ros-planning/panda_moveit_config">panda_moveit_config</a> packages to add the extra
+functionalities needed to train RL agents efficiently. It contains several launch files and ROS nodes
+that ease the <a class="reference external" href="https://wiki.ros.org/openai_ros">openai_ros</a> interaction with the <a class="reference external" href="https://github.com/frankaemika/franka_ros/tree/develop/franka_gazebo">Panda Gazebo simulation</a>. These launch files can be used to spawn the
+Panda Robot in several distinct task environments (see <a class="reference external" href="https://theconstructcore.bitbucket.io/openai_ros/panda_environment.html#task-environments">the openai_ros documentation</a> for the available environments).
+The ROS nodes generate several ROS services that make it easier to control or get information from the robot. It contains
+the following ROS nodes:</p>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="simple">
+<dt><strong>panda_control_server</strong>: Creates services related to the panda_control.</dt><dd><ul>
+<li><p><strong>get_controlled_joints:</strong> Returns the panda joints that are currently controlled when using a given control type.</p></li>
+<li><p><strong>follow_joint_trajectory:</strong> Sets the arm joint trajectory and the gripper width.</p></li>
+<li><p><strong>set_joint_commands:</strong> Sets an arm command (i.e. position or effort) based on the specified control type.</p></li>
+<li><p><strong>panda_arm/follow_joint_trajectory:</strong> Sets the arm joint trajectory.</p></li>
+<li><p><strong>panda_hand/set_gripper_width:</strong> Sets the gripper width.</p></li>
+<li><p><strong>panda_arm/set_joint_positions:</strong> Sets the arm positions.</p></li>
+<li><p><strong>panda_arm/set_joint_efforts:</strong> Sets the arm efforts.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>panda_moveit_server:</strong> Creates services used to control the robot through <a class="reference external" href="https://moveit.ros.org">MoveIt</a>.</dt><dd><ul>
+<li><p><strong>panda_arm/set_ee_pose:</strong> Sets the end-effector pose.</p></li>
+<li><p><strong>get_random_joint_positions</strong>: Returns random valid joint positions.</p></li>
+<li><p><strong>get_random_ee_pose</strong>: Returns a valid random end-effector pose.</p></li>
+<li><p><strong>planning_scene/add_box</strong>: Adds a box to the MoveIt planning scene</p></li>
+<li><p><strong>panda_arm/get_ee</strong>: Returns the name currently used end-effector link.</p></li>
+<li><p><strong>panda_arm/set_ee</strong>: Sets the end effector link.</p></li>
+<li><p><strong>panda_arm/get_ee_pose</strong>: Returns the current end-effector pose.</p></li>
+<li><p><strong>panda_arm/get_ee_rpy</strong>: Returns the current end-effector orientation.</p></li>
+<li><p><strong>set_joint_positions</strong>: Sets the arm and Hand joints positions.</p></li>
+<li><p><strong>get_controlled_joints</strong>: Gets the joints that MoveIt currently controls.</p></li>
+<li><p><strong>panda_arm/set_joint_positions</strong>: Sets the arm joints positions.</p></li>
+<li><p><strong>panda_hand/set_joint_positions</strong>: Sets the hand joints position.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<p>See the ‘ message descriptions ‘ _ for more information about the messages these services require. For more information about all
+the modules and ROS nodes contained in this package see the sections below.</p>
 <div class="section" id="contents">
 <h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
