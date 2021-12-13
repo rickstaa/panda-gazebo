@@ -1,6 +1,6 @@
 {
   "name": "panda-gazebo",
-  "version": "2.3.8",
+  "version": "2.3.9",
   "description": "Gazebo panda simulation created for the Panda environment that is found in the 'openai_ros' ROS package.",
   "keywords": [
     "reinforcement-learning",
