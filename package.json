@@ -34,7 +34,7 @@
     ]
   },
   "lint-staged": {
-    "!(CHANGELOG.md)*.md": "./node_modules/.bin/remark . -o --",
+    "!(CHANGELOG)*.md": "./node_modules/.bin/remark . -o --",
     "!(**/(tests)/**)*.py": [
       "black",
       "flake8"
