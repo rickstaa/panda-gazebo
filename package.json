@@ -1,6 +1,6 @@
 {
   "name": "panda-gazebo",
-  "version": "2.3.1",
+  "version": "2.3.6",
   "description": "Gazebo panda simulation created for the Panda environment that is found in the 'openai_ros' ROS package.",
   "keywords": [
     "reinforcement-learning",
@@ -34,7 +34,7 @@
     ]
   },
   "lint-staged": {
-    "*.md": "./node_modules/.bin/remark -o .",
+    "!(CHANGELOG.md)*.md": "./node_modules/.bin/remark . -o --",
     "!(**/(tests)/**)*.py": [
       "black",
       "flake8"
