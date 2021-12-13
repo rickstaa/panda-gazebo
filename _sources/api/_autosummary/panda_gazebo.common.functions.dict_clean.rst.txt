@@ -1,6 +1,0 @@
-panda\_gazebo.common.functions.dict\_clean
-==========================================
-
-.. currentmodule:: panda_gazebo.common.functions
-
-.. autofunction:: dict_clean

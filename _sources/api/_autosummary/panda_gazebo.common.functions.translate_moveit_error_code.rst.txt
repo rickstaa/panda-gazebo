@@ -1,6 +1,0 @@
-panda\_gazebo.common.functions.translate\_moveit\_error\_code
-=============================================================
-
-.. currentmodule:: panda_gazebo.common.functions
-
-.. autofunction:: translate_moveit_error_code
