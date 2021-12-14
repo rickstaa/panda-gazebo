@@ -4,6 +4,7 @@
 # the set max/min boundaries.
 float64 width
 bool grasping # The gripper simply moves if this is `false`.
+float64 max_effort # The max effort used by the gripper.
 bool wait
 ---
 bool success

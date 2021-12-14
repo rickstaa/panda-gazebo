@@ -37,33 +37,30 @@ if __name__ == "__main__":
 
     # %% /panda_control_server/set_joint_commands test
 
-    # # Connect to /panda_control_server/set_joint_commands
-    # rospy.logdebug(
-    #     "Connecting to '/panda_control_server/set_joint_commands' service."
-    # )
-    # rospy.wait_for_service("/panda_control_server/set_joint_commands", timeout=10)
-    # set_arm_joint_effort_srv = rospy.ServiceProxy(
-    #     "/panda_control_server/set_joint_commands", SetJointCommands
-    # )
-    # rospy.logdebug(
-    #     "Connected to '/panda_control_server/set_joint_commands' service!"
-    # )
+    # Connect to /panda_control_server/set_joint_commands
+    rospy.logdebug("Connecting to '/panda_control_server/set_joint_commands' service.")
+    rospy.wait_for_service("/panda_control_server/set_joint_commands", timeout=10)
+    set_arm_joint_effort_srv = rospy.ServiceProxy(
+        "/panda_control_server/set_joint_commands", SetJointCommands
+    )
+    rospy.logdebug("Connected to '/panda_control_server/set_joint_commands' service!")
 
-    # # Generate joint_efforts msg
-    # set_joint_commands_msg = SetJointCommandsRequest()
-    # set_joint_commands_msg.joint_names = [
-    #     "panda_joint1",
-    #     "panda_joint2",
-    #     "panda_joint3",
-    #     "gripper_width",
-    # ]
-    # # set_joint_commands_msg.grasping = False
-    # set_joint_commands_msg.wait = True
-    # set_joint_commands_msg.control_type = "position"
-    # set_joint_commands_msg.joint_commands = [1, 2, 3, 0.03]
-    # set_joint_commands_msg.grasping = True
-    # retval = set_arm_joint_effort_srv.call(set_joint_commands_msg)
-    # print(retval)
+    # Generate joint_efforts msg
+    set_joint_commands_msg = SetJointCommandsRequest()
+    set_joint_commands_msg.joint_names = [
+        "panda_joint1",
+        "panda_joint2",
+        "panda_joint3",
+        "gripper_width",
+        "gripper_max_effort",
+    ]
+    # set_joint_commands_msg.grasping = False
+    set_joint_commands_msg.wait = True
+    set_joint_commands_msg.control_type = "position"
+    set_joint_commands_msg.joint_commands = [1, 2, 3, 0.03, 130]
+    set_joint_commands_msg.grasping = True
+    retval = set_arm_joint_effort_srv.call(set_joint_commands_msg)
+    print(retval)
 
     # -- TEST SET ARM JOINT EFFORTS --
 

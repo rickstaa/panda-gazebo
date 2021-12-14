@@ -1408,6 +1408,11 @@ class PandaControlServer(object):
             for key, val in joint_commands_dict.items()
             if key.lower() == "gripper_width"
         ]
+        max_effort_command = [
+            val
+            for key, val in joint_commands_dict.items()
+            if key.lower() == "gripper_max_effort"
+        ]
 
         # Create arm control message
         if arm_joint_commands_dict:
@@ -1430,6 +1435,7 @@ class PandaControlServer(object):
             gripper_req = SetGripperWidthRequest()
             gripper_req.width = gripper_width_command[0]
             gripper_req.grasping = joint_commands_req.grasping
+            gripper_req.max_effort = max_effort_command[0]
             gripper_req.wait = joint_commands_req.wait
         else:
             gripper_req = None
@@ -1936,6 +1942,9 @@ class PandaControlServer(object):
         resp = SetGripperWidthResponse()
 
         # Check if gripper width is within boundaries
+        set_gripper_width_req.width = (
+            set_gripper_width_req.width / 2
+        )  # NOTE: Done because the gripper command action takes in the joints positions
         if set_gripper_width_req.width < 0.0 or set_gripper_width_req.width > 0.08:
             rospy.logwarn(
                 "Gripper width was clipped as it was not within bounds [0, 0.8]."
@@ -1947,7 +1956,12 @@ class PandaControlServer(object):
         # Create gripper command message
         req = GripperCommandGoal()
         req.command.position = gripper_width
-        req.command.max_effort = GRASP_FORCE if set_gripper_width_req.grasping else 0
+        req.command.max_effort = (
+            set_gripper_width_req.max_effort
+            if set_gripper_width_req.max_effort != 0.0
+            and set_gripper_width_req.grasping
+            else (GRASP_FORCE if set_gripper_width_req.grasping else 0.0)
+        )
 
         # Invoke 'franka_gripper' action service
         if self._gripper_command_client_connected:
