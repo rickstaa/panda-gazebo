@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.4.0](https://github.com/rickstaa/panda-gazebo/compare/v2.3.13...v2.4.0) (2021-12-14)
+
+
+### Features
+
+* add 'max_effort' gripper command parameter ([777f003](https://github.com/rickstaa/panda-gazebo/commit/777f003b3ed26e20dc42122c938cf8986e67d780))
+
 ### [2.3.11](https://github.com/rickstaa/panda-gazebo/compare/v2.3.10...v2.3.11) (2021-12-13)
 
 ### [2.3.10](https://github.com/rickstaa/panda-gazebo/compare/v2.3.9...v2.3.10) (2021-12-13)
