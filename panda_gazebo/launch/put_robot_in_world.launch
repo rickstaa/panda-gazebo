@@ -47,6 +47,10 @@
     <arg name="yaw" value="$(arg yaw)" />
   </include>
 
+  <!--Set panda_gazebo parameters-->
+  <!--  Disable franka_gripper action console logs-->
+  <param name="franka_gripper/log_level" value="Warn"/>
+
   <!--Run the main MoveIt! executable without trajectory execution (we do not have controllers configured by default)-->
   <include if="$(arg moveit)" file="$(find panda_moveit_config)/launch/move_group.launch">
     <arg name="info" value="true"/>
