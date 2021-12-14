@@ -122,6 +122,7 @@ class PandaControlServer(object):
     def __init__(  # noqa: C901
         self,
         autofill_traj_positions=False,
+        load_gripper=True,
         connection_timeout=10,
         load_extra_services=False,
         brute_force_grasping=False,
@@ -132,6 +133,8 @@ class PandaControlServer(object):
             autofill_traj_positions (bool, optional): Whether you want to automatically
                 set the current states as positions when the positions field of the
                 joint trajectory message is left empty. Defaults to ``False``.
+            load_gripper (boolean, optional): Whether we also want to load the gripper
+                control services.
             connection_timeout (int, optional): The timeout for connecting to the
                 controller_manager services. Defaults to 3 sec.
             load_extra_services (bool, optional): Whether to load extra services that
@@ -154,6 +157,7 @@ class PandaControlServer(object):
         self._gripper_move_client_connected = False
         self._gripper_grasp_client_connected = False
         self._arm_joint_traj_client_connected = False
+        self._load_gripper = load_gripper
 
         # Disable the gripper width reached check used in the
         # franka_gripper/gripper_action` when the `max_effort` is bigger than 0.0.
@@ -203,15 +207,16 @@ class PandaControlServer(object):
         # is called and that users only need to set the gripper width while it
         # automatically sets the speed, epsilon and force. It also clips gripper width
         # that are not possible.
-        rospy.logdebug(
-            "Creating '%s/panda_hand/set_gripper_width' service." % rospy.get_name()
-        )
-        self._set_gripper_width_srv = rospy.Service(
-            "%s/panda_hand/set_gripper_width" % rospy.get_name().split("/")[-1],
-            SetGripperWidth,
-            self._set_gripper_width_cb,
-        )
-        rospy.loginfo("'%s' services created successfully." % rospy.get_name())
+        if self._load_gripper:
+            rospy.logdebug(
+                "Creating '%s/panda_hand/set_gripper_width' service." % rospy.get_name()
+            )
+            self._set_gripper_width_srv = rospy.Service(
+                "%s/panda_hand/set_gripper_width" % rospy.get_name().split("/")[-1],
+                SetGripperWidth,
+                self._set_gripper_width_cb,
+            )
+            rospy.loginfo("'%s' services created successfully." % rospy.get_name())
 
         ########################################
         # Create panda_control publishers and ##
@@ -264,37 +269,39 @@ class PandaControlServer(object):
             sys.exit(0)
 
         # Connect to the gripper command action server
-        franka_gripper_command_topic = "franka_gripper/gripper_action"
-        rospy.logdebug(
-            "Connecting to '%s' action service." % franka_gripper_command_topic
-        )
-        self._gripper_command_client_connected = False
-        if action_server_exists(franka_gripper_command_topic):
-            # Connect to robot control action server
-            self._gripper_command_client = actionlib.SimpleActionClient(
-                franka_gripper_command_topic,
-                GripperCommandAction,
+        if self._load_gripper:
+            franka_gripper_command_topic = "franka_gripper/gripper_action"
+            rospy.logdebug(
+                "Connecting to '%s' action service." % franka_gripper_command_topic
             )
+            self._gripper_command_client_connected = False
+            if action_server_exists(franka_gripper_command_topic):
+                # Connect to robot control action server
+                self._gripper_command_client = actionlib.SimpleActionClient(
+                    franka_gripper_command_topic,
+                    GripperCommandAction,
+                )
 
-            # Waits until the action server has started up
-            retval = self._gripper_command_client.wait_for_server(
-                timeout=rospy.Duration(secs=5)
-            )
-            if not retval:
+                # Waits until the action server has started up
+                retval = self._gripper_command_client.wait_for_server(
+                    timeout=rospy.Duration(secs=5)
+                )
+                if not retval:
+                    rospy.logwarn(
+                        "No connection could be established with the '%s' service. "
+                        "The Panda Robot Environment therefore can not use this action "
+                        "service to control the Panda Robot."
+                        % (franka_gripper_command_topic)
+                    )
+                else:
+                    self._gripper_command_client_connected = True
+            else:
                 rospy.logwarn(
                     "No connection could be established with the '%s' service. "
                     "The Panda Robot Environment therefore can not use this action "
                     "service to control the Panda Robot."
                     % (franka_gripper_command_topic)
                 )
-            else:
-                self._gripper_command_client_connected = True
-        else:
-            rospy.logwarn(
-                "No connection could be established with the '%s' service. "
-                "The Panda Robot Environment therefore can not use this action "
-                "service to control the Panda Robot." % (franka_gripper_command_topic)
-            )
 
         # Connect to franka_state message
         self._franka_states = None
@@ -1641,26 +1648,40 @@ class PandaControlServer(object):
         )
 
         # Send control commands
+        gripper_result = False
         if arm_command_msg is not None:
             if control_type == "position":
                 arm_resp = self._arm_set_joint_positions_cb(arm_command_msg)
             else:
                 arm_resp = self._arm_set_joint_efforts_cb(arm_command_msg)
-        if gripper_command_msg is not None:
+        if self._load_gripper and gripper_command_msg is not None:
             gripper_result = self._set_gripper_width_cb(gripper_command_msg)
+        elif gripper_command_msg is not None:
+            rospy.logwarn_once(
+                f"Gripper command could not be set since the '{rospy.get_name()}' "
+                "gripper services were not loaded. Please set the 'load_gripper` "
+                "argument to `True` if you want to control the gripper through the "
+                f"'{rospy.get_name()}'."
+            )
 
         # Return result
         resp = SetJointCommandsResponse()
-        if all([gripper_result, arm_resp.success]):
+        if (
+            (self._load_gripper and all([gripper_result, arm_resp.success]))
+            or not self._load_gripper
+            and arm_resp.success
+        ):
             resp.success = True
             resp.message = "Everything went OK"
-        elif all([not item for item in [gripper_result, arm_resp.success]]):
+        elif self._load_gripper and all(
+            [not item for item in [gripper_result, arm_resp.success]]
+        ):
             resp.success = False
             resp.message = "Joint control failed"
         elif not arm_resp.success:
             resp.success = False
             resp.message = "Arm control failed"
-        elif not gripper_result:
+        elif self._load_gripper and not gripper_result:
             resp.success = False
             resp.message = "Gripper control failed"
         return resp

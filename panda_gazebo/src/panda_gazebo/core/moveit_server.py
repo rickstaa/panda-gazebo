@@ -125,17 +125,12 @@ class PandaMoveitPlannerServer(object):
         """
         self._load_gripper = load_gripper
 
-        # Initialize MoveIt/Robot/Scene and group commanders
-        rospy.logdebug("Initialize MoveIt Robot/Scene and group commanders.")
+        # Initialize MoveIt/Robot/Scene commanders
+        rospy.logdebug("Initialize MoveIt Robot/Scene commanders.")
         try:
             moveit_commander.roscpp_initialize(sys.argv)
             self.robot = moveit_commander.RobotCommander()
             self.scene = moveit_commander.PlanningSceneInterface()
-            self.move_group_arm = moveit_commander.MoveGroupCommander(arm_move_group)
-            if self._load_gripper:
-                self.move_group_hand = moveit_commander.MoveGroupCommander(
-                    hand_move_group
-                )
         except Exception as e:
             if "invalid robot mode" in e.args[0]:
                 rospy.logerr(
@@ -143,17 +138,24 @@ class PandaMoveitPlannerServer(object):
                     % rospy.get_name()
                 )
                 sys.exit(0)
-            elif len(re.findall("Group '(.*)' was not found", e.args[0])) >= 1:
-                if hasattr(self, "move_group_arm"):
-                    logerror_move_group = "hand"
-                else:
-                    logerror_move_group = "arm"
+            else:
                 rospy.logerr(
-                    "Shutting down '%s' because Panda %s move group '%s' was not found."
+                    "Shutting down '%s' because %s" % (rospy.get_name(), e.args[0])
+                )
+                sys.exit(0)
+
+        # Initialize group commanders
+        try:
+            rospy.logdebug("Initialize MoveIt Panda arm commander.")
+            self.move_group_arm = moveit_commander.MoveGroupCommander(arm_move_group)
+        except Exception as e:
+            if len(re.findall("Group '(.*)' was not found", e.args[0])) >= 1:
+                rospy.logerr(
+                    "Shutting down '%s' because Panda arm move group '%s' was not "
+                    "found."
                     % (
                         rospy.get_name(),
-                        logerror_move_group,
-                        re.match(r"Group \'(.*)\' was not found.", e.args[0]).group(1),
+                        arm_move_group,
                     )
                 )
                 sys.exit(0)
@@ -162,6 +164,24 @@ class PandaMoveitPlannerServer(object):
                     "Shutting down '%s' because %s" % (rospy.get_name(), e.args[0])
                 )
                 sys.exit(0)
+        if self._load_gripper:
+            try:
+                rospy.logdebug("Initialize MoveIt Panda hand commander.")
+                self.move_group_hand = moveit_commander.MoveGroupCommander(
+                    hand_move_group
+                )
+            except Exception as e:
+                if len(re.findall("Group '(.*)' was not found", e.args[0])) >= 1:
+                    rospy.logwarn(
+                        "Gripper services could not be loaded since the "
+                        f"'{hand_move_group}' was not found."
+                    )
+                    self._load_gripper = False
+                else:
+                    rospy.logerr(
+                        "Shutting down '%s' because %s" % (rospy.get_name(), e.args[0])
+                    )
+                    sys.exit(0)
 
         self.move_group_arm.set_end_effector_link(arm_ee_link)
         self._display_trajectory_publisher = rospy.Publisher(
@@ -314,10 +334,11 @@ class PandaMoveitPlannerServer(object):
             joint in self._controlled_joints_dict["arm"]
             for joint in self._joint_states.name
         ]
-        self._hand_states_mask = [
-            joint in self._controlled_joints_dict["hand"]
-            for joint in self._joint_states.name
-        ]
+        if self._load_gripper:
+            self._hand_states_mask = [
+                joint in self._controlled_joints_dict["hand"]
+                for joint in self._joint_states.name
+            ]
 
     ################################################
     # Helper functions #############################
@@ -427,7 +448,8 @@ class PandaMoveitPlannerServer(object):
             if arm_plan_retval:
                 arm_retval = self.move_group_arm.go(wait=wait)
                 if wait:
-                    self.move_group_hand.stop()
+                    if self._load_gripper:
+                        self.move_group_hand.stop()
                     self.move_group_arm.stop()
             else:
                 rospy.logwarn(

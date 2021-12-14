@@ -73,11 +73,13 @@
     <param name="end_effector" value="$(arg end_effector)"/>
     <param name="max_velocity_scaling_factor" value="$(arg max_velocity_scaling_factor)"/>
     <param name="max_acceleration_scaling_factor" value="$(arg max_acceleration_scaling_factor)"/>
+    <param name="load_gripper" value="$(arg load_gripper)"/>
   </node>
 
   <!--Load ros_control service-->
   <node pkg="panda_gazebo" type="panda_control_server.py" name="panda_control_server" required="true">
     <param name="brute_force_grasping" value="$(arg brute_force_grasping)"/>
+    <param name="load_gripper" value="$(arg load_gripper)"/>
   </node>
 
   <!--Load RViz-->

@@ -22,6 +22,10 @@ if __name__ == "__main__":
         autofill_traj_positions = rospy.get_param("~autofill_traj_positions")
     except KeyError:
         autofill_traj_positions = False
+    try:
+        load_gripper = rospy.get_param("~load_gripper")
+    except KeyError:
+        load_gripper = True
     try:  # Check if extra services should be loaded
         load_extra_services = rospy.get_param("~load_extra_services")
     except KeyError:
@@ -34,6 +38,7 @@ if __name__ == "__main__":
     # Start control server
     control_server = PandaControlServer(
         autofill_traj_positions=autofill_traj_positions,
+        load_gripper=load_gripper,
         load_extra_services=load_extra_services,
         brute_force_grasping=brute_force_grasping,
     )
