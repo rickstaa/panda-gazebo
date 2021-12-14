@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>panda_gazebo.core.control_server.PandaControlServer &mdash; panda-gazebo 2.3.11 documentation</title>
+  <title>panda_gazebo.core.control_server.PandaControlServer &mdash; panda-gazebo 2.4.0 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.3.11
+                2.4.0
               </div>
             
           
@@ -199,7 +199,7 @@
 <h1>panda_gazebo.core.control_server.PandaControlServer<a class="headerlink" href="#panda-gazebo-core-control-server-pandacontrolserver" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="panda_gazebo.core.control_server.PandaControlServer">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">panda_gazebo.core.control_server.</span></span><span class="sig-name descname"><span class="pre">PandaControlServer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">autofill_traj_positions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">connection_timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_extra_services</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">brute_force_grasping</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/panda_gazebo/core/control_server.html#PandaControlServer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.core.control_server.PandaControlServer" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">panda_gazebo.core.control_server.</span></span><span class="sig-name descname"><span class="pre">PandaControlServer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">autofill_traj_positions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_gripper</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">connection_timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_extra_services</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">brute_force_grasping</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/panda_gazebo/core/control_server.html#PandaControlServer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.core.control_server.PandaControlServer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Controller server used to send control commands to the simulated Panda Robot.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="panda_gazebo.core.control_server.PandaControlServer.joints">
@@ -287,7 +287,7 @@ message is left empty.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="panda_gazebo.core.control_server.PandaControlServer.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">autofill_traj_positions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">connection_timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_extra_services</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">brute_force_grasping</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/panda_gazebo/core/control_server.html#PandaControlServer.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.core.control_server.PandaControlServer.__init__" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">autofill_traj_positions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_gripper</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">connection_timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_extra_services</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">brute_force_grasping</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/panda_gazebo/core/control_server.html#PandaControlServer.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.core.control_server.PandaControlServer.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initializes the PandaControlServer object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -295,6 +295,8 @@ message is left empty.</p>
 <li><p><strong>autofill_traj_positions</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether you want to automatically
 set the current states as positions when the positions field of the
 joint trajectory message is left empty. Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><strong>load_gripper</strong> (<em>boolean</em><em>, </em><em>optional</em>) – Whether we also want to load the gripper
+control services.</p></li>
 <li><p><strong>connection_timeout</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>optional</em>) – The timeout for connecting to the
 controller_manager services. Defaults to 3 sec.</p></li>
 <li><p><strong>load_extra_services</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to load extra services that

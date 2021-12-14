@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>panda_control_server &mdash; panda-gazebo 2.3.11 documentation</title>
+  <title>panda_control_server &mdash; panda-gazebo 2.4.0 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.3.11
+                2.4.0
               </div>
             
           
@@ -204,22 +204,27 @@ Franka robot.</p>
 <span class="lineno"> 9 </span>        <span class="n">autofill_traj_positions</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_param</span><span class="p">(</span><span class="s2">&quot;~autofill_traj_positions&quot;</span><span class="p">)</span>
 <span class="lineno">10 </span>    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
 <span class="lineno">11 </span>        <span class="n">autofill_traj_positions</span> <span class="o">=</span> <span class="bp">False</span>
-<span class="lineno">12 </span>    <span class="k">try</span><span class="p">:</span>  <span class="c1"># Check if extra services should be loaded</span>
-<span class="lineno">13 </span>        <span class="n">load_extra_services</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_param</span><span class="p">(</span><span class="s2">&quot;~load_extra_services&quot;</span><span class="p">)</span>
+<span class="lineno">12 </span>    <span class="k">try</span><span class="p">:</span>
+<span class="lineno">13 </span>        <span class="n">load_gripper</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_param</span><span class="p">(</span><span class="s2">&quot;~load_gripper&quot;</span><span class="p">)</span>
 <span class="lineno">14 </span>    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-<span class="lineno">15 </span>        <span class="n">load_extra_services</span> <span class="o">=</span> <span class="bp">False</span>
-<span class="lineno">16 </span>    <span class="k">try</span><span class="p">:</span>  <span class="c1"># Disables the gripper width reached check when grasping.</span>
-<span class="lineno">17 </span>        <span class="n">brute_force_grasping</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_param</span><span class="p">(</span><span class="s2">&quot;~brute_force_grasping&quot;</span><span class="p">)</span>
+<span class="lineno">15 </span>        <span class="n">load_gripper</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="lineno">16 </span>    <span class="k">try</span><span class="p">:</span>  <span class="c1"># Check if extra services should be loaded</span>
+<span class="lineno">17 </span>        <span class="n">load_extra_services</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_param</span><span class="p">(</span><span class="s2">&quot;~load_extra_services&quot;</span><span class="p">)</span>
 <span class="lineno">18 </span>    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-<span class="lineno">19 </span>        <span class="n">brute_force_grasping</span> <span class="o">=</span> <span class="bp">False</span>
-<span class="lineno">20 </span>
-<span class="lineno">21 </span>    <span class="c1"># Start control server</span>
-<span class="lineno">22 </span>    <span class="n">control_server</span> <span class="o">=</span> <span class="n">PandaControlServer</span><span class="p">(</span>
-<span class="lineno">23 </span>        <span class="n">autofill_traj_positions</span><span class="o">=</span><span class="n">autofill_traj_positions</span><span class="p">,</span>
-<span class="lineno">24 </span>        <span class="n">load_extra_services</span><span class="o">=</span><span class="n">load_extra_services</span><span class="p">,</span>
-<span class="lineno">25 </span>        <span class="n">brute_force_grasping</span><span class="o">=</span><span class="n">brute_force_grasping</span><span class="p">,</span>
-<span class="lineno">26 </span>    <span class="p">)</span>
-<span class="lineno">27 </span>    <span class="n">rospy</span><span class="o">.</span><span class="n">spin</span><span class="p">()</span>  <span class="c1"># Maintain the service open</span>
+<span class="lineno">19 </span>        <span class="n">load_extra_services</span> <span class="o">=</span> <span class="bp">False</span>
+<span class="lineno">20 </span>    <span class="k">try</span><span class="p">:</span>  <span class="c1"># Disables the gripper width reached check when grasping.</span>
+<span class="lineno">21 </span>        <span class="n">brute_force_grasping</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_param</span><span class="p">(</span><span class="s2">&quot;~brute_force_grasping&quot;</span><span class="p">)</span>
+<span class="lineno">22 </span>    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+<span class="lineno">23 </span>        <span class="n">brute_force_grasping</span> <span class="o">=</span> <span class="bp">False</span>
+<span class="lineno">24 </span>
+<span class="lineno">25 </span>    <span class="c1"># Start control server</span>
+<span class="lineno">26 </span>    <span class="n">control_server</span> <span class="o">=</span> <span class="n">PandaControlServer</span><span class="p">(</span>
+<span class="lineno">27 </span>        <span class="n">autofill_traj_positions</span><span class="o">=</span><span class="n">autofill_traj_positions</span><span class="p">,</span>
+<span class="lineno">28 </span>        <span class="n">load_gripper</span><span class="o">=</span><span class="n">load_gripper</span><span class="p">,</span>
+<span class="lineno">29 </span>        <span class="n">load_extra_services</span><span class="o">=</span><span class="n">load_extra_services</span><span class="p">,</span>
+<span class="lineno">30 </span>        <span class="n">brute_force_grasping</span><span class="o">=</span><span class="n">brute_force_grasping</span><span class="p">,</span>
+<span class="lineno">31 </span>    <span class="p">)</span>
+<span class="lineno">32 </span>    <span class="n">rospy</span><span class="o">.</span><span class="n">spin</span><span class="p">()</span>  <span class="c1"># Maintain the service open</span>
 </pre></div>
 </div>
 </div>

@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>panda_gazebo.core.moveit_server &mdash; panda-gazebo 2.3.11 documentation</title>
+  <title>panda_gazebo.core.moveit_server &mdash; panda-gazebo 2.4.0 documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.3.11
+                2.4.0
               </div>
             
           
@@ -296,17 +296,12 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_load_gripper</span> <span class="o">=</span> <span class="n">load_gripper</span>
 
-        <span class="c1"># Initialize MoveIt/Robot/Scene and group commanders</span>
-        <span class="n">rospy</span><span class="o">.</span><span class="n">logdebug</span><span class="p">(</span><span class="s2">&quot;Initialize MoveIt Robot/Scene and group commanders.&quot;</span><span class="p">)</span>
+        <span class="c1"># Initialize MoveIt/Robot/Scene commanders</span>
+        <span class="n">rospy</span><span class="o">.</span><span class="n">logdebug</span><span class="p">(</span><span class="s2">&quot;Initialize MoveIt Robot/Scene commanders.&quot;</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">moveit_commander</span><span class="o">.</span><span class="n">roscpp_initialize</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">robot</span> <span class="o">=</span> <span class="n">moveit_commander</span><span class="o">.</span><span class="n">RobotCommander</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">scene</span> <span class="o">=</span> <span class="n">moveit_commander</span><span class="o">.</span><span class="n">PlanningSceneInterface</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">move_group_arm</span> <span class="o">=</span> <span class="n">moveit_commander</span><span class="o">.</span><span class="n">MoveGroupCommander</span><span class="p">(</span><span class="n">arm_move_group</span><span class="p">)</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_gripper</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">move_group_hand</span> <span class="o">=</span> <span class="n">moveit_commander</span><span class="o">.</span><span class="n">MoveGroupCommander</span><span class="p">(</span>
-                    <span class="n">hand_move_group</span>
-                <span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">if</span> <span class="s2">&quot;invalid robot mode&quot;</span> <span class="ow">in</span> <span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
                 <span class="n">rospy</span><span class="o">.</span><span class="n">logerr</span><span class="p">(</span>
@@ -314,17 +309,24 @@
                     <span class="o">%</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
                 <span class="p">)</span>
                 <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;Group &#39;(.*)&#39; was not found&quot;</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;move_group_arm&quot;</span><span class="p">):</span>
-                    <span class="n">logerror_move_group</span> <span class="o">=</span> <span class="s2">&quot;hand&quot;</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">logerror_move_group</span> <span class="o">=</span> <span class="s2">&quot;arm&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
                 <span class="n">rospy</span><span class="o">.</span><span class="n">logerr</span><span class="p">(</span>
-                    <span class="s2">&quot;Shutting down &#39;</span><span class="si">%s</span><span class="s2">&#39; because Panda </span><span class="si">%s</span><span class="s2"> move group &#39;</span><span class="si">%s</span><span class="s2">&#39; was not found.&quot;</span>
+                    <span class="s2">&quot;Shutting down &#39;</span><span class="si">%s</span><span class="s2">&#39; because </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">rospy</span><span class="o">.</span><span class="n">get_name</span><span class="p">(),</span> <span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="p">)</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># Initialize group commanders</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">rospy</span><span class="o">.</span><span class="n">logdebug</span><span class="p">(</span><span class="s2">&quot;Initialize MoveIt Panda arm commander.&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">move_group_arm</span> <span class="o">=</span> <span class="n">moveit_commander</span><span class="o">.</span><span class="n">MoveGroupCommander</span><span class="p">(</span><span class="n">arm_move_group</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;Group &#39;(.*)&#39; was not found&quot;</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">rospy</span><span class="o">.</span><span class="n">logerr</span><span class="p">(</span>
+                    <span class="s2">&quot;Shutting down &#39;</span><span class="si">%s</span><span class="s2">&#39; because Panda arm move group &#39;</span><span class="si">%s</span><span class="s2">&#39; was not &quot;</span>
+                    <span class="s2">&quot;found.&quot;</span>
                     <span class="o">%</span> <span class="p">(</span>
                         <span class="n">rospy</span><span class="o">.</span><span class="n">get_name</span><span class="p">(),</span>
-                        <span class="n">logerror_move_group</span><span class="p">,</span>
-                        <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Group \&#39;(.*)\&#39; was not found.&quot;</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
+                        <span class="n">arm_move_group</span><span class="p">,</span>
                     <span class="p">)</span>
                 <span class="p">)</span>
                 <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
@@ -333,6 +335,24 @@
                     <span class="s2">&quot;Shutting down &#39;</span><span class="si">%s</span><span class="s2">&#39; because </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">rospy</span><span class="o">.</span><span class="n">get_name</span><span class="p">(),</span> <span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
                 <span class="p">)</span>
                 <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_gripper</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">rospy</span><span class="o">.</span><span class="n">logdebug</span><span class="p">(</span><span class="s2">&quot;Initialize MoveIt Panda hand commander.&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">move_group_hand</span> <span class="o">=</span> <span class="n">moveit_commander</span><span class="o">.</span><span class="n">MoveGroupCommander</span><span class="p">(</span>
+                    <span class="n">hand_move_group</span>
+                <span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;Group &#39;(.*)&#39; was not found&quot;</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">rospy</span><span class="o">.</span><span class="n">logwarn</span><span class="p">(</span>
+                        <span class="s2">&quot;Gripper services could not be loaded since the &quot;</span>
+                        <span class="n">f</span><span class="s2">&quot;&#39;</span><span class="si">{hand_move_group}</span><span class="s2">&#39; was not found.&quot;</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_load_gripper</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">rospy</span><span class="o">.</span><span class="n">logerr</span><span class="p">(</span>
+                        <span class="s2">&quot;Shutting down &#39;</span><span class="si">%s</span><span class="s2">&#39; because </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">rospy</span><span class="o">.</span><span class="n">get_name</span><span class="p">(),</span> <span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                    <span class="p">)</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">move_group_arm</span><span class="o">.</span><span class="n">set_end_effector_link</span><span class="p">(</span><span class="n">arm_ee_link</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_display_trajectory_publisher</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Publisher</span><span class="p">(</span>
@@ -485,10 +505,11 @@
             <span class="n">joint</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_controlled_joints_dict</span><span class="p">[</span><span class="s2">&quot;arm&quot;</span><span class="p">]</span>
             <span class="k">for</span> <span class="n">joint</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_joint_states</span><span class="o">.</span><span class="n">name</span>
         <span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_hand_states_mask</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">joint</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_controlled_joints_dict</span><span class="p">[</span><span class="s2">&quot;hand&quot;</span><span class="p">]</span>
-            <span class="k">for</span> <span class="n">joint</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_joint_states</span><span class="o">.</span><span class="n">name</span>
-        <span class="p">]</span></div>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_gripper</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_hand_states_mask</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">joint</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_controlled_joints_dict</span><span class="p">[</span><span class="s2">&quot;hand&quot;</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">joint</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_joint_states</span><span class="o">.</span><span class="n">name</span>
+            <span class="p">]</span></div>
 
     <span class="c1">################################################</span>
     <span class="c1"># Helper functions #############################</span>
@@ -598,7 +619,8 @@
             <span class="k">if</span> <span class="n">arm_plan_retval</span><span class="p">:</span>
                 <span class="n">arm_retval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">move_group_arm</span><span class="o">.</span><span class="n">go</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="n">wait</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">wait</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">move_group_hand</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_gripper</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">move_group_hand</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">move_group_arm</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">rospy</span><span class="o">.</span><span class="n">logwarn</span><span class="p">(</span>
