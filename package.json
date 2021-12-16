@@ -23,6 +23,7 @@
   "license": "UNLICENSED",
   "author": "Rick Staa",
   "scripts": {
+    "preinstall": "npx only-allow pnpm",
     "changelog": "HUSKY=0 standard-version --skip.bump --skip.commit --skip.tag",
     "prepare": "husky install",
     "release": "HUSKY=0 standard-version",
@@ -52,7 +53,6 @@
     "cz-conventional-changelog": "3.3.0",
     "husky": "7.0.4",
     "lint-staged": "12.1.2",
-    "pnpm": "6.24.0",
     "remark": "14.0.2",
     "remark-cli": "10.0.0",
     "remark-lint": "9.1.0",

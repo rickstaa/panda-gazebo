@@ -40,12 +40,15 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: "12"
+      - name: Install pnpm
+        run: |
+          npm install -g pnpm
       - name: Install standard-version
         run: |
-          npm install standard-version
+          pnpm install standard-version
       - name: Make sure the version in all code files is correct
         run: |
-          npm run release -- --skip.commit --skip.tag --skip.changelog --release-as ${{ steps.get_semver.outputs.current_version }}
+          pnpm run release -- --skip.commit --skip.tag --skip.changelog --release-as ${{ steps.get_semver.outputs.current_version }}
       - name: Commit code version changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
