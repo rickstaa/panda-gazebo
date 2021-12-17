@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.6.0](https://github.com/rickstaa/panda-gazebo/compare/v2.5.0...v2.6.0) (2021-12-17)
+
+
+### Features
+
+* **moveit_server:** add 'get_ee_pose_joint_config' service ([9e2580f](https://github.com/rickstaa/panda-gazebo/commit/9e2580f508e34d49d187310aa8acf72fef4e5aff))
+
 ## [2.5.0](https://github.com/rickstaa/panda-gazebo/compare/v2.4.2...v2.5.0) (2021-12-17)
 
 
