@@ -107,6 +107,7 @@
 
     <!--Export gazebo models and worlds-->
     <gazebo_ros gazebo_model_path="${prefix}/resources/models"/>
-    <gazebo_ros gazebo_resource_path="${prefix}/resources/worlds"/>
+    <gazebo_ros gazebo_media_path="${prefix}/resources/models"/>
+    <gazebo_ros gazebo_resource_path="${prefix}/resources"/>
   </export>
 </package>
