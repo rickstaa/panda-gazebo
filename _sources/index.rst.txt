@@ -29,6 +29,7 @@ the following ROS nodes:
       - **panda_arm/get_ee**: Returns the name currently used end-effector link.
       - **panda_arm/set_ee**: Sets the end effector link.
       - **panda_arm/get_ee_pose**: Returns the current end-effector pose.
+      - **panda_arm/get_ee_pose_joint_config**: Returns a set of possible joint configurations for a given end-effector pose.
       - **panda_arm/get_ee_rpy**: Returns the current end-effector orientation.
       - **set_joint_positions**: Sets the arm and Hand joints positions.
       - **get_controlled_joints**: Gets the joints that MoveIt currently controls.
