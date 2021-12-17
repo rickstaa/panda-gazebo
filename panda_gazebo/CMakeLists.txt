@@ -67,6 +67,7 @@ add_service_files(
   GetEe.srv
   SetEe.srv
   GetEePose.srv
+  GetEePoseJointConfig.srv
   GetEeRpy.srv
   GetRandomEePose.srv
   GetRandomJointPositions.srv

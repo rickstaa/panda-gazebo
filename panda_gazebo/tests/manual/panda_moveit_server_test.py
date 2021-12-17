@@ -6,6 +6,8 @@ from panda_gazebo.srv import (
     GetEe,
     GetEePose,
     GetEePoseRequest,
+    GetEePoseJointConfig,
+    GetEePoseJointConfigRequest,
     GetEeRequest,
     GetEeRpy,
     GetEeRpyRequest,
@@ -66,17 +68,17 @@ if __name__ == "__main__":
     # resp = setarm__joint_positions_srv.call(req)
     # print(resp.message)
 
-    # -- Test set panda_hand robot joint positions service --
-    req = SetJointPositionsRequest()
-    req.joint_positions = [0.0, 0.0]
-    # req.joint_positions = [0.03]
-    # req.joint_names = ["panda_finger_joint1"]
-    set_hand_joint_positions_srv = rospy.ServiceProxy(
-        "panda_moveit_planner_server/panda_hand/set_joint_positions",
-        SetJointPositions,
-    )
-    resp = set_hand_joint_positions_srv.call(req)
-    print(resp.message)
+    # # -- Test set panda_hand robot joint positions service --
+    # req = SetJointPositionsRequest()
+    # req.joint_positions = [0.0, 0.0]
+    # # req.joint_positions = [0.03]
+    # # req.joint_names = ["panda_finger_joint1"]
+    # set_hand_joint_positions_srv = rospy.ServiceProxy(
+    #     "panda_moveit_planner_server/panda_hand/set_joint_positions",
+    #     SetJointPositions,
+    # )
+    # resp = set_hand_joint_positions_srv.call(req)
+    # print(resp.message)
 
     # # -- Test set ee pose service --
     # req = SetEePoseRequest()
@@ -88,6 +90,19 @@ if __name__ == "__main__":
     # )
     # resp = set_ee_pose_srv.call(req)
     # print(resp.message)
+
+    # -- Test get ee pose joint config service --
+    req = GetEePoseJointConfigRequest()
+    req.pose.position.x = 0
+    req.pose.position.y = 0.5
+    req.pose.position.z = 0.5
+    get_ee_pose_joint_config_srv = rospy.ServiceProxy(
+        "panda_moveit_planner_server/panda_arm/get_ee_pose_joint_config", GetEePoseJointConfig
+    )
+    resp = get_ee_pose_joint_config_srv.call(req)
+    print(resp.joint_names)
+    print(resp.joint_positions)
+    print(resp.message)
 
     # # -- Test get ee pose service --
     # req = GetEePoseRequest()

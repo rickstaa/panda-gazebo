@@ -12,6 +12,7 @@ Extra services:
     * panda_arm/get_ee
     * panda_arm/set_ee
     * panda_arm/get_ee_pose
+    * panda_arm/get_ee_pose_joint_config
     * panda_arm/get_ee_rpy
     * set_joint_positions
     * get_controlled_joints
@@ -56,6 +57,8 @@ from panda_gazebo.srv import (
     AddBoxResponse,
     GetEe,
     GetEePose,
+    GetEePoseJointConfig,
+    GetEePoseJointConfigResponse,
     GetEePoseResponse,
     GetEeResponse,
     GetEeRpy,
@@ -209,6 +212,15 @@ class PandaMoveitPlannerServer(object):
             "%s/panda_arm/set_ee_pose" % rospy.get_name().split("/")[-1],
             SetEePose,
             self._arm_set_ee_pose_callback,
+        )
+        rospy.logdebug(
+            "Creating '%s/panda_arm/get_ee_pose_joint_config' service."
+            % rospy.get_name()
+        )
+        self._arm_get_ee_pose_joint_config_srv = rospy.Service(
+            "%s/panda_arm/get_ee_pose_joint_config" % rospy.get_name().split("/")[-1],
+            GetEePoseJointConfig,
+            self._arm_get_ee_pose_joint_config,
         )
         rospy.logdebug(
             "Creating '%s/get_random_joint_positions' service." % rospy.get_name()
@@ -804,6 +816,58 @@ class PandaMoveitPlannerServer(object):
                     config["max_acceleration_scaling_factor"]
                 )
         return config
+
+    def _arm_get_ee_pose_joint_config(self, get_ee_pose_joint_configuration):
+        """Request a set of joint configurations that lead to a given end-effector
+        (EE) pose.
+
+        Args:
+            set_ee_pose_req :obj:`geometry_msgs.msg.Pose`: The trajectory you want the
+                EE to follow.
+
+        Returns:
+            :obj:`panda_gazebo.srv.SetEePoseResponse`: Response message containing (
+                success bool, message).
+        """
+
+        # Make sure quaternion is normalized
+        if quaternion_norm(get_ee_pose_joint_configuration.pose.orientation) != 1.0:
+            rospy.logwarn(
+                "The quaternion in the set ee pose was normalized since moveit expects "
+                "normalized quaternions."
+            )
+            get_ee_pose_joint_configuration.pose.orientation = normalize_quaternion(
+                get_ee_pose_joint_configuration.pose.orientation
+            )
+
+        pose_target = Pose()
+        pose_target.orientation.x = get_ee_pose_joint_configuration.pose.orientation.x
+        pose_target.orientation.y = get_ee_pose_joint_configuration.pose.orientation.y
+        pose_target.orientation.z = get_ee_pose_joint_configuration.pose.orientation.z
+        pose_target.orientation.w = get_ee_pose_joint_configuration.pose.orientation.w
+        pose_target.position.x = get_ee_pose_joint_configuration.pose.position.x
+        pose_target.position.y = get_ee_pose_joint_configuration.pose.position.y
+        pose_target.position.z = get_ee_pose_joint_configuration.pose.position.z
+
+        # Retrieve joint configurations
+        resp = GetEePoseJointConfigResponse()
+        try:
+            retval, plan, _, _ = self.move_group_arm.plan(pose_target)
+
+            # Check if setpoint execution was successful
+            resp.joint_names = list(plan.joint_trajectory.joint_names)
+            resp.joint_positions = list(plan.joint_trajectory.points[-1].positions)
+            if not retval:
+                resp.success = False
+                resp.message = "Joint configuration could not be retrieved for Ee pose"
+            else:
+                resp.success = True
+                resp.message = "Everything went OK"
+        except MoveItCommanderException as e:
+            rospy.logwarn(e.args[0])
+            resp.success = False
+            resp.message = e.args[0]
+        return resp
 
     def _arm_set_ee_pose_callback(self, set_ee_pose_req):
         """Request the Panda arm to control to a given end effector

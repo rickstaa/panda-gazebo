@@ -1,0 +1,8 @@
+# Service that can be used to get a set of posible joint configuration for a given EE
+# pose using moveit.
+geometry_msgs/Pose pose
+---
+string[] joint_names
+float64[] joint_positions
+bool success
+string message
