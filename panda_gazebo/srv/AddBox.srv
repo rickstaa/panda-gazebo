@@ -2,7 +2,7 @@
 string name
 string frame_id
 geometry_msgs/Pose pose
-float64[] size
+float64[3] size
 ---
 bool success
 string message

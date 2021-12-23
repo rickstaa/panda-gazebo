@@ -1,16 +1,23 @@
 """This script can be used to manually test the 'panda_moveit_server' services"""
 
 import rospy
+from geometry_msgs.msg import Pose, Quaternion
 from panda_gazebo.msg import BoundingRegion
 from panda_gazebo.srv import (
+    AddBox,
+    AddBoxRequest,
+    AddPlane,
+    AddPlaneRequest,
     GetEe,
     GetEePose,
-    GetEePoseRequest,
     GetEePoseJointConfig,
     GetEePoseJointConfigRequest,
+    GetEePoseRequest,
     GetEeRequest,
     GetEeRpy,
     GetEeRpyRequest,
+    GetMoveItControlledJoints,
+    GetMoveItControlledJointsRequest,
     GetRandomEePose,
     GetRandomEePoseRequest,
     GetRandomJointPositions,
@@ -21,8 +28,6 @@ from panda_gazebo.srv import (
     SetEeRequest,
     SetJointPositions,
     SetJointPositionsRequest,
-    GetMoveItControlledJoints,
-    GetMoveItControlledJointsRequest,
 )
 
 if __name__ == "__main__":
@@ -91,18 +96,19 @@ if __name__ == "__main__":
     # resp = set_ee_pose_srv.call(req)
     # print(resp.message)
 
-    # -- Test get ee pose joint config service --
-    req = GetEePoseJointConfigRequest()
-    req.pose.position.x = 0
-    req.pose.position.y = 0.5
-    req.pose.position.z = 0.5
-    get_ee_pose_joint_config_srv = rospy.ServiceProxy(
-        "panda_moveit_planner_server/panda_arm/get_ee_pose_joint_config", GetEePoseJointConfig
-    )
-    resp = get_ee_pose_joint_config_srv.call(req)
-    print(resp.joint_names)
-    print(resp.joint_positions)
-    print(resp.message)
+    # # -- Test get ee pose joint config service --
+    # req = GetEePoseJointConfigRequest()
+    # req.pose.position.x = 0
+    # req.pose.position.y = 0.5
+    # req.pose.position.z = 0.5
+    # get_ee_pose_joint_config_srv = rospy.ServiceProxy(
+    #     "panda_moveit_planner_server/panda_arm/get_ee_pose_joint_config",
+    #     GetEePoseJointConfig,
+    # )
+    # resp = get_ee_pose_joint_config_srv.call(req)
+    # print(resp.joint_names)
+    # print(resp.joint_positions)
+    # print(resp.message)
 
     # # -- Test get ee pose service --
     # req = GetEePoseRequest()
@@ -174,3 +180,25 @@ if __name__ == "__main__":
     # )
     # resp = get_controlled_joints_srv.call(req)
     # print(resp.message)
+
+    # -- Test add Box service --
+    req = AddBoxRequest()
+    # req = AddBoxRequest(
+    #     name="box", pose=Pose(orientation=Quaternion(0, 0, 0, 1)), size=[1, 1, 1]
+    # )
+    add_box_srv = rospy.ServiceProxy(
+        "panda_moveit_planner_server/planning_scene/add_box",
+        AddBox,
+    )
+    resp = add_box_srv.call(req)
+    print(resp.message)
+
+    # -- Test add plane service --
+    # req = AddPlaneRequest()
+    req = AddPlaneRequest(name="plane", pose=Pose(orientation=Quaternion(0, 0, 0, 1)))
+    add_plane_srv = rospy.ServiceProxy(
+        "panda_moveit_planner_server/planning_scene/add_plane",
+        AddPlane,
+    )
+    resp = add_plane_srv.call(req)
+    print(resp.message)

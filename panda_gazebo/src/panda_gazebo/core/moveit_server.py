@@ -7,6 +7,7 @@ Main services:
     * get_random_joint_positions
     * get_random_ee_pose
     * planning_scene/add_box
+    * planning_scene/add_plane
 
 Extra services:
     * panda_arm/get_ee
@@ -37,7 +38,7 @@ import moveit_commander
 import numpy as np
 import rospy
 from dynamic_reconfigure.server import Server
-from geometry_msgs.msg import Pose, PoseStamped
+from geometry_msgs.msg import Pose, PoseStamped, Quaternion
 from moveit_commander.exception import MoveItCommanderException
 from moveit_msgs.msg import DisplayTrajectory
 from panda_gazebo.cfg import MoveitServerConfig
@@ -55,6 +56,8 @@ from panda_gazebo.exceptions import InputMessageInvalidError
 from panda_gazebo.srv import (
     AddBox,
     AddBoxResponse,
+    AddPlane,
+    AddPlaneResponse,
     GetEe,
     GetEePose,
     GetEePoseJointConfig,
@@ -310,6 +313,14 @@ class PandaMoveitPlannerServer(object):
             "%s/planning_scene/add_box" % rospy.get_name().split("/")[-1],
             AddBox,
             self._scene_add_box_callback,
+        )
+        rospy.logdebug(
+            "Creating '%s/planning_scene/add_plane' service." % rospy.get_name()
+        )
+        self._scene_add_plane_srv = rospy.Service(
+            "%s/planning_scene/add_plane" % rospy.get_name().split("/")[-1],
+            AddPlane,
+            self._scene_add_plane_callback,
         )
 
         rospy.loginfo("'%s' services created successfully." % rospy.get_name())
@@ -855,12 +866,12 @@ class PandaMoveitPlannerServer(object):
             retval, plan, _, _ = self.move_group_arm.plan(pose_target)
 
             # Check if setpoint execution was successful
-            resp.joint_names = list(plan.joint_trajectory.joint_names)
-            resp.joint_positions = list(plan.joint_trajectory.points[-1].positions)
             if not retval:
                 resp.success = False
                 resp.message = "Joint configuration could not be retrieved for Ee pose"
             else:
+                resp.joint_names = list(plan.joint_trajectory.joint_names)
+                resp.joint_positions = list(plan.joint_trajectory.points[-1].positions)
                 resp.success = True
                 resp.message = "Everything went OK"
         except MoveItCommanderException as e:
@@ -1666,15 +1677,55 @@ class PandaMoveitPlannerServer(object):
         resp = AddBoxResponse()
         try:
             self.scene.add_box(
-                name=add_box_req.name if add_box_req.name else "box",
-                pose=PoseStamped(header=pose_header, pose=box_pose)
+                add_box_req.name if add_box_req.name else "box",
+                PoseStamped(header=pose_header, pose=box_pose)
                 if add_box_req.pose
-                else None,
-                size=add_box_req.size if add_box_req.size else None,
+                else PoseStamped(orientation=Quaternion(0, 0, 0, 1)),
+                size=add_box_req.size if add_box_req.size else (1, 1, 1),
             )
         except Exception:
             resp.success = False
             resp.message = "Box could not be added"
+            return resp
+
+        # Return response
+        resp.success = True
+        resp.message = "Everything went OK"
+        return resp
+
+    def _scene_add_plane_callback(self, add_plane_req):
+        """Add plane to planning scene
+
+        Args:
+            add_plane_req (:obj:`panda_gazebo.srv.AddBoxRequest`): The add plane
+                request.
+
+        Returns:
+            bool: Whether the plane was successfully added.
+        """
+        pose_header = Header(
+            frame_id=add_plane_req.frame_id if add_plane_req.frame_id else "world"
+        )
+        plane_pose = Pose(
+            position=add_plane_req.pose.position,
+            orientation=normalize_quaternion(add_plane_req.pose.orientation),
+        )
+
+        # Send request
+        resp = AddPlaneResponse()
+        try:
+            self.scene.add_plane(
+                add_plane_req.name if add_plane_req.name else "plane",
+                PoseStamped(header=pose_header, pose=plane_pose)
+                if add_plane_req.pose
+                else PoseStamped(orientation=Quaternion(0, 0, 0, 1)),
+                normal=add_plane_req.normal if add_plane_req.normal else (0, 0, 1),
+                offset=add_plane_req.offset if add_plane_req.offset else 0,
+            )
+        except Exception:
+            resp.success = False
+            resp.message = "Plane could not be added"
+            return resp
 
         # Return response
         resp.success = True

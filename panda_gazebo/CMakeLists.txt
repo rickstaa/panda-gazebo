@@ -62,6 +62,7 @@ add_message_files(
 add_service_files(
   FILES
   AddBox.srv
+  AddPlane.srv
   GetControlledJoints.srv
   GetMoveItControlledJoints.srv
   GetEe.srv

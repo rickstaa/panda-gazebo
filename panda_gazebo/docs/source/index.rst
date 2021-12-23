@@ -26,6 +26,7 @@ the following ROS nodes:
       - **get_random_joint_positions**: Returns random valid joint positions.
       - **get_random_ee_pose**: Returns a valid random end-effector pose.
       - **planning_scene/add_box**: Adds a box to the MoveIt planning scene
+      - **planning_scene/add_plane**: Adds a plane to the MoveIt planning scene
       - **panda_arm/get_ee**: Returns the name currently used end-effector link.
       - **panda_arm/set_ee**: Sets the end effector link.
       - **panda_arm/get_ee_pose**: Returns the current end-effector pose.
