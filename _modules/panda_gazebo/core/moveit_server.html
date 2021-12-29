@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>panda_gazebo.core.moveit_server &mdash; panda-gazebo 2.7.0 documentation</title>
+  <title>panda_gazebo.core.moveit_server &mdash; panda-gazebo 2.7.1 documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.7.0
+                2.7.1
               </div>
             
           
@@ -1889,7 +1889,9 @@
                 <span class="n">add_plane_req</span><span class="o">.</span><span class="n">name</span> <span class="k">if</span> <span class="n">add_plane_req</span><span class="o">.</span><span class="n">name</span> <span class="k">else</span> <span class="s2">&quot;plane&quot;</span><span class="p">,</span>
                 <span class="n">PoseStamped</span><span class="p">(</span><span class="n">header</span><span class="o">=</span><span class="n">pose_header</span><span class="p">,</span> <span class="n">pose</span><span class="o">=</span><span class="n">plane_pose</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">add_plane_req</span><span class="o">.</span><span class="n">pose</span>
-                <span class="k">else</span> <span class="n">PoseStamped</span><span class="p">(</span><span class="n">orientation</span><span class="o">=</span><span class="n">Quaternion</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+                <span class="k">else</span> <span class="n">PoseStamped</span><span class="p">(</span>
+                    <span class="n">header</span><span class="o">=</span><span class="n">pose_header</span><span class="p">,</span> <span class="n">pose</span><span class="o">=</span><span class="n">Pose</span><span class="p">(</span><span class="n">orientation</span><span class="o">=</span><span class="n">Quaternion</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+                <span class="p">),</span>
                 <span class="n">normal</span><span class="o">=</span><span class="n">add_plane_req</span><span class="o">.</span><span class="n">normal</span> <span class="k">if</span> <span class="n">add_plane_req</span><span class="o">.</span><span class="n">normal</span> <span class="k">else</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
                 <span class="n">offset</span><span class="o">=</span><span class="n">add_plane_req</span><span class="o">.</span><span class="n">offset</span> <span class="k">if</span> <span class="n">add_plane_req</span><span class="o">.</span><span class="n">offset</span> <span class="k">else</span> <span class="mi">0</span><span class="p">,</span>
             <span class="p">)</span>
