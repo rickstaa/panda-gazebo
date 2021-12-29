@@ -182,10 +182,10 @@ if __name__ == "__main__":
     # print(resp.message)
 
     # -- Test add Box service --
-    req = AddBoxRequest()
-    # req = AddBoxRequest(
-    #     name="box", pose=Pose(orientation=Quaternion(0, 0, 0, 1)), size=[1, 1, 1]
-    # )
+    # req = AddBoxRequest()
+    req = AddBoxRequest(
+        name="box", pose=Pose(orientation=Quaternion(0, 0, 0, 1)), size=[1, 1, 1]
+    )
     add_box_srv = rospy.ServiceProxy(
         "panda_moveit_planner_server/planning_scene/add_box",
         AddBox,
