@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.7.1](https://github.com/rickstaa/panda-gazebo/compare/v2.7.0...v2.7.1) (2021-12-29)
+
+
+### Bug Fixes
+
+* **moveit_server:** fixes 'add_plane' bug ([a6a800b](https://github.com/rickstaa/panda-gazebo/commit/a6a800b36040e8d55d33558ad3c4ef452a7c6624))
+
 ## [2.7.0](https://github.com/rickstaa/panda-gazebo/compare/v2.6.0...v2.7.0) (2021-12-23)
 
 
