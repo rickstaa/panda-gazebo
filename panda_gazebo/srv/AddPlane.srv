@@ -3,7 +3,7 @@ string name
 string frame_id
 geometry_msgs/Pose pose
 float64[3] normal
-float64[1] offset  # In the direction of the normal
+float64 offset  # In the direction of the normal
 ---
 bool success
 string message

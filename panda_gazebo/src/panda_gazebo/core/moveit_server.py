@@ -1718,7 +1718,9 @@ class PandaMoveitPlannerServer(object):
                 add_plane_req.name if add_plane_req.name else "plane",
                 PoseStamped(header=pose_header, pose=plane_pose)
                 if add_plane_req.pose
-                else PoseStamped(orientation=Quaternion(0, 0, 0, 1)),
+                else PoseStamped(
+                    header=pose_header, pose=Pose(orientation=Quaternion(0, 0, 0, 1))
+                ),
                 normal=add_plane_req.normal if add_plane_req.normal else (0, 0, 1),
                 offset=add_plane_req.offset if add_plane_req.offset else 0,
             )
