@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>panda_gazebo.core.control_server &mdash; panda-gazebo 2.7.1 documentation</title>
+  <title>panda_gazebo.core.control_server &mdash; panda-gazebo 2.7.2 documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.7.1
+                2.7.2
               </div>
             
           
@@ -189,7 +189,6 @@
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">compress</span>
 
 <span class="kn">import</span> <span class="nn">actionlib</span>
@@ -593,7 +592,7 @@
 <span class="sd">                velocities and efforts.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Retrieve arm position, velocity and effort states as a dictionary</span>
-        <span class="n">arm_state_position_dict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span>
+        <span class="n">arm_state_position_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
             <span class="nb">zip</span><span class="p">(</span>
                 <span class="nb">list</span><span class="p">(</span>
                     <span class="n">compress</span><span class="p">(</span>
@@ -615,7 +614,7 @@
                 <span class="p">),</span>
             <span class="p">)</span>
         <span class="p">)</span>
-        <span class="n">arm_state_velocities_dict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span>
+        <span class="n">arm_state_velocities_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
             <span class="nb">zip</span><span class="p">(</span>
                 <span class="nb">list</span><span class="p">(</span>
                     <span class="n">compress</span><span class="p">(</span>
@@ -637,7 +636,7 @@
                 <span class="p">),</span>
             <span class="p">)</span>
         <span class="p">)</span>
-        <span class="n">arm_state_efforts_dict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span>
+        <span class="n">arm_state_efforts_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
             <span class="nb">zip</span><span class="p">(</span>
                 <span class="nb">list</span><span class="p">(</span>
                     <span class="n">compress</span><span class="p">(</span>
@@ -661,7 +660,7 @@
         <span class="p">)</span>
 
         <span class="c1"># Retrieve hand position, velocity and effort states as a dictionary</span>
-        <span class="n">hand_state_position_dict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span>
+        <span class="n">hand_state_position_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
             <span class="nb">zip</span><span class="p">(</span>
                 <span class="nb">list</span><span class="p">(</span>
                     <span class="n">compress</span><span class="p">(</span>
@@ -683,7 +682,7 @@
                 <span class="p">),</span>
             <span class="p">)</span>
         <span class="p">)</span>
-        <span class="n">hand_state_velocities_dict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span>
+        <span class="n">hand_state_velocities_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
             <span class="nb">zip</span><span class="p">(</span>
                 <span class="nb">list</span><span class="p">(</span>
                     <span class="n">compress</span><span class="p">(</span>
@@ -705,7 +704,7 @@
                 <span class="p">),</span>
             <span class="p">)</span>
         <span class="p">)</span>
-        <span class="n">hand_state_efforts_dict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span>
+        <span class="n">hand_state_efforts_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
             <span class="nb">zip</span><span class="p">(</span>
                 <span class="nb">list</span><span class="p">(</span>
                     <span class="n">compress</span><span class="p">(</span>
@@ -1206,16 +1205,12 @@
                     <span class="c1"># joint states.</span>
                     <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">waypoint</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">input_msg</span><span class="o">.</span><span class="n">trajectory</span><span class="o">.</span><span class="n">points</span><span class="p">):</span>
                         <span class="n">input_command_dict</span> <span class="o">=</span> <span class="p">{</span>
-                            <span class="s2">&quot;positions&quot;</span><span class="p">:</span> <span class="n">OrderedDict</span><span class="p">(</span>
-                                <span class="nb">zip</span><span class="p">(</span><span class="n">joint_names</span><span class="p">,</span> <span class="n">waypoint</span><span class="o">.</span><span class="n">positions</span><span class="p">)</span>
-                            <span class="p">),</span>
-                            <span class="s2">&quot;velocities&quot;</span><span class="p">:</span> <span class="n">OrderedDict</span><span class="p">(</span>
-                                <span class="nb">zip</span><span class="p">(</span><span class="n">joint_names</span><span class="p">,</span> <span class="n">waypoint</span><span class="o">.</span><span class="n">velocities</span><span class="p">)</span>
-                            <span class="p">),</span>
-                            <span class="s2">&quot;accelerations&quot;</span><span class="p">:</span> <span class="n">OrderedDict</span><span class="p">(</span>
+                            <span class="s2">&quot;positions&quot;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">joint_names</span><span class="p">,</span> <span class="n">waypoint</span><span class="o">.</span><span class="n">positions</span><span class="p">)),</span>
+                            <span class="s2">&quot;velocities&quot;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">joint_names</span><span class="p">,</span> <span class="n">waypoint</span><span class="o">.</span><span class="n">velocities</span><span class="p">)),</span>
+                            <span class="s2">&quot;accelerations&quot;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span>
                                 <span class="nb">zip</span><span class="p">(</span><span class="n">joint_names</span><span class="p">,</span> <span class="n">waypoint</span><span class="o">.</span><span class="n">accelerations</span><span class="p">)</span>
                             <span class="p">),</span>
-                            <span class="s2">&quot;efforts&quot;</span><span class="p">:</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">joint_names</span><span class="p">,</span> <span class="n">waypoint</span><span class="o">.</span><span class="n">effort</span><span class="p">)),</span>
+                            <span class="s2">&quot;efforts&quot;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">joint_names</span><span class="p">,</span> <span class="n">waypoint</span><span class="o">.</span><span class="n">effort</span><span class="p">)),</span>
                         <span class="p">}</span>
 
                         <span class="c1"># Add time_from_start variable if create_time_axis == TRUE</span>
@@ -1261,7 +1256,7 @@
 
                         <span class="c1"># Create acceleration command array</span>
                         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">waypoint</span><span class="o">.</span><span class="n">accelerations</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-                            <span class="n">arm_acceleration_commands_dict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span>
+                            <span class="n">arm_acceleration_commands_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
                                 <span class="nb">zip</span><span class="p">(</span>
                                     <span class="n">arm_state_dict</span><span class="p">[</span><span class="s2">&quot;velocities&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span>
                                     <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">arm_state_dict</span><span class="p">[</span><span class="s2">&quot;velocities&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span>
@@ -1516,7 +1511,7 @@
                     <span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="c1"># Create input control command dictionary</span>
-                    <span class="n">input_command_dict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">joint_names</span><span class="p">,</span> <span class="n">control_input</span><span class="p">))</span>
+                    <span class="n">input_command_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">joint_names</span><span class="p">,</span> <span class="n">control_input</span><span class="p">))</span>
 
                     <span class="c1"># Update current state dictionary with given joint_position commands</span>
                     <span class="n">arm_position_commands_dict</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span>
@@ -1633,7 +1628,7 @@
         <span class="n">control_type</span> <span class="o">=</span> <span class="n">control_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
 
         <span class="c1"># Get the joints which are contolled by a given control type</span>
-        <span class="n">controlled_joints_dict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="nb">zip</span><span class="p">([</span><span class="s2">&quot;arm&quot;</span><span class="p">,</span> <span class="s2">&quot;hand&quot;</span><span class="p">,</span> <span class="s2">&quot;both&quot;</span><span class="p">],</span> <span class="p">[[],</span> <span class="p">[],</span> <span class="p">[]]))</span>
+        <span class="n">controlled_joints_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">([</span><span class="s2">&quot;arm&quot;</span><span class="p">,</span> <span class="s2">&quot;hand&quot;</span><span class="p">,</span> <span class="s2">&quot;both&quot;</span><span class="p">],</span> <span class="p">[[],</span> <span class="p">[],</span> <span class="p">[]]))</span>
         <span class="k">if</span> <span class="n">control_type</span> <span class="o">==</span> <span class="s2">&quot;position&quot;</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">controller</span> <span class="ow">in</span> <span class="n">ARM_POSITION_CONTROLLERS</span> <span class="o">+</span> <span class="n">HAND_CONTROLLERS</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>

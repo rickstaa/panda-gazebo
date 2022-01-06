@@ -1,9 +1,9 @@
-panda\_gazebo.core.moveit\_server.PandaMoveitPlannerServer
+panda\_gazebo.core.moveit\_server.PandaMoveItPlannerServer
 ==========================================================
 
 .. currentmodule:: panda_gazebo.core.moveit_server
 
-.. autoclass:: PandaMoveitPlannerServer
+.. autoclass:: PandaMoveItPlannerServer
    :members:
 
    
@@ -14,7 +14,7 @@ panda\_gazebo.core.moveit\_server.PandaMoveitPlannerServer
 
    .. autosummary::
    
-      ~PandaMoveitPlannerServer.__init__
+      ~PandaMoveItPlannerServer.__init__
    
    
 

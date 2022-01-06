@@ -19,7 +19,7 @@ panda\_gazebo.core.moveit\_server
       :toctree:
       :template: custom-class-template.rst
    
-      PandaMoveitPlannerServer
+      PandaMoveItPlannerServer
    
    
 

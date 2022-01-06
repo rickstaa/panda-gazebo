@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>panda_gazebo.core.moveit_server &mdash; panda-gazebo 2.7.1 documentation</title>
+  <title>panda_gazebo.core.moveit_server &mdash; panda-gazebo 2.7.2 documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.7.1
+                2.7.2
               </div>
             
           
@@ -202,7 +202,6 @@
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">compress</span>
 
 <span class="kn">import</span> <span class="nn">moveit_commander</span>
@@ -259,7 +258,7 @@
 <span class="n">MAX_RANDOM_SAMPLES</span> <span class="o">=</span> <span class="mi">5</span>
 
 
-<div class="viewcode-block" id="PandaMoveitPlannerServer"><a class="viewcode-back" href="../../../api/_autosummary/panda_gazebo.core.moveit_server.PandaMoveitPlannerServer.html#panda_gazebo.core.moveit_server.PandaMoveitPlannerServer">[docs]</a><span class="k">class</span> <span class="nc">PandaMoveitPlannerServer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="PandaMoveItPlannerServer"><a class="viewcode-back" href="../../../api/_autosummary/panda_gazebo.core.moveit_server.PandaMoveItPlannerServer.html#panda_gazebo.core.moveit_server.PandaMoveItPlannerServer">[docs]</a><span class="k">class</span> <span class="nc">PandaMoveItPlannerServer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Used to control or request information from the Panda Robot. This is done using</span>
 <span class="sd">    the MoveIt `moveit_commander` module.</span>
 
@@ -277,15 +276,16 @@
 <span class="sd">            and hand joint positions setpoint.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="PandaMoveitPlannerServer.__init__"><a class="viewcode-back" href="../../../api/_autosummary/panda_gazebo.core.moveit_server.PandaMoveitPlannerServer.html#panda_gazebo.core.moveit_server.PandaMoveitPlannerServer.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>  <span class="c1"># noqa: C901</span>
+<div class="viewcode-block" id="PandaMoveItPlannerServer.__init__"><a class="viewcode-back" href="../../../api/_autosummary/panda_gazebo.core.moveit_server.PandaMoveItPlannerServer.html#panda_gazebo.core.moveit_server.PandaMoveItPlannerServer.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>  <span class="c1"># noqa: C901</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">arm_move_group</span><span class="o">=</span><span class="s2">&quot;panda_arm&quot;</span><span class="p">,</span>
         <span class="n">arm_ee_link</span><span class="o">=</span><span class="s2">&quot;panda_link8&quot;</span><span class="p">,</span>
         <span class="n">hand_move_group</span><span class="o">=</span><span class="s2">&quot;hand&quot;</span><span class="p">,</span>
         <span class="n">load_gripper</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">load_set_ee_pose_service</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">load_extra_services</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Initializes the PandaMoveitPlannerServer object.</span>
+        <span class="sd">&quot;&quot;&quot;Initializes the PandaMoveItPlannerServer object.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            arm_move_group (str, optional): The name of the move group you want to use</span>
@@ -295,10 +295,14 @@
 <span class="sd">            hand_move_group (str, optional): The name of the move group you want to use</span>
 <span class="sd">                for controlling the Panda hand. Defaults to ``hand``.</span>
 <span class="sd">            load_gripper (boolean, optional): Whether we also want to load the gripper</span>
-<span class="sd">                control services.</span>
+<span class="sd">                control services. Defaults to ``True``.</span>
+<span class="sd">            load_set_ee_pose_service (boolean, optional): Whether the set ee pose</span>
+<span class="sd">                service should be loaded. This service is only used by the</span>
+<span class="sd">                `openai_ros &lt;https://wiki.ros.org/openai_ros&gt;`_ when the control type</span>
+<span class="sd">                is set to ``trajectory``. Defaults, to ``True``.</span>
 <span class="sd">            load_extra_services (bool, optional): Whether to load extra services that</span>
 <span class="sd">                are not used by the `openai_ros &lt;https://wiki.ros.org/openai_ros&gt;`_</span>
-<span class="sd">                package.</span>
+<span class="sd">                package. Defaults to ``False``.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_load_gripper</span> <span class="o">=</span> <span class="n">load_gripper</span>
 
@@ -377,16 +381,17 @@
         <span class="c1"># Create node services services ########</span>
         <span class="c1">########################################</span>
 
-        <span class="c1"># Create main PandaMoveitPlannerServer services</span>
+        <span class="c1"># Create main PandaMoveItPlannerServer services</span>
         <span class="n">rospy</span><span class="o">.</span><span class="n">loginfo</span><span class="p">(</span><span class="s2">&quot;Creating &#39;</span><span class="si">%s</span><span class="s2">&#39; services.&quot;</span> <span class="o">%</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_name</span><span class="p">())</span>
-        <span class="n">rospy</span><span class="o">.</span><span class="n">logdebug</span><span class="p">(</span>
-            <span class="s2">&quot;Creating &#39;</span><span class="si">%s</span><span class="s2">/panda_arm/set_ee_pose&#39; service.&quot;</span> <span class="o">%</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_arm_set_ee_pose_srv</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Service</span><span class="p">(</span>
-            <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/panda_arm/set_ee_pose&quot;</span> <span class="o">%</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
-            <span class="n">SetEePose</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_arm_set_ee_pose_callback</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">load_set_ee_pose_service</span><span class="p">:</span>
+            <span class="n">rospy</span><span class="o">.</span><span class="n">logdebug</span><span class="p">(</span>
+                <span class="s2">&quot;Creating &#39;</span><span class="si">%s</span><span class="s2">/panda_arm/set_ee_pose&#39; service.&quot;</span> <span class="o">%</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_arm_set_ee_pose_srv</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Service</span><span class="p">(</span>
+                <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/panda_arm/set_ee_pose&quot;</span> <span class="o">%</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                <span class="n">SetEePose</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_arm_set_ee_pose_callback</span><span class="p">,</span>
+            <span class="p">)</span>
         <span class="n">rospy</span><span class="o">.</span><span class="n">logdebug</span><span class="p">(</span>
             <span class="s2">&quot;Creating &#39;</span><span class="si">%s</span><span class="s2">/panda_arm/get_ee_pose_joint_config&#39; service.&quot;</span>
             <span class="o">%</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
@@ -728,14 +733,14 @@
             <span class="p">)</span>
 
         <span class="c1"># Get the current state of the arm and hand</span>
-        <span class="n">arm_state_dict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span>
+        <span class="n">arm_state_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
             <span class="nb">zip</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">move_group_arm</span><span class="o">.</span><span class="n">get_active_joints</span><span class="p">(),</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">move_group_arm</span><span class="o">.</span><span class="n">get_current_joint_values</span><span class="p">(),</span>
             <span class="p">)</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="n">control_group</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;hand&quot;</span><span class="p">,</span> <span class="s2">&quot;both&quot;</span><span class="p">]:</span>
-            <span class="n">hand_state_dict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span>
+            <span class="n">hand_state_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
                 <span class="nb">zip</span><span class="p">(</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">move_group_hand</span><span class="o">.</span><span class="n">get_active_joints</span><span class="p">(),</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">move_group_hand</span><span class="o">.</span><span class="n">get_current_joint_values</span><span class="p">(),</span>
@@ -877,7 +882,7 @@
                 <span class="k">for</span> <span class="n">joint_name</span> <span class="ow">in</span> <span class="n">joint_names</span>
                 <span class="k">if</span> <span class="n">joint_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">controlled_joints</span>
             <span class="p">]</span>
-            <span class="n">input_command_dict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">joint_names</span><span class="p">,</span> <span class="n">joint_positions</span><span class="p">))</span>
+            <span class="n">input_command_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">joint_names</span><span class="p">,</span> <span class="n">joint_positions</span><span class="p">))</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">invalid_joint_names</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="c1"># Remove invalid keys and throw warning</span>
                 <span class="p">[</span><span class="n">input_command_dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">joint</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="k">for</span> <span class="n">joint</span> <span class="ow">in</span> <span class="n">invalid_joint_names</span><span class="p">]</span>
@@ -1522,14 +1527,14 @@
         <span class="n">get_random_arm_joint_positions_srvs_exception</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="n">get_random_hand_joint_positions_srvs_exception</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">random_arm_joint_values_unbounded</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span>
+            <span class="n">random_arm_joint_values_unbounded</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
                 <span class="nb">zip</span><span class="p">(</span><span class="n">arm_joints</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">move_group_arm</span><span class="o">.</span><span class="n">get_random_joint_values</span><span class="p">())</span>
             <span class="p">)</span>
         <span class="k">except</span> <span class="n">MoveItCommanderException</span><span class="p">:</span>
             <span class="n">get_random_arm_joint_positions_srvs_exception</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_gripper</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">random_hand_joint_values_unbounded</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span>
+                <span class="n">random_hand_joint_values_unbounded</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
                     <span class="nb">zip</span><span class="p">(</span><span class="n">hand_joints</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">move_group_hand</span><span class="o">.</span><span class="n">get_random_joint_values</span><span class="p">())</span>
                 <span class="p">)</span>
             <span class="k">except</span> <span class="n">MoveItCommanderException</span><span class="p">:</span>
@@ -1554,7 +1559,7 @@
                 <span class="n">resp</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">else</span><span class="p">:</span>  <span class="c1"># Joint limits were set</span>
             <span class="c1"># Create joint limit dictionary</span>
-            <span class="n">joint_limits_dict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span>
+            <span class="n">joint_limits_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
                 <span class="nb">zip</span><span class="p">(</span>
                     <span class="n">get_random_position_req</span><span class="o">.</span><span class="n">joint_limits</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
                     <span class="n">get_random_position_req</span><span class="o">.</span><span class="n">joint_limits</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
