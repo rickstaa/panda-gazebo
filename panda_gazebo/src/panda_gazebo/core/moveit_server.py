@@ -31,7 +31,6 @@ Dynamic reconfigure service:
 import copy
 import re
 import sys
-from collections import OrderedDict
 from itertools import compress
 
 import moveit_commander
@@ -88,7 +87,7 @@ from std_msgs.msg import Header
 MAX_RANDOM_SAMPLES = 5
 
 
-class PandaMoveitPlannerServer(object):
+class PandaMoveItPlannerServer(object):
     """Used to control or request information from the Panda Robot. This is done using
     the MoveIt `moveit_commander` module.
 
@@ -112,9 +111,10 @@ class PandaMoveitPlannerServer(object):
         arm_ee_link="panda_link8",
         hand_move_group="hand",
         load_gripper=True,
+        load_set_ee_pose_service=True,
         load_extra_services=False,
     ):
-        """Initializes the PandaMoveitPlannerServer object.
+        """Initializes the PandaMoveItPlannerServer object.
 
         Args:
             arm_move_group (str, optional): The name of the move group you want to use
@@ -124,10 +124,14 @@ class PandaMoveitPlannerServer(object):
             hand_move_group (str, optional): The name of the move group you want to use
                 for controlling the Panda hand. Defaults to ``hand``.
             load_gripper (boolean, optional): Whether we also want to load the gripper
-                control services.
+                control services. Defaults to ``True``.
+            load_set_ee_pose_service (boolean, optional): Whether the set ee pose
+                service should be loaded. This service is only used by the
+                `openai_ros <https://wiki.ros.org/openai_ros>`_ when the control type
+                is set to ``trajectory``. Defaults, to ``True``.
             load_extra_services (bool, optional): Whether to load extra services that
                 are not used by the `openai_ros <https://wiki.ros.org/openai_ros>`_
-                package.
+                package. Defaults to ``False``.
         """
         self._load_gripper = load_gripper
 
@@ -206,16 +210,17 @@ class PandaMoveitPlannerServer(object):
         # Create node services services ########
         ########################################
 
-        # Create main PandaMoveitPlannerServer services
+        # Create main PandaMoveItPlannerServer services
         rospy.loginfo("Creating '%s' services." % rospy.get_name())
-        rospy.logdebug(
-            "Creating '%s/panda_arm/set_ee_pose' service." % rospy.get_name()
-        )
-        self._arm_set_ee_pose_srv = rospy.Service(
-            "%s/panda_arm/set_ee_pose" % rospy.get_name().split("/")[-1],
-            SetEePose,
-            self._arm_set_ee_pose_callback,
-        )
+        if load_set_ee_pose_service:
+            rospy.logdebug(
+                "Creating '%s/panda_arm/set_ee_pose' service." % rospy.get_name()
+            )
+            self._arm_set_ee_pose_srv = rospy.Service(
+                "%s/panda_arm/set_ee_pose" % rospy.get_name().split("/")[-1],
+                SetEePose,
+                self._arm_set_ee_pose_callback,
+            )
         rospy.logdebug(
             "Creating '%s/panda_arm/get_ee_pose_joint_config' service."
             % rospy.get_name()
@@ -557,14 +562,14 @@ class PandaMoveitPlannerServer(object):
             )
 
         # Get the current state of the arm and hand
-        arm_state_dict = OrderedDict(
+        arm_state_dict = dict(
             zip(
                 self.move_group_arm.get_active_joints(),
                 self.move_group_arm.get_current_joint_values(),
             )
         )
         if control_group in ["hand", "both"]:
-            hand_state_dict = OrderedDict(
+            hand_state_dict = dict(
                 zip(
                     self.move_group_hand.get_active_joints(),
                     self.move_group_hand.get_current_joint_values(),
@@ -706,7 +711,7 @@ class PandaMoveitPlannerServer(object):
                 for joint_name in joint_names
                 if joint_name not in controlled_joints
             ]
-            input_command_dict = OrderedDict(zip(joint_names, joint_positions))
+            input_command_dict = dict(zip(joint_names, joint_positions))
             if len(invalid_joint_names) != 0:
                 # Remove invalid keys and throw warning
                 [input_command_dict.pop(joint, None) for joint in invalid_joint_names]
@@ -1351,14 +1356,14 @@ class PandaMoveitPlannerServer(object):
         get_random_arm_joint_positions_srvs_exception = False
         get_random_hand_joint_positions_srvs_exception = False
         try:
-            random_arm_joint_values_unbounded = OrderedDict(
+            random_arm_joint_values_unbounded = dict(
                 zip(arm_joints, self.move_group_arm.get_random_joint_values())
             )
         except MoveItCommanderException:
             get_random_arm_joint_positions_srvs_exception = True
         if self._load_gripper:
             try:
-                random_hand_joint_values_unbounded = OrderedDict(
+                random_hand_joint_values_unbounded = dict(
                     zip(hand_joints, self.move_group_hand.get_random_joint_values())
                 )
             except MoveItCommanderException:
@@ -1383,7 +1388,7 @@ class PandaMoveitPlannerServer(object):
                 resp.success = False
         else:  # Joint limits were set
             # Create joint limit dictionary
-            joint_limits_dict = OrderedDict(
+            joint_limits_dict = dict(
                 zip(
                     get_random_position_req.joint_limits.names,
                     get_random_position_req.joint_limits.values,

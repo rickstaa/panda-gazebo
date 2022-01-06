@@ -18,7 +18,6 @@ Extra services:
 import copy
 import os
 import sys
-from collections import OrderedDict
 from itertools import compress
 
 import actionlib
@@ -422,7 +421,7 @@ class PandaControlServer(object):
                 velocities and efforts.
         """
         # Retrieve arm position, velocity and effort states as a dictionary
-        arm_state_position_dict = OrderedDict(
+        arm_state_position_dict = dict(
             zip(
                 list(
                     compress(
@@ -444,7 +443,7 @@ class PandaControlServer(object):
                 ),
             )
         )
-        arm_state_velocities_dict = OrderedDict(
+        arm_state_velocities_dict = dict(
             zip(
                 list(
                     compress(
@@ -466,7 +465,7 @@ class PandaControlServer(object):
                 ),
             )
         )
-        arm_state_efforts_dict = OrderedDict(
+        arm_state_efforts_dict = dict(
             zip(
                 list(
                     compress(
@@ -490,7 +489,7 @@ class PandaControlServer(object):
         )
 
         # Retrieve hand position, velocity and effort states as a dictionary
-        hand_state_position_dict = OrderedDict(
+        hand_state_position_dict = dict(
             zip(
                 list(
                     compress(
@@ -512,7 +511,7 @@ class PandaControlServer(object):
                 ),
             )
         )
-        hand_state_velocities_dict = OrderedDict(
+        hand_state_velocities_dict = dict(
             zip(
                 list(
                     compress(
@@ -534,7 +533,7 @@ class PandaControlServer(object):
                 ),
             )
         )
-        hand_state_efforts_dict = OrderedDict(
+        hand_state_efforts_dict = dict(
             zip(
                 list(
                     compress(
@@ -1035,16 +1034,12 @@ class PandaControlServer(object):
                     # joint states.
                     for idx, waypoint in enumerate(input_msg.trajectory.points):
                         input_command_dict = {
-                            "positions": OrderedDict(
-                                zip(joint_names, waypoint.positions)
-                            ),
-                            "velocities": OrderedDict(
-                                zip(joint_names, waypoint.velocities)
-                            ),
-                            "accelerations": OrderedDict(
+                            "positions": dict(zip(joint_names, waypoint.positions)),
+                            "velocities": dict(zip(joint_names, waypoint.velocities)),
+                            "accelerations": dict(
                                 zip(joint_names, waypoint.accelerations)
                             ),
-                            "efforts": OrderedDict(zip(joint_names, waypoint.effort)),
+                            "efforts": dict(zip(joint_names, waypoint.effort)),
                         }
 
                         # Add time_from_start variable if create_time_axis == TRUE
@@ -1090,7 +1085,7 @@ class PandaControlServer(object):
 
                         # Create acceleration command array
                         if len(waypoint.accelerations) != 0:
-                            arm_acceleration_commands_dict = OrderedDict(
+                            arm_acceleration_commands_dict = dict(
                                 zip(
                                     arm_state_dict["velocities"].keys(),
                                     [0.0] * len(arm_state_dict["velocities"].keys()),
@@ -1345,7 +1340,7 @@ class PandaControlServer(object):
                     )
                 else:
                     # Create input control command dictionary
-                    input_command_dict = OrderedDict(zip(joint_names, control_input))
+                    input_command_dict = dict(zip(joint_names, control_input))
 
                     # Update current state dictionary with given joint_position commands
                     arm_position_commands_dict = copy.deepcopy(
@@ -1462,7 +1457,7 @@ class PandaControlServer(object):
         control_type = control_type.lower()
 
         # Get the joints which are contolled by a given control type
-        controlled_joints_dict = OrderedDict(zip(["arm", "hand", "both"], [[], [], []]))
+        controlled_joints_dict = dict(zip(["arm", "hand", "both"], [[], [], []]))
         if control_type == "position":
             for controller in ARM_POSITION_CONTROLLERS + HAND_CONTROLLERS:
                 try:

@@ -56,7 +56,7 @@ if __name__ == "__main__":
     ]
     # set_joint_commands_msg.grasping = False
     set_joint_commands_msg.wait = True
-    set_joint_commands_msg.control_type = "position"
+    set_joint_commands_msg.control_type = "effort"
     set_joint_commands_msg.joint_commands = [1, 2, 3, 0.03, 130]
     set_joint_commands_msg.grasping = True
     retval = set_arm_joint_effort_srv.call(set_joint_commands_msg)
@@ -188,18 +188,40 @@ if __name__ == "__main__":
 
     # -- Test set gripper width service --
 
-    # Without grasp
-    req = SetGripperWidthRequest()
-    req.width = 0.04
-    req.wait = True
-    get_controlled_joints_srv = rospy.ServiceProxy(
-        "/panda_control_server/panda_hand/set_gripper_width",
-        SetGripperWidth,
-    )
-    resp = get_controlled_joints_srv.call(req)
+    # # Without grasp
+    # req = SetGripperWidthRequest()
+    # req.width = 0.04
+    # req.wait = True
+    # get_controlled_joints_srv = rospy.ServiceProxy(
+    #     "/panda_control_server/panda_hand/set_gripper_width",
+    #     SetGripperWidth,
+    # )
+    # resp = get_controlled_joints_srv.call(req)
+    # # print(resp)
+    # # req = SetGripperWidthRequest()
+    # # req.width = 0.0
+    # # req.wait = True
+    # # get_controlled_joints_srv = rospy.ServiceProxy(
+    # #     "/panda_control_server/panda_hand/set_gripper_width",
+    # #     SetGripperWidth,
+    # # )
+    # # resp = get_controlled_joints_srv.call(req)
+    # # print(resp)
+
+    # # With grasp
+    # req = SetGripperWidthRequest()
+    # req.width = 0.04
+    # req.wait = True
+    # req.grasping = True
+    # get_controlled_joints_srv = rospy.ServiceProxy(
+    #     "/panda_control_server/panda_hand/set_gripper_width",
+    #     SetGripperWidth,
+    # )
+    # resp = get_controlled_joints_srv.call(req)
     # print(resp)
     # req = SetGripperWidthRequest()
-    # req.width = 0.0
+    # req.grasping = True
+    # req.width = 0.03
     # req.wait = True
     # get_controlled_joints_srv = rospy.ServiceProxy(
     #     "/panda_control_server/panda_hand/set_gripper_width",
@@ -207,28 +229,6 @@ if __name__ == "__main__":
     # )
     # resp = get_controlled_joints_srv.call(req)
     # print(resp)
-
-    # With grasp
-    req = SetGripperWidthRequest()
-    req.width = 0.04
-    req.wait = True
-    req.grasping = True
-    get_controlled_joints_srv = rospy.ServiceProxy(
-        "/panda_control_server/panda_hand/set_gripper_width",
-        SetGripperWidth,
-    )
-    resp = get_controlled_joints_srv.call(req)
-    print(resp)
-    req = SetGripperWidthRequest()
-    req.grasping = True
-    req.width = 0.03
-    req.wait = True
-    get_controlled_joints_srv = rospy.ServiceProxy(
-        "/panda_control_server/panda_hand/set_gripper_width",
-        SetGripperWidth,
-    )
-    resp = get_controlled_joints_srv.call(req)
-    print(resp)
 
     # Reset grasp
     # req = SetGripperWidthRequest()
