@@ -7,8 +7,10 @@ Main services:
     * get_controlled_joints
     * follow_joint_trajectory
     * set_joint_commands
-    * panda_arm/follow_joint_trajectory
     * panda_hand/set_gripper_width
+
+Main actions:
+    * panda_arm/follow_joint_trajectory
 
 Extra services:
     * panda_arm/set_joint_positions
@@ -123,6 +125,8 @@ class PandaControlServer(object):
         autofill_traj_positions=False,
         load_gripper=True,
         connection_timeout=10,
+        load_set_joint_commands_service=True,
+        load_arm_follow_joint_trajectory_action=False,
         load_extra_services=False,
         brute_force_grasping=False,
     ):
@@ -136,6 +140,14 @@ class PandaControlServer(object):
                 control services.
             connection_timeout (int, optional): The timeout for connecting to the
                 controller_manager services. Defaults to 3 sec.
+            load_set_joint_commands_service (boolean, optional): Whether the set joint
+                commands service should be loaded. This service is only used by the
+                `openai_ros <https://wiki.ros.org/openai_ros>`_ when the control type
+                is NOT set to ``trajectory``. Defaults, to ``True``.
+            load_arm_follow_joint_trajectory_action (boolean, optional): Whether the
+                arm follow joint trajectory action should be loaded. This service is
+                only used by the `openai_ros <https://wiki.ros.org/openai_ros>`_ when
+                the control type is set to ``trajectory``. Defaults, to ``False``.
             load_extra_services (bool, optional): Whether to load extra services that
                 are not used by the `openai_ros <https://wiki.ros.org/openai_ros>`_
                 package. Defaults to ``False``.
@@ -177,12 +189,15 @@ class PandaControlServer(object):
             GetControlledJoints,
             self._get_controlled_joints_cb,
         )
-        rospy.logdebug("Creating '%s/set_joint_commands' service." % rospy.get_name())
-        self._set_joint_commands_srv = rospy.Service(
-            "%s/set_joint_commands" % rospy.get_name().split("/")[-1],
-            SetJointCommands,
-            self._set_joint_commands_cb,
-        )
+        if load_set_joint_commands_service:
+            rospy.logdebug(
+                "Creating '%s/set_joint_commands' service." % rospy.get_name()
+            )
+            self._set_joint_commands_srv = rospy.Service(
+                "%s/set_joint_commands" % rospy.get_name().split("/")[-1],
+                SetJointCommands,
+                self._set_joint_commands_cb,
+            )
         if load_extra_services:
             rospy.logdebug(
                 "Creating '%s/panda_arm/set_joint_positions' service."
@@ -222,28 +237,28 @@ class PandaControlServer(object):
         # and connect to required (action) #####
         # services and messages. ###############
         ########################################
-
-        # Create arm joint position controller publishers
-        self._arm_joint_position_pub = GroupPublisher()
-        for position_controller in ARM_POSITION_CONTROLLERS:
-            self._arm_joint_position_pub.append(
-                rospy.Publisher(
-                    "%s/command" % (position_controller),
-                    Float64,
-                    queue_size=10,
+        if load_set_joint_commands_service:
+            # Create arm joint position controller publishers
+            self._arm_joint_position_pub = GroupPublisher()
+            for position_controller in ARM_POSITION_CONTROLLERS:
+                self._arm_joint_position_pub.append(
+                    rospy.Publisher(
+                        "%s/command" % (position_controller),
+                        Float64,
+                        queue_size=10,
+                    )
                 )
-            )
 
-        # Create arm joint effort publishers
-        self._arm_joint_effort_pub = GroupPublisher()
-        for effort_controller in ARM_EFFORT_CONTROLLERS:
-            self._arm_joint_effort_pub.append(
-                rospy.Publisher(
-                    "%s/command" % (effort_controller),
-                    Float64,
-                    queue_size=10,
+            # Create arm joint effort publishers
+            self._arm_joint_effort_pub = GroupPublisher()
+            for effort_controller in ARM_EFFORT_CONTROLLERS:
+                self._arm_joint_effort_pub.append(
+                    rospy.Publisher(
+                        "%s/command" % (effort_controller),
+                        Float64,
+                        queue_size=10,
+                    )
                 )
-            )
 
         # Connect to controller_manager services
         try:
@@ -354,56 +369,57 @@ class PandaControlServer(object):
         #   - The ability to send joint trajectory messages that do not specify joints.
         #   - The ability to automatic generate a time axes when the create_time_axis
         #     field is set to True.
-
-        # Connect to original 'panda_arm_controller/follow_joint_trajectory' action
-        # server
-        rospy.logdebug(
-            "Connecting to '%s' action service."
-            % "panda_arm_controller/follow_joint_trajectory"
-        )
-        if action_server_exists("panda_arm_controller/follow_joint_trajectory"):
-            # Connect to robot control action server
-            self._arm_joint_traj_client = actionlib.SimpleActionClient(
-                "panda_arm_controller/follow_joint_trajectory",
-                control_msgs.FollowJointTrajectoryAction,
+        if load_arm_follow_joint_trajectory_action:
+            # Connect to original 'panda_arm_controller/follow_joint_trajectory' action
+            # server
+            rospy.logdebug(
+                "Connecting to '%s' action service."
+                % "panda_arm_controller/follow_joint_trajectory"
             )
+            if action_server_exists("panda_arm_controller/follow_joint_trajectory"):
+                # Connect to robot control action server
+                self._arm_joint_traj_client = actionlib.SimpleActionClient(
+                    "panda_arm_controller/follow_joint_trajectory",
+                    control_msgs.FollowJointTrajectoryAction,
+                )
 
-            # Waits until the action server has started up
-            retval = self._arm_joint_traj_client.wait_for_server(
-                timeout=rospy.Duration(secs=5)
-            )
-            if not retval:
+                # Waits until the action server has started up
+                retval = self._arm_joint_traj_client.wait_for_server(
+                    timeout=rospy.Duration(secs=5)
+                )
+                if not retval:
+                    rospy.logwarn(
+                        "No connection could be established with the '%s' service. "
+                        "The Panda Robot Environment therefore can not use this action "
+                        "service to control the Panda Robot."
+                        % ("panda_arm_controller/follow_joint_trajectory")
+                    )
+                else:
+                    self._arm_joint_traj_client_connected = True
+            else:
                 rospy.logwarn(
                     "No connection could be established with the '%s' service. "
                     "The Panda Robot Environment therefore can not use this action "
                     "service to control the Panda Robot."
                     % ("panda_arm_controller/follow_joint_trajectory")
                 )
-            else:
-                self._arm_joint_traj_client_connected = True
-        else:
-            rospy.logwarn(
-                "No connection could be established with the '%s' service. "
-                "The Panda Robot Environment therefore can not use this action "
-                "service to control the Panda Robot."
-                % ("panda_arm_controller/follow_joint_trajectory")
-            )
 
-        # Setup a new Panda arm joint trajectory action server
-        rospy.logdebug(
-            "Creating '%s/panda_arm/follow_joint_trajectory' service."
-            % rospy.get_name()
-        )
-        self._arm_joint_traj_as = actionlib.SimpleActionServer(
-            "%s/panda_arm/follow_joint_trajectory" % rospy.get_name().split("/")[-1],
-            FollowJointTrajectoryAction,
-            execute_cb=self._arm_joint_traj_execute_cb,
-            auto_start=False,
-        )
-        self._arm_joint_traj_as.register_preempt_callback(
-            self._arm_joint_traj_preempt_cb
-        )
-        self._arm_joint_traj_as.start()
+            # Setup a new Panda arm joint trajectory action server
+            rospy.logdebug(
+                "Creating '%s/panda_arm/follow_joint_trajectory' service."
+                % rospy.get_name()
+            )
+            self._arm_joint_traj_as = actionlib.SimpleActionServer(
+                "%s/panda_arm/follow_joint_trajectory"
+                % rospy.get_name().split("/")[-1],
+                FollowJointTrajectoryAction,
+                execute_cb=self._arm_joint_traj_execute_cb,
+                auto_start=False,
+            )
+            self._arm_joint_traj_as.register_preempt_callback(
+                self._arm_joint_traj_preempt_cb
+            )
+            self._arm_joint_traj_as.start()
 
     ################################################
     # Panda control member functions ###############

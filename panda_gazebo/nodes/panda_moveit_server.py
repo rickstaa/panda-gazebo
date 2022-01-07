@@ -26,7 +26,7 @@ if __name__ == "__main__":
         load_gripper = rospy.get_param("~load_gripper")
     except KeyError:
         load_gripper = True
-    try:  # Check if extra services should be loaded
+    try:  # Check if set ee pose service should be loaded
         load_set_ee_pose_service = rospy.get_param("~load_set_ee_pose_service")
     except KeyError:
         load_set_ee_pose_service = True

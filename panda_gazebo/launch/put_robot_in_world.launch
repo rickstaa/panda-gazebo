@@ -85,9 +85,14 @@
   </node>
 
   <!--Load ros_control service-->
+  <arg if="$(eval arg('control_type') == 'trajectory')" name="load_set_joint_commands_service" value="false"/>
+  <arg if="$(eval arg('control_type') == 'trajectory')" name="load_arm_follow_joint_trajectory_action" value="true"/>
+  <arg unless="$(eval arg('control_type') == 'trajectory')" name="load_set_joint_commands_service" value="true"/>
+  <arg unless="$(eval arg('control_type') == 'trajectory')" name="load_arm_follow_joint_trajectory_action" value="false"/>
   <node pkg="panda_gazebo" type="panda_control_server.py" name="panda_control_server" required="true">
     <param name="brute_force_grasping" value="$(arg brute_force_grasping)"/>
-    <param name="load_gripper" value="$(arg load_gripper)"/>
+    <param name="load_set_joint_commands_service" value="$(arg load_set_joint_commands_service)"/>
+    <param name="load_arm_follow_joint_trajectory_action" value="$(arg load_arm_follow_joint_trajectory_action)"/>
   </node>
 
   <!--Load RViz-->

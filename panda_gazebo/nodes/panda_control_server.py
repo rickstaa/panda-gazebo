@@ -14,7 +14,7 @@ Source code
 import rospy
 from panda_gazebo.core.control_server import PandaControlServer
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # noqa: C901
     rospy.init_node("panda_control_server")
 
     # Get ROS parameters
@@ -26,6 +26,18 @@ if __name__ == "__main__":
         load_gripper = rospy.get_param("~load_gripper")
     except KeyError:
         load_gripper = True
+    try:  # Check if set joint commands service should be loaded
+        load_set_joint_commands_service = rospy.get_param(
+            "~load_set_joint_commands_service"
+        )
+    except KeyError:
+        load_set_joint_commands_service = True
+    try:  # Check if arm follow joint trajectory action should be loaded
+        load_arm_follow_joint_trajectory_action = rospy.get_param(
+            "~load_arm_follow_joint_trajectory_action"
+        )
+    except KeyError:
+        load_arm_follow_joint_trajectory_action = False
     try:  # Check if extra services should be loaded
         load_extra_services = rospy.get_param("~load_extra_services")
     except KeyError:
@@ -39,6 +51,8 @@ if __name__ == "__main__":
     control_server = PandaControlServer(
         autofill_traj_positions=autofill_traj_positions,
         load_gripper=load_gripper,
+        load_set_joint_commands_service=load_set_joint_commands_service,
+        load_arm_follow_joint_trajectory_action=load_arm_follow_joint_trajectory_action,
         load_extra_services=load_extra_services,
         brute_force_grasping=brute_force_grasping,
     )
