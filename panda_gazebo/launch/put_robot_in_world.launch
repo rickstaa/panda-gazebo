@@ -49,7 +49,7 @@
 
   <!--Set panda_gazebo parameters-->
   <!--  Disable franka_gripper action console logs-->
-  <node pkg="panda_gazebo" type="set_franka_gripper_logging_level" name="set_franka_gripper_logging_level"/>
+  <node pkg="panda_gazebo" type="set_franka_gripper_logging_level.py" name="set_franka_gripper_logger_level"/>
 
   <!--Run the main MoveIt! executable without trajectory execution (we do not have controllers configured by default)-->
   <include if="$(arg moveit)" file="$(find panda_moveit_config)/launch/move_group.launch">

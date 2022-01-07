@@ -3,6 +3,7 @@
 'franka_gripper' node."""
 
 import argparse
+import sys
 import rospy
 from roscpp.srv import SetLoggerLevel, SetLoggerLevelRequest
 
@@ -14,7 +15,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "-l", "--level", nargs="?", type=str, default="warn", help="logging level"
     )
-    args = parser.parse_args()
+    args = parser.parse_args(rospy.myargv(argv=sys.argv)[1:])
 
     # Call '/gazebo/set_logger_level' service
     try:
