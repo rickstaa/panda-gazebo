@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.7.3](https://github.com/rickstaa/panda-gazebo/compare/v2.7.2...v2.7.3) (2022-01-07)
+
+
+### Bug Fixes
+
+* fix 'franka_gripper' log level setter script bug ([d678551](https://github.com/rickstaa/panda-gazebo/commit/d67855133322f14decf186e591e5bd2993b09992))
+
 ### [2.7.2](https://github.com/rickstaa/panda-gazebo/compare/v2.7.1...v2.7.2) (2022-01-06)
 
 ### [2.7.1](https://github.com/rickstaa/panda-gazebo/compare/v2.7.0...v2.7.1) (2021-12-29)
