@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>panda_gazebo.core.control_server &mdash; panda-gazebo 2.7.3 documentation</title>
+  <title>panda_gazebo.core.control_server &mdash; panda-gazebo 2.7.4 documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.7.3
+                2.7.4
               </div>
             
           
@@ -178,8 +178,10 @@
 <span class="sd">    * get_controlled_joints</span>
 <span class="sd">    * follow_joint_trajectory</span>
 <span class="sd">    * set_joint_commands</span>
-<span class="sd">    * panda_arm/follow_joint_trajectory</span>
 <span class="sd">    * panda_hand/set_gripper_width</span>
+
+<span class="sd">Main actions:</span>
+<span class="sd">    * panda_arm/follow_joint_trajectory</span>
 
 <span class="sd">Extra services:</span>
 <span class="sd">    * panda_arm/set_joint_positions</span>
@@ -294,6 +296,8 @@
         <span class="n">autofill_traj_positions</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">load_gripper</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">connection_timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">load_set_joint_commands_service</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">load_arm_follow_joint_trajectory_action</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">load_extra_services</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">brute_force_grasping</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
@@ -307,6 +311,14 @@
 <span class="sd">                control services.</span>
 <span class="sd">            connection_timeout (int, optional): The timeout for connecting to the</span>
 <span class="sd">                controller_manager services. Defaults to 3 sec.</span>
+<span class="sd">            load_set_joint_commands_service (boolean, optional): Whether the set joint</span>
+<span class="sd">                commands service should be loaded. This service is only used by the</span>
+<span class="sd">                `openai_ros &lt;https://wiki.ros.org/openai_ros&gt;`_ when the control type</span>
+<span class="sd">                is NOT set to ``trajectory``. Defaults, to ``True``.</span>
+<span class="sd">            load_arm_follow_joint_trajectory_action (boolean, optional): Whether the</span>
+<span class="sd">                arm follow joint trajectory action should be loaded. This service is</span>
+<span class="sd">                only used by the `openai_ros &lt;https://wiki.ros.org/openai_ros&gt;`_ when</span>
+<span class="sd">                the control type is set to ``trajectory``. Defaults, to ``False``.</span>
 <span class="sd">            load_extra_services (bool, optional): Whether to load extra services that</span>
 <span class="sd">                are not used by the `openai_ros &lt;https://wiki.ros.org/openai_ros&gt;`_</span>
 <span class="sd">                package. Defaults to ``False``.</span>
@@ -348,12 +360,15 @@
             <span class="n">GetControlledJoints</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_get_controlled_joints_cb</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">rospy</span><span class="o">.</span><span class="n">logdebug</span><span class="p">(</span><span class="s2">&quot;Creating &#39;</span><span class="si">%s</span><span class="s2">/set_joint_commands&#39; service.&quot;</span> <span class="o">%</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_name</span><span class="p">())</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_set_joint_commands_srv</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Service</span><span class="p">(</span>
-            <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/set_joint_commands&quot;</span> <span class="o">%</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
-            <span class="n">SetJointCommands</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_set_joint_commands_cb</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">load_set_joint_commands_service</span><span class="p">:</span>
+            <span class="n">rospy</span><span class="o">.</span><span class="n">logdebug</span><span class="p">(</span>
+                <span class="s2">&quot;Creating &#39;</span><span class="si">%s</span><span class="s2">/set_joint_commands&#39; service.&quot;</span> <span class="o">%</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_joint_commands_srv</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Service</span><span class="p">(</span>
+                <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/set_joint_commands&quot;</span> <span class="o">%</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                <span class="n">SetJointCommands</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_set_joint_commands_cb</span><span class="p">,</span>
+            <span class="p">)</span>
         <span class="k">if</span> <span class="n">load_extra_services</span><span class="p">:</span>
             <span class="n">rospy</span><span class="o">.</span><span class="n">logdebug</span><span class="p">(</span>
                 <span class="s2">&quot;Creating &#39;</span><span class="si">%s</span><span class="s2">/panda_arm/set_joint_positions&#39; service.&quot;</span>
@@ -393,28 +408,28 @@
         <span class="c1"># and connect to required (action) #####</span>
         <span class="c1"># services and messages. ###############</span>
         <span class="c1">########################################</span>
-
-        <span class="c1"># Create arm joint position controller publishers</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_position_pub</span> <span class="o">=</span> <span class="n">GroupPublisher</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">position_controller</span> <span class="ow">in</span> <span class="n">ARM_POSITION_CONTROLLERS</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_position_pub</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="n">rospy</span><span class="o">.</span><span class="n">Publisher</span><span class="p">(</span>
-                    <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/command&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">position_controller</span><span class="p">),</span>
-                    <span class="n">Float64</span><span class="p">,</span>
-                    <span class="n">queue_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="k">if</span> <span class="n">load_set_joint_commands_service</span><span class="p">:</span>
+            <span class="c1"># Create arm joint position controller publishers</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_position_pub</span> <span class="o">=</span> <span class="n">GroupPublisher</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">position_controller</span> <span class="ow">in</span> <span class="n">ARM_POSITION_CONTROLLERS</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_position_pub</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">rospy</span><span class="o">.</span><span class="n">Publisher</span><span class="p">(</span>
+                        <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/command&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">position_controller</span><span class="p">),</span>
+                        <span class="n">Float64</span><span class="p">,</span>
+                        <span class="n">queue_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                    <span class="p">)</span>
                 <span class="p">)</span>
-            <span class="p">)</span>
 
-        <span class="c1"># Create arm joint effort publishers</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_effort_pub</span> <span class="o">=</span> <span class="n">GroupPublisher</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">effort_controller</span> <span class="ow">in</span> <span class="n">ARM_EFFORT_CONTROLLERS</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_effort_pub</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="n">rospy</span><span class="o">.</span><span class="n">Publisher</span><span class="p">(</span>
-                    <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/command&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">effort_controller</span><span class="p">),</span>
-                    <span class="n">Float64</span><span class="p">,</span>
-                    <span class="n">queue_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+            <span class="c1"># Create arm joint effort publishers</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_effort_pub</span> <span class="o">=</span> <span class="n">GroupPublisher</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">effort_controller</span> <span class="ow">in</span> <span class="n">ARM_EFFORT_CONTROLLERS</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_effort_pub</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">rospy</span><span class="o">.</span><span class="n">Publisher</span><span class="p">(</span>
+                        <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/command&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">effort_controller</span><span class="p">),</span>
+                        <span class="n">Float64</span><span class="p">,</span>
+                        <span class="n">queue_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                    <span class="p">)</span>
                 <span class="p">)</span>
-            <span class="p">)</span>
 
         <span class="c1"># Connect to controller_manager services</span>
         <span class="k">try</span><span class="p">:</span>
@@ -525,56 +540,57 @@
         <span class="c1">#   - The ability to send joint trajectory messages that do not specify joints.</span>
         <span class="c1">#   - The ability to automatic generate a time axes when the create_time_axis</span>
         <span class="c1">#     field is set to True.</span>
-
-        <span class="c1"># Connect to original &#39;panda_arm_controller/follow_joint_trajectory&#39; action</span>
-        <span class="c1"># server</span>
-        <span class="n">rospy</span><span class="o">.</span><span class="n">logdebug</span><span class="p">(</span>
-            <span class="s2">&quot;Connecting to &#39;</span><span class="si">%s</span><span class="s2">&#39; action service.&quot;</span>
-            <span class="o">%</span> <span class="s2">&quot;panda_arm_controller/follow_joint_trajectory&quot;</span>
-        <span class="p">)</span>
-        <span class="k">if</span> <span class="n">action_server_exists</span><span class="p">(</span><span class="s2">&quot;panda_arm_controller/follow_joint_trajectory&quot;</span><span class="p">):</span>
-            <span class="c1"># Connect to robot control action server</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_traj_client</span> <span class="o">=</span> <span class="n">actionlib</span><span class="o">.</span><span class="n">SimpleActionClient</span><span class="p">(</span>
-                <span class="s2">&quot;panda_arm_controller/follow_joint_trajectory&quot;</span><span class="p">,</span>
-                <span class="n">control_msgs</span><span class="o">.</span><span class="n">FollowJointTrajectoryAction</span><span class="p">,</span>
+        <span class="k">if</span> <span class="n">load_arm_follow_joint_trajectory_action</span><span class="p">:</span>
+            <span class="c1"># Connect to original &#39;panda_arm_controller/follow_joint_trajectory&#39; action</span>
+            <span class="c1"># server</span>
+            <span class="n">rospy</span><span class="o">.</span><span class="n">logdebug</span><span class="p">(</span>
+                <span class="s2">&quot;Connecting to &#39;</span><span class="si">%s</span><span class="s2">&#39; action service.&quot;</span>
+                <span class="o">%</span> <span class="s2">&quot;panda_arm_controller/follow_joint_trajectory&quot;</span>
             <span class="p">)</span>
+            <span class="k">if</span> <span class="n">action_server_exists</span><span class="p">(</span><span class="s2">&quot;panda_arm_controller/follow_joint_trajectory&quot;</span><span class="p">):</span>
+                <span class="c1"># Connect to robot control action server</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_traj_client</span> <span class="o">=</span> <span class="n">actionlib</span><span class="o">.</span><span class="n">SimpleActionClient</span><span class="p">(</span>
+                    <span class="s2">&quot;panda_arm_controller/follow_joint_trajectory&quot;</span><span class="p">,</span>
+                    <span class="n">control_msgs</span><span class="o">.</span><span class="n">FollowJointTrajectoryAction</span><span class="p">,</span>
+                <span class="p">)</span>
 
-            <span class="c1"># Waits until the action server has started up</span>
-            <span class="n">retval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_traj_client</span><span class="o">.</span><span class="n">wait_for_server</span><span class="p">(</span>
-                <span class="n">timeout</span><span class="o">=</span><span class="n">rospy</span><span class="o">.</span><span class="n">Duration</span><span class="p">(</span><span class="n">secs</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
-            <span class="p">)</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">retval</span><span class="p">:</span>
+                <span class="c1"># Waits until the action server has started up</span>
+                <span class="n">retval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_traj_client</span><span class="o">.</span><span class="n">wait_for_server</span><span class="p">(</span>
+                    <span class="n">timeout</span><span class="o">=</span><span class="n">rospy</span><span class="o">.</span><span class="n">Duration</span><span class="p">(</span><span class="n">secs</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">retval</span><span class="p">:</span>
+                    <span class="n">rospy</span><span class="o">.</span><span class="n">logwarn</span><span class="p">(</span>
+                        <span class="s2">&quot;No connection could be established with the &#39;</span><span class="si">%s</span><span class="s2">&#39; service. &quot;</span>
+                        <span class="s2">&quot;The Panda Robot Environment therefore can not use this action &quot;</span>
+                        <span class="s2">&quot;service to control the Panda Robot.&quot;</span>
+                        <span class="o">%</span> <span class="p">(</span><span class="s2">&quot;panda_arm_controller/follow_joint_trajectory&quot;</span><span class="p">)</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_traj_client_connected</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span>
                 <span class="n">rospy</span><span class="o">.</span><span class="n">logwarn</span><span class="p">(</span>
                     <span class="s2">&quot;No connection could be established with the &#39;</span><span class="si">%s</span><span class="s2">&#39; service. &quot;</span>
                     <span class="s2">&quot;The Panda Robot Environment therefore can not use this action &quot;</span>
                     <span class="s2">&quot;service to control the Panda Robot.&quot;</span>
                     <span class="o">%</span> <span class="p">(</span><span class="s2">&quot;panda_arm_controller/follow_joint_trajectory&quot;</span><span class="p">)</span>
                 <span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_traj_client_connected</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">rospy</span><span class="o">.</span><span class="n">logwarn</span><span class="p">(</span>
-                <span class="s2">&quot;No connection could be established with the &#39;</span><span class="si">%s</span><span class="s2">&#39; service. &quot;</span>
-                <span class="s2">&quot;The Panda Robot Environment therefore can not use this action &quot;</span>
-                <span class="s2">&quot;service to control the Panda Robot.&quot;</span>
-                <span class="o">%</span> <span class="p">(</span><span class="s2">&quot;panda_arm_controller/follow_joint_trajectory&quot;</span><span class="p">)</span>
-            <span class="p">)</span>
 
-        <span class="c1"># Setup a new Panda arm joint trajectory action server</span>
-        <span class="n">rospy</span><span class="o">.</span><span class="n">logdebug</span><span class="p">(</span>
-            <span class="s2">&quot;Creating &#39;</span><span class="si">%s</span><span class="s2">/panda_arm/follow_joint_trajectory&#39; service.&quot;</span>
-            <span class="o">%</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_traj_as</span> <span class="o">=</span> <span class="n">actionlib</span><span class="o">.</span><span class="n">SimpleActionServer</span><span class="p">(</span>
-            <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/panda_arm/follow_joint_trajectory&quot;</span> <span class="o">%</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
-            <span class="n">FollowJointTrajectoryAction</span><span class="p">,</span>
-            <span class="n">execute_cb</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_traj_execute_cb</span><span class="p">,</span>
-            <span class="n">auto_start</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_traj_as</span><span class="o">.</span><span class="n">register_preempt_callback</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_traj_preempt_cb</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_traj_as</span><span class="o">.</span><span class="n">start</span><span class="p">()</span></div>
+            <span class="c1"># Setup a new Panda arm joint trajectory action server</span>
+            <span class="n">rospy</span><span class="o">.</span><span class="n">logdebug</span><span class="p">(</span>
+                <span class="s2">&quot;Creating &#39;</span><span class="si">%s</span><span class="s2">/panda_arm/follow_joint_trajectory&#39; service.&quot;</span>
+                <span class="o">%</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_traj_as</span> <span class="o">=</span> <span class="n">actionlib</span><span class="o">.</span><span class="n">SimpleActionServer</span><span class="p">(</span>
+                <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/panda_arm/follow_joint_trajectory&quot;</span>
+                <span class="o">%</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                <span class="n">FollowJointTrajectoryAction</span><span class="p">,</span>
+                <span class="n">execute_cb</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_traj_execute_cb</span><span class="p">,</span>
+                <span class="n">auto_start</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_traj_as</span><span class="o">.</span><span class="n">register_preempt_callback</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_traj_preempt_cb</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_traj_as</span><span class="o">.</span><span class="n">start</span><span class="p">()</span></div>
 
     <span class="c1">################################################</span>
     <span class="c1"># Panda control member functions ###############</span>

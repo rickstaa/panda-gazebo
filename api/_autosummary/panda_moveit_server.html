@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>panda_moveit_server &mdash; panda-gazebo 2.7.3 documentation</title>
+  <title>panda_moveit_server &mdash; panda-gazebo 2.7.4 documentation</title>
   
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                2.7.3
+                2.7.4
               </div>
             
           
@@ -207,7 +207,7 @@ Franka robot using the Moveit framework.</p>
 <span class="lineno">13 </span>        <span class="n">load_gripper</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_param</span><span class="p">(</span><span class="s2">&quot;~load_gripper&quot;</span><span class="p">)</span>
 <span class="lineno">14 </span>    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
 <span class="lineno">15 </span>        <span class="n">load_gripper</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="lineno">16 </span>    <span class="k">try</span><span class="p">:</span>  <span class="c1"># Check if extra services should be loaded</span>
+<span class="lineno">16 </span>    <span class="k">try</span><span class="p">:</span>  <span class="c1"># Check if set ee pose service should be loaded</span>
 <span class="lineno">17 </span>        <span class="n">load_set_ee_pose_service</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_param</span><span class="p">(</span><span class="s2">&quot;~load_set_ee_pose_service&quot;</span><span class="p">)</span>
 <span class="lineno">18 </span>    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
 <span class="lineno">19 </span>        <span class="n">load_set_ee_pose_service</span> <span class="o">=</span> <span class="bp">True</span>
