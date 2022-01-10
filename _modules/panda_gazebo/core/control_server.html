@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>panda_gazebo.core.control_server &mdash; panda-gazebo 2.7.6 documentation</title>
+  <title>panda_gazebo.core.control_server &mdash; panda-gazebo 2.7.7 documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.7.6
+                2.7.7
               </div>
             
           
@@ -329,7 +329,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">arm_joint_positions_threshold</span> <span class="o">=</span> <span class="mf">0.07</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">arm_joint_efforts_threshold</span> <span class="o">=</span> <span class="mi">7</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">arm_velocity_threshold</span> <span class="o">=</span> <span class="mf">0.01</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arm_velocity_threshold</span> <span class="o">=</span> <span class="mf">0.07</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wait_till_arm_control_done_timeout</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Duration</span><span class="p">(</span><span class="n">ACTION_TIMEOUT</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_autofill_traj_positions</span> <span class="o">=</span> <span class="n">autofill_traj_positions</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_gripper_command_client_connected</span> <span class="o">=</span> <span class="kc">False</span>
@@ -2074,10 +2074,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_arm_joint_effort_pub</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">control_pub_msgs</span><span class="p">)</span>
 
         <span class="c1"># Wait till control is finished or timeout has been reached</span>
-        <span class="c1"># NOTE: We currently do not have to wait since the FrankaHWSim does not yet</span>
-        <span class="c1"># implement control latency. Torques are therefore applied instantly. A feature</span>
-        <span class="c1"># request for this can be found on</span>
-        <span class="c1"># https://github.com/frankaemika/franka_ros/issues/208.</span>
+        <span class="c1"># NOTE: We currently do not have to wait for control efforts to be applied</span>
+        <span class="c1"># since the &#39;FrankaHWSim&#39; does not yet implement control latency. Torques</span>
+        <span class="c1"># are therefore applied instantly.</span>
         <span class="c1"># if set_joint_efforts_req.wait and not len(stopped_controllers) &gt;= 1:</span>
         <span class="c1">#     self._wait_till_arm_control_done(</span>
         <span class="c1">#         control_type=&quot;effort&quot;,</span>
