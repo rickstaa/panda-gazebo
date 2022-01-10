@@ -1,7 +1,11 @@
 #! /usr/bin/env python3
-"""This server is responsible for controlling the Panda arm. It created a number of
+"""This server is responsible for controlling the Panda arm. It created several
 (action) services that can be used to send control commands to the Panda Robot arm and
-hand.
+hand. These services wrap around the original control topics and services created by
+the `franka_ros`_ and `ros_control`_ packages and add extra functionality. They allow
+you to `wait` for control commands to be completed, send incomplete control commands
+and incomplete trajectories (i.e. control commands/trajectories that do not contain
+all the joints).
 
 Main services:
     * get_controlled_joints
@@ -15,6 +19,9 @@ Main actions:
 Extra services:
     * panda_arm/set_joint_positions
     * panda_arm/set_joint_efforts
+
+.. _`franka_ros`: https://github.com/frankaemika/franka_ros
+.. _`ros_control`: https://github.com/ros-controls/ros_control
 """
 
 import copy
@@ -107,17 +114,12 @@ class PandaControlServer(object):
         joints (:obj:`sensor_msgs.JointState`): The current joint states.
         controllers (dict): Dictionary with information about the currently loaded
             controllers.
-        joint_positions_setpoint (dict): Dictionary containing the last Panda arm and
-            hand positions setpoint.
-        joint_efforts_setpoint (dict): Dictionary containing the last Panda arm and hand
-            efforts setpoint.
-        joint_positions_threshold (int): The current threshold for determining whether
-            the joint positions are within the given setpoint.
-        joint_efforts_threshold (int): Threshold for determining whether the joint
-            efforts are within the given setpoint.
-        autofill_traj_positions (bool): Whether you want to automatically set the
-            current states as positions when the positions field of the joint trajectory
-            message is left empty.
+        arm_joint_positions_threshold (float): The current threshold for determining
+            whether the arm joint positions are within the given setpoint.
+        arm_joint_efforts_threshold (float): The current threshold for determining
+            whether the arm joint efforts are within the given setpoint.
+        arm_velocity_threshold (float): The current threshold for determining whether
+            the arm has zero velocity.
     """
 
     def __init__(  # noqa: C901
@@ -154,19 +156,12 @@ class PandaControlServer(object):
             brute_force_grasping (bool, optional): Disable the gripper width reached
                 check when grasping. Defaults to ``False``.
         """
-        self.arm_joint_positions_setpoint = []
-        self.arm_joint_efforts_setpoint = []
-        self.gripper_width_setpoint = None
-        self.arm_joint_positions_threshold = 0.01
-        self.hand_joint_positions_threshold = 0.001
-        self.arm_joint_efforts_threshold = 0.01
-        self.autofill_traj_positions = autofill_traj_positions
-        self._wait_till_arm_control_done_timeout = rospy.Duration(ACTION_TIMEOUT)
-        self._arm_joint_positions_grad_threshold = 0.01
-        self._hand_joint_positions_grad_threshold = 0.001
-        self._arm_joint_efforts_grad_threshold = 0.01
-        self._gripper_move_client_connected = False
-        self._gripper_grasp_client_connected = False
+        self.arm_joint_positions_threshold = 0.07
+        self.arm_joint_efforts_threshold = 7
+        self.arm_velocity_threshold = 0.01
+        self.wait_till_arm_control_done_timeout = rospy.Duration(ACTION_TIMEOUT)
+        self._autofill_traj_positions = autofill_traj_positions
+        self._gripper_command_client_connected = False
         self._arm_joint_traj_client_connected = False
         self._load_gripper = load_gripper
 
@@ -180,6 +175,10 @@ class PandaControlServer(object):
         ########################################
 
         # Create main PandaControlServer services
+        # NOTE: These services wrap around the controller command topics created by
+        # the `ros_control` package to allow the user to wait for control commands
+        # and specify incomplete joint control commands (i.e. joint commands that do
+        # not contain all the joints).
         rospy.loginfo("Creating '%s' services." % rospy.get_name())
         rospy.logdebug(
             "Creating '%s/get_controlled_joints' service." % rospy.get_name()
@@ -288,7 +287,6 @@ class PandaControlServer(object):
             rospy.logdebug(
                 "Connecting to '%s' action service." % franka_gripper_command_topic
             )
-            self._gripper_command_client_connected = False
             if action_server_exists(franka_gripper_command_topic):
                 # Connect to robot control action server
                 self._gripper_command_client = actionlib.SimpleActionClient(
@@ -588,7 +586,7 @@ class PandaControlServer(object):
     def _wait_till_arm_control_done(  # noqa: C901
         self,
         control_type,
-        controlled_joints=None,
+        joint_setpoint,
         timeout=None,
         check_gradient=True,
     ):
@@ -598,92 +596,84 @@ class PandaControlServer(object):
         Args:
             control_type (str): The type of control that is being executed and on which
                 we should wait. Options are ``effort`` and ``position``.
-            controlled_joints (list, optional): A dictionary containing the joints that
-                are currently being controlled, these joints will be determined if no
-                dictionary is given.
+            joint_setpoint (list): The setpoint to wait for.
             timeout (int, optional): The timeout when waiting for the control
-                to be done. Defaults to :attr:`_wait_till_arm_control_done_timeout`.
+                to be done. Defaults to
+                :attr:`~PandaControlServer._wait_till_arm_control_done_timeout`.
             check_gradient (boolean, optional): If enabled the script will also return
                 when the gradients become zero. Defaults to ``True``.
+
+        Raises:
+            :obj:`ValueError`: Raised when the control_type is invalid.
         """
-        # Validate control type and control group
         if control_type not in ["position", "effort"]:
-            rospy.logwarn(
+            raise ValueError(
                 "Please specify a valid control type. Valid values are %s."
                 % ("['position', 'effort']")
             )
-            return False
         else:
             control_type = control_type.lower()
+        timeout = (
+            rospy.Duration(timeout)
+            if timeout is not None
+            else self.wait_till_arm_control_done_timeout
+        )
 
         # Compute the state masks
-        if controlled_joints:
+        try:
+            controlled_joints = self._get_controlled_joints(control_type=control_type)
             arm_states_mask = [
-                joint in controlled_joints for joint in self.joint_states.name
+                joint in controlled_joints["arm"] for joint in self.joint_states.name
             ]
-        else:  # Try to determine the controlled joints and state mask
-            try:
-                controlled_joints = self._get_controlled_joints(
-                    control_type=control_type
+        except InputMessageInvalidError:
+            rospy.logwarn(
+                "Not waiting for control to be completed as no information could "
+                "be retrieved about which joints are controlled when using '%s' "
+                "control. Please make sure the '%s' controllers that are needed "
+                "for '%s' control are initialized."
+                % (
+                    control_type,
+                    ARM_POSITION_CONTROLLERS
+                    if control_type == "position"
+                    else ARM_EFFORT_CONTROLLERS,
+                    control_type,
                 )
-                arm_states_mask = [
-                    joint in controlled_joints["arm"]
-                    for joint in self.joint_states.name
-                ]
-            except InputMessageInvalidError:
-                rospy.logwarn(
-                    "Not waiting for control to be completed as no information could "
-                    "be retrieved about which joints are controlled when using '%s' "
-                    "control. Please make sure the '%s' controllers that are needed "
-                    "for '%s' control are initialized."
-                    % (
-                        control_type,
-                        ARM_POSITION_CONTROLLERS
-                        if control_type == "position"
-                        else ARM_EFFORT_CONTROLLERS,
-                        control_type,
-                    )
+            )
+            return False
+        if not any(arm_states_mask):
+            rospy.logwarn(
+                "Not waiting for control to be completed as no joints appear to be "
+                "controlled when using '%s' control. Please make sure the '%s' "
+                "controllers that are needed for '%s' control are initialized."
+                % (
+                    control_type,
+                    ARM_POSITION_CONTROLLERS
+                    if control_type == "position"
+                    else ARM_EFFORT_CONTROLLERS,
+                    control_type,
                 )
-                return False
-            if not any(arm_states_mask):
-                rospy.logwarn(
-                    "Not waiting for control to be completed as no joints appear to be "
-                    "controlled when using '%s' control. Please make sure the '%s' "
-                    "controllers that are needed for '%s' control are initialized."
-                    % (
-                        control_type,
-                        ARM_POSITION_CONTROLLERS
-                        if control_type == "position"
-                        else ARM_EFFORT_CONTROLLERS,
-                        control_type,
-                    )
-                )
-                return False
-
-        # Get set input arguments
-        if timeout:
-            timeout = rospy.Duration(timeout)
-        else:
-            timeout = self._wait_till_arm_control_done_timeout
+            )
+            return False
 
         # Wait till robot positions/efforts reach the setpoint or the velocities are
         # not changing anymore
         timeout_time = rospy.get_rostime() + timeout
         while not rospy.is_shutdown() and rospy.get_rostime() < timeout_time:
             # Wait till joint positions are within range or arm not changing anymore
-            if control_type == "position":
-                joint_setpoint = self.arm_joint_positions_setpoint
-                joint_states = np.array(
-                    list(compress(self.joint_states.position, arm_states_mask))
-                )
-                state_threshold = self.arm_joint_positions_threshold
-                grad_threshold = self._arm_joint_positions_grad_threshold
-            # Check if joint effort states are within setpoint
-            elif control_type == "effort":
-                joint_setpoint = self.arm_joint_efforts_setpoint
-                joint_states = self.cur_command_torques
-                state_threshold = self.arm_joint_efforts_threshold
-                grad_threshold = self._arm_joint_efforts_grad_threshold
+            joint_states = (
+                np.array(list(compress(self.joint_states.position, arm_states_mask)))
+                if control_type == "position"
+                else np.array(list(compress(self.joint_states.effort, arm_states_mask)))
+            )
+            state_threshold = (
+                self.arm_joint_positions_threshold
+                if control_type == "position"
+                else self.arm_joint_efforts_threshold
+            )
+            grad_threshold = self.arm_velocity_threshold
+            joint_setpoint_tmp = np.append(
+                np.array(joint_setpoint), joint_states[len(joint_setpoint) :]
+            )
 
             # Add current state to state_buffer and delete oldest entry
             state_buffer = np.full((2, len(joint_states)), np.nan)
@@ -696,33 +686,22 @@ class PandaControlServer(object):
             # Check if setpoint is reached
             if check_gradient:  # Check position/effort and gradients
                 if (
-                    np.linalg.norm(
-                        np.array(list(compress(joint_states, arm_states_mask)))
-                        - np.array(list(compress(joint_setpoint, arm_states_mask)))
-                    )
+                    np.linalg.norm(joint_states - joint_setpoint_tmp)
                     <= state_threshold  # Check if difference norm is within threshold
                 ) or all(
                     [
                         (np.abs(val) <= grad_threshold and val != 0.0)
-                        for val in list(compress(grad_buffer[-1], arm_states_mask))
+                        for val in grad_buffer[-1]
                     ]  # Check if all velocities are close to zero
                 ):
                     break
             else:  # Only check position/effort
                 if (
-                    np.linalg.norm(
-                        np.array(list(compress(joint_states, arm_states_mask)))
-                        - np.array(list(compress(joint_setpoint, arm_states_mask)))
-                    )
+                    np.linalg.norm(joint_states - joint_setpoint_tmp)
                     <= state_threshold  # Check if difference norm is within threshold
                 ):
                     break
 
-        # Reset setpoints and return result
-        if control_type == "position":
-            self.arm_joint_positions_setpoint = []
-        else:
-            self.arm_joint_efforts_setpoint = []
         return True
 
     def _create_arm_traj_action_server_msg(  # noqa: C901
@@ -925,7 +904,7 @@ class PandaControlServer(object):
                     ] = list(waypoint.positions)
                 else:
                     # Make sure empty position field stays empty
-                    if not self.autofill_traj_positions:
+                    if not self._autofill_traj_positions:
                         arm_control_msg.trajectory.points[idx].positions = []
 
                 # Add joint velocity commands
@@ -1081,7 +1060,7 @@ class PandaControlServer(object):
                             arm_position_commands = arm_position_commands_dict.values()
                         else:
                             # Make sure empty position field stays empty
-                            if not self.autofill_traj_positions:
+                            if not self._autofill_traj_positions:
                                 arm_position_commands = []
 
                         # Create velocity command array
@@ -1431,12 +1410,12 @@ class PandaControlServer(object):
                 arm_req = SetJointPositions()
                 arm_req.joint_names = list(arm_joint_commands_dict.keys())
                 arm_req.joint_positions = list(arm_joint_commands_dict.values())
-                arm_req.wait = joint_commands_req.wait
+                arm_req.wait = joint_commands_req.arm_wait
             else:
                 arm_req = SetJointEfforts()
                 arm_req.joint_names = list(arm_joint_commands_dict.keys())
                 arm_req.joint_efforts = list(arm_joint_commands_dict.values())
-                arm_req.wait = joint_commands_req.wait
+                arm_req.wait = joint_commands_req.arm_wait
         else:
             arm_req = None
 
@@ -1447,7 +1426,7 @@ class PandaControlServer(object):
             gripper_req.width = gripper_width_command[0]
             gripper_req.grasping = joint_commands_req.grasping
             gripper_req.max_effort = max_effort_command[0]
-            gripper_req.wait = joint_commands_req.wait
+            gripper_req.wait = joint_commands_req.hand_wait
         else:
             gripper_req = None
 
@@ -1805,9 +1784,6 @@ class PandaControlServer(object):
                 )
 
         # Save setpoint and publish request
-        self.arm_joint_positions_setpoint = [
-            command.data for command in control_pub_msgs
-        ]
         rospy.logdebug("Publishing Panda arm joint positions control message.")
         self._arm_joint_position_pub.publish(control_pub_msgs)
 
@@ -1815,6 +1791,7 @@ class PandaControlServer(object):
         if set_joint_positions_req.wait and not len(stopped_controllers) >= 1:
             self._wait_till_arm_control_done(
                 control_type="position",
+                joint_setpoint=[command.data for command in control_pub_msgs],
             )
 
         resp.success = True
@@ -1922,7 +1899,6 @@ class PandaControlServer(object):
                 )
 
         # Save setpoint and publish request
-        self.arm_joint_efforts_setpoint = [command.data for command in control_pub_msgs]
         rospy.logdebug("Publishing Panda arm joint efforts control message.")
         self._arm_joint_effort_pub.publish(control_pub_msgs)
 
@@ -1934,6 +1910,7 @@ class PandaControlServer(object):
         # if set_joint_efforts_req.wait and not len(stopped_controllers) >= 1:
         #     self._wait_till_arm_control_done(
         #         control_type="effort",
+        #         joint_setpoint=[command.data for command in control_pub_msgs],
         #     )
 
         resp.success = True
@@ -1976,7 +1953,6 @@ class PandaControlServer(object):
 
         # Invoke 'franka_gripper' action service
         if self._gripper_command_client_connected:
-            self.gripper_width_setpoint = gripper_width
             self._gripper_command_client.send_goal(req)
 
             # Wait for result
@@ -1985,7 +1961,6 @@ class PandaControlServer(object):
                     timeout=rospy.Duration.from_sec(ACTION_TIMEOUT)
                 )
                 resp.success = gripper_result
-                self.gripper_width_setpoint = None
             else:
                 resp.success = True
         else:

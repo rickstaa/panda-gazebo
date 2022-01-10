@@ -37,8 +37,8 @@ the following ROS nodes:
       - **panda_arm/set_joint_positions**: Sets the arm joints positions.
       - **panda_hand/set_joint_positions**: Sets the hand joints position.
 
-See the 'message descriptions'_ for more information about the messages these services require. For more information about all
-the modules and ROS nodes contained in this package see the sections below.
+See the `message descriptions`_ for more information about the messages these services require. For more information about
+all the modules and ROS nodes contained in this package see the sections below.
 
 .. _`Panda Emika Franka`: https://frankaemika.github.io/docs
 .. _`gazebo`: http://gazebosim.org
