@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>panda_gazebo.core.control_server &mdash; panda-gazebo 2.7.4 documentation</title>
+  <title>panda_gazebo.core.control_server &mdash; panda-gazebo 2.7.6 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.7.4
+                2.7.6
               </div>
             
           
@@ -195,24 +195,28 @@
             
   <div class="section" id="module-panda_gazebo.core.control_server">
 <span id="panda-gazebo-core-control-server"></span><h1>panda_gazebo.core.control_server<a class="headerlink" href="#module-panda_gazebo.core.control_server" title="Permalink to this headline">¶</a></h1>
-<p>This server is responsible for controlling the Panda arm. It created a number of
+<p>This server is responsible for controlling the Panda arm. It created several
 (action) services that can be used to send control commands to the Panda Robot arm and
-hand.</p>
+hand. These services wrap around the original control topics and services created by
+the <a class="reference external" href="https://github.com/frankaemika/franka_ros">franka_ros</a> and <a class="reference external" href="https://github.com/ros-controls/ros_control">ros_control</a> packages and add extra functionality. They allow
+you to <cite>wait</cite> for control commands to be completed, send incomplete control commands
+and incomplete trajectories (i.e. control commands/trajectories that do not contain
+all the joints).</p>
 <dl class="simple">
 <dt>Main services:</dt><dd><ul class="simple">
-<li><p>get_controlled_joints</p></li>
-<li><p>follow_joint_trajectory</p></li>
-<li><p>set_joint_commands</p></li>
-<li><p>panda_hand/set_gripper_width</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">get_controlled_joints</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">follow_joint_trajectory</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">set_joint_commands</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">panda_hand/set_gripper_width</span></code></p></li>
 </ul>
 </dd>
 <dt>Main actions:</dt><dd><ul class="simple">
-<li><p>panda_arm/follow_joint_trajectory</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">panda_arm/follow_joint_trajectory</span></code></p></li>
 </ul>
 </dd>
 <dt>Extra services:</dt><dd><ul class="simple">
-<li><p>panda_arm/set_joint_positions</p></li>
-<li><p>panda_arm/set_joint_efforts</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">panda_arm/set_joint_positions</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">panda_arm/set_joint_efforts</span></code></p></li>
 </ul>
 </dd>
 </dl>
@@ -244,7 +248,7 @@ hand.</p>
 
   <div role="contentinfo">
     <p>
-        &#169; Copyright 2020, Rick Staa.
+        &#169; Copyright 2022, Rick Staa.
 
     </p>
   </div>

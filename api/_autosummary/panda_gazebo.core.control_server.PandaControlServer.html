@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>panda_gazebo.core.control_server.PandaControlServer &mdash; panda-gazebo 2.7.4 documentation</title>
+  <title>panda_gazebo.core.control_server.PandaControlServer &mdash; panda-gazebo 2.7.6 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.7.4
+                2.7.6
               </div>
             
           
@@ -225,62 +225,37 @@ controllers.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="panda_gazebo.core.control_server.PandaControlServer.joint_positions_setpoint">
-<span class="sig-name descname"><span class="pre">joint_positions_setpoint</span></span><a class="headerlink" href="#panda_gazebo.core.control_server.PandaControlServer.joint_positions_setpoint" title="Permalink to this definition">¶</a></dt>
-<dd><p>Dictionary containing the last Panda arm and
-hand positions setpoint.</p>
+<dt class="sig sig-object py" id="panda_gazebo.core.control_server.PandaControlServer.arm_joint_positions_threshold">
+<span class="sig-name descname"><span class="pre">arm_joint_positions_threshold</span></span><a class="headerlink" href="#panda_gazebo.core.control_server.PandaControlServer.arm_joint_positions_threshold" title="Permalink to this definition">¶</a></dt>
+<dd><p>The current threshold for determining
+whether the arm joint positions are within the given setpoint.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)">dict</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="panda_gazebo.core.control_server.PandaControlServer.joint_efforts_setpoint">
-<span class="sig-name descname"><span class="pre">joint_efforts_setpoint</span></span><a class="headerlink" href="#panda_gazebo.core.control_server.PandaControlServer.joint_efforts_setpoint" title="Permalink to this definition">¶</a></dt>
-<dd><p>Dictionary containing the last Panda arm and hand
-efforts setpoint.</p>
+<dt class="sig sig-object py" id="panda_gazebo.core.control_server.PandaControlServer.arm_joint_efforts_threshold">
+<span class="sig-name descname"><span class="pre">arm_joint_efforts_threshold</span></span><a class="headerlink" href="#panda_gazebo.core.control_server.PandaControlServer.arm_joint_efforts_threshold" title="Permalink to this definition">¶</a></dt>
+<dd><p>The current threshold for determining
+whether the arm joint efforts are within the given setpoint.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)">dict</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="panda_gazebo.core.control_server.PandaControlServer.joint_positions_threshold">
-<span class="sig-name descname"><span class="pre">joint_positions_threshold</span></span><a class="headerlink" href="#panda_gazebo.core.control_server.PandaControlServer.joint_positions_threshold" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="panda_gazebo.core.control_server.PandaControlServer.arm_velocity_threshold">
+<span class="sig-name descname"><span class="pre">arm_velocity_threshold</span></span><a class="headerlink" href="#panda_gazebo.core.control_server.PandaControlServer.arm_velocity_threshold" title="Permalink to this definition">¶</a></dt>
 <dd><p>The current threshold for determining whether
-the joint positions are within the given setpoint.</p>
+the arm has zero velocity.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)">int</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="panda_gazebo.core.control_server.PandaControlServer.joint_efforts_threshold">
-<span class="sig-name descname"><span class="pre">joint_efforts_threshold</span></span><a class="headerlink" href="#panda_gazebo.core.control_server.PandaControlServer.joint_efforts_threshold" title="Permalink to this definition">¶</a></dt>
-<dd><p>Threshold for determining whether the joint
-efforts are within the given setpoint.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)">int</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="panda_gazebo.core.control_server.PandaControlServer.autofill_traj_positions">
-<span class="sig-name descname"><span class="pre">autofill_traj_positions</span></span><a class="headerlink" href="#panda_gazebo.core.control_server.PandaControlServer.autofill_traj_positions" title="Permalink to this definition">¶</a></dt>
-<dd><p>Whether you want to automatically set the
-current states as positions when the positions field of the joint trajectory
-message is left empty.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)">bool</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -402,7 +377,7 @@ external torque and gravity torque from the effort that is supplied by gazebo.</
 
   <div role="contentinfo">
     <p>
-        &#169; Copyright 2020, Rick Staa.
+        &#169; Copyright 2022, Rick Staa.
 
     </p>
   </div>
