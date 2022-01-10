@@ -3,22 +3,22 @@
 the Panda robot or retrieve sensor data for the robot.
 
 Main services:
-    * panda_arm/set_ee_pose
-    * get_random_joint_positions
-    * get_random_ee_pose
-    * planning_scene/add_box
-    * planning_scene/add_plane
+    * ``panda_arm/set_ee_pose``
+    * ``get_random_joint_positions``
+    * ``get_random_ee_pose``
+    * ``planning_scene/add_box``
+    * ``planning_scene/add_plane``
 
 Extra services:
-    * panda_arm/get_ee
-    * panda_arm/set_ee
-    * panda_arm/get_ee_pose
-    * panda_arm/get_ee_pose_joint_config
-    * panda_arm/get_ee_rpy
-    * set_joint_positions
-    * get_controlled_joints
-    * panda_arm/set_joint_positions
-    * panda_hand/set_joint_positions
+    * ``panda_arm/get_ee``
+    * ``panda_arm/set_ee``
+    * ``panda_arm/get_ee_pose``
+    * ``panda_arm/get_ee_pose_joint_config``
+    * ``panda_arm/get_ee_rpy``
+    * ``set_joint_positions``
+    * ``get_controlled_joints``
+    * ``panda_arm/set_joint_positions``
+    * ``panda_hand/set_joint_positions``
 
 Dynamic reconfigure service:
     This node also contains a dynamic reconfigure service that allows you to change

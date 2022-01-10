@@ -48,7 +48,7 @@ all the modules and ROS nodes contained in this package see the sections below.
 .. _`panda_moveit_config`: https://github.com/ros-planning/panda_moveit_config
 .. _`Panda Gazebo simulation`: https://github.com/frankaemika/franka_ros/tree/develop/franka_gazebo
 .. _`MoveIt`: https://moveit.ros.org
-.. _`message description`: https://github.com/rickstaa/panda-gazebo/tree/noetic-devel/panda_gazebo/srv
+.. _`message descriptions`: https://github.com/rickstaa/panda-gazebo/tree/noetic-devel/panda_gazebo/srv
 
 Contents
 ========

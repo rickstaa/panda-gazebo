@@ -8,17 +8,17 @@ and incomplete trajectories (i.e. control commands/trajectories that do not cont
 all the joints).
 
 Main services:
-    * get_controlled_joints
-    * follow_joint_trajectory
-    * set_joint_commands
-    * panda_hand/set_gripper_width
+    * ``get_controlled_joints``
+    * ``follow_joint_trajectory``
+    * ``set_joint_commands``
+    * ``panda_hand/set_gripper_width``
 
 Main actions:
-    * panda_arm/follow_joint_trajectory
+    * ``panda_arm/follow_joint_trajectory``
 
 Extra services:
-    * panda_arm/set_joint_positions
-    * panda_arm/set_joint_efforts
+    * ``panda_arm/set_joint_positions``
+    * ``panda_arm/set_joint_efforts``
 
 .. _`franka_ros`: https://github.com/frankaemika/franka_ros
 .. _`ros_control`: https://github.com/ros-controls/ros_control

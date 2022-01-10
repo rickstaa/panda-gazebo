@@ -12,6 +12,7 @@
 # -- Make sure panda-gazebo is accessible without going through setup.py -----------
 import os.path as osp
 import sys
+from datetime import datetime
 
 sys.path.insert(0, osp.abspath("../../src/panda_gazebo"))
 sys.path.insert(1, osp.abspath("../../nodes"))
@@ -58,7 +59,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "panda-gazebo"
-copyright = "2020, Rick Staa"
+copyright = f"{datetime.now().year}, Rick Staa"
 author = "Rick Staa"
 git_user_name = "rickstaa"
 
