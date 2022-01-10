@@ -158,7 +158,7 @@ class PandaControlServer(object):
         """
         self.arm_joint_positions_threshold = 0.07
         self.arm_joint_efforts_threshold = 7
-        self.arm_velocity_threshold = 0.01
+        self.arm_velocity_threshold = 0.07
         self.wait_till_arm_control_done_timeout = rospy.Duration(ACTION_TIMEOUT)
         self._autofill_traj_positions = autofill_traj_positions
         self._gripper_command_client_connected = False
@@ -1903,10 +1903,9 @@ class PandaControlServer(object):
         self._arm_joint_effort_pub.publish(control_pub_msgs)
 
         # Wait till control is finished or timeout has been reached
-        # NOTE: We currently do not have to wait since the FrankaHWSim does not yet
-        # implement control latency. Torques are therefore applied instantly. A feature
-        # request for this can be found on
-        # https://github.com/frankaemika/franka_ros/issues/208.
+        # NOTE: We currently do not have to wait for control efforts to be applied
+        # since the 'FrankaHWSim' does not yet implement control latency. Torques
+        # are therefore applied instantly.
         # if set_joint_efforts_req.wait and not len(stopped_controllers) >= 1:
         #     self._wait_till_arm_control_done(
         #         control_type="effort",
