@@ -24,8 +24,9 @@ panda\_gazebo.core.control\_server.PandaControlServer
 
    .. autosummary::
    
+      ~PandaControlServer.controlled_joints
       ~PandaControlServer.controllers
-      ~PandaControlServer.cur_command_torques
       ~PandaControlServer.gripper_width
+      ~PandaControlServer.joint_controllers
    
    

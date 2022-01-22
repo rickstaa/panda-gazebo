@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>panda_control_server &mdash; panda-gazebo 2.7.7 documentation</title>
+  <title>panda_control_server &mdash; panda-gazebo 2.7.8 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.7.7
+                2.7.8
               </div>
             
           
@@ -228,17 +228,22 @@ Franka robot.</p>
 <span class="lineno">33 </span>        <span class="n">brute_force_grasping</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_param</span><span class="p">(</span><span class="s2">&quot;~brute_force_grasping&quot;</span><span class="p">)</span>
 <span class="lineno">34 </span>    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
 <span class="lineno">35 </span>        <span class="n">brute_force_grasping</span> <span class="o">=</span> <span class="bp">False</span>
-<span class="lineno">36 </span>
-<span class="lineno">37 </span>    <span class="c1"># Start control server</span>
-<span class="lineno">38 </span>    <span class="n">control_server</span> <span class="o">=</span> <span class="n">PandaControlServer</span><span class="p">(</span>
-<span class="lineno">39 </span>        <span class="n">autofill_traj_positions</span><span class="o">=</span><span class="n">autofill_traj_positions</span><span class="p">,</span>
-<span class="lineno">40 </span>        <span class="n">load_gripper</span><span class="o">=</span><span class="n">load_gripper</span><span class="p">,</span>
-<span class="lineno">41 </span>        <span class="n">load_set_joint_commands_service</span><span class="o">=</span><span class="n">load_set_joint_commands_service</span><span class="p">,</span>
-<span class="lineno">42 </span>        <span class="n">load_arm_follow_joint_trajectory_action</span><span class="o">=</span><span class="n">load_arm_follow_joint_trajectory_action</span><span class="p">,</span>
-<span class="lineno">43 </span>        <span class="n">load_extra_services</span><span class="o">=</span><span class="n">load_extra_services</span><span class="p">,</span>
-<span class="lineno">44 </span>        <span class="n">brute_force_grasping</span><span class="o">=</span><span class="n">brute_force_grasping</span><span class="p">,</span>
-<span class="lineno">45 </span>    <span class="p">)</span>
-<span class="lineno">46 </span>    <span class="n">rospy</span><span class="o">.</span><span class="n">spin</span><span class="p">()</span>  <span class="c1"># Maintain the service open</span>
+<span class="lineno">36 </span>    <span class="k">try</span><span class="p">:</span>  <span class="c1"># The rate with which we check for the used controllers to be active.</span>
+<span class="lineno">37 </span>        <span class="n">controllers_check_rate</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_param</span><span class="p">(</span><span class="s2">&quot;~controllers_check_rate&quot;</span><span class="p">)</span>
+<span class="lineno">38 </span>    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+<span class="lineno">39 </span>        <span class="n">controllers_check_rate</span> <span class="o">=</span> <span class="mf">0.1</span>
+<span class="lineno">40 </span>
+<span class="lineno">41 </span>    <span class="c1"># Start control server</span>
+<span class="lineno">42 </span>    <span class="n">control_server</span> <span class="o">=</span> <span class="n">PandaControlServer</span><span class="p">(</span>
+<span class="lineno">43 </span>        <span class="n">autofill_traj_positions</span><span class="o">=</span><span class="n">autofill_traj_positions</span><span class="p">,</span>
+<span class="lineno">44 </span>        <span class="n">load_gripper</span><span class="o">=</span><span class="n">load_gripper</span><span class="p">,</span>
+<span class="lineno">45 </span>        <span class="n">load_set_joint_commands_service</span><span class="o">=</span><span class="n">load_set_joint_commands_service</span><span class="p">,</span>
+<span class="lineno">46 </span>        <span class="n">load_arm_follow_joint_trajectory_action</span><span class="o">=</span><span class="n">load_arm_follow_joint_trajectory_action</span><span class="p">,</span>
+<span class="lineno">47 </span>        <span class="n">load_extra_services</span><span class="o">=</span><span class="n">load_extra_services</span><span class="p">,</span>
+<span class="lineno">48 </span>        <span class="n">brute_force_grasping</span><span class="o">=</span><span class="n">brute_force_grasping</span><span class="p">,</span>
+<span class="lineno">49 </span>        <span class="n">controllers_check_rate</span><span class="o">=</span><span class="n">controllers_check_rate</span><span class="p">,</span>
+<span class="lineno">50 </span>    <span class="p">)</span>
+<span class="lineno">51 </span>    <span class="n">rospy</span><span class="o">.</span><span class="n">spin</span><span class="p">()</span>  <span class="c1"># Maintain the service open</span>
 </pre></div>
 </div>
 </div>

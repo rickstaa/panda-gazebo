@@ -28,7 +28,7 @@
    :template: custom-module-template.rst
    :recursive:
 
-   panda_gazebo.common.action_client_state
+   panda_gazebo.common.controlled_joints_dict
    panda_gazebo.common.controller_info_dict
    panda_gazebo.common.functions
 
