@@ -287,7 +287,6 @@ class PandaControlSwitcher(object):
             or (control_type == "hand" and control_type != self.hand_control_type)
             and time.time() - start_time <= timeout
         ):
-
             time.sleep(1.0 / rate)
         if time.time() - start_time > timeout:
             raise TimeoutError(
@@ -367,7 +366,7 @@ class PandaControlSwitcher(object):
         start_time = time.time()
         controllers_state = {}
         while (
-            control_group not in controllers_state.keys()
+            control_group not in controllers_state
             or "running" not in controllers_state[control_group].keys()
         ) and time.time() - start_time <= self._controller_spawner_wait_timeout:
             controllers_state = self._list_controllers_state()

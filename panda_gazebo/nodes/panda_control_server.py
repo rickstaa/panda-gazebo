@@ -46,6 +46,10 @@ if __name__ == "__main__":  # noqa: C901
         brute_force_grasping = rospy.get_param("~brute_force_grasping")
     except KeyError:
         brute_force_grasping = False
+    try:  # The rate with which we check for the used controllers to be active.
+        controllers_check_rate = rospy.get_param("~controllers_check_rate")
+    except KeyError:
+        controllers_check_rate = 0.1
 
     # Start control server
     control_server = PandaControlServer(
@@ -55,5 +59,6 @@ if __name__ == "__main__":  # noqa: C901
         load_arm_follow_joint_trajectory_action=load_arm_follow_joint_trajectory_action,
         load_extra_services=load_extra_services,
         brute_force_grasping=brute_force_grasping,
+        controllers_check_rate=controllers_check_rate,
     )
     rospy.spin()  # Maintain the service open

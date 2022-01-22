@@ -34,56 +34,56 @@ if __name__ == "__main__":
     rospy.init_node("test_panda_moveit_server")
 
     # # -- Test set robot joint positions service --
-    # req = SetJointPositionsRequest()
-    # req.joint_positions = [
-    #     2.15,
-    #     1.12,
-    #     -1.59,
-    #     -1.94,
-    #     -2.44,
-    #     1.88,
-    #     1.54,
-    #     0.02,
-    #     0.02,
-    # ]
-    # req.joint_names = [
-    #     "panda_joint1",
-    #     "panda_joint2",
-    #     "panda_joint3",
-    #     "panda_joint4",
-    #     "panda_joint5",
-    #     "panda_joint6",
-    #     "panda_joint7",
-    #     "panda_finger_joint1",
-    #     "panda_finger_joint2",
-    # ]
-    # set_joint_positions_srv = rospy.ServiceProxy(
-    #     "panda_moveit_planner_server/set_joint_positions", SetJointPositions
-    # )
-    # resp = set_joint_positions_srv.call(req)
-    # print(resp.message)
+    req = SetJointPositionsRequest()
+    req.joint_positions = [
+        2.15,
+        1.12,
+        -1.59,
+        -1.94,
+        -2.44,
+        1.88,
+        1.54,
+        0.02,
+        0.02,
+    ]
+    req.joint_names = [
+        "panda_joint1",
+        "panda_joint2",
+        "panda_joint3",
+        "panda_joint4",
+        "panda_joint5",
+        "panda_joint6",
+        "panda_joint7",
+        "panda_finger_joint1",
+        "panda_finger_joint2",
+    ]
+    set_joint_positions_srv = rospy.ServiceProxy(
+        "panda_moveit_planner_server/set_joint_positions", SetJointPositions
+    )
+    resp = set_joint_positions_srv.call(req)
+    print(resp.message)
 
     # # -- Test panda_arm set robot joint positions service --
-    # req = SetJointPositionsRequest()
-    # req.joint_positions = [-0.60, 0.33, -0.83, -1.46, 0.26, 1.69, -0.64, 0.016, 0.016]
-    # # req.joint_names = ["panda_joint1", "panda_joint2"]
-    # setarm__joint_positions_srv = rospy.ServiceProxy(
-    #     "panda_moveit_planner_server/panda_arm/set_joint_positions", SetJointPositions
-    # )
-    # resp = setarm__joint_positions_srv.call(req)
-    # print(resp.message)
+    req = SetJointPositionsRequest()
+    req.joint_positions = [-0.60, 0.33, -0.83, -1.46, 0.26, 1.69, -0.64, 0.016, 0.016]
+    # req.joint_names = ["panda_joint1", "panda_joint2"]
+    setarm__joint_positions_srv = rospy.ServiceProxy(
+        "panda_moveit_planner_server/panda_arm/set_joint_positions", SetJointPositions
+    )
+    resp = setarm__joint_positions_srv.call(req)
+    print(resp.message)
 
     # # -- Test set panda_hand robot joint positions service --
-    # req = SetJointPositionsRequest()
-    # req.joint_positions = [0.0, 0.0]
-    # # req.joint_positions = [0.03]
-    # # req.joint_names = ["panda_finger_joint1"]
-    # set_hand_joint_positions_srv = rospy.ServiceProxy(
-    #     "panda_moveit_planner_server/panda_hand/set_joint_positions",
-    #     SetJointPositions,
-    # )
-    # resp = set_hand_joint_positions_srv.call(req)
-    # print(resp.message)
+    req = SetJointPositionsRequest()
+    req.joint_positions = [0.0, 0.0]
+    # req.joint_positions = [0.03]
+    # req.joint_names = ["panda_finger_joint1"]
+    set_hand_joint_positions_srv = rospy.ServiceProxy(
+        "panda_moveit_planner_server/panda_hand/set_joint_positions",
+        SetJointPositions,
+    )
+    resp = set_hand_joint_positions_srv.call(req)
+    print(resp.message)
 
     # # -- Test set ee pose service --
     # req = SetEePoseRequest()

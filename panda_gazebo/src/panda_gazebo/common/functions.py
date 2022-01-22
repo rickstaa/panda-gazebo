@@ -151,20 +151,23 @@ def translate_actionclient_result_error_code(actionclient_retval):
     Returns:
         str: Error string that corresponds to the error code.
     """
-    error_dict = {
-        value: attr
-        for attr, value in actionclient_retval.__class__.__dict__.items()
-        if attr[0] != "_" and all(map(str.isupper, attr.replace("_", "")))
-    }
-    return (
-        error_dict[actionclient_retval.error_code]
-        .lower()
-        .capitalize()
-        .replace("_", " ")
-        + "."
-        if error_dict[actionclient_retval.error_code] != "SUCCESSFUL"
-        else ""
-    )
+    if actionclient_retval is not None:
+        error_dict = {
+            value: attr
+            for attr, value in actionclient_retval.__class__.__dict__.items()
+            if attr[0] != "_" and all(map(str.isupper, attr.replace("_", "")))
+        }
+        return (
+            error_dict[actionclient_retval.error_code]
+            .lower()
+            .capitalize()
+            .replace("_", " ")
+            + "."
+            if error_dict[actionclient_retval.error_code] != "SUCCESSFUL"
+            else ""
+        )
+    else:
+        return "No goal set"
 
 
 def translate_moveit_error_code(moveit_error_code):

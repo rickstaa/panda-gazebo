@@ -3,7 +3,6 @@
 
 import copy
 
-# Script parameters
 CONTROLLER_INFO_DICT = {
     "arm": {
         "running": {
