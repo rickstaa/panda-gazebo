@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.7.11](https://github.com/rickstaa/panda-gazebo/compare/v2.7.10...v2.7.11) (2022-01-24)
+
+
+### Bug Fixes
+
+* fix dynamic reconfigure test scripts ([029d2f0](https://github.com/rickstaa/panda-gazebo/commit/029d2f07d0c7db47f4146be15c6b223a281e9f39))
+
 ### [2.7.8](https://github.com/rickstaa/panda-gazebo/compare/v2.7.7...v2.7.8) (2022-01-22)
 
 ### [2.7.7](https://github.com/rickstaa/panda-gazebo/compare/v2.7.6...v2.7.7) (2022-01-10)
