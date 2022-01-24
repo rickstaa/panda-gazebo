@@ -37,10 +37,6 @@ class JointPositionDynamicReconfigureServer:
         self.arm_joint7_pub = rospy.Publisher(
             "panda_arm_joint7_position_controller/command", Float64, queue_size=10
         )
-        self.gripper_move_client = actionlib.SimpleActionClient(
-            "franka_gripper/move", MoveAction
-        )
-        self.gripper_move_client.wait_for_server()
         self.arm_pubs = [
             self.arm_joint1_pub,
             self.arm_joint2_pub,
@@ -50,6 +46,12 @@ class JointPositionDynamicReconfigureServer:
             self.arm_joint6_pub,
             self.arm_joint7_pub,
         ]
+        self.gripper_move_client = actionlib.SimpleActionClient(
+            "franka_gripper/move", MoveAction
+        )
+        self.gripper_connected = self.gripper_move_client.wait_for_server(
+            timeout=rospy.Duration(secs=5)
+        )
 
     def callback(self, config, level):
         """Dynamic reconfigure callback function.
@@ -87,12 +89,17 @@ class JointPositionDynamicReconfigureServer:
         # Write joint positions to controller topics
         if level > -1 and level < 7:
             self.arm_pubs[level].publish(list(config.values())[level])
-        elif level in [7, 8]:
+        elif level in [7, 8] and self.gripper_connected:
             move_goal = MoveGoal(width=config["width"], speed=config["speed"])
             self.gripper_move_client.send_goal(move_goal)
             result = self.gripper_move_client.wait_for_result()
             if not result:
                 rospy.logerr("Something went wrong while setting the gripper commands.")
+        elif level in [7, 8] and not self.gripper_connected:
+            rospy.logwarn_once(
+                "Gripper commands not applied since the gripper command action was not "
+                "found."
+            )
         return config
 
 
