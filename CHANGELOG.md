@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.8.0](https://github.com/rickstaa/panda-gazebo/compare/v2.7.11...v2.8.0) (2022-01-26)
+
+
+### Features
+
+* add ability to disable franka_gazebo logs ([99aed6e](https://github.com/rickstaa/panda-gazebo/commit/99aed6e2461fe6b5303c51437c24f0f21d085309))
+
 ### [2.7.11](https://github.com/rickstaa/panda-gazebo/compare/v2.7.10...v2.7.11) (2022-01-24)
 
 
