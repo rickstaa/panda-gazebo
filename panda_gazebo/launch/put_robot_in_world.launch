@@ -3,6 +3,7 @@
   <arg name="rviz" default="true" doc="Start Rviz"/>
   <arg name="load_gripper" default="true" doc="Load the gripper"/>
   <arg name="debug" default="false" doc="Add gdb debug flag"/>
+  <arg name="disable_franka_gazebo_logging" default="false" doc="Disables the franka gazebo warnings"/>
   <!--Moveit arguments-->
   <arg name="moveit" default="true" doc="Start MoveIt"/>
   <arg name="rviz_file" default="" doc="Path to the Rviz configuration file"/>
@@ -48,8 +49,9 @@
   </include>
 
   <!--Set panda_gazebo parameters-->
-  <!--  Disable franka_gripper action console logs-->
+  <!--  Disable franka action console logs-->
   <node pkg="panda_gazebo" type="set_franka_gripper_logging_level.py" name="set_franka_gripper_logger_level"/>
+  <node if="$(arg disable_franka_gazebo_logging)" pkg="panda_gazebo" type="set_franka_gazebo_logging_level.py" name="set_franka_gazebo_logger_level"/>
 
   <!--Run the main MoveIt! executable without trajectory execution (we do not have controllers configured by default)-->
   <include if="$(arg moveit)" file="$(find panda_moveit_config)/launch/move_group.launch">
