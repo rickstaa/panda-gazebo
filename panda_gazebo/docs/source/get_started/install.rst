@@ -9,6 +9,7 @@ The following dependencies are required to run the :panda-gazebo:`panda-gazebo <
 
 * `ROS Noetic - Desktop full <https://wiki.ros.org/Noetic/Installation/Ubuntu/>`_
 * `Python 3 <https://www.python.org/downloads/>`_
+* `libfranka library <https://github.com/frankaemika/libfranka>`_
 
 Clone instructions
 ------------------
@@ -30,7 +31,8 @@ can pull the submodules using the following git command:
 Build instructions
 ------------------
 
-After you cloned the repository, you have to install the system dependencies using the ``rosdep install --from-path src --ignore-src -r -y --skip-keys libfranka`` command. After these
+After you cloned the repository, you have to build the ``libfranka`` library from the source (see https://frankaemika.github.io/docs/installation_linux.html#building-from-source).
+After you build ``libfranka` from source, you have to install the system dependencies using the ``rosdep install --from-path src --ignore-src -r -y --skip-keys libfranka`` command. After these
 dependencies are installed, you can build the ROS packages inside the catkin workspace using the following build command:
 
 .. code-block:: bash
