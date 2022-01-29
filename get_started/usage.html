@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Usage &mdash; panda-gazebo 2.8.0 documentation</title>
+  <title>Usage &mdash; panda-gazebo 2.8.2 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.8.0
+                2.8.2
               </div>
             
           
@@ -179,9 +179,26 @@
             
   <div class="section" id="usage">
 <h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
+<p>The <a class="reference external" href="https://github.com/rickstaa/panda-gazebo/">panda-gazebo</a> contains three kinds of launch files: world launch files, a robot launch file
+and a simulation launch file.</p>
+<p><strong>World launch files</strong></p>
+<p>World launch files start Gazebo and load a world where the Panda robot can be trained. They don’t spawn the robot.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">start_reach_world.launch</span></code>: World that can be used for training a reaching task.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">start_push_world.launch</span></code>: World that can be used for training a push task.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">start_pick_and_place_world.launch</span></code>: World can be used to train a puck and place task.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">start_slide_world.launch</span></code>: World that can be used for training a sliding task.</p></li>
+</ul>
+</div></blockquote>
+<p><strong>Robot launch file</strong></p>
+<p>The <code class="docutils literal notranslate"><span class="pre">put_robot_in_world.launch</span></code> robot launch files spawn the Panda robot in Gazebo and load the required control services.</p>
+<p><strong>Simulation launch file</strong></p>
+<p>The <code class="docutils literal notranslate"><span class="pre">start_simulation.launch</span></code> launch file combines the two other launch files to start the gazebo world and spawns the Panda robot.</p>
 <div class="section" id="usage-instructions">
 <h2>Usage instructions<a class="headerlink" href="#usage-instructions" title="Permalink to this headline">¶</a></h2>
-<p>You can launch the gazebo simulation using the following <code class="docutils literal notranslate"><span class="pre">roslaunch</span></code> command:</p>
+<p>You can launch any launch files using the <code class="docutils literal notranslate"><span class="pre">roslaunch</span></code> command-line tool. For example, if you want to start a gazebo simulation
+of the Panda robot, you can use the following <code class="docutils literal notranslate"><span class="pre">roslaunch</span></code> command:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>roslaunch panda_gazebo start_simulation.launch
 </pre></div>
 </div>

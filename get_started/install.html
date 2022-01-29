@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Installation &mdash; panda-gazebo 2.8.0 documentation</title>
+  <title>Installation &mdash; panda-gazebo 2.8.2 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.8.0
+                2.8.2
               </div>
             
           
@@ -187,6 +187,7 @@
 <ul class="simple">
 <li><p><a class="reference external" href="https://wiki.ros.org/Noetic/Installation/Ubuntu/">ROS Noetic - Desktop full</a></p></li>
 <li><p><a class="reference external" href="https://www.python.org/downloads/">Python 3</a></p></li>
+<li><p><a class="reference external" href="https://github.com/frankaemika/libfranka">libfranka library</a></p></li>
 </ul>
 </div>
 <div class="section" id="clone-instructions">
@@ -204,7 +205,8 @@ can pull the submodules using the following git command:</p>
 </div>
 <div class="section" id="build-instructions">
 <h2>Build instructions<a class="headerlink" href="#build-instructions" title="Permalink to this headline">¶</a></h2>
-<p>After you cloned the repository, you have to install the system dependencies using the <code class="docutils literal notranslate"><span class="pre">rosdep</span> <span class="pre">install</span> <span class="pre">--from-path</span> <span class="pre">src</span> <span class="pre">--ignore-src</span> <span class="pre">-r</span> <span class="pre">-y</span> <span class="pre">--skip-keys</span> <span class="pre">libfranka</span></code> command. After these
+<p>After you cloned the repository, you have to build the <code class="docutils literal notranslate"><span class="pre">libfranka</span></code> library from the source (see <a class="reference external" href="https://frankaemika.github.io/docs/installation_linux.html#building-from-source">https://frankaemika.github.io/docs/installation_linux.html#building-from-source</a>).
+After you build <code class="docutils literal notranslate"><span class="pre">libfranka`</span> <span class="pre">from</span> <span class="pre">source,</span> <span class="pre">you</span> <span class="pre">have</span> <span class="pre">to</span> <span class="pre">install</span> <span class="pre">the</span> <span class="pre">system</span> <span class="pre">dependencies</span> <span class="pre">using</span> <span class="pre">the</span> <span class="pre">``rosdep</span> <span class="pre">install</span> <span class="pre">--from-path</span> <span class="pre">src</span> <span class="pre">--ignore-src</span> <span class="pre">-r</span> <span class="pre">-y</span> <span class="pre">--skip-keys</span> <span class="pre">libfranka</span></code> command. After these
 dependencies are installed, you can build the ROS packages inside the catkin workspace using the following build command:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>catkin build -j4 -DCMAKE_BUILD_TYPE<span class="o">=</span>Release -DFranka_DIR:PATH<span class="o">=</span>~/libfranka/build
 </pre></div>
