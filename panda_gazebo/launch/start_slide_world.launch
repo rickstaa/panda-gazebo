@@ -5,10 +5,11 @@
   <arg name="paused" default="true" doc="Start gazebo paused"/>
   <arg name="verbose" default="false" doc="Enable Gazebo verbose mode"/>
   <arg name="gazebo_gui" default="true" doc="Start the gazebo GUI"/>
-  <arg name="physics" default="dart" doc="The physics engine used by gazebo"/> <!--Phyics engines: dart|ode-->
+  <!--Phyics engines: dart|ode-->
+  <arg name="physics" default="dart" doc="The physics engine used by gazebo"/>
 
   <!--Start the gazebo world-->
-  <include file="$(find panda_gazebo)/launch/start_world.launch">
+  <include file="$(find panda_gazebo)/launch/start_world.launch.xml">
     <arg name="world" value="$(arg world)"/>
     <arg name="verbose" value="$(arg verbose)"/>
     <arg name="paused" value="$(arg paused)"/>

@@ -68,7 +68,7 @@
   <rosparam if="$(arg moveit)" file="$(find panda_gazebo)/cfg/controllers/moveit.yaml" command="load" />
 
   <!--Load and start the controllers-->
-  <include file="$(find panda_gazebo)/launch/load_controllers.launch">
+  <include file="$(find panda_gazebo)/launch/load_controllers.launch.xml">
     <arg name="moveit" default="$(arg moveit)"/>
     <arg name="control_type" value="$(arg control_type)"/>
     <arg name="load_gripper" value="$(arg load_gripper)"/>
@@ -99,7 +99,7 @@
   </node>
 
   <!--Load RViz-->
-  <include if="$(arg rviz)" file="$(find panda_gazebo)/launch/panda_rviz.launch">
+  <include if="$(arg rviz)" file="$(find panda_gazebo)/launch/panda_rviz.launch.xml">
     <arg name="debug" value="$(arg debug)"/>
     <arg name="moveit" value="$(arg moveit)"/>
     <arg if="$(eval arg('rviz_file') != '')" name="rviz_file" value="$(arg rviz_file)"/>
