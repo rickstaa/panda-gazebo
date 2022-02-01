@@ -4,16 +4,13 @@
   <version>2.8.2</version>
   <description>A package that allows you to train several ROS based robots using Gazebo.</description>
 
-
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <maintainer email="rick.staa@outlook.com">Rick Staa</maintainer>
-
 
   <!-- One license tag required, multiple allowed, one license per tag -->
   <!-- Commonly used license strings: -->
   <!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
   <license>Rick Staa copyright</license>
-
 
   <!-- Url tags are optional, but multiple are allowed, one per tag -->
   <!-- Optional attribute type can be: website, bugtracker, or repository -->

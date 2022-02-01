@@ -127,10 +127,11 @@ class PandaMoveItPlannerServer(object):
                 control services. Defaults to ``True``.
             load_set_ee_pose_service (boolean, optional): Whether the set ee pose
                 service should be loaded. This service is only used by the
-                `openai_ros <https://wiki.ros.org/openai_ros>`_ when the control type
-                is set to ``trajectory``. Defaults, to ``True``.
+                `ros_gazebo_gym <https://github.com/rickstaa/ros-gazebo-gym>`_ package
+                when the control type is set to ``trajectory``. Defaults, to ``True``.
             load_extra_services (bool, optional): Whether to load extra services that
-                are not used by the `openai_ros <https://wiki.ros.org/openai_ros>`_
+                are not used by the
+                `ros_gazebo_gym <https://github.com/rickstaa/ros-gazebo-gym>`_
                 package. Defaults to ``False``.
         """
         self._load_gripper = load_gripper

@@ -3,15 +3,12 @@ Welcome to panda-gazebo documentation
 =====================================
 
 Welcome to the API documentation for the :panda-gazebo:`panda-gazebo <>` package. This package contains all the ROS packages
-needed for creating a `Panda Emika Franka`_ Gazebo simulation. It is used by the `openai_ros`_ ROS RL package to create the
-openai_ros Panda task environments.
-
-The :panda-gazebo:`panda-gazebo <>` package wraps the `franka_ros`_ and `panda_moveit_config`_ packages to add the extra
-functionalities needed to train RL agents efficiently. It contains several launch files and ROS nodes
-that ease the `openai_ros`_ interaction with the `Panda Gazebo simulation`_. These launch files can be used to spawn the
-Panda Robot in several distinct task environments (see `the openai_ros documentation`_ for the available environments).
-The ROS nodes generate several ROS services that make it easier to control or get information from the robot. It contains
-the following ROS nodes:
+needed for creating a `Panda Emika Franka`_ Gazebo simulation. It is used by the `ros_gazebo_gym`_ RL framework to create the
+Panda task environments. It wraps the `franka_ros`_ and `panda_moveit_config`_ packages to add the extra functionalities needed
+to train RL agents efficiently. It contains several launch files and ROS nodes that ease the `ros_gazebo_gym`_ interaction with
+the `Panda Gazebo simulation`_. These launch files can be used to spawn the Panda Robot in several distinct task environments
+(see `the ros_gazebo_gym documentation`_ for the available environments). The ROS nodes generate several ROS services that make
+it easier to control or get information from the robot. It contains the following ROS nodes:
 
    - **panda_control_server**: Creates services related to the panda_control.
       - **get_controlled_joints:** Returns the panda joints that are currently controlled when using a given control type.
@@ -38,12 +35,12 @@ the following ROS nodes:
       - **panda_hand/set_joint_positions**: Sets the hand joints position.
 
 See the `message descriptions`_ for more information about the messages these services require. For more information about
-all the modules and ROS nodes contained in this package see the sections below.
+all the modules and ROS nodes in this package see the sections below.
 
 .. _`Panda Emika Franka`: https://frankaemika.github.io/docs
 .. _`gazebo`: http://gazebosim.org
-.. _`openai_ros`: https://wiki.ros.org/openai_ros
-.. _`the openai_ros documentation`: https://theconstructcore.bitbucket.io/openai_ros/panda_environment.html#task-environments
+.. _`ros_gazebo_gym`: https://github.com/rickstaa/ros-gazebo-gym
+.. _`the ros_gazebo_gym documentation`: https://rickstaa.dev/ros-gazebo-gym/panda_environment.html#task-environments
 .. _`franka_ros`: https://github.com/frankaemika/franka_ros
 .. _`panda_moveit_config`: https://github.com/ros-planning/panda_moveit_config
 .. _`Panda Gazebo simulation`: https://github.com/frankaemika/franka_ros/tree/develop/franka_gazebo
