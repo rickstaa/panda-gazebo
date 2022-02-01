@@ -1,6 +1,6 @@
 # Panda-gazebo
 
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/rickstaa/panda-gazebo)](https://github.com/rickstaa/gazebo-panda-gym/releases)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/rickstaa/panda-gazebo)](https://github.com/rickstaa/panda-gazebo/releases)
 [![Python 3](https://img.shields.io/badge/Python-3.8%20%7C%203.7%20%7C%203.6-green)](https://www.python.org/)
 [![ROS version](https://img.shields.io/badge/ROS%20versions-Noetic-brightgreen)](https://wiki.ros.org)
 
