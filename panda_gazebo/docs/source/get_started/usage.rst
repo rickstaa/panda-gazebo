@@ -2,7 +2,7 @@
 Usage
 =====
 
-The :panda-gazebo:`panda-gazebo <>` contains three kinds of launch files: world launch files, a robot launch file
+The :panda_gazebo:`panda_gazebo <>` contains three kinds of launch files: world launch files, a robot launch file
 and a simulation launch file.
 
 **World launch files**

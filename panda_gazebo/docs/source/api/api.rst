@@ -3,7 +3,7 @@ Code API
 ========
 
 Modules
-^^^^^^^^
+^^^^^^^
 
 .. autosummary::
    :toctree: _autosummary

@@ -22,7 +22,7 @@ Markdown guidelines:
 .. _`remark-lint`: https://github.com/remarkjs/remark-lint
 
 .. note::
-    The panda-gazebo framework contains several `GitHub actions`_, which check code changes
+    The panda_gazebo package contains several `GitHub actions`_, which check code changes
     against these coding guidelines. As a result, when the above guidelines are not met, you will
     receive an error/warning when you create a pull request. Some of these actions will create pull requests
     which you can use to fix some of these violations. For other errors/warning, you are expected to handle
@@ -35,7 +35,7 @@ Markdown guidelines:
 Pre-commit hooks
 ----------------
 
-The panda-gazebo package also contains several pre-commit hooks that can be used to enforce the aforementioned guidelines before a commit is made. To enable these hooks please:
+The panda_gazebo package also contains several pre-commit hooks that can be used to enforce the aforementioned guidelines before a commit is made. To enable these hooks please:
 
 1.  Install `node <https://nodejs.org/en/download/package-manager>`_.
 2.  Install `python <https://www.python.org/downloads>`_.

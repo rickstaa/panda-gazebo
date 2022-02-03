@@ -1,5 +1,5 @@
 # coding: utf-8
-"""The panda-gazebo version."""
+"""The panda_gazebo version."""
 version = "2.8.3"
 __version__ = version
 # format:

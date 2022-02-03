@@ -2,11 +2,13 @@
 Welcome to panda-gazebo documentation
 =====================================
 
-Welcome to the API documentation for the :panda-gazebo:`panda-gazebo <>` package. This package contains all the ROS packages
-needed for creating a `Panda Emika Franka`_ Gazebo simulation. It is used by the `ros_gazebo_gym`_ RL framework to create the
-Panda task environments. It wraps the `franka_ros`_ and `panda_moveit_config`_ packages to add the extra functionalities needed
-to train RL agents efficiently. It contains several launch files and ROS nodes that ease the `ros_gazebo_gym`_ interaction with
-the `Panda Gazebo simulation`_. These launch files can be used to spawn the Panda Robot in several distinct task environments
+Welcome to the API documentation for the :panda_gazebo:`panda_gazebo <>` package. This package contains all the ROS packages
+needed for creating a `Panda Emika Franka`_ Gazebo simulation. It is used by the :ros_gazebo_gym:`ros_gazebo_gym <>` RL framework
+to create the Panda task environments. It wraps the `franka_ros`_ and `panda_moveit_config`_ packages to add the extra
+functionalities needed to train RL agents efficiently.
+
+The  :panda_gazebo:`panda_gazebo <>` package contains several launch files and ROS nodes that ease the :ros_gazebo_gym:`ros_gazebo_gym <>`
+interaction with the `Panda Gazebo simulation`_. These launch files can be used to spawn the Panda Robot in several distinct task environments
 (see `the ros_gazebo_gym documentation`_ for the available environments). The ROS nodes generate several ROS services that make
 it easier to control or get information from the robot. It contains the following ROS nodes:
 
@@ -40,12 +42,12 @@ all the modules and ROS nodes in this package see the sections below.
 .. _`Panda Emika Franka`: https://frankaemika.github.io/docs
 .. _`gazebo`: http://gazebosim.org
 .. _`ros_gazebo_gym`: https://github.com/rickstaa/ros-gazebo-gym
-.. _`the ros_gazebo_gym documentation`: https://rickstaa.dev/ros-gazebo-gym/panda_environment.html#task-environments
+.. _`the ros_gazebo_gym documentation`: https://rickstaa.github.io/ros-gazebo-gym/panda_environment.html#task-environments
 .. _`franka_ros`: https://github.com/frankaemika/franka_ros
 .. _`panda_moveit_config`: https://github.com/ros-planning/panda_moveit_config
 .. _`Panda Gazebo simulation`: https://github.com/frankaemika/franka_ros/tree/develop/franka_gazebo
 .. _`MoveIt`: https://moveit.ros.org
-.. _`message descriptions`: https://github.com/rickstaa/panda-gazebo/tree/noetic-devel/panda_gazebo/srv
+.. _`message descriptions`: https://github.com/rickstaa/panda-gazebo/tree/noetic/panda_gazebo/srv
 
 Contents
 ========
@@ -64,6 +66,7 @@ Contents
 
    dev/release_dev.rst
    dev/doc_dev.rst
+   dev/license.rst
 
 .. toctree::
    :maxdepth: 2
