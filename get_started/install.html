@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Installation &mdash; panda-gazebo 2.8.2 documentation</title>
+  <title>Installation &mdash; panda-gazebo 2.8.4 documentation</title>
   
 
   
@@ -18,6 +18,8 @@
   <link rel="stylesheet" href="../_static/css/modify.css" type="text/css" />
 
   
+  
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
   
 
   
@@ -57,9 +59,12 @@
           
 
           
-            <a href="../index.html" class="icon icon-home"> panda-gazebo
+            <a href="../index.html">
           
 
+          
+            
+            <img src="../_static/logo.svg" class="logo" alt="Logo"/>
           
           </a>
 
@@ -67,7 +72,7 @@
             
             
               <div class="version">
-                2.8.2
+                2.8.4
               </div>
             
           
@@ -106,6 +111,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../dev/release_dev.html">Release package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../dev/doc_dev.html">Release documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dev/license.html">License</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
 <ul>
@@ -165,7 +171,7 @@
         
           
             
-              <a href="https://github.com/rickstaa/panda-gazebo/blob/noetic-devel/docs/source/get_started/install.rst" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/rickstaa/panda-gazebo/blob/noetic/docs/source/get_started/install.rst" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -183,7 +189,7 @@
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="install-dependencies">
 <h2>Install dependencies<a class="headerlink" href="#install-dependencies" title="Permalink to this headline">¶</a></h2>
-<p>The following dependencies are required to run the <a class="reference external" href="https://github.com/rickstaa/panda-gazebo/">panda-gazebo</a> package:</p>
+<p>The following dependencies are required to run the <a class="reference external" href="https://github.com/rickstaa/panda-gazebo/">panda_gazebo</a> package:</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://wiki.ros.org/Noetic/Installation/Ubuntu/">ROS Noetic - Desktop full</a></p></li>
 <li><p><a class="reference external" href="https://www.python.org/downloads/">Python 3</a></p></li>
@@ -205,9 +211,12 @@ can pull the submodules using the following git command:</p>
 </div>
 <div class="section" id="build-instructions">
 <h2>Build instructions<a class="headerlink" href="#build-instructions" title="Permalink to this headline">¶</a></h2>
-<p>After you cloned the repository, you have to build the <code class="docutils literal notranslate"><span class="pre">libfranka</span></code> library from the source (see <a class="reference external" href="https://frankaemika.github.io/docs/installation_linux.html#building-from-source">https://frankaemika.github.io/docs/installation_linux.html#building-from-source</a>).
-After you build <code class="docutils literal notranslate"><span class="pre">libfranka`</span> <span class="pre">from</span> <span class="pre">source,</span> <span class="pre">you</span> <span class="pre">have</span> <span class="pre">to</span> <span class="pre">install</span> <span class="pre">the</span> <span class="pre">system</span> <span class="pre">dependencies</span> <span class="pre">using</span> <span class="pre">the</span> <span class="pre">``rosdep</span> <span class="pre">install</span> <span class="pre">--from-path</span> <span class="pre">src</span> <span class="pre">--ignore-src</span> <span class="pre">-r</span> <span class="pre">-y</span> <span class="pre">--skip-keys</span> <span class="pre">libfranka</span></code> command. After these
-dependencies are installed, you can build the ROS packages inside the catkin workspace using the following build command:</p>
+<p>After you cloned the repository, you have to build the <a class="reference external" href="https://github.com/frankaemika/libfranka">libfranka</a> library from the source (see <a class="reference external" href="https://frankaemika.github.io/docs/installation_linux.html#building-from-source)">the franka documentation</a>).
+After you build <a class="reference external" href="https://github.com/frankaemika/libfranka">libfranka</a> from source, you have to install the system dependencies using the <a class="reference external" href="http://wiki.ros.org/rosdep">rosdep tool</a>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>rosdep install --from-path src --ignore-src -r -y --skip-keys libfranka
+</pre></div>
+</div>
+<p>When this command finishes you can build the ROS packages inside the catkin workspace using the following build command:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>catkin build -j4 -DCMAKE_BUILD_TYPE<span class="o">=</span>Release -DFranka_DIR:PATH<span class="o">=</span>~/libfranka/build
 </pre></div>
 </div>

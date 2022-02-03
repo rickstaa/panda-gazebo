@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>panda_gazebo.core.control_server.PandaControlServer &mdash; panda-gazebo 2.8.2 documentation</title>
+  <title>panda_gazebo.core.control_server.PandaControlServer &mdash; panda-gazebo 2.8.4 documentation</title>
   
 
   
@@ -18,6 +18,8 @@
   <link rel="stylesheet" href="../../_static/css/modify.css" type="text/css" />
 
   
+  
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
   
 
   
@@ -57,9 +59,12 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home"> panda-gazebo
+            <a href="../../index.html">
           
 
+          
+            
+            <img src="../../_static/logo.svg" class="logo" alt="Logo"/>
           
           </a>
 
@@ -67,7 +72,7 @@
             
             
               <div class="version">
-                2.8.2
+                2.8.4
               </div>
             
           
@@ -101,6 +106,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../dev/release_dev.html">Release package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../dev/doc_dev.html">Release documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dev/license.html">License</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
 <ul class="current">
@@ -181,7 +187,7 @@
         
           
             
-              <a href="https://github.com/rickstaa/panda-gazebo/blob/noetic-devel/docs/source/api/_autosummary/panda_gazebo.core.control_server.PandaControlServer.rst" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/rickstaa/panda-gazebo/blob/noetic/docs/source/api/_autosummary/panda_gazebo.core.control_server.PandaControlServer.rst" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -297,17 +303,15 @@ joint trajectory message is left empty. Defaults to <code class="docutils litera
 control services.</p></li>
 <li><p><strong>load_set_joint_commands_service</strong> (<em>boolean</em><em>, </em><em>optional</em>) – Whether the set joint
 commands service should be loaded. This service is only used by the
-<a class="reference external" href="https://wiki.ros.org/openai_ros">openai_ros</a> when the control type
-is NOT set to <code class="docutils literal notranslate"><span class="pre">trajectory</span></code>. Defaults, to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
-<li><p><strong>load_arm_follow_joint_trajectory_action</strong> (<em>boolean</em><em>, </em><em>optional</em>) – <p>Whether the
+<a class="reference external" href="https://github.com/rickstaa/ros-gazebo-gym/tree/noetic/">ros_gazebo_gym</a> package when the control type is
+NOT set to <code class="docutils literal notranslate"><span class="pre">trajectory</span></code>. Defaults, to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>load_arm_follow_joint_trajectory_action</strong> (<em>boolean</em><em>, </em><em>optional</em>) – Whether the
 arm follow joint trajectory action should be loaded. This service is
-only used by the <a class="reference external" href="https://wiki.ros.org/openai_ros">openai_ros</a> when
-the control type is set to <code class="docutils literal notranslate"><span class="pre">trajectory</span></code>. Defaults, to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
-</p></li>
-<li><p><strong>load_extra_services</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a><em>, </em><em>optional</em>) – <p>Whether to load extra services that
-are not used by the <a class="reference external" href="https://wiki.ros.org/openai_ros">openai_ros</a>
-package. Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
-</p></li>
+only used by the <a class="reference external" href="https://github.com/rickstaa/ros-gazebo-gym/tree/noetic/">ros_gazebo_gym</a> package when the
+control type is set to <code class="docutils literal notranslate"><span class="pre">trajectory</span></code>. Defaults, to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><strong>load_extra_services</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to load extra services that
+are not used by the <a class="reference external" href="https://github.com/rickstaa/ros-gazebo-gym/tree/noetic/">ros_gazebo_gym</a> package.
+Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
 <li><p><strong>brute_force_grasping</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a><em>, </em><em>optional</em>) – Disable the gripper width reached
 check when grasping. Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
 <li><p><strong>controllers_check_rate</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>, </em><em>optional</em>) – Rate at which the availability of
@@ -345,10 +349,10 @@ control frequency.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#panda_gazebo.core.control_server.PandaControlServer.controlled_joints" title="panda_gazebo.core.control_server.PandaControlServer.controlled_joints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">controlled_joints</span></code></a></p></td>
 <td><p>Returns the joints that can be controlled by a each control type.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#id3" title="panda_gazebo.core.control_server.PandaControlServer.controllers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">controllers</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#id1" title="panda_gazebo.core.control_server.PandaControlServer.controllers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">controllers</span></code></a></p></td>
 <td><p>Retrieves info about the loaded controllers.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#id4" title="panda_gazebo.core.control_server.PandaControlServer.gripper_width"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gripper_width</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#id2" title="panda_gazebo.core.control_server.PandaControlServer.gripper_width"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gripper_width</span></code></a></p></td>
 <td><p>Returns the gripper width as calculated based on the Panda finger joints.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#id0" title="panda_gazebo.core.control_server.PandaControlServer.joint_controllers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">joint_controllers</span></code></a></p></td>
@@ -399,8 +403,8 @@ given joint.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id3">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">controllers</span></span><a class="headerlink" href="#id3" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id1">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">controllers</span></span><a class="headerlink" href="#id1" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieves info about the loaded controllers.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -413,8 +417,8 @@ given joint.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id4">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">gripper_width</span></span><a class="headerlink" href="#id4" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id2">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">gripper_width</span></span><a class="headerlink" href="#id2" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the gripper width as calculated based on the Panda finger joints.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>

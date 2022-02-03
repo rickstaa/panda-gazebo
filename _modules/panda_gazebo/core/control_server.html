@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>panda_gazebo.core.control_server &mdash; panda-gazebo 2.8.2 documentation</title>
+  <title>panda_gazebo.core.control_server &mdash; panda-gazebo 2.8.4 documentation</title>
   
 
   
@@ -18,6 +18,8 @@
   <link rel="stylesheet" href="../../../_static/css/modify.css" type="text/css" />
 
   
+  
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
   
 
   
@@ -55,9 +57,12 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home"> panda-gazebo
+            <a href="../../../index.html">
           
 
+          
+            
+            <img src="../../../_static/logo.svg" class="logo" alt="Logo"/>
           
           </a>
 
@@ -65,7 +70,7 @@
             
             
               <div class="version">
-                2.8.2
+                2.8.4
               </div>
             
           
@@ -99,6 +104,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../dev/release_dev.html">Release package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../dev/doc_dev.html">Release documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../dev/license.html">License</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
 <ul>
@@ -319,15 +325,15 @@
 <span class="sd">                control services.</span>
 <span class="sd">            load_set_joint_commands_service (boolean, optional): Whether the set joint</span>
 <span class="sd">                commands service should be loaded. This service is only used by the</span>
-<span class="sd">                `openai_ros &lt;https://wiki.ros.org/openai_ros&gt;`_ when the control type</span>
-<span class="sd">                is NOT set to ``trajectory``. Defaults, to ``True``.</span>
+<span class="sd">                :ros_gazebo_gym:`ros_gazebo_gym &lt;&gt;` package when the control type is</span>
+<span class="sd">                NOT set to ``trajectory``. Defaults, to ``True``.</span>
 <span class="sd">            load_arm_follow_joint_trajectory_action (boolean, optional): Whether the</span>
 <span class="sd">                arm follow joint trajectory action should be loaded. This service is</span>
-<span class="sd">                only used by the `openai_ros &lt;https://wiki.ros.org/openai_ros&gt;`_ when</span>
-<span class="sd">                the control type is set to ``trajectory``. Defaults, to ``False``.</span>
+<span class="sd">                only used by the :ros_gazebo_gym:`ros_gazebo_gym &lt;&gt;` package when the</span>
+<span class="sd">                control type is set to ``trajectory``. Defaults, to ``False``.</span>
 <span class="sd">            load_extra_services (bool, optional): Whether to load extra services that</span>
-<span class="sd">                are not used by the `openai_ros &lt;https://wiki.ros.org/openai_ros&gt;`_</span>
-<span class="sd">                package. Defaults to ``False``.</span>
+<span class="sd">                are not used by the :ros_gazebo_gym:`ros_gazebo_gym &lt;&gt;` package.</span>
+<span class="sd">                Defaults to ``False``.</span>
 <span class="sd">            brute_force_grasping (bool, optional): Disable the gripper width reached</span>
 <span class="sd">                check when grasping. Defaults to ``False``.</span>
 <span class="sd">            controllers_check_rate (float, optional): Rate at which the availability of</span>
