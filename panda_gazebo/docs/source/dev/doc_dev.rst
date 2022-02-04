@@ -43,5 +43,5 @@ push the documentation to the `noetic-devel`_ branch and run the
     Please make sure you are on the `noetic-devel`_ branch while building the documentation. Otherwise,
     errors will greet you.
 
-.. _`docs/`: https://github.com/rickstaa/panda-gazebo/tree/main/panda/docs
-.. _`noetic-devel`: https://github.com/rickstaa/panda/tree/noetic-devel
+.. _`docs/`: https://github.com/rickstaa/panda-gazebo/tree/noetic/panda/docs
+.. _`noetic`: https://github.com/rickstaa/panda/tree/noetic
