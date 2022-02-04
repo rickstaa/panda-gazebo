@@ -1,5 +1,5 @@
-﻿"""Module that contains the core components (classes and functions) that are needed for
-creating the panda-gazebo simulation.
+﻿"""Contains the core components (classes and functions) that are needed for
+creating the :panda_gazebo:`panda_gazebo <>` simulation.
 """
 
 from panda_gazebo.core.control_server import PandaControlServer

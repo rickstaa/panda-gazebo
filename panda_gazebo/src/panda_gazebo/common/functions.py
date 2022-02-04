@@ -1,5 +1,5 @@
 """Module containing some additional functions used in the
-:panda-gazebo:`panda-gazebo <>` package.
+:panda_gazebo:`panda_gazebo <>` package.
 """
 
 import copy

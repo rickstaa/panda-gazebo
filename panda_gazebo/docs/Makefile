@@ -26,7 +26,7 @@ gh-pages:
 	cd ../.. && \
 	git checkout gh-pages && \
 	git rm -rf . && git clean -ffxd && \
-	git checkout noetic-devel $(GH_PAGES_SOURCES) && \
+	git checkout noetic $(GH_PAGES_SOURCES) && \
 	git reset HEAD && \
 	cd panda_gazebo/docs && \
 	make clean && \
@@ -39,9 +39,9 @@ gh-pages:
 	cd .. && \
 	rm -rf $(GH_PAGES_SOURCES) && \
 	git add -A && \
-	git commit -m "docs: Generated gh-pages for `git log noetic-devel -1 --pretty=short --abbrev-commit`" && \
+	git commit -m "docs: Generated gh-pages for `git log noetic -1 --pretty=short --abbrev-commit`" && \
 	git push origin gh-pages && \
-	git checkout noetic-devel && \
+	git checkout noetic && \
 	git submodule update --recursive && \
 	pnpm install && \
 	pnpm run prepare && \

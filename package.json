@@ -1,6 +1,6 @@
 {
   "name": "panda-gazebo",
-  "version": "2.8.3",
+  "version": "2.8.4",
   "description": "Gazebo panda simulation created for the Panda environment that is found in the 'ros-gazebo-gym' package.",
   "keywords": [
     "reinforcement-learning",
@@ -23,8 +23,8 @@
   "license": "UNLICENSED",
   "author": "Rick Staa",
   "scripts": {
-    "preinstall": "npx only-allow pnpm",
     "changelog": "HUSKY=0 standard-version --skip.bump --skip.commit --skip.tag",
+    "preinstall": "npx only-allow pnpm",
     "prepare": "husky install",
     "release": "HUSKY=0 standard-version",
     "sort": "sort-package-json"

@@ -4,7 +4,7 @@ name: Auto semver CI
 on:
   push:
     branches:
-      - noetic-devel
+      - noetic
   pull_request:
     types:
       - labeled

@@ -7,8 +7,8 @@ Release documentation
 Install requirements
 --------------------
 
-Building the :panda-gazebo:`panda-gazebo <>` documentation requires `sphinx`_,
-the panda-gazebo package and several plugins. All of the above can be
+Building the :panda_gazebo:`panda_gazebo <>` documentation requires `sphinx`_,
+the panda_gazebo package and several plugins. All of the above can be
 installed using the following `pip`_ command inside the ``./panda_gazebo`` folder:
 
 .. code-block:: bash
@@ -26,7 +26,7 @@ To build the `HTML`_ documentation, go into the `docs/`_ directory and run the
 inside the ``docs/build/html`` directory.
 
 .. note::
-    Make sure you are in the Conda environment in which you installed the panda-gazebo package
+    Make sure you are in the Conda environment in which you installed the panda_gazebo package
     with it's dependencies.
 
 .. _`HTML`: https://www.w3schools.com/html/
@@ -34,13 +34,13 @@ inside the ``docs/build/html`` directory.
 Deploying
 ---------
 
-To deploy documentation to the Github Pages site for the repository,
-push the documentation to the `noetic-devel`_ branch and run the
-``make gh-pages`` command inside the `docs/`_ directory.
+To deploy documentation to the Github Pages site for the repository, push the
+documentation to the `noetic`_ branch and run the ``make gh-pages`` command
+inside the `docs/`_ directory.
 
 .. warning::
 
-    Please make sure you are on the `noetic-devel`_ branch while building the documentation. Otherwise,
+    Please make sure you are on the `noetic`_ branch while building the documentation. Otherwise,
     errors will greet you.
 
 .. _`docs/`: https://github.com/rickstaa/panda-gazebo/tree/noetic/panda/docs
