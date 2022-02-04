@@ -43,5 +43,5 @@ inside the `docs/`_ directory.
     Please make sure you are on the `noetic`_ branch while building the documentation. Otherwise,
     errors will greet you.
 
-.. _`docs/`: https://github.com/rickstaa/panda-gazebo/tree/main/panda/docs
+.. _`docs/`: https://github.com/rickstaa/panda-gazebo/tree/noetic/panda/docs
 .. _`noetic`: https://github.com/rickstaa/panda/tree/noetic
