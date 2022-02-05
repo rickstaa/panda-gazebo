@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>panda_gazebo.common.functions.get_unique_list &mdash; panda-gazebo 2.8.5 documentation</title>
+  <title>panda_gazebo.common.functions.get_unique_list &mdash; panda-gazebo 2.8.6 documentation</title>
   
 
   
@@ -72,7 +72,7 @@
             
             
               <div class="version">
-                2.8.5
+                2.8.6
               </div>
             
           
@@ -204,11 +204,14 @@
 <h1>panda_gazebo.common.functions.get_unique_list<a class="headerlink" href="#panda-gazebo-common-functions-get-unique-list" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="panda_gazebo.common.functions.get_unique_list">
-<span class="sig-prename descclassname"><span class="pre">panda_gazebo.common.functions.</span></span><span class="sig-name descname"><span class="pre">get_unique_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/panda_gazebo/common/functions.html#get_unique_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.common.functions.get_unique_list" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">panda_gazebo.common.functions.</span></span><span class="sig-name descname"><span class="pre">get_unique_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/panda_gazebo/common/functions.html#get_unique_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.common.functions.get_unique_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Removes non-unique items from a list.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>input_list</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – The input list.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_list</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – The input list.</p></li>
+<li><p><strong>trim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>, </em><em>optional</em>) – Trim empty items. Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The new list containing only unique items.</p>

@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>panda_gazebo.core.control_server &mdash; panda-gazebo 2.8.5 documentation</title>
+  <title>panda_gazebo.core.control_server &mdash; panda-gazebo 2.8.6 documentation</title>
   
 
   
@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                2.8.5
+                2.8.6
               </div>
             
           
@@ -1933,6 +1933,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>  <span class="c1"># noqa: E501</span>
         <span class="n">resp</span> <span class="o">=</span> <span class="n">GetControlledJointsResponse</span><span class="p">()</span>
         <span class="n">resp</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">resp</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Everything went OK&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__controllers</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># Make sure latest controller info is retrieved</span>
             <span class="n">controlled_joints</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">controlled_joints</span><span class="p">[</span>
@@ -1943,6 +1944,7 @@
             <span class="n">resp</span><span class="o">.</span><span class="n">controlled_joints_hand</span> <span class="o">=</span> <span class="n">controlled_joints</span><span class="p">[</span><span class="s2">&quot;hand&quot;</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
             <span class="n">resp</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">resp</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Controlled joints could not be retrieved&quot;</span>
         <span class="k">return</span> <span class="n">resp</span>
 
     <span class="c1">################################################</span>

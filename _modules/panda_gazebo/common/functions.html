@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>panda_gazebo.common.functions &mdash; panda-gazebo 2.8.5 documentation</title>
+  <title>panda_gazebo.common.functions &mdash; panda-gazebo 2.8.6 documentation</title>
   
 
   
@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                2.8.5
+                2.8.6
               </div>
             
           
@@ -474,16 +474,20 @@
     <span class="k">return</span> <span class="n">stripped_dict</span></div>
 
 
-<div class="viewcode-block" id="get_unique_list"><a class="viewcode-back" href="../../../api/_autosummary/panda_gazebo.common.functions.get_unique_list.html#panda_gazebo.common.functions.get_unique_list">[docs]</a><span class="k">def</span> <span class="nf">get_unique_list</span><span class="p">(</span><span class="n">input_list</span><span class="p">):</span>
+<div class="viewcode-block" id="get_unique_list"><a class="viewcode-back" href="../../../api/_autosummary/panda_gazebo.common.functions.get_unique_list.html#panda_gazebo.common.functions.get_unique_list">[docs]</a><span class="k">def</span> <span class="nf">get_unique_list</span><span class="p">(</span><span class="n">input_list</span><span class="p">,</span> <span class="n">trim</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Removes non-unique items from a list.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        input_list (list): The input list.</span>
+<span class="sd">        trim (list, optional): Trim empty items. Defaults to ``True``.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        list: The new list containing only unique items.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">list</span><span class="p">({</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">input_list</span><span class="p">})</span></div>
+    <span class="k">if</span> <span class="n">trim</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">({</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">input_list</span> <span class="k">if</span> <span class="n">item</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">})</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">({</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">input_list</span><span class="p">})</span></div>
 
 
 <div class="viewcode-block" id="get_duplicate_list"><a class="viewcode-back" href="../../../api/_autosummary/panda_gazebo.common.functions.get_duplicate_list.html#panda_gazebo.common.functions.get_duplicate_list">[docs]</a><span class="k">def</span> <span class="nf">get_duplicate_list</span><span class="p">(</span><span class="n">input_list</span><span class="p">):</span>

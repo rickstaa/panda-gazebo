@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>panda_gazebo.core.moveit_server &mdash; panda-gazebo 2.8.5 documentation</title>
+  <title>panda_gazebo.core.moveit_server &mdash; panda-gazebo 2.8.6 documentation</title>
   
 
   
@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                2.8.5
+                2.8.6
               </div>
             
           
@@ -1399,9 +1399,11 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">rospy</span><span class="o">.</span><span class="n">logdebug</span><span class="p">(</span><span class="s2">&quot;Retrieving ee pose.&quot;</span><span class="p">)</span>
         <span class="n">ee_pose</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">move_group_arm</span><span class="o">.</span><span class="n">get_current_pose</span><span class="p">()</span>
-        <span class="n">ee_pose_resp</span> <span class="o">=</span> <span class="n">GetEePoseResponse</span><span class="p">()</span>
-        <span class="n">ee_pose_resp</span> <span class="o">=</span> <span class="n">ee_pose</span><span class="o">.</span><span class="n">pose</span>
-        <span class="k">return</span> <span class="n">ee_pose_resp</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="n">GetEePoseResponse</span><span class="p">()</span>
+        <span class="n">resp</span><span class="o">.</span><span class="n">pose</span> <span class="o">=</span> <span class="n">ee_pose</span><span class="o">.</span><span class="n">pose</span>
+        <span class="n">resp</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">resp</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Everything went OK&quot;</span>
+        <span class="k">return</span> <span class="n">resp</span>
 
     <span class="k">def</span> <span class="nf">_arm_get_ee_rpy_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Request current end effector (EE) orientation.</span>
@@ -1415,11 +1417,13 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">rospy</span><span class="o">.</span><span class="n">logdebug</span><span class="p">(</span><span class="s2">&quot;Retrieving ee orientation.&quot;</span><span class="p">)</span>
         <span class="n">ee_rpy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">move_group_arm</span><span class="o">.</span><span class="n">get_current_rpy</span><span class="p">()</span>
-        <span class="n">ee_rpy_res</span> <span class="o">=</span> <span class="n">GetEeRpyResponse</span><span class="p">()</span>
-        <span class="n">ee_rpy_res</span><span class="o">.</span><span class="n">r</span> <span class="o">=</span> <span class="n">ee_rpy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">ee_rpy_res</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">ee_rpy</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">ee_rpy_res</span><span class="o">.</span><span class="n">p</span> <span class="o">=</span> <span class="n">ee_rpy</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">ee_rpy_res</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="n">GetEeRpyResponse</span><span class="p">()</span>
+        <span class="n">resp</span><span class="o">.</span><span class="n">r</span> <span class="o">=</span> <span class="n">ee_rpy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">resp</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">ee_rpy</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">resp</span><span class="o">.</span><span class="n">p</span> <span class="o">=</span> <span class="n">ee_rpy</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">resp</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">resp</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Everything went OK&quot;</span>
+        <span class="k">return</span> <span class="n">resp</span>
 
     <span class="k">def</span> <span class="nf">_arm_get_ee_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Request end effector (EE) name.</span>
@@ -1434,6 +1438,8 @@
         <span class="n">rospy</span><span class="o">.</span><span class="n">logdebug</span><span class="p">(</span><span class="s2">&quot;Retrieving ee name.&quot;</span><span class="p">)</span>
         <span class="n">resp</span> <span class="o">=</span> <span class="n">GetEeResponse</span><span class="p">()</span>
         <span class="n">resp</span><span class="o">.</span><span class="n">ee_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">move_group_arm</span><span class="o">.</span><span class="n">get_end_effector_link</span><span class="p">()</span>
+        <span class="n">resp</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">resp</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Everything went OK&quot;</span>
         <span class="k">return</span> <span class="n">resp</span>
 
     <span class="k">def</span> <span class="nf">_arm_set_ee_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">set_ee_req</span><span class="p">):</span>
@@ -1454,7 +1460,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">move_group_arm</span><span class="o">.</span><span class="n">set_end_effector_link</span><span class="p">(</span><span class="n">set_ee_req</span><span class="o">.</span><span class="n">ee_name</span><span class="p">)</span>
             <span class="k">except</span> <span class="n">MoveItCommanderException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="n">rospy</span><span class="o">.</span><span class="n">logwarn</span><span class="p">(</span><span class="s2">&quot;Ee could not be set.&quot;</span><span class="p">)</span>
-                <span class="n">resp</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="n">resp</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">False</span>
                 <span class="n">resp</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">resp</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="n">resp</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Everything went OK&quot;</span>
@@ -1561,8 +1567,10 @@
                 <span class="ow">and</span> <span class="ow">not</span> <span class="n">get_random_hand_joint_positions_srvs_exception</span>
             <span class="p">):</span>
                 <span class="n">resp</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">resp</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Everything went OK&quot;</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">resp</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="n">resp</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Random joint position could not be retrieved.&quot;</span>
         <span class="k">else</span><span class="p">:</span>  <span class="c1"># Joint limits were set</span>
             <span class="c1"># Create joint limit dictionary</span>
             <span class="n">joint_limits_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
@@ -1631,6 +1639,7 @@
                 <span class="c1"># otherwise keep sampling till the max sample limit has been reached</span>
                 <span class="k">if</span> <span class="n">arm_joint_commands_valid</span> <span class="ow">and</span> <span class="n">hand_joint_commands_valid</span><span class="p">:</span>  <span class="c1"># If valid</span>
                     <span class="n">resp</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="n">resp</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Everything went OK&quot;</span>
                     <span class="k">break</span>
                 <span class="k">elif</span> <span class="n">n_sample</span> <span class="o">&gt;=</span> <span class="n">MAX_RANDOM_SAMPLES</span><span class="p">:</span>
                     <span class="n">rospy</span><span class="o">.</span><span class="n">logwarn</span><span class="p">(</span>
@@ -1653,9 +1662,11 @@
                                 <span class="n">random_hand_joint_values_unbounded</span>
                             <span class="p">)</span>
                         <span class="n">resp</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="n">resp</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Everything went OK&quot;</span>
                         <span class="k">break</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">resp</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">False</span>
+                        <span class="n">resp</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Random joint position could not be retrieved.&quot;</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">rospy</span><span class="o">.</span><span class="n">logwarn</span><span class="p">(</span>
                         <span class="s2">&quot;Failed to sample valid random joint positions from the &quot;</span>
@@ -1732,9 +1743,11 @@
         <span class="p">):</span>  <span class="c1"># No bounding region was set</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">get_random_pose_srvs_exception</span><span class="p">:</span>
                 <span class="n">resp</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">resp</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Everything went OK&quot;</span>
                 <span class="n">resp</span><span class="o">.</span><span class="n">ee_pose</span> <span class="o">=</span> <span class="n">random_ee_pose_unbounded</span><span class="o">.</span><span class="n">pose</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">resp</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="n">resp</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Random ee pose could not be retrieved.&quot;</span>
         <span class="k">else</span><span class="p">:</span>  <span class="c1"># A bounding region was set</span>
             <span class="c1"># Try to find a valid ee_pose within the bounding region</span>
             <span class="n">n_sample</span> <span class="o">=</span> <span class="mi">0</span>
@@ -1778,6 +1791,7 @@
                 <span class="c1"># otherwise keep sampling till the max sample limit has been reached</span>
                 <span class="k">if</span> <span class="n">ee_pose_valid</span><span class="p">:</span>  <span class="c1"># If valid</span>
                     <span class="n">resp</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="n">resp</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Everything went OK&quot;</span>
                     <span class="n">resp</span><span class="o">.</span><span class="n">ee_pose</span> <span class="o">=</span> <span class="n">random_ee_pose</span>
                     <span class="k">break</span>
                 <span class="k">elif</span> <span class="n">n_sample</span> <span class="o">&gt;=</span> <span class="n">MAX_RANDOM_SAMPLES</span><span class="p">:</span>
@@ -1790,10 +1804,12 @@
                     <span class="c1"># Use unbounded ee_pose, set success bool and break out of the loop</span>
                     <span class="k">if</span> <span class="ow">not</span> <span class="n">get_random_pose_srvs_exception</span><span class="p">:</span>
                         <span class="n">resp</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="n">resp</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Everything went OK&quot;</span>
                         <span class="n">resp</span><span class="o">.</span><span class="n">ee_pose</span> <span class="o">=</span> <span class="n">random_ee_pose_unbounded</span><span class="o">.</span><span class="n">pose</span>
                         <span class="k">break</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">resp</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">False</span>
+                        <span class="n">resp</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Random ee pose could not be retrieved.&quot;</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">rospy</span><span class="o">.</span><span class="n">logwarn</span><span class="p">(</span>
                         <span class="s2">&quot;Failed to sample a valid random end effector pose from the &quot;</span>
@@ -1816,6 +1832,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>  <span class="c1"># noqa: E501</span>
         <span class="n">resp</span> <span class="o">=</span> <span class="n">GetMoveItControlledJointsResponse</span><span class="p">()</span>
         <span class="n">resp</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">resp</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Everything went OK&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">resp</span><span class="o">.</span><span class="n">controlled_joints</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="n">flatten_list</span><span class="p">(</span>
@@ -1836,6 +1853,7 @@
             <span class="n">resp</span><span class="o">.</span><span class="n">controlled_joints_hand</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_controlled_joints_dict</span><span class="p">[</span><span class="s2">&quot;hand&quot;</span><span class="p">]</span>
         <span class="k">except</span> <span class="n">InputMessageInvalidError</span><span class="p">:</span>
             <span class="n">resp</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">resp</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Controlled joints could not be retrieved.&quot;</span>
         <span class="k">return</span> <span class="n">resp</span>
 
     <span class="k">def</span> <span class="nf">_scene_add_box_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">add_box_req</span><span class="p">):</span>
