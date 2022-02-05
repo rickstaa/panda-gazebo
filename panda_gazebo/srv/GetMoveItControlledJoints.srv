@@ -1,6 +1,7 @@
 # Service that can be used to retrieve the joints that are currently controlled by MoveIt.
 ---
-bool success
 string[] controlled_joints
 string[] controlled_joints_arm
 string[] controlled_joints_hand
+bool success
+string message

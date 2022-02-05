@@ -2,3 +2,5 @@
 
 ---
 string ee_name
+bool success
+string message

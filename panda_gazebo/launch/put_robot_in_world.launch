@@ -3,7 +3,8 @@
   <arg name="rviz" default="true" doc="Start Rviz"/>
   <arg name="load_gripper" default="true" doc="Load the gripper"/>
   <arg name="debug" default="false" doc="Add gdb debug flag"/>
-  <arg name="disable_franka_gazebo_logging" default="false" doc="Disables the franka gazebo warnings"/>
+  <arg name="output" default="log" doc="output channel of main nodes. options: screen, log"/>
+  <arg name="disable_franka_gazebo_logs" default="false" doc="prevents franka gazebo from logging to the stdout"/>
   <!--Moveit arguments-->
   <arg name="moveit" default="true" doc="Start MoveIt"/>
   <arg name="rviz_file" default="" doc="Path to the Rviz configuration file"/>
@@ -50,8 +51,8 @@
 
   <!--Set panda_gazebo parameters-->
   <!--  Disable franka action console logs-->
-  <node pkg="panda_gazebo" type="set_franka_gripper_logging_level.py" name="set_franka_gripper_logger_level"/>
-  <node if="$(arg disable_franka_gazebo_logging)" pkg="panda_gazebo" type="set_franka_gazebo_logging_level.py" name="set_franka_gazebo_logger_level"/>
+  <node pkg="panda_gazebo" type="set_franka_gripper_logging_level.py" name="set_franka_gripper_logger_level" output="$(arg output)"/>
+  <node if="$(arg disable_franka_gazebo_logs)" pkg="panda_gazebo" type="set_franka_gazebo_logging_level.py" name="set_franka_gazebo_logger_level" output="$(arg output)"/>
 
   <!--Run the main MoveIt! executable without trajectory execution (we do not have controllers configured by default)-->
   <include if="$(arg moveit)" file="$(find panda_moveit_config)/launch/move_group.launch">
@@ -78,7 +79,7 @@
   <!--Retrieve the right transmission for the control type-->
   <arg if="$(eval arg('control_type') == 'trajectory')" name="load_set_ee_pose_service" value="true"/>
   <arg unless="$(eval arg('control_type') == 'trajectory')" name="load_set_ee_pose_service" value="false"/>
-  <node if="$(arg moveit)" pkg="panda_gazebo" type="panda_moveit_server.py" name="panda_moveit_planner_server" required="true" args="">
+  <node if="$(arg moveit)" pkg="panda_gazebo" type="panda_moveit_server.py" name="panda_moveit_planner_server" required="true" output="$(arg output)">
     <param name="end_effector" value="$(arg end_effector)"/>
     <param name="max_velocity_scaling_factor" value="$(arg max_velocity_scaling_factor)"/>
     <param name="max_acceleration_scaling_factor" value="$(arg max_acceleration_scaling_factor)"/>
@@ -91,7 +92,7 @@
   <arg if="$(eval arg('control_type') == 'trajectory')" name="load_arm_follow_joint_trajectory_action" value="true"/>
   <arg unless="$(eval arg('control_type') == 'trajectory')" name="load_set_joint_commands_service" value="true"/>
   <arg unless="$(eval arg('control_type') == 'trajectory')" name="load_arm_follow_joint_trajectory_action" value="false"/>
-  <node pkg="panda_gazebo" type="panda_control_server.py" name="panda_control_server" required="true">
+  <node pkg="panda_gazebo" type="panda_control_server.py" name="panda_control_server" required="true" output="$(arg output)">
     <param name="brute_force_grasping" value="$(arg brute_force_grasping)"/>
     <param name="load_gripper" value="$(arg load_gripper)"/>
     <param name="load_set_joint_commands_service" value="$(arg load_set_joint_commands_service)"/>

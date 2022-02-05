@@ -297,16 +297,20 @@ def dict_clean(input_dict):
     return stripped_dict
 
 
-def get_unique_list(input_list):
+def get_unique_list(input_list, trim=True):
     """Removes non-unique items from a list.
 
     Args:
         input_list (list): The input list.
+        trim (list, optional): Trim empty items. Defaults to ``True``.
 
     Returns:
         list: The new list containing only unique items.
     """
-    return list({item for item in input_list})
+    if trim:
+        return list({item for item in input_list if item != ""})
+    else:
+        return list({item for item in input_list})
 
 
 def get_duplicate_list(input_list):

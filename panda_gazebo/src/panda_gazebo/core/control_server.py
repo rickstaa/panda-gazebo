@@ -1756,6 +1756,7 @@ class PandaControlServer(object):
         """  # noqa: E501
         resp = GetControlledJointsResponse()
         resp.success = True
+        resp.message = "Everything went OK"
         try:
             self.__controllers = {}  # Make sure latest controller info is retrieved
             controlled_joints = self.controlled_joints[
@@ -1766,6 +1767,7 @@ class PandaControlServer(object):
             resp.controlled_joints_hand = controlled_joints["hand"]
         except KeyError:
             resp.success = False
+            resp.message = "Controlled joints could not be retrieved"
         return resp
 
     ################################################

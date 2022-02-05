@@ -2,6 +2,7 @@
 # and hand.
 JointLimits joint_limits
 ---
-bool success
 string[] joint_names
 float64[] joint_positions
+bool success
+string message

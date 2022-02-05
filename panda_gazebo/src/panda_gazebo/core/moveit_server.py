@@ -1222,9 +1222,11 @@ class PandaMoveItPlannerServer(object):
         """
         rospy.logdebug("Retrieving ee pose.")
         ee_pose = self.move_group_arm.get_current_pose()
-        ee_pose_resp = GetEePoseResponse()
-        ee_pose_resp = ee_pose.pose
-        return ee_pose_resp
+        resp = GetEePoseResponse()
+        resp.pose = ee_pose.pose
+        resp.success = True
+        resp.message = "Everything went OK"
+        return resp
 
     def _arm_get_ee_rpy_callback(self, _):
         """Request current end effector (EE) orientation.
@@ -1238,11 +1240,13 @@ class PandaMoveItPlannerServer(object):
         """
         rospy.logdebug("Retrieving ee orientation.")
         ee_rpy = self.move_group_arm.get_current_rpy()
-        ee_rpy_res = GetEeRpyResponse()
-        ee_rpy_res.r = ee_rpy[0]
-        ee_rpy_res.y = ee_rpy[1]
-        ee_rpy_res.p = ee_rpy[2]
-        return ee_rpy_res
+        resp = GetEeRpyResponse()
+        resp.r = ee_rpy[0]
+        resp.y = ee_rpy[1]
+        resp.p = ee_rpy[2]
+        resp.success = True
+        resp.message = "Everything went OK"
+        return resp
 
     def _arm_get_ee_callback(self, _):
         """Request end effector (EE) name.
@@ -1257,6 +1261,8 @@ class PandaMoveItPlannerServer(object):
         rospy.logdebug("Retrieving ee name.")
         resp = GetEeResponse()
         resp.ee_name = self.move_group_arm.get_end_effector_link()
+        resp.success = True
+        resp.message = "Everything went OK"
         return resp
 
     def _arm_set_ee_callback(self, set_ee_req):
@@ -1277,7 +1283,7 @@ class PandaMoveItPlannerServer(object):
                 self.move_group_arm.set_end_effector_link(set_ee_req.ee_name)
             except MoveItCommanderException as e:
                 rospy.logwarn("Ee could not be set.")
-                resp = False
+                resp.success = False
                 resp.message = e.args[0]
             resp.success = True
             resp.message = "Everything went OK"
@@ -1384,8 +1390,10 @@ class PandaMoveItPlannerServer(object):
                 and not get_random_hand_joint_positions_srvs_exception
             ):
                 resp.success = True
+                resp.message = "Everything went OK"
             else:
                 resp.success = False
+                resp.message = "Random joint position could not be retrieved."
         else:  # Joint limits were set
             # Create joint limit dictionary
             joint_limits_dict = dict(
@@ -1454,6 +1462,7 @@ class PandaMoveItPlannerServer(object):
                 # otherwise keep sampling till the max sample limit has been reached
                 if arm_joint_commands_valid and hand_joint_commands_valid:  # If valid
                     resp.success = True
+                    resp.message = "Everything went OK"
                     break
                 elif n_sample >= MAX_RANDOM_SAMPLES:
                     rospy.logwarn(
@@ -1476,9 +1485,11 @@ class PandaMoveItPlannerServer(object):
                                 random_hand_joint_values_unbounded
                             )
                         resp.success = True
+                        resp.message = "Everything went OK"
                         break
                     else:
                         resp.success = False
+                        resp.message = "Random joint position could not be retrieved."
                 else:
                     rospy.logwarn(
                         "Failed to sample valid random joint positions from the "
@@ -1555,9 +1566,11 @@ class PandaMoveItPlannerServer(object):
         ):  # No bounding region was set
             if not get_random_pose_srvs_exception:
                 resp.success = True
+                resp.message = "Everything went OK"
                 resp.ee_pose = random_ee_pose_unbounded.pose
             else:
                 resp.success = False
+                resp.message = "Random ee pose could not be retrieved."
         else:  # A bounding region was set
             # Try to find a valid ee_pose within the bounding region
             n_sample = 0
@@ -1601,6 +1614,7 @@ class PandaMoveItPlannerServer(object):
                 # otherwise keep sampling till the max sample limit has been reached
                 if ee_pose_valid:  # If valid
                     resp.success = True
+                    resp.message = "Everything went OK"
                     resp.ee_pose = random_ee_pose
                     break
                 elif n_sample >= MAX_RANDOM_SAMPLES:
@@ -1613,10 +1627,12 @@ class PandaMoveItPlannerServer(object):
                     # Use unbounded ee_pose, set success bool and break out of the loop
                     if not get_random_pose_srvs_exception:
                         resp.success = True
+                        resp.message = "Everything went OK"
                         resp.ee_pose = random_ee_pose_unbounded.pose
                         break
                     else:
                         resp.success = False
+                        resp.message = "Random ee pose could not be retrieved."
                 else:
                     rospy.logwarn(
                         "Failed to sample a valid random end effector pose from the "
@@ -1639,6 +1655,7 @@ class PandaMoveItPlannerServer(object):
         """  # noqa: E501
         resp = GetMoveItControlledJointsResponse()
         resp.success = True
+        resp.message = "Everything went OK"
         try:
             resp.controlled_joints = (
                 flatten_list(
@@ -1659,6 +1676,7 @@ class PandaMoveItPlannerServer(object):
             resp.controlled_joints_hand = self._controlled_joints_dict["hand"]
         except InputMessageInvalidError:
             resp.success = False
+            resp.message = "Controlled joints could not be retrieved."
         return resp
 
     def _scene_add_box_callback(self, add_box_req):

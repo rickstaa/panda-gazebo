@@ -85,101 +85,101 @@ if __name__ == "__main__":
     resp = set_hand_joint_positions_srv.call(req)
     print(resp.message)
 
-    # # -- Test set ee pose service --
-    # req = SetEePoseRequest()
-    # req.pose.position.x = 0
-    # req.pose.position.y = 0.5
-    # req.pose.position.z = 0.5
-    # set_ee_pose_srv = rospy.ServiceProxy(
-    #     "panda_moveit_planner_server/panda_arm/set_ee_pose", SetEePose
-    # )
-    # resp = set_ee_pose_srv.call(req)
-    # print(resp.message)
+    # -- Test set ee pose service --
+    req = SetEePoseRequest()
+    req.pose.position.x = 0
+    req.pose.position.y = 0.5
+    req.pose.position.z = 0.5
+    set_ee_pose_srv = rospy.ServiceProxy(
+        "panda_moveit_planner_server/panda_arm/set_ee_pose", SetEePose
+    )
+    resp = set_ee_pose_srv.call(req)
+    print(resp.message)
 
-    # # -- Test get ee pose joint config service --
-    # req = GetEePoseJointConfigRequest()
-    # req.pose.position.x = 0
-    # req.pose.position.y = 0.5
-    # req.pose.position.z = 0.5
-    # get_ee_pose_joint_config_srv = rospy.ServiceProxy(
-    #     "panda_moveit_planner_server/panda_arm/get_ee_pose_joint_config",
-    #     GetEePoseJointConfig,
-    # )
-    # resp = get_ee_pose_joint_config_srv.call(req)
-    # print(resp.joint_names)
-    # print(resp.joint_positions)
-    # print(resp.message)
+    # -- Test get ee pose joint config service --
+    req = GetEePoseJointConfigRequest()
+    req.pose.position.x = 0
+    req.pose.position.y = 0.5
+    req.pose.position.z = 0.5
+    get_ee_pose_joint_config_srv = rospy.ServiceProxy(
+        "panda_moveit_planner_server/panda_arm/get_ee_pose_joint_config",
+        GetEePoseJointConfig,
+    )
+    resp = get_ee_pose_joint_config_srv.call(req)
+    print(resp.joint_names)
+    print(resp.joint_positions)
+    print(resp.message)
 
-    # # -- Test get ee pose service --
-    # req = GetEePoseRequest()
-    # get_ee_pose_srv = rospy.ServiceProxy(
-    #     "panda_moveit_planner_server/panda_arm/get_ee_pose", GetEePose
-    # )
-    # resp = get_ee_pose_srv.call(req)
-    # print(resp.message)
+    # -- Test get ee pose service --
+    req = GetEePoseRequest()
+    get_ee_pose_srv = rospy.ServiceProxy(
+        "panda_moveit_planner_server/panda_arm/get_ee_pose", GetEePose
+    )
+    resp = get_ee_pose_srv.call(req)
+    print(resp.message)
 
-    # # -- Test get ee rpy service --
-    # req = GetEeRpyRequest()
-    # get_ee_rpy_srv = rospy.ServiceProxy(
-    #     "panda_moveit_planner_server/panda_arm/get_ee_rpy", GetEeRpy
-    # )
-    # resp = get_ee_rpy_srv.call(req)
-    # print(resp.message)
+    # -- Test get ee rpy service --
+    req = GetEeRpyRequest()
+    get_ee_rpy_srv = rospy.ServiceProxy(
+        "panda_moveit_planner_server/panda_arm/get_ee_rpy", GetEeRpy
+    )
+    resp = get_ee_rpy_srv.call(req)
+    print(resp.message)
 
-    # # -- Test get ee service --
-    # req = GetEeRequest()
-    # get_ee_srv = rospy.ServiceProxy(
-    #     "panda_moveit_planner_server/panda_arm/get_ee", GetEe
-    # )
-    # resp = get_ee_srv.call(req)
-    # print(resp.message)
+    # -- Test get ee service --
+    req = GetEeRequest()
+    get_ee_srv = rospy.ServiceProxy(
+        "panda_moveit_planner_server/panda_arm/get_ee", GetEe
+    )
+    resp = get_ee_srv.call(req)
+    print(resp.message)
 
-    # # -- Test set ee service --
-    # req = SetEeRequest()
-    # req.ee_name = "panda_link0"
-    # set_ee_srv = rospy.ServiceProxy(
-    #     "panda_moveit_planner_server/panda_arm/set_ee", SetEe
-    # )
-    # resp = set_ee_srv.call(req)
-    # print(resp.message)
+    # -- Test set ee service --
+    req = SetEeRequest()
+    req.ee_name = "panda_link0"
+    set_ee_srv = rospy.ServiceProxy(
+        "panda_moveit_planner_server/panda_arm/set_ee", SetEe
+    )
+    resp = set_ee_srv.call(req)
+    print(resp.message)
 
-    # # Set back
-    # req = SetEeRequest()
-    # req.ee_name = "panda_link8"
-    # set_ee_srv = rospy.ServiceProxy(
-    #     "panda_moveit_planner_server/panda_arm/set_ee", SetEe
-    # )
-    # resp = set_ee_srv.call(req)
+    # Set back
+    req = SetEeRequest()
+    req.ee_name = "panda_link8"
+    set_ee_srv = rospy.ServiceProxy(
+        "panda_moveit_planner_server/panda_arm/set_ee", SetEe
+    )
+    resp = set_ee_srv.call(req)
 
-    # # -- Test get random joint positions service --
-    # req = GetRandomJointPositionsRequest()
-    # req.joint_limits.names = ["panda_joint1_min", "panda_joint1_max"]
-    # req.joint_limits.values = [0.0, 0.5]
-    # get_random_joint_positions_srv = rospy.ServiceProxy(
-    #     "panda_moveit_planner_server/get_random_joint_positions",
-    #     GetRandomJointPositions,
-    # )
-    # resp = get_random_joint_positions_srv.call(req)
-    # print(resp.message)
+    # -- Test get random joint positions service --
+    req = GetRandomJointPositionsRequest()
+    req.joint_limits.names = ["panda_joint1_min", "panda_joint1_max"]
+    req.joint_limits.values = [0.0, 0.5]
+    get_random_joint_positions_srv = rospy.ServiceProxy(
+        "panda_moveit_planner_server/get_random_joint_positions",
+        GetRandomJointPositions,
+    )
+    resp = get_random_joint_positions_srv.call(req)
+    print(resp.message)
 
-    # # -- Test get random pose service --
-    # req = GetRandomEePoseRequest()
-    # req.bounding_region = BoundingRegion(x_min=0.0, x_max=1.0)
-    # get_random_ee_pose_srv = rospy.ServiceProxy(
-    #     "panda_moveit_planner_server/get_random_ee_pose",
-    #     GetRandomEePose,
-    # )
-    # resp = get_random_ee_pose_srv.call(req)
-    # print(resp.message)
+    # -- Test get random pose service --
+    req = GetRandomEePoseRequest()
+    req.bounding_region = BoundingRegion(x_min=0.0, x_max=1.0)
+    get_random_ee_pose_srv = rospy.ServiceProxy(
+        "panda_moveit_planner_server/get_random_ee_pose",
+        GetRandomEePose,
+    )
+    resp = get_random_ee_pose_srv.call(req)
+    print(resp.message)
 
-    # # -- Test get controlled joints service --
-    # req = GetMoveItControlledJointsRequest()
-    # get_controlled_joints_srv = rospy.ServiceProxy(
-    #     "panda_moveit_planner_server/get_controlled_joints",
-    #     GetMoveItControlledJoints,
-    # )
-    # resp = get_controlled_joints_srv.call(req)
-    # print(resp.message)
+    # -- Test get controlled joints service --
+    req = GetMoveItControlledJointsRequest()
+    get_controlled_joints_srv = rospy.ServiceProxy(
+        "panda_moveit_planner_server/get_controlled_joints",
+        GetMoveItControlledJoints,
+    )
+    resp = get_controlled_joints_srv.call(req)
+    print(resp.message)
 
     # -- Test add Box service --
     # req = AddBoxRequest()
