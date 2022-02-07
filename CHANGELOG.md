@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.9.0](https://github.com/rickstaa/panda-gazebo/compare/v2.8.6...v2.9.0) (2022-02-07)
+
+
+### Features
+
+* **moveit_server:** add random ee/joint pose attempts parameter ([fab0243](https://github.com/rickstaa/panda-gazebo/commit/fab02433e067f99cf6488cd9163ea8563ca6e725))
+
 ### [2.8.6](https://github.com/rickstaa/panda-gazebo/compare/v2.8.5...v2.8.6) (2022-02-05)
 
 ### [2.8.5](https://github.com/rickstaa/panda-gazebo/compare/v2.8.4...v2.8.5) (2022-02-04)
