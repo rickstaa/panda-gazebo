@@ -12,29 +12,29 @@ interaction with the `Panda Gazebo simulation`_. These launch files can be used 
 (see `the ros_gazebo_gym documentation`_ for the available environments). The ROS nodes generate several ROS services that make
 it easier to control or get information from the robot. It contains the following ROS nodes:
 
-   - **panda_control_server**: Creates services related to the panda_control.
-      - **get_controlled_joints:** Returns the panda joints that are currently controlled when using a given control type.
-      - **follow_joint_trajectory:** Sets the arm joint trajectory and the gripper width.
-      - **set_joint_commands:** Sets an arm command (i.e. position or effort) based on the specified control type.
-      - **panda_arm/follow_joint_trajectory:** Sets the arm joint trajectory.
-      - **panda_hand/set_gripper_width:** Sets the gripper width.
-      - **panda_arm/set_joint_positions:** Sets the arm positions.
-      - **panda_arm/set_joint_efforts:** Sets the arm efforts.
-   - **panda_moveit_server:** Creates services used to control the robot through `MoveIt`_.
-      - **panda_arm/set_ee_pose:** Sets the end-effector pose.
-      - **get_random_joint_positions**: Returns random valid joint positions.
-      - **get_random_ee_pose**: Returns a valid random end-effector pose.
-      - **planning_scene/add_box**: Adds a box to the MoveIt planning scene
-      - **planning_scene/add_plane**: Adds a plane to the MoveIt planning scene
-      - **panda_arm/get_ee**: Returns the name currently used end-effector link.
-      - **panda_arm/set_ee**: Sets the end effector link.
-      - **panda_arm/get_ee_pose**: Returns the current end-effector pose.
-      - **panda_arm/get_ee_pose_joint_config**: Returns a set of possible joint configurations for a given end-effector pose.
-      - **panda_arm/get_ee_rpy**: Returns the current end-effector orientation.
-      - **set_joint_positions**: Sets the arm and Hand joints positions.
-      - **get_controlled_joints**: Gets the joints that MoveIt currently controls.
-      - **panda_arm/set_joint_positions**: Sets the arm joints positions.
-      - **panda_hand/set_joint_positions**: Sets the hand joints position.
+- **panda_control_server**: Creates services related to the panda_control.
+   - **get_controlled_joints:** Returns the panda joints that are currently controlled when using a given control type.
+   - **follow_joint_trajectory:** Sets the arm joint trajectory and the gripper width.
+   - **set_joint_commands:** Sets an arm command (i.e. position or effort) based on the specified control type.
+   - **panda_arm/follow_joint_trajectory:** Sets the arm joint trajectory.
+   - **panda_hand/set_gripper_width:** Sets the gripper width.
+   - **panda_arm/set_joint_positions:** Sets the arm positions.
+   - **panda_arm/set_joint_efforts:** Sets the arm efforts.
+- **panda_moveit_server:** Creates services used to control the robot through `MoveIt`_.
+   - **panda_arm/set_ee_pose:** Sets the end-effector pose.
+   - **get_random_joint_positions**: Returns random valid joint positions.
+   - **get_random_ee_pose**: Returns a valid random end-effector pose.
+   - **planning_scene/add_box**: Adds a box to the MoveIt planning scene
+   - **planning_scene/add_plane**: Adds a plane to the MoveIt planning scene
+   - **panda_arm/get_ee**: Returns the name currently used end-effector link.
+   - **panda_arm/set_ee**: Sets the end effector link.
+   - **panda_arm/get_ee_pose**: Returns the current end-effector pose.
+   - **panda_arm/get_ee_pose_joint_config**: Returns a set of possible joint configurations for a given end-effector pose.
+   - **panda_arm/get_ee_rpy**: Returns the current end-effector orientation.
+   - **set_joint_positions**: Sets the arm and Hand joints positions.
+   - **get_controlled_joints**: Gets the joints that MoveIt currently controls.
+   - **panda_arm/set_joint_positions**: Sets the arm joints positions.
+   - **panda_hand/set_joint_positions**: Sets the hand joints position.
 
 See the :panda_gazebo:`message descriptions <tree/noetic/panda_gazebo/srv>` for more information about the messages these services require. For more information about
 all the modules and ROS nodes in this package see the sections below.
