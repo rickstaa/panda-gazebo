@@ -1,8 +1,9 @@
 # Panda-gazebo
 
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/rickstaa/panda-gazebo)](https://github.com/rickstaa/panda-gazebo/releases)
-[![Python 3](https://img.shields.io/badge/Python-3.8%20%7C%203.7%20%7C%203.6-green)](https://www.python.org/)
+[![Python 3](https://img.shields.io/badge/Python-3.8%20%7C%203.7%20%7C%203.6-brightgreen)](https://www.python.org/)
 [![ROS version](https://img.shields.io/badge/ROS%20versions-Noetic-brightgreen)](https://wiki.ros.org)
+[![Contributions](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)](contributing.md)
 
 This package contains all the ROS packages needed for creating a [Panda Emika Franka](https://frankaemika.github.io/docs/)
 Gazebo simulation. It is used by the [ros\_gazebo\_gym](https://github.com/rickstaa/ros-gazebo-gym)
