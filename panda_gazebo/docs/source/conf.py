@@ -51,7 +51,7 @@ autodoc_member_order = "bysource"
 # Add mappings
 intersphinx_mapping = {
     "python3": ("https://docs.python.org/3", None),
-    "numpy": ("http://docs.scipy.org/doc/numpy", None),
+    "numpy": ("https://numpy.org/doc/stable", None),
 }
 
 # Add any paths that contain templates here, relative to this directory.

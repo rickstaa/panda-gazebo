@@ -36,7 +36,7 @@ it easier to control or get information from the robot. It contains the followin
       - **panda_arm/set_joint_positions**: Sets the arm joints positions.
       - **panda_hand/set_joint_positions**: Sets the hand joints position.
 
-See the `message descriptions`_ for more information about the messages these services require. For more information about
+See the :panda_gazebo:`message descriptions <tree/noetic/panda_gazebo/srv>` for more information about the messages these services require. For more information about
 all the modules and ROS nodes in this package see the sections below.
 
 .. _`Panda Emika Franka`: https://frankaemika.github.io/docs
@@ -47,7 +47,6 @@ all the modules and ROS nodes in this package see the sections below.
 .. _`panda_moveit_config`: https://github.com/ros-planning/panda_moveit_config
 .. _`Panda Gazebo simulation`: https://github.com/frankaemika/franka_ros/tree/develop/franka_gazebo
 .. _`MoveIt`: https://moveit.ros.org
-.. _`message descriptions`: https://github.com/rickstaa/panda-gazebo/tree/noetic/panda_gazebo/srv
 
 Contents
 ========
