@@ -21,7 +21,7 @@ installed using the following `pip`_ command inside the ``./panda_gazebo`` folde
 Build the documentation
 -----------------------
 
-To build the `HTML`_ documentation, go into the `docs/`_ directory and run the
+To build the `HTML`_ documentation, go into the :panda_gazebo:`docs/ <tree/noetic/panda_gazebo/docs>` directory and run the
 ``make html`` command. This command will generate the html documentation
 inside the ``docs/build/html`` directory.
 
@@ -36,12 +36,11 @@ Deploying
 
 To deploy documentation to the Github Pages site for the repository, push the
 documentation to the `noetic`_ branch and run the ``make gh-pages`` command
-inside the `docs/`_ directory.
+inside the :panda_gazebo:`docs/ <tree/noetic/panda_gazebo/docs>` directory.
 
 .. warning::
 
     Please make sure you are on the `noetic`_ branch while building the documentation. Otherwise,
     errors will greet you.
 
-.. _`docs/`: https://github.com/rickstaa/panda-gazebo/tree/noetic/panda/docs
 .. _`noetic`: https://github.com/rickstaa/panda/tree/noetic
