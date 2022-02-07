@@ -1307,6 +1307,12 @@ class PandaMoveItPlannerServer(object):
             :obj:`panda_gazebo.srv.GetRandomPositionsResponse`: Response message
                 containing the random joints positions.
         """
+        max_attempts = (
+            get_random_position_req.attempts
+            if get_random_position_req.attempts != 0.0
+            else MAX_RANDOM_SAMPLES
+        )
+
         # Retrieve possible joints
         arm_joints = self.move_group_arm.get_active_joints()
         hand_joints = (
@@ -1464,10 +1470,10 @@ class PandaMoveItPlannerServer(object):
                     resp.success = True
                     resp.message = "Everything went OK"
                     break
-                elif n_sample >= MAX_RANDOM_SAMPLES:
+                elif n_sample >= max_attempts:
                     rospy.logwarn(
                         "Ignoring bounding region as the maximum number of sample "
-                        "iterations has been reached. Please make sure that the robot "
+                        "attemps has been reached. Please make sure that the robot "
                         "joints can reach the set joint_limits. "
                     )
 
@@ -1541,6 +1547,12 @@ class PandaMoveItPlannerServer(object):
             :obj:`panda_gazebo.srv.GetRandomEePoseResponse`: Response message containing
                 the random joints positions.
         """
+        max_attempts = (
+            get_random_ee_pose_req.attempts
+            if get_random_ee_pose_req.attempts != 0.0
+            else MAX_RANDOM_SAMPLES
+        )
+
         # Get a random ee pose
         rospy.logdebug("Retrieving a valid random end effector pose.")
         try:
@@ -1617,10 +1629,10 @@ class PandaMoveItPlannerServer(object):
                     resp.message = "Everything went OK"
                     resp.ee_pose = random_ee_pose
                     break
-                elif n_sample >= MAX_RANDOM_SAMPLES:
+                elif n_sample >= max_attempts:
                     rospy.logwarn(
                         "Ignoring bounding region as the maximum number of sample "
-                        "iterations has been reached. Please make sure that the robot "
+                        "attemps has been reached. Please make sure that the robot "
                         "end effector can reach the points inside the bounding region."
                     )
 
