@@ -115,7 +115,7 @@ html_context = {
     "github_user": git_user_name,
     "github_repo": project,
     "github_version": "noetic",
-    "conf_py_path": "/docs/source/",  # needs leading and trailing slashes!
+    "conf_py_path": "/panda_gazebo/docs/source/",  # needs leading and trailing slashes!
 }
 
 # -- External links dictionary -----------------------------------------------
