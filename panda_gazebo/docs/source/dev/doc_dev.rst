@@ -35,12 +35,10 @@ Deploying
 ---------
 
 To deploy documentation to the Github Pages site for the repository, push the
-documentation to the `noetic`_ branch and run the ``make gh-pages`` command
+documentation to the :panda_gazebo:`noetic <tree/noetic>` branch and run the ``make gh-pages`` command
 inside the :panda_gazebo:`docs/ <tree/noetic/panda_gazebo/docs>` directory.
 
 .. warning::
 
-    Please make sure you are on the `noetic`_ branch while building the documentation. Otherwise,
+    Please make sure you are on the :panda_gazebo:`noetic <tree/noetic>` branch while building the documentation. Otherwise,
     errors will greet you.
-
-.. _`noetic`: https://github.com/rickstaa/panda/tree/noetic
