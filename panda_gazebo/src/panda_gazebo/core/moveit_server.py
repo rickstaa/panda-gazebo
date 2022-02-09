@@ -1312,17 +1312,11 @@ class PandaMoveItPlannerServer(object):
             if get_random_position_req.attempts != 0.0
             else MAX_RANDOM_SAMPLES
         )
-
-        # Retrieve possible joints
+        joint_limits = {}
+        limited_joints = []
         arm_joints = self.move_group_arm.get_active_joints()
         hand_joints = (
             self.move_group_hand.get_active_joints() if self._load_gripper else []
-        )
-        valid_joint_names = flatten_list(
-            [
-                [item + "_min", item + "_max"]
-                for item in flatten_list([arm_joints, hand_joints])
-            ]
         )
 
         # Validate joint limits if supplied (remove them if invalid)
@@ -1330,39 +1324,130 @@ class PandaMoveItPlannerServer(object):
             get_random_position_req.joint_limits.names
             and get_random_position_req.joint_limits.values
         ):
+            get_random_position_req.joint_limits.names = [
+                joint_limit_name.lower()
+                for joint_limit_name in get_random_position_req.joint_limits.names
+            ]
+
             # Check if limit names and limit values are of equal length
             if len(get_random_position_req.joint_limits.names) != len(
                 get_random_position_req.joint_limits.values
             ):
                 rospy.logwarn(
-                    "Joint limits ignored as the number of joints (%s) is "
-                    "unequal to the number of limit values (%s)."
+                    "Joint limits ignored as the number of joints ({}) is "
+                    "unequal to the number of limit values ({}).".format(
+                        len(get_random_position_req.joint_limits.names),
+                        len(get_random_position_req.joint_limits.values),
+                    )
                 )
                 get_random_position_req.joint_limits.names = []
                 get_random_position_req.joint_limits.values = []
             else:  # Check if the names in the joint_limits message are valid
-                invalid_names = []
+                valid_joint_names = flatten_list(
+                    [
+                        [joint + "_min", joint + "_max"]
+                        for joint in flatten_list([arm_joints, hand_joints])
+                    ]
+                )
+                invalid_joint_names = []
                 for name in get_random_position_req.joint_limits.names:
                     if name not in valid_joint_names:
-                        invalid_names.append(name)
+                        invalid_joint_names.append(name)
 
-                # Throw warning if a name is invalid and remove joint limits
-                if len(invalid_names) != 0:
+                # Throw warning and remove invalid joint limits
+                if len(invalid_joint_names) != 0:
+                    warn_strings = (
+                        [
+                            "limit",
+                            invalid_joint_names[0],
+                            "was",
+                            "it is not a valid joint limit",
+                        ]
+                        if len(invalid_joint_names) == 1
+                        else [
+                            "limits",
+                            invalid_joint_names,
+                            "were",
+                            "they are not valid joint limits",
+                        ]
+                    )
                     rospy.logwarn(
-                        "Joint limits ignored as the the "
-                        "'panda_gazebo.msg.JointLimits' field of the "
-                        "'panda_gazebo.srv.GetRandomJointPositionsRequest' "
-                        "contains %s %s. Valid values are %s."
-                        % (
-                            "an invalid joint name"
-                            if len(invalid_names) == 1
-                            else "invalid joint names",
-                            invalid_names,
+                        "Joint {} '{}' {} ignored since {}. Valid values are "
+                        "'{}'.".format(
+                            warn_strings[0],
+                            warn_strings[1],
+                            warn_strings[2],
+                            warn_strings[3],
                             valid_joint_names,
                         )
                     )
-                    get_random_position_req.joint_limits.names = []
-                    get_random_position_req.joint_limits.values = []
+                    get_random_position_req.joint_limits.names = [
+                        joint_name
+                        for joint_name in get_random_position_req.joint_limits.names
+                        if joint_name not in invalid_joint_names
+                    ]
+                    get_random_position_req.joint_limits.values = [
+                        joint_limit
+                        for joint_limit_name, joint_limit in zip(
+                            get_random_position_req.joint_limits.names,
+                            get_random_position_req.joint_limits.values,
+                        )
+                        if joint_limit_name not in invalid_joint_names
+                    ]
+
+                # Check if a joint limit both has a min and max specified
+                limited_joints = get_unique_list(
+                    [
+                        name.replace("_min", "").replace("_max", "")
+                        for name in get_random_position_req.joint_limits.names
+                    ]
+                )
+                required_joint_limits = flatten_list(
+                    [[joint + "_min", joint + "_max"] for joint in limited_joints]
+                )
+                missing_joint_limits = [
+                    required_joint_limit
+                    for required_joint_limit in required_joint_limits
+                    if required_joint_limit
+                    not in get_random_position_req.joint_limits.names
+                ]
+                if missing_joint_limits:
+                    ignored_joint_limit_joint = get_unique_list(
+                        [
+                            missing_joint_limit.replace("_min", "").replace("_max", "")
+                            for missing_joint_limit in missing_joint_limits
+                        ]
+                    )
+                    warn_strings = (
+                        ["joint", f"'{ignored_joint_limit_joint}'"]
+                        if len(ignored_joint_limit_joint) == 1
+                        else ["joints", ignored_joint_limit_joint]
+                    )
+                    rospy.logwarn(
+                        "Joint limits specified on {} {} were ignored as both a min "
+                        "and max limit need to be specified.".format(*warn_strings)
+                    )
+                    get_random_position_req.joint_limits.names = [
+                        name
+                        for name in get_random_position_req.joint_limits.names
+                        if name.replace("_min", "").replace("_max", "")
+                        not in ignored_joint_limit_joint
+                    ]
+                    get_random_position_req.joint_limits.values = [
+                        joint_limit
+                        for joint_limit_name, joint_limit in zip(
+                            get_random_position_req.joint_limits.names,
+                            get_random_position_req.joint_limits.values,
+                        )
+                        if joint_limit_name.replace("_min", "").replace("_max", "")
+                        not in ignored_joint_limit_joint
+                    ]
+            joint_limits = dict(
+                zip(
+                    get_random_position_req.joint_limits.names,
+                    get_random_position_req.joint_limits.values,
+                )
+            )
 
         # Retrieve random joint position values
         get_random_arm_joint_positions_srvs_exception = False
@@ -1387,10 +1472,7 @@ class PandaMoveItPlannerServer(object):
         random_hand_joint_values = (
             random_hand_joint_values_unbounded if self._load_gripper else {}
         )
-        if (
-            not get_random_position_req.joint_limits.names
-            and not get_random_position_req.joint_limits.values
-        ):  # If no joint limits were given
+        if not joint_limits:  # If no joint limits were given
             if (
                 not get_random_arm_joint_positions_srvs_exception
                 and not get_random_hand_joint_positions_srvs_exception
@@ -1401,25 +1483,16 @@ class PandaMoveItPlannerServer(object):
                 resp.success = False
                 resp.message = "Random joint position could not be retrieved."
         else:  # Joint limits were set
-            # Create joint limit dictionary
-            joint_limits_dict = dict(
-                zip(
-                    get_random_position_req.joint_limits.names,
-                    get_random_position_req.joint_limits.values,
-                )
-            )
-
             # Try to find random joint values within the joint limits
             n_sample = 0
             arm_joint_commands_valid = False
             hand_joint_commands_valid = False if self._load_gripper else True
             while True:  # Continue till joint positions are valid or max samples size
-                if n_sample > 0:
-                    rospy.logdebug("Retrieving a valid random joint positions.")
+                rospy.logdebug("Retrieving valid random joint positions.")
                 for joint in get_unique_list(
                     [
-                        names.replace("_min", "").replace("_max", "")
-                        for names in get_random_position_req.joint_limits.names
+                        joint_limit_names.replace("_min", "").replace("_max", "")
+                        for joint_limit_names in joint_limits.keys()
                     ]
                 ):
                     # Sample random value for the given joint within the joint limits
@@ -1428,16 +1501,16 @@ class PandaMoveItPlannerServer(object):
                         and joint in random_arm_joint_values.keys()
                     ):
                         random_arm_joint_values[joint] = np.random.uniform(
-                            joint_limits_dict[joint + "_min"],
-                            joint_limits_dict[joint + "_max"],
+                            joint_limits[joint + "_min"],
+                            joint_limits[joint + "_max"],
                         )
                     if (
                         not hand_joint_commands_valid
                         and joint in random_hand_joint_values.keys()
                     ):
                         random_hand_joint_values[joint] = np.random.uniform(
-                            joint_limits_dict[joint + "_min"],
-                            joint_limits_dict[joint + "_max"],
+                            joint_limits[joint + "_min"],
+                            joint_limits[joint + "_max"],
                         )
 
                 # Check if joint positions are valid (Plan is not empty)
@@ -1474,7 +1547,7 @@ class PandaMoveItPlannerServer(object):
                     rospy.logwarn(
                         "Ignoring bounding region as the maximum number of sample "
                         "attemps has been reached. Please make sure that the robot "
-                        "joints can reach the set joint_limits. "
+                        "joints can reach the set joint_limits."
                     )
 
                     # Use unbounded joint positions, set success bool and break out of
@@ -1483,7 +1556,6 @@ class PandaMoveItPlannerServer(object):
                         not get_random_arm_joint_positions_srvs_exception
                         and not get_random_hand_joint_positions_srvs_exception
                     ):
-
                         # Create response message and break out of loop
                         random_arm_joint_values = random_arm_joint_values_unbounded
                         if self._load_gripper:
