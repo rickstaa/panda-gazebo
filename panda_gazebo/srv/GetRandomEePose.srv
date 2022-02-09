@@ -3,5 +3,7 @@ BoundingRegion bounding_region
 int32 attempts
 ---
 geometry_msgs/Pose ee_pose
+string[] joint_names
+float64[] joint_positions
 bool success
 string message

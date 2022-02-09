@@ -845,6 +845,11 @@ class PandaMoveItPlannerServer(object):
             :obj:`panda_gazebo.srv.SetEePoseResponse`: Response message containing (
                 success bool, message).
         """
+        max_attempts = (
+            get_ee_pose_joint_configuration.attempts
+            if get_ee_pose_joint_configuration.attempts != 0.0
+            else MAX_RANDOM_SAMPLES
+        )
 
         # Make sure quaternion is normalized
         if quaternion_norm(get_ee_pose_joint_configuration.pose.orientation) != 1.0:
@@ -867,22 +872,31 @@ class PandaMoveItPlannerServer(object):
 
         # Retrieve joint configurations
         resp = GetEePoseJointConfigResponse()
-        try:
-            retval, plan, _, _ = self.move_group_arm.plan(pose_target)
+        n_sample = 0
+        while True:  # Continue till joint positions are valid or max samples size
+            rospy.logdebug("Retrieving joint configuration for given EE pose.")
+            try:
+                retval, plan, _, _ = self.move_group_arm.plan(pose_target)
+            except MoveItCommanderException:
+                retval = False
 
-            # Check if setpoint execution was successful
-            if not retval:
-                resp.success = False
-                resp.message = "Joint configuration could not be retrieved for Ee pose"
-            else:
+            # Check if joint config was retrieved
+            if retval:
                 resp.joint_names = list(plan.joint_trajectory.joint_names)
                 resp.joint_positions = list(plan.joint_trajectory.points[-1].positions)
                 resp.success = True
                 resp.message = "Everything went OK"
-        except MoveItCommanderException as e:
-            rospy.logwarn(e.args[0])
-            resp.success = False
-            resp.message = e.args[0]
+                break
+            elif n_sample >= max_attempts:
+                resp.success = False
+                resp.message = "Joint configuration could not be retrieved for Ee pose"
+                break
+            else:
+                rospy.logwarn(
+                    "Failed to retrieve joint configuration for given EE pose Trying "
+                    f"again ({n_sample})."
+                )
+                n_sample += 1
         return resp
 
     def _arm_set_ee_pose_callback(self, set_ee_pose_req):
@@ -897,7 +911,6 @@ class PandaMoveItPlannerServer(object):
             :obj:`panda_gazebo.srv.SetEePoseResponse`: Response message containing (
                 success bool, message).
         """
-
         # Make sure quaternion is normalized
         if quaternion_norm(set_ee_pose_req.pose.orientation) != 1.0:
             rospy.logwarn(
@@ -1468,9 +1481,9 @@ class PandaMoveItPlannerServer(object):
 
         # Get random joint positions (while taking into possible joint limits)
         resp = GetRandomJointPositionsResponse()
-        random_arm_joint_values = random_arm_joint_values_unbounded
+        random_arm_joint_values = random_arm_joint_values_unbounded.copy()
         random_hand_joint_values = (
-            random_hand_joint_values_unbounded if self._load_gripper else {}
+            random_hand_joint_values_unbounded.copy() if self._load_gripper else {}
         )
         if not joint_limits:  # If no joint limits were given
             if (
@@ -1544,30 +1557,41 @@ class PandaMoveItPlannerServer(object):
                     resp.message = "Everything went OK"
                     break
                 elif n_sample >= max_attempts:
-                    rospy.logwarn(
-                        "Ignoring bounding region as the maximum number of sample "
-                        "attemps has been reached. Please make sure that the robot "
-                        "joints can reach the set joint_limits."
-                    )
-
-                    # Use unbounded joint positions, set success bool and break out of
-                    # the loop
                     if (
                         not get_random_arm_joint_positions_srvs_exception
                         and not get_random_hand_joint_positions_srvs_exception
                     ):
-                        # Create response message and break out of loop
+                        warn_string = (
+                            "hand and arm"
+                            if not (
+                                hand_joint_commands_valid and arm_joint_commands_valid
+                            )
+                            else ("hand" if hand_joint_commands_valid else "arm")
+                        )
+                        rospy.logwarn(
+                            (
+                                "No valid random {} positions could be found within "
+                                "the set boundary region within the set number of "
+                                "attempts ({}). Please make sure that the robot joints "
+                                "can reach the set joint_limits. Unbounded random "
+                                "{} joint positions returned instead."
+                            ).format(warn_string, max_attempts, warn_string)
+                        )
+                        resp.success = False
+                        resp.message = (
+                            "Random {} joint positions could not be retrieved in the "
+                            "boundary region within the set attempts. Unbounded {} "
+                            "random joint positions returned instead."
+                        ).format(warn_string, warn_string)
                         random_arm_joint_values = random_arm_joint_values_unbounded
                         if self._load_gripper:
                             random_hand_joint_values = (
                                 random_hand_joint_values_unbounded
                             )
-                        resp.success = True
-                        resp.message = "Everything went OK"
-                        break
                     else:
                         resp.success = False
                         resp.message = "Random joint position could not be retrieved."
+                    break
                 else:
                     rospy.logwarn(
                         "Failed to sample valid random joint positions from the "
@@ -1618,6 +1642,10 @@ class PandaMoveItPlannerServer(object):
         Returns:
             :obj:`panda_gazebo.srv.GetRandomEePoseResponse`: Response message containing
                 the random joints positions.
+
+        .. note::
+            Additionally also returns the joint_positions that relate to the random EE
+            pose.
         """
         max_attempts = (
             get_random_ee_pose_req.attempts
@@ -1626,7 +1654,6 @@ class PandaMoveItPlannerServer(object):
         )
 
         # Get a random ee pose
-        rospy.logdebug("Retrieving a valid random end effector pose.")
         try:
             random_ee_pose_unbounded = self.move_group_arm.get_random_pose()
             get_random_pose_srvs_exception = False
@@ -1660,8 +1687,7 @@ class PandaMoveItPlannerServer(object):
             n_sample = 0
             ee_pose_valid = False
             while True:  # Continue till ee pose is valid or max samples size
-                if n_sample > 0:
-                    rospy.logdebug("Retrieving a valid random end effector pose.")
+                rospy.logdebug("Retrieving a valid random end effector pose.")
 
                 # Sample ee position from bounding region
                 sampled_ee_position = np.random.uniform(
@@ -1700,27 +1726,33 @@ class PandaMoveItPlannerServer(object):
                     resp.success = True
                     resp.message = "Everything went OK"
                     resp.ee_pose = random_ee_pose
+                    resp.joint_names = plan[1].joint_trajectory.joint_names
+                    resp.joint_positions = plan[1].joint_trajectory.points[-1].positions
                     break
                 elif n_sample >= max_attempts:
-                    rospy.logwarn(
-                        "Ignoring bounding region as the maximum number of sample "
-                        "attemps has been reached. Please make sure that the robot "
-                        "end effector can reach the points inside the bounding region."
-                    )
-
-                    # Use unbounded ee_pose, set success bool and break out of the loop
                     if not get_random_pose_srvs_exception:
-                        resp.success = True
-                        resp.message = "Everything went OK"
+                        rospy.logwarn(
+                            "No valid random EE pose could be found within the set "
+                            "boundary region within the set number of attempts "
+                            f"({max_attempts}). Please make sure that the robot "
+                            "end-effector can reach the points inside the bounding "
+                            "region. Unbounded random EE pose returned instead."
+                        )
+                        resp.success = False
+                        resp.message = (
+                            "Random ee pose could not be retrieved within the boundary "
+                            "within the set attempts. Unbounded random EE pose "
+                            "returned instead."
+                        )
                         resp.ee_pose = random_ee_pose_unbounded.pose
-                        break
                     else:
                         resp.success = False
                         resp.message = "Random ee pose could not be retrieved."
+                    break
                 else:
                     rospy.logwarn(
                         "Failed to sample a valid random end effector pose from the "
-                        "bounding region. Trying again."
+                        f"bounding region. Trying again ({n_sample})."
                     )
                     n_sample += 1
         return resp

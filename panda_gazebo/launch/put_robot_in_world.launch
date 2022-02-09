@@ -3,7 +3,7 @@
   <arg name="rviz" default="true" doc="Start Rviz"/>
   <arg name="load_gripper" default="true" doc="Load the gripper"/>
   <arg name="debug" default="false" doc="Add gdb debug flag"/>
-  <arg name="output" default="log" doc="output channel of main nodes. options: screen, log"/>
+  <arg name="output" default="screen" doc="output channel of main nodes. options: screen, log"/>
   <arg name="disable_franka_gazebo_logs" default="false" doc="prevents franka gazebo from logging to the stdout"/>
   <!--Moveit arguments-->
   <arg name="moveit" default="true" doc="Start MoveIt"/>

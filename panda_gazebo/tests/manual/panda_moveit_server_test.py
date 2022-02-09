@@ -96,20 +96,6 @@ if __name__ == "__main__":
     # resp = set_ee_pose_srv.call(req)
     # print(resp.message)
 
-    # # -- Test get ee pose joint config service --
-    # req = GetEePoseJointConfigRequest()
-    # req.pose.position.x = 0
-    # req.pose.position.y = 0.5
-    # req.pose.position.z = 0.5
-    # get_ee_pose_joint_config_srv = rospy.ServiceProxy(
-    #     "panda_moveit_planner_server/panda_arm/get_ee_pose_joint_config",
-    #     GetEePoseJointConfig,
-    # )
-    # resp = get_ee_pose_joint_config_srv.call(req)
-    # print(resp.joint_names)
-    # print(resp.joint_positions)
-    # print(resp.message)
-
     # # -- Test get ee pose service --
     # req = GetEePoseRequest()
     # get_ee_pose_srv = rospy.ServiceProxy(
@@ -151,29 +137,44 @@ if __name__ == "__main__":
     # )
     # resp = set_ee_srv.call(req)
 
-    # -- Test get random joint positions service --
-    req = GetRandomJointPositionsRequest()
-    req.joint_limits.names = [
-        "panda_joint1_min",
-        "panda_joint1_max",
-        "panda_joint2_min",
-    ]
-    req.joint_limits.values = [0.0, 0.5, 0.5]
-    get_random_joint_positions_srv = rospy.ServiceProxy(
-        "panda_moveit_planner_server/get_random_joint_positions",
-        GetRandomJointPositions,
+    # # -- Test get random joint positions service --
+    # req = GetRandomJointPositionsRequest()
+    # req.joint_limits.names = [
+    #     "panda_joint1_min",
+    #     "panda_joint1_max",
+    #     "panda_finger_joint1_min",
+    #     "panda_finger_joint1_max",
+    # ]
+    # req.joint_limits.values = [-0.0, 0.5, 0.2, 0.5, 0.0, 0.04]
+    # get_random_joint_positions_srv = rospy.ServiceProxy(
+    #     "panda_moveit_planner_server/get_random_joint_positions",
+    #     GetRandomJointPositions,
+    # )
+    # resp = get_random_joint_positions_srv.call(req)
+    # print(resp.message)
+
+    # -- Test get random pose service --
+    req = GetRandomEePoseRequest()
+    req.bounding_region = BoundingRegion(x_min=0.0, x_max=1.0)
+    get_random_ee_pose_srv = rospy.ServiceProxy(
+        "panda_moveit_planner_server/get_random_ee_pose",
+        GetRandomEePose,
     )
-    resp = get_random_joint_positions_srv.call(req)
+    resp = get_random_ee_pose_srv.call(req)
     print(resp.message)
 
-    # # -- Test get random pose service --
-    # req = GetRandomEePoseRequest()
-    # req.bounding_region = BoundingRegion(x_min=0.0, x_max=1.0)
-    # get_random_ee_pose_srv = rospy.ServiceProxy(
-    #     "panda_moveit_planner_server/get_random_ee_pose",
-    #     GetRandomEePose,
+    # # -- Test get ee pose joint config service --
+    # req = GetEePoseJointConfigRequest()
+    # req.pose.position.x = 0
+    # req.pose.position.y = 0.5
+    # req.pose.position.z = 0.5
+    # get_ee_pose_joint_config_srv = rospy.ServiceProxy(
+    #     "panda_moveit_planner_server/panda_arm/get_ee_pose_joint_config",
+    #     GetEePoseJointConfig,
     # )
-    # resp = get_random_ee_pose_srv.call(req)
+    # resp = get_ee_pose_joint_config_srv.call(req)
+    # print(resp.joint_names)
+    # print(resp.joint_positions)
     # print(resp.message)
 
     # # -- Test get controlled joints service --
