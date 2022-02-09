@@ -1,37 +1,81 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>panda_gazebo.core.moveit_server &mdash; panda-gazebo 2.9.4 documentation</title>
-      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../../../_static/css/modify.css" type="text/css" />
+  
+  <title>panda_gazebo.core.moveit_server &mdash; panda-gazebo 2.10.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/modify.css" type="text/css" />
+
+  
+  
     <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+  
+
+  
+  
+
+  
+
+  
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
         <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
         <script src="../../../_static/jquery.js"></script>
         <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/doctools.js"></script>
-    <script src="../../../_static/js/theme.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
 </head>
 
-<body class="wy-body-for-nav"> 
+<body class="wy-body-for-nav">
+
+   
   <div class="wy-grid-for-nav">
+    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
+          
+
+          
             <a href="../../../index.html">
+          
+
+          
+            
             <img src="../../../_static/logo.svg" class="logo" alt="Logo"/>
+          
           </a>
+
+          
+            
+            
               <div class="version">
-                2.9.4
+                2.10.0
               </div>
+            
+          
+
+          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -39,7 +83,18 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
               <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../get_started/install.html">Installation</a></li>
@@ -56,30 +111,69 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../api/api.html">Code API</a></li>
 </ul>
 
+            
+          
         </div>
+        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../../index.html">panda-gazebo</a>
+        
       </nav>
 
+
       <div class="wy-nav-content">
+        
         <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
+    
       <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
           <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
       <li>panda_gazebo.core.moveit_server</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
+        
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-             
+            
   <h1>Source code for panda_gazebo.core.moveit_server</h1><div class="highlight"><pre>
 <span></span><span class="ch">#! /usr/bin/env python</span>
 <span class="sd">&quot;&quot;&quot;A ros server that creates several of MoveIt services which can be used to control</span>
@@ -928,6 +1022,11 @@
 <span class="sd">            :obj:`panda_gazebo.srv.SetEePoseResponse`: Response message containing (</span>
 <span class="sd">                success bool, message).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">max_attempts</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">get_ee_pose_joint_configuration</span><span class="o">.</span><span class="n">attempts</span>
+            <span class="k">if</span> <span class="n">get_ee_pose_joint_configuration</span><span class="o">.</span><span class="n">attempts</span> <span class="o">!=</span> <span class="mf">0.0</span>
+            <span class="k">else</span> <span class="n">MAX_RANDOM_SAMPLES</span>
+        <span class="p">)</span>
 
         <span class="c1"># Make sure quaternion is normalized</span>
         <span class="k">if</span> <span class="n">quaternion_norm</span><span class="p">(</span><span class="n">get_ee_pose_joint_configuration</span><span class="o">.</span><span class="n">pose</span><span class="o">.</span><span class="n">orientation</span><span class="p">)</span> <span class="o">!=</span> <span class="mf">1.0</span><span class="p">:</span>
@@ -950,22 +1049,31 @@
 
         <span class="c1"># Retrieve joint configurations</span>
         <span class="n">resp</span> <span class="o">=</span> <span class="n">GetEePoseJointConfigResponse</span><span class="p">()</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">retval</span><span class="p">,</span> <span class="n">plan</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">move_group_arm</span><span class="o">.</span><span class="n">plan</span><span class="p">(</span><span class="n">pose_target</span><span class="p">)</span>
+        <span class="n">n_sample</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>  <span class="c1"># Continue till joint positions are valid or max samples size</span>
+            <span class="n">rospy</span><span class="o">.</span><span class="n">logdebug</span><span class="p">(</span><span class="s2">&quot;Retrieving joint configuration for given EE pose.&quot;</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">retval</span><span class="p">,</span> <span class="n">plan</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">move_group_arm</span><span class="o">.</span><span class="n">plan</span><span class="p">(</span><span class="n">pose_target</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">MoveItCommanderException</span><span class="p">:</span>
+                <span class="n">retval</span> <span class="o">=</span> <span class="kc">False</span>
 
-            <span class="c1"># Check if setpoint execution was successful</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">retval</span><span class="p">:</span>
-                <span class="n">resp</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">False</span>
-                <span class="n">resp</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Joint configuration could not be retrieved for Ee pose&quot;</span>
-            <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Check if joint config was retrieved</span>
+            <span class="k">if</span> <span class="n">retval</span><span class="p">:</span>
                 <span class="n">resp</span><span class="o">.</span><span class="n">joint_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">plan</span><span class="o">.</span><span class="n">joint_trajectory</span><span class="o">.</span><span class="n">joint_names</span><span class="p">)</span>
                 <span class="n">resp</span><span class="o">.</span><span class="n">joint_positions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">plan</span><span class="o">.</span><span class="n">joint_trajectory</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">positions</span><span class="p">)</span>
                 <span class="n">resp</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">True</span>
                 <span class="n">resp</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Everything went OK&quot;</span>
-        <span class="k">except</span> <span class="n">MoveItCommanderException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">rospy</span><span class="o">.</span><span class="n">logwarn</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-            <span class="n">resp</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">False</span>
-            <span class="n">resp</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">break</span>
+            <span class="k">elif</span> <span class="n">n_sample</span> <span class="o">&gt;=</span> <span class="n">max_attempts</span><span class="p">:</span>
+                <span class="n">resp</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="n">resp</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Joint configuration could not be retrieved for Ee pose&quot;</span>
+                <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">rospy</span><span class="o">.</span><span class="n">logwarn</span><span class="p">(</span>
+                    <span class="s2">&quot;Failed to retrieve joint configuration for given EE pose Trying &quot;</span>
+                    <span class="n">f</span><span class="s2">&quot;again (</span><span class="si">{n_sample}</span><span class="s2">).&quot;</span>
+                <span class="p">)</span>
+                <span class="n">n_sample</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="n">resp</span>
 
     <span class="k">def</span> <span class="nf">_arm_set_ee_pose_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">set_ee_pose_req</span><span class="p">):</span>
@@ -980,7 +1088,6 @@
 <span class="sd">            :obj:`panda_gazebo.srv.SetEePoseResponse`: Response message containing (</span>
 <span class="sd">                success bool, message).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="c1"># Make sure quaternion is normalized</span>
         <span class="k">if</span> <span class="n">quaternion_norm</span><span class="p">(</span><span class="n">set_ee_pose_req</span><span class="o">.</span><span class="n">pose</span><span class="o">.</span><span class="n">orientation</span><span class="p">)</span> <span class="o">!=</span> <span class="mf">1.0</span><span class="p">:</span>
             <span class="n">rospy</span><span class="o">.</span><span class="n">logwarn</span><span class="p">(</span>
@@ -1551,9 +1658,9 @@
 
         <span class="c1"># Get random joint positions (while taking into possible joint limits)</span>
         <span class="n">resp</span> <span class="o">=</span> <span class="n">GetRandomJointPositionsResponse</span><span class="p">()</span>
-        <span class="n">random_arm_joint_values</span> <span class="o">=</span> <span class="n">random_arm_joint_values_unbounded</span>
+        <span class="n">random_arm_joint_values</span> <span class="o">=</span> <span class="n">random_arm_joint_values_unbounded</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">random_hand_joint_values</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">random_hand_joint_values_unbounded</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_gripper</span> <span class="k">else</span> <span class="p">{}</span>
+            <span class="n">random_hand_joint_values_unbounded</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_gripper</span> <span class="k">else</span> <span class="p">{}</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">joint_limits</span><span class="p">:</span>  <span class="c1"># If no joint limits were given</span>
             <span class="k">if</span> <span class="p">(</span>
@@ -1627,30 +1734,41 @@
                     <span class="n">resp</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Everything went OK&quot;</span>
                     <span class="k">break</span>
                 <span class="k">elif</span> <span class="n">n_sample</span> <span class="o">&gt;=</span> <span class="n">max_attempts</span><span class="p">:</span>
-                    <span class="n">rospy</span><span class="o">.</span><span class="n">logwarn</span><span class="p">(</span>
-                        <span class="s2">&quot;Ignoring bounding region as the maximum number of sample &quot;</span>
-                        <span class="s2">&quot;attemps has been reached. Please make sure that the robot &quot;</span>
-                        <span class="s2">&quot;joints can reach the set joint_limits.&quot;</span>
-                    <span class="p">)</span>
-
-                    <span class="c1"># Use unbounded joint positions, set success bool and break out of</span>
-                    <span class="c1"># the loop</span>
                     <span class="k">if</span> <span class="p">(</span>
                         <span class="ow">not</span> <span class="n">get_random_arm_joint_positions_srvs_exception</span>
                         <span class="ow">and</span> <span class="ow">not</span> <span class="n">get_random_hand_joint_positions_srvs_exception</span>
                     <span class="p">):</span>
-                        <span class="c1"># Create response message and break out of loop</span>
+                        <span class="n">warn_string</span> <span class="o">=</span> <span class="p">(</span>
+                            <span class="s2">&quot;hand and arm&quot;</span>
+                            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span>
+                                <span class="n">hand_joint_commands_valid</span> <span class="ow">and</span> <span class="n">arm_joint_commands_valid</span>
+                            <span class="p">)</span>
+                            <span class="k">else</span> <span class="p">(</span><span class="s2">&quot;hand&quot;</span> <span class="k">if</span> <span class="n">hand_joint_commands_valid</span> <span class="k">else</span> <span class="s2">&quot;arm&quot;</span><span class="p">)</span>
+                        <span class="p">)</span>
+                        <span class="n">rospy</span><span class="o">.</span><span class="n">logwarn</span><span class="p">(</span>
+                            <span class="p">(</span>
+                                <span class="s2">&quot;No valid random </span><span class="si">{}</span><span class="s2"> positions could be found within &quot;</span>
+                                <span class="s2">&quot;the set boundary region within the set number of &quot;</span>
+                                <span class="s2">&quot;attempts (</span><span class="si">{}</span><span class="s2">). Please make sure that the robot joints &quot;</span>
+                                <span class="s2">&quot;can reach the set joint_limits. Unbounded random &quot;</span>
+                                <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> joint positions returned instead.&quot;</span>
+                            <span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">warn_string</span><span class="p">,</span> <span class="n">max_attempts</span><span class="p">,</span> <span class="n">warn_string</span><span class="p">)</span>
+                        <span class="p">)</span>
+                        <span class="n">resp</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">False</span>
+                        <span class="n">resp</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
+                            <span class="s2">&quot;Random </span><span class="si">{}</span><span class="s2"> joint positions could not be retrieved in the &quot;</span>
+                            <span class="s2">&quot;boundary region within the set attempts. Unbounded </span><span class="si">{}</span><span class="s2"> &quot;</span>
+                            <span class="s2">&quot;random joint positions returned instead.&quot;</span>
+                        <span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">warn_string</span><span class="p">,</span> <span class="n">warn_string</span><span class="p">)</span>
                         <span class="n">random_arm_joint_values</span> <span class="o">=</span> <span class="n">random_arm_joint_values_unbounded</span>
                         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_gripper</span><span class="p">:</span>
                             <span class="n">random_hand_joint_values</span> <span class="o">=</span> <span class="p">(</span>
                                 <span class="n">random_hand_joint_values_unbounded</span>
                             <span class="p">)</span>
-                        <span class="n">resp</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">True</span>
-                        <span class="n">resp</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Everything went OK&quot;</span>
-                        <span class="k">break</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">resp</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">False</span>
                         <span class="n">resp</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Random joint position could not be retrieved.&quot;</span>
+                    <span class="k">break</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">rospy</span><span class="o">.</span><span class="n">logwarn</span><span class="p">(</span>
                         <span class="s2">&quot;Failed to sample valid random joint positions from the &quot;</span>
@@ -1701,6 +1819,10 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            :obj:`panda_gazebo.srv.GetRandomEePoseResponse`: Response message containing</span>
 <span class="sd">                the random joints positions.</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            Additionally also returns the joint_positions that relate to the random EE</span>
+<span class="sd">            pose.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">max_attempts</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">get_random_ee_pose_req</span><span class="o">.</span><span class="n">attempts</span>
@@ -1709,7 +1831,6 @@
         <span class="p">)</span>
 
         <span class="c1"># Get a random ee pose</span>
-        <span class="n">rospy</span><span class="o">.</span><span class="n">logdebug</span><span class="p">(</span><span class="s2">&quot;Retrieving a valid random end effector pose.&quot;</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">random_ee_pose_unbounded</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">move_group_arm</span><span class="o">.</span><span class="n">get_random_pose</span><span class="p">()</span>
             <span class="n">get_random_pose_srvs_exception</span> <span class="o">=</span> <span class="kc">False</span>
@@ -1743,8 +1864,7 @@
             <span class="n">n_sample</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="n">ee_pose_valid</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>  <span class="c1"># Continue till ee pose is valid or max samples size</span>
-                <span class="k">if</span> <span class="n">n_sample</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">rospy</span><span class="o">.</span><span class="n">logdebug</span><span class="p">(</span><span class="s2">&quot;Retrieving a valid random end effector pose.&quot;</span><span class="p">)</span>
+                <span class="n">rospy</span><span class="o">.</span><span class="n">logdebug</span><span class="p">(</span><span class="s2">&quot;Retrieving a valid random end effector pose.&quot;</span><span class="p">)</span>
 
                 <span class="c1"># Sample ee position from bounding region</span>
                 <span class="n">sampled_ee_position</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span>
@@ -1783,27 +1903,33 @@
                     <span class="n">resp</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">True</span>
                     <span class="n">resp</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Everything went OK&quot;</span>
                     <span class="n">resp</span><span class="o">.</span><span class="n">ee_pose</span> <span class="o">=</span> <span class="n">random_ee_pose</span>
+                    <span class="n">resp</span><span class="o">.</span><span class="n">joint_names</span> <span class="o">=</span> <span class="n">plan</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">joint_trajectory</span><span class="o">.</span><span class="n">joint_names</span>
+                    <span class="n">resp</span><span class="o">.</span><span class="n">joint_positions</span> <span class="o">=</span> <span class="n">plan</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">joint_trajectory</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">positions</span>
                     <span class="k">break</span>
                 <span class="k">elif</span> <span class="n">n_sample</span> <span class="o">&gt;=</span> <span class="n">max_attempts</span><span class="p">:</span>
-                    <span class="n">rospy</span><span class="o">.</span><span class="n">logwarn</span><span class="p">(</span>
-                        <span class="s2">&quot;Ignoring bounding region as the maximum number of sample &quot;</span>
-                        <span class="s2">&quot;attemps has been reached. Please make sure that the robot &quot;</span>
-                        <span class="s2">&quot;end effector can reach the points inside the bounding region.&quot;</span>
-                    <span class="p">)</span>
-
-                    <span class="c1"># Use unbounded ee_pose, set success bool and break out of the loop</span>
                     <span class="k">if</span> <span class="ow">not</span> <span class="n">get_random_pose_srvs_exception</span><span class="p">:</span>
-                        <span class="n">resp</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">True</span>
-                        <span class="n">resp</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Everything went OK&quot;</span>
+                        <span class="n">rospy</span><span class="o">.</span><span class="n">logwarn</span><span class="p">(</span>
+                            <span class="s2">&quot;No valid random EE pose could be found within the set &quot;</span>
+                            <span class="s2">&quot;boundary region within the set number of attempts &quot;</span>
+                            <span class="n">f</span><span class="s2">&quot;(</span><span class="si">{max_attempts}</span><span class="s2">). Please make sure that the robot &quot;</span>
+                            <span class="s2">&quot;end-effector can reach the points inside the bounding &quot;</span>
+                            <span class="s2">&quot;region. Unbounded random EE pose returned instead.&quot;</span>
+                        <span class="p">)</span>
+                        <span class="n">resp</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">False</span>
+                        <span class="n">resp</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
+                            <span class="s2">&quot;Random ee pose could not be retrieved within the boundary &quot;</span>
+                            <span class="s2">&quot;within the set attempts. Unbounded random EE pose &quot;</span>
+                            <span class="s2">&quot;returned instead.&quot;</span>
+                        <span class="p">)</span>
                         <span class="n">resp</span><span class="o">.</span><span class="n">ee_pose</span> <span class="o">=</span> <span class="n">random_ee_pose_unbounded</span><span class="o">.</span><span class="n">pose</span>
-                        <span class="k">break</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">resp</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">False</span>
                         <span class="n">resp</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Random ee pose could not be retrieved.&quot;</span>
+                    <span class="k">break</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">rospy</span><span class="o">.</span><span class="n">logwarn</span><span class="p">(</span>
                         <span class="s2">&quot;Failed to sample a valid random end effector pose from the &quot;</span>
-                        <span class="s2">&quot;bounding region. Trying again.&quot;</span>
+                        <span class="n">f</span><span class="s2">&quot;bounding region. Trying again (</span><span class="si">{n_sample}</span><span class="s2">).&quot;</span>
                     <span class="p">)</span>
                     <span class="n">n_sample</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="n">resp</span>
@@ -1926,30 +2052,46 @@
 </pre></div>
 
            </div>
+           
           </div>
           <footer>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Rick Staa.</p>
-  </div>
+    <p>
+        &#169; Copyright 2022, Rick Staa.
 
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
         </div>
       </div>
+
     </section>
+
   </div>
-  <script>
+  
+
+  <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>
