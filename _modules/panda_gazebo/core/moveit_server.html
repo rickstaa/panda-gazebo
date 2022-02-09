@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>panda_gazebo.core.moveit_server &mdash; panda-gazebo 2.9.3 documentation</title>
+  <title>panda_gazebo.core.moveit_server &mdash; panda-gazebo 2.9.4 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/modify.css" type="text/css" />
@@ -30,7 +30,7 @@
             <img src="../../../_static/logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.9.3
+                2.9.4
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -1395,17 +1395,11 @@
             <span class="k">if</span> <span class="n">get_random_position_req</span><span class="o">.</span><span class="n">attempts</span> <span class="o">!=</span> <span class="mf">0.0</span>
             <span class="k">else</span> <span class="n">MAX_RANDOM_SAMPLES</span>
         <span class="p">)</span>
-
-        <span class="c1"># Retrieve possible joints</span>
+        <span class="n">joint_limits</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">limited_joints</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">arm_joints</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">move_group_arm</span><span class="o">.</span><span class="n">get_active_joints</span><span class="p">()</span>
         <span class="n">hand_joints</span> <span class="o">=</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">move_group_hand</span><span class="o">.</span><span class="n">get_active_joints</span><span class="p">()</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_gripper</span> <span class="k">else</span> <span class="p">[]</span>
-        <span class="p">)</span>
-        <span class="n">valid_joint_names</span> <span class="o">=</span> <span class="n">flatten_list</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="p">[</span><span class="n">item</span> <span class="o">+</span> <span class="s2">&quot;_min&quot;</span><span class="p">,</span> <span class="n">item</span> <span class="o">+</span> <span class="s2">&quot;_max&quot;</span><span class="p">]</span>
-                <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">flatten_list</span><span class="p">([</span><span class="n">arm_joints</span><span class="p">,</span> <span class="n">hand_joints</span><span class="p">])</span>
-            <span class="p">]</span>
         <span class="p">)</span>
 
         <span class="c1"># Validate joint limits if supplied (remove them if invalid)</span>
@@ -1413,39 +1407,130 @@
             <span class="n">get_random_position_req</span><span class="o">.</span><span class="n">joint_limits</span><span class="o">.</span><span class="n">names</span>
             <span class="ow">and</span> <span class="n">get_random_position_req</span><span class="o">.</span><span class="n">joint_limits</span><span class="o">.</span><span class="n">values</span>
         <span class="p">):</span>
+            <span class="n">get_random_position_req</span><span class="o">.</span><span class="n">joint_limits</span><span class="o">.</span><span class="n">names</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">joint_limit_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">joint_limit_name</span> <span class="ow">in</span> <span class="n">get_random_position_req</span><span class="o">.</span><span class="n">joint_limits</span><span class="o">.</span><span class="n">names</span>
+            <span class="p">]</span>
+
             <span class="c1"># Check if limit names and limit values are of equal length</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">get_random_position_req</span><span class="o">.</span><span class="n">joint_limits</span><span class="o">.</span><span class="n">names</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span>
                 <span class="n">get_random_position_req</span><span class="o">.</span><span class="n">joint_limits</span><span class="o">.</span><span class="n">values</span>
             <span class="p">):</span>
                 <span class="n">rospy</span><span class="o">.</span><span class="n">logwarn</span><span class="p">(</span>
-                    <span class="s2">&quot;Joint limits ignored as the number of joints (</span><span class="si">%s</span><span class="s2">) is &quot;</span>
-                    <span class="s2">&quot;unequal to the number of limit values (</span><span class="si">%s</span><span class="s2">).&quot;</span>
+                    <span class="s2">&quot;Joint limits ignored as the number of joints (</span><span class="si">{}</span><span class="s2">) is &quot;</span>
+                    <span class="s2">&quot;unequal to the number of limit values (</span><span class="si">{}</span><span class="s2">).&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="nb">len</span><span class="p">(</span><span class="n">get_random_position_req</span><span class="o">.</span><span class="n">joint_limits</span><span class="o">.</span><span class="n">names</span><span class="p">),</span>
+                        <span class="nb">len</span><span class="p">(</span><span class="n">get_random_position_req</span><span class="o">.</span><span class="n">joint_limits</span><span class="o">.</span><span class="n">values</span><span class="p">),</span>
+                    <span class="p">)</span>
                 <span class="p">)</span>
                 <span class="n">get_random_position_req</span><span class="o">.</span><span class="n">joint_limits</span><span class="o">.</span><span class="n">names</span> <span class="o">=</span> <span class="p">[]</span>
                 <span class="n">get_random_position_req</span><span class="o">.</span><span class="n">joint_limits</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">else</span><span class="p">:</span>  <span class="c1"># Check if the names in the joint_limits message are valid</span>
-                <span class="n">invalid_names</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">valid_joint_names</span> <span class="o">=</span> <span class="n">flatten_list</span><span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="p">[</span><span class="n">joint</span> <span class="o">+</span> <span class="s2">&quot;_min&quot;</span><span class="p">,</span> <span class="n">joint</span> <span class="o">+</span> <span class="s2">&quot;_max&quot;</span><span class="p">]</span>
+                        <span class="k">for</span> <span class="n">joint</span> <span class="ow">in</span> <span class="n">flatten_list</span><span class="p">([</span><span class="n">arm_joints</span><span class="p">,</span> <span class="n">hand_joints</span><span class="p">])</span>
+                    <span class="p">]</span>
+                <span class="p">)</span>
+                <span class="n">invalid_joint_names</span> <span class="o">=</span> <span class="p">[]</span>
                 <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">get_random_position_req</span><span class="o">.</span><span class="n">joint_limits</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">valid_joint_names</span><span class="p">:</span>
-                        <span class="n">invalid_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+                        <span class="n">invalid_joint_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 
-                <span class="c1"># Throw warning if a name is invalid and remove joint limits</span>
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">invalid_names</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># Throw warning and remove invalid joint limits</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">invalid_joint_names</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">warn_strings</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="p">[</span>
+                            <span class="s2">&quot;limit&quot;</span><span class="p">,</span>
+                            <span class="n">invalid_joint_names</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                            <span class="s2">&quot;was&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;it is not a valid joint limit&quot;</span><span class="p">,</span>
+                        <span class="p">]</span>
+                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">invalid_joint_names</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+                        <span class="k">else</span> <span class="p">[</span>
+                            <span class="s2">&quot;limits&quot;</span><span class="p">,</span>
+                            <span class="n">invalid_joint_names</span><span class="p">,</span>
+                            <span class="s2">&quot;were&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;they are not valid joint limits&quot;</span><span class="p">,</span>
+                        <span class="p">]</span>
+                    <span class="p">)</span>
                     <span class="n">rospy</span><span class="o">.</span><span class="n">logwarn</span><span class="p">(</span>
-                        <span class="s2">&quot;Joint limits ignored as the the &quot;</span>
-                        <span class="s2">&quot;&#39;panda_gazebo.msg.JointLimits&#39; field of the &quot;</span>
-                        <span class="s2">&quot;&#39;panda_gazebo.srv.GetRandomJointPositionsRequest&#39; &quot;</span>
-                        <span class="s2">&quot;contains </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">. Valid values are </span><span class="si">%s</span><span class="s2">.&quot;</span>
-                        <span class="o">%</span> <span class="p">(</span>
-                            <span class="s2">&quot;an invalid joint name&quot;</span>
-                            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">invalid_names</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
-                            <span class="k">else</span> <span class="s2">&quot;invalid joint names&quot;</span><span class="p">,</span>
-                            <span class="n">invalid_names</span><span class="p">,</span>
+                        <span class="s2">&quot;Joint </span><span class="si">{}</span><span class="s2"> &#39;</span><span class="si">{}</span><span class="s2">&#39; </span><span class="si">{}</span><span class="s2"> ignored since </span><span class="si">{}</span><span class="s2">. Valid values are &quot;</span>
+                        <span class="s2">&quot;&#39;</span><span class="si">{}</span><span class="s2">&#39;.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                            <span class="n">warn_strings</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                            <span class="n">warn_strings</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                            <span class="n">warn_strings</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                            <span class="n">warn_strings</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
                             <span class="n">valid_joint_names</span><span class="p">,</span>
                         <span class="p">)</span>
                     <span class="p">)</span>
-                    <span class="n">get_random_position_req</span><span class="o">.</span><span class="n">joint_limits</span><span class="o">.</span><span class="n">names</span> <span class="o">=</span> <span class="p">[]</span>
-                    <span class="n">get_random_position_req</span><span class="o">.</span><span class="n">joint_limits</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="n">get_random_position_req</span><span class="o">.</span><span class="n">joint_limits</span><span class="o">.</span><span class="n">names</span> <span class="o">=</span> <span class="p">[</span>
+                        <span class="n">joint_name</span>
+                        <span class="k">for</span> <span class="n">joint_name</span> <span class="ow">in</span> <span class="n">get_random_position_req</span><span class="o">.</span><span class="n">joint_limits</span><span class="o">.</span><span class="n">names</span>
+                        <span class="k">if</span> <span class="n">joint_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">invalid_joint_names</span>
+                    <span class="p">]</span>
+                    <span class="n">get_random_position_req</span><span class="o">.</span><span class="n">joint_limits</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="p">[</span>
+                        <span class="n">joint_limit</span>
+                        <span class="k">for</span> <span class="n">joint_limit_name</span><span class="p">,</span> <span class="n">joint_limit</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+                            <span class="n">get_random_position_req</span><span class="o">.</span><span class="n">joint_limits</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+                            <span class="n">get_random_position_req</span><span class="o">.</span><span class="n">joint_limits</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                        <span class="p">)</span>
+                        <span class="k">if</span> <span class="n">joint_limit_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">invalid_joint_names</span>
+                    <span class="p">]</span>
+
+                <span class="c1"># Check if a joint limit both has a min and max specified</span>
+                <span class="n">limited_joints</span> <span class="o">=</span> <span class="n">get_unique_list</span><span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_min&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_max&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">get_random_position_req</span><span class="o">.</span><span class="n">joint_limits</span><span class="o">.</span><span class="n">names</span>
+                    <span class="p">]</span>
+                <span class="p">)</span>
+                <span class="n">required_joint_limits</span> <span class="o">=</span> <span class="n">flatten_list</span><span class="p">(</span>
+                    <span class="p">[[</span><span class="n">joint</span> <span class="o">+</span> <span class="s2">&quot;_min&quot;</span><span class="p">,</span> <span class="n">joint</span> <span class="o">+</span> <span class="s2">&quot;_max&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">joint</span> <span class="ow">in</span> <span class="n">limited_joints</span><span class="p">]</span>
+                <span class="p">)</span>
+                <span class="n">missing_joint_limits</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">required_joint_limit</span>
+                    <span class="k">for</span> <span class="n">required_joint_limit</span> <span class="ow">in</span> <span class="n">required_joint_limits</span>
+                    <span class="k">if</span> <span class="n">required_joint_limit</span>
+                    <span class="ow">not</span> <span class="ow">in</span> <span class="n">get_random_position_req</span><span class="o">.</span><span class="n">joint_limits</span><span class="o">.</span><span class="n">names</span>
+                <span class="p">]</span>
+                <span class="k">if</span> <span class="n">missing_joint_limits</span><span class="p">:</span>
+                    <span class="n">ignored_joint_limit_joint</span> <span class="o">=</span> <span class="n">get_unique_list</span><span class="p">(</span>
+                        <span class="p">[</span>
+                            <span class="n">missing_joint_limit</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_min&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_max&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                            <span class="k">for</span> <span class="n">missing_joint_limit</span> <span class="ow">in</span> <span class="n">missing_joint_limits</span>
+                        <span class="p">]</span>
+                    <span class="p">)</span>
+                    <span class="n">warn_strings</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="p">[</span><span class="s2">&quot;joint&quot;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;&#39;</span><span class="si">{ignored_joint_limit_joint}</span><span class="s2">&#39;&quot;</span><span class="p">]</span>
+                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ignored_joint_limit_joint</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+                        <span class="k">else</span> <span class="p">[</span><span class="s2">&quot;joints&quot;</span><span class="p">,</span> <span class="n">ignored_joint_limit_joint</span><span class="p">]</span>
+                    <span class="p">)</span>
+                    <span class="n">rospy</span><span class="o">.</span><span class="n">logwarn</span><span class="p">(</span>
+                        <span class="s2">&quot;Joint limits specified on </span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2"> were ignored as both a min &quot;</span>
+                        <span class="s2">&quot;and max limit need to be specified.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">warn_strings</span><span class="p">)</span>
+                    <span class="p">)</span>
+                    <span class="n">get_random_position_req</span><span class="o">.</span><span class="n">joint_limits</span><span class="o">.</span><span class="n">names</span> <span class="o">=</span> <span class="p">[</span>
+                        <span class="n">name</span>
+                        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">get_random_position_req</span><span class="o">.</span><span class="n">joint_limits</span><span class="o">.</span><span class="n">names</span>
+                        <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_min&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_max&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                        <span class="ow">not</span> <span class="ow">in</span> <span class="n">ignored_joint_limit_joint</span>
+                    <span class="p">]</span>
+                    <span class="n">get_random_position_req</span><span class="o">.</span><span class="n">joint_limits</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="p">[</span>
+                        <span class="n">joint_limit</span>
+                        <span class="k">for</span> <span class="n">joint_limit_name</span><span class="p">,</span> <span class="n">joint_limit</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+                            <span class="n">get_random_position_req</span><span class="o">.</span><span class="n">joint_limits</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+                            <span class="n">get_random_position_req</span><span class="o">.</span><span class="n">joint_limits</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                        <span class="p">)</span>
+                        <span class="k">if</span> <span class="n">joint_limit_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_min&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_max&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                        <span class="ow">not</span> <span class="ow">in</span> <span class="n">ignored_joint_limit_joint</span>
+                    <span class="p">]</span>
+            <span class="n">joint_limits</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                <span class="nb">zip</span><span class="p">(</span>
+                    <span class="n">get_random_position_req</span><span class="o">.</span><span class="n">joint_limits</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+                    <span class="n">get_random_position_req</span><span class="o">.</span><span class="n">joint_limits</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
 
         <span class="c1"># Retrieve random joint position values</span>
         <span class="n">get_random_arm_joint_positions_srvs_exception</span> <span class="o">=</span> <span class="kc">False</span>
@@ -1470,10 +1555,7 @@
         <span class="n">random_hand_joint_values</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">random_hand_joint_values_unbounded</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_gripper</span> <span class="k">else</span> <span class="p">{}</span>
         <span class="p">)</span>
-        <span class="k">if</span> <span class="p">(</span>
-            <span class="ow">not</span> <span class="n">get_random_position_req</span><span class="o">.</span><span class="n">joint_limits</span><span class="o">.</span><span class="n">names</span>
-            <span class="ow">and</span> <span class="ow">not</span> <span class="n">get_random_position_req</span><span class="o">.</span><span class="n">joint_limits</span><span class="o">.</span><span class="n">values</span>
-        <span class="p">):</span>  <span class="c1"># If no joint limits were given</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">joint_limits</span><span class="p">:</span>  <span class="c1"># If no joint limits were given</span>
             <span class="k">if</span> <span class="p">(</span>
                 <span class="ow">not</span> <span class="n">get_random_arm_joint_positions_srvs_exception</span>
                 <span class="ow">and</span> <span class="ow">not</span> <span class="n">get_random_hand_joint_positions_srvs_exception</span>
@@ -1484,25 +1566,16 @@
                 <span class="n">resp</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">False</span>
                 <span class="n">resp</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Random joint position could not be retrieved.&quot;</span>
         <span class="k">else</span><span class="p">:</span>  <span class="c1"># Joint limits were set</span>
-            <span class="c1"># Create joint limit dictionary</span>
-            <span class="n">joint_limits_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-                <span class="nb">zip</span><span class="p">(</span>
-                    <span class="n">get_random_position_req</span><span class="o">.</span><span class="n">joint_limits</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
-                    <span class="n">get_random_position_req</span><span class="o">.</span><span class="n">joint_limits</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
-                <span class="p">)</span>
-            <span class="p">)</span>
-
             <span class="c1"># Try to find random joint values within the joint limits</span>
             <span class="n">n_sample</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="n">arm_joint_commands_valid</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="n">hand_joint_commands_valid</span> <span class="o">=</span> <span class="kc">False</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_gripper</span> <span class="k">else</span> <span class="kc">True</span>
             <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>  <span class="c1"># Continue till joint positions are valid or max samples size</span>
-                <span class="k">if</span> <span class="n">n_sample</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">rospy</span><span class="o">.</span><span class="n">logdebug</span><span class="p">(</span><span class="s2">&quot;Retrieving a valid random joint positions.&quot;</span><span class="p">)</span>
+                <span class="n">rospy</span><span class="o">.</span><span class="n">logdebug</span><span class="p">(</span><span class="s2">&quot;Retrieving valid random joint positions.&quot;</span><span class="p">)</span>
                 <span class="k">for</span> <span class="n">joint</span> <span class="ow">in</span> <span class="n">get_unique_list</span><span class="p">(</span>
                     <span class="p">[</span>
-                        <span class="n">names</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_min&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_max&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-                        <span class="k">for</span> <span class="n">names</span> <span class="ow">in</span> <span class="n">get_random_position_req</span><span class="o">.</span><span class="n">joint_limits</span><span class="o">.</span><span class="n">names</span>
+                        <span class="n">joint_limit_names</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_min&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_max&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">joint_limit_names</span> <span class="ow">in</span> <span class="n">joint_limits</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
                     <span class="p">]</span>
                 <span class="p">):</span>
                     <span class="c1"># Sample random value for the given joint within the joint limits</span>
@@ -1511,16 +1584,16 @@
                         <span class="ow">and</span> <span class="n">joint</span> <span class="ow">in</span> <span class="n">random_arm_joint_values</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
                     <span class="p">):</span>
                         <span class="n">random_arm_joint_values</span><span class="p">[</span><span class="n">joint</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span>
-                            <span class="n">joint_limits_dict</span><span class="p">[</span><span class="n">joint</span> <span class="o">+</span> <span class="s2">&quot;_min&quot;</span><span class="p">],</span>
-                            <span class="n">joint_limits_dict</span><span class="p">[</span><span class="n">joint</span> <span class="o">+</span> <span class="s2">&quot;_max&quot;</span><span class="p">],</span>
+                            <span class="n">joint_limits</span><span class="p">[</span><span class="n">joint</span> <span class="o">+</span> <span class="s2">&quot;_min&quot;</span><span class="p">],</span>
+                            <span class="n">joint_limits</span><span class="p">[</span><span class="n">joint</span> <span class="o">+</span> <span class="s2">&quot;_max&quot;</span><span class="p">],</span>
                         <span class="p">)</span>
                     <span class="k">if</span> <span class="p">(</span>
                         <span class="ow">not</span> <span class="n">hand_joint_commands_valid</span>
                         <span class="ow">and</span> <span class="n">joint</span> <span class="ow">in</span> <span class="n">random_hand_joint_values</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
                     <span class="p">):</span>
                         <span class="n">random_hand_joint_values</span><span class="p">[</span><span class="n">joint</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span>
-                            <span class="n">joint_limits_dict</span><span class="p">[</span><span class="n">joint</span> <span class="o">+</span> <span class="s2">&quot;_min&quot;</span><span class="p">],</span>
-                            <span class="n">joint_limits_dict</span><span class="p">[</span><span class="n">joint</span> <span class="o">+</span> <span class="s2">&quot;_max&quot;</span><span class="p">],</span>
+                            <span class="n">joint_limits</span><span class="p">[</span><span class="n">joint</span> <span class="o">+</span> <span class="s2">&quot;_min&quot;</span><span class="p">],</span>
+                            <span class="n">joint_limits</span><span class="p">[</span><span class="n">joint</span> <span class="o">+</span> <span class="s2">&quot;_max&quot;</span><span class="p">],</span>
                         <span class="p">)</span>
 
                 <span class="c1"># Check if joint positions are valid (Plan is not empty)</span>
@@ -1557,7 +1630,7 @@
                     <span class="n">rospy</span><span class="o">.</span><span class="n">logwarn</span><span class="p">(</span>
                         <span class="s2">&quot;Ignoring bounding region as the maximum number of sample &quot;</span>
                         <span class="s2">&quot;attemps has been reached. Please make sure that the robot &quot;</span>
-                        <span class="s2">&quot;joints can reach the set joint_limits. &quot;</span>
+                        <span class="s2">&quot;joints can reach the set joint_limits.&quot;</span>
                     <span class="p">)</span>
 
                     <span class="c1"># Use unbounded joint positions, set success bool and break out of</span>
@@ -1566,7 +1639,6 @@
                         <span class="ow">not</span> <span class="n">get_random_arm_joint_positions_srvs_exception</span>
                         <span class="ow">and</span> <span class="ow">not</span> <span class="n">get_random_hand_joint_positions_srvs_exception</span>
                     <span class="p">):</span>
-
                         <span class="c1"># Create response message and break out of loop</span>
                         <span class="n">random_arm_joint_values</span> <span class="o">=</span> <span class="n">random_arm_joint_values_unbounded</span>
                         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_gripper</span><span class="p">:</span>
