@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.9.4](https://github.com/rickstaa/panda-gazebo/compare/v2.9.3...v2.9.4) (2022-02-09)
+
+
+### Bug Fixes
+
+* **moveit_server:** fixes 'get_random_joint_positions' bug ([fec512f](https://github.com/rickstaa/panda-gazebo/commit/fec512f734aef89c9295d6cb5c4c1921c8c061d5))
+
 ### [2.9.3](https://github.com/rickstaa/panda-gazebo/compare/v2.9.2...v2.9.3) (2022-02-07)
 
 ### [2.9.2](https://github.com/rickstaa/panda-gazebo/compare/v2.9.1...v2.9.2) (2022-02-07)
