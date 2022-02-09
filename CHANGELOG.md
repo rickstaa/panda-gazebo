@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.10.0](https://github.com/rickstaa/panda-gazebo/compare/v2.9.4...v2.10.0) (2022-02-09)
+
+
+### Features
+
+* **moveit_server:** improve moveit services ([caae4ad](https://github.com/rickstaa/panda-gazebo/commit/caae4ad20419ec7cb4c5954e1959490635294018))
+
 ### [2.9.4](https://github.com/rickstaa/panda-gazebo/compare/v2.9.3...v2.9.4) (2022-02-09)
 
 
