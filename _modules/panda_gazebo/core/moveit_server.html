@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>panda_gazebo.core.moveit_server &mdash; panda-gazebo 2.10.0 documentation</title>
+  <title>panda_gazebo.core.moveit_server &mdash; panda-gazebo 2.11.0 documentation</title>
   
 
   
@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                2.10.0
+                2.11.0
               </div>
             
           
@@ -1496,6 +1496,10 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            :obj:`panda_gazebo.srv.GetRandomPositionsResponse`: Response message</span>
 <span class="sd">                containing the random joints positions.</span>
+
+<span class="sd">        .. important::</span>
+<span class="sd">            Please be aware that when the `min` and `max` boundaries of a joint are set</span>
+<span class="sd">            to be equal the joint is assumed to be unbounded.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">max_attempts</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">get_random_position_req</span><span class="o">.</span><span class="n">attempts</span>
@@ -1687,21 +1691,29 @@
                 <span class="p">):</span>
                     <span class="c1"># Sample random value for the given joint within the joint limits</span>
                     <span class="k">if</span> <span class="p">(</span>
-                        <span class="ow">not</span> <span class="n">arm_joint_commands_valid</span>
-                        <span class="ow">and</span> <span class="n">joint</span> <span class="ow">in</span> <span class="n">random_arm_joint_values</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+                        <span class="n">joint</span> <span class="ow">in</span> <span class="n">random_arm_joint_values</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+                        <span class="ow">and</span> <span class="ow">not</span> <span class="n">arm_joint_commands_valid</span>
                     <span class="p">):</span>
-                        <span class="n">random_arm_joint_values</span><span class="p">[</span><span class="n">joint</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span>
-                            <span class="n">joint_limits</span><span class="p">[</span><span class="n">joint</span> <span class="o">+</span> <span class="s2">&quot;_min&quot;</span><span class="p">],</span>
-                            <span class="n">joint_limits</span><span class="p">[</span><span class="n">joint</span> <span class="o">+</span> <span class="s2">&quot;_max&quot;</span><span class="p">],</span>
-                        <span class="p">)</span>
+                        <span class="k">if</span> <span class="p">(</span>
+                            <span class="n">joint_limits</span><span class="p">[</span><span class="n">joint</span> <span class="o">+</span> <span class="s2">&quot;_min&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">joint_limits</span><span class="p">[</span><span class="n">joint</span> <span class="o">+</span> <span class="s2">&quot;_max&quot;</span><span class="p">]</span>
+                        <span class="p">):</span>  <span class="c1"># Only sample if min and max are unequal</span>
+                            <span class="n">random_arm_joint_values</span><span class="p">[</span><span class="n">joint</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span>
+                                <span class="n">joint_limits</span><span class="p">[</span><span class="n">joint</span> <span class="o">+</span> <span class="s2">&quot;_min&quot;</span><span class="p">],</span>
+                                <span class="n">joint_limits</span><span class="p">[</span><span class="n">joint</span> <span class="o">+</span> <span class="s2">&quot;_max&quot;</span><span class="p">],</span>
+                            <span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">arm_joint_commands_valid</span> <span class="o">=</span> <span class="kc">True</span>
                     <span class="k">if</span> <span class="p">(</span>
-                        <span class="ow">not</span> <span class="n">hand_joint_commands_valid</span>
-                        <span class="ow">and</span> <span class="n">joint</span> <span class="ow">in</span> <span class="n">random_hand_joint_values</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+                        <span class="n">joint</span> <span class="ow">in</span> <span class="n">random_hand_joint_values</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+                        <span class="ow">and</span> <span class="ow">not</span> <span class="n">hand_joint_commands_valid</span>
                     <span class="p">):</span>
-                        <span class="n">random_hand_joint_values</span><span class="p">[</span><span class="n">joint</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span>
-                            <span class="n">joint_limits</span><span class="p">[</span><span class="n">joint</span> <span class="o">+</span> <span class="s2">&quot;_min&quot;</span><span class="p">],</span>
-                            <span class="n">joint_limits</span><span class="p">[</span><span class="n">joint</span> <span class="o">+</span> <span class="s2">&quot;_max&quot;</span><span class="p">],</span>
-                        <span class="p">)</span>
+                        <span class="k">if</span> <span class="n">joint_limits</span><span class="p">[</span><span class="n">joint</span> <span class="o">+</span> <span class="s2">&quot;_min&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">joint_limits</span><span class="p">[</span><span class="n">joint</span> <span class="o">+</span> <span class="s2">&quot;_max&quot;</span><span class="p">]:</span>
+                            <span class="n">random_hand_joint_values</span><span class="p">[</span><span class="n">joint</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span>
+                                <span class="n">joint_limits</span><span class="p">[</span><span class="n">joint</span> <span class="o">+</span> <span class="s2">&quot;_min&quot;</span><span class="p">],</span>
+                                <span class="n">joint_limits</span><span class="p">[</span><span class="n">joint</span> <span class="o">+</span> <span class="s2">&quot;_max&quot;</span><span class="p">],</span>
+                            <span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">hand_joint_commands_valid</span> <span class="o">=</span> <span class="kc">True</span>
 
                 <span class="c1"># Check if joint positions are valid (Plan is not empty)</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">arm_joint_commands_valid</span><span class="p">:</span>
@@ -1823,6 +1835,10 @@
 <span class="sd">        .. note::</span>
 <span class="sd">            Additionally also returns the joint_positions that relate to the random EE</span>
 <span class="sd">            pose.</span>
+
+<span class="sd">        .. important::</span>
+<span class="sd">            Please be aware that when the `min` and `max` boundary of a EE coordinate</span>
+<span class="sd">            are equal the dimension is assumed to be be unbounded.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">max_attempts</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">get_random_ee_pose_req</span><span class="o">.</span><span class="n">attempts</span>
@@ -1882,10 +1898,32 @@
                 <span class="p">)</span>
 
                 <span class="c1"># Create ee_pose msg</span>
+                <span class="c1"># NOTE: Only use boundary when {x,y,z}_min and {x,y,z}_max are different</span>
                 <span class="n">random_ee_pose</span> <span class="o">=</span> <span class="n">Pose</span><span class="p">()</span>
-                <span class="n">random_ee_pose</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">sampled_ee_position</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="n">random_ee_pose</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">sampled_ee_position</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-                <span class="n">random_ee_pose</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">sampled_ee_position</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+                <span class="n">random_ee_pose</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">sampled_ee_position</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="p">(</span>
+                        <span class="n">get_random_ee_pose_req</span><span class="o">.</span><span class="n">bounding_region</span><span class="o">.</span><span class="n">x_min</span>
+                        <span class="o">!=</span> <span class="n">get_random_ee_pose_req</span><span class="o">.</span><span class="n">bounding_region</span><span class="o">.</span><span class="n">x_max</span>
+                    <span class="p">)</span>
+                    <span class="k">else</span> <span class="n">random_ee_pose_unbounded</span><span class="o">.</span><span class="n">pose</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">x</span>
+                <span class="p">)</span>
+                <span class="n">random_ee_pose</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">sampled_ee_position</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="p">(</span>
+                        <span class="n">get_random_ee_pose_req</span><span class="o">.</span><span class="n">bounding_region</span><span class="o">.</span><span class="n">y_min</span>
+                        <span class="o">!=</span> <span class="n">get_random_ee_pose_req</span><span class="o">.</span><span class="n">bounding_region</span><span class="o">.</span><span class="n">y_max</span>
+                    <span class="p">)</span>
+                    <span class="k">else</span> <span class="n">random_ee_pose_unbounded</span><span class="o">.</span><span class="n">pose</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">y</span>
+                <span class="p">)</span>
+                <span class="n">random_ee_pose</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">sampled_ee_position</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="p">(</span>
+                        <span class="n">get_random_ee_pose_req</span><span class="o">.</span><span class="n">bounding_region</span><span class="o">.</span><span class="n">z_min</span>
+                        <span class="o">!=</span> <span class="n">get_random_ee_pose_req</span><span class="o">.</span><span class="n">bounding_region</span><span class="o">.</span><span class="n">z_max</span>
+                    <span class="p">)</span>
+                    <span class="k">else</span> <span class="n">random_ee_pose_unbounded</span><span class="o">.</span><span class="n">pose</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">z</span>
+                <span class="p">)</span>
                 <span class="n">random_ee_pose</span><span class="o">.</span><span class="n">orientation</span> <span class="o">=</span> <span class="n">random_ee_pose_unbounded</span><span class="o">.</span><span class="n">pose</span><span class="o">.</span><span class="n">orientation</span>
 
                 <span class="c1"># Check if pose is valid (No exception and plan is not empty)</span>
