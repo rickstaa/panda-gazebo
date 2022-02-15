@@ -1319,6 +1319,10 @@ class PandaMoveItPlannerServer(object):
         Returns:
             :obj:`panda_gazebo.srv.GetRandomPositionsResponse`: Response message
                 containing the random joints positions.
+
+        .. important::
+            Please be aware that when the `min` and `max` boundaries of a joint are set
+            to be equal the joint is assumed to be unbounded.
         """
         max_attempts = (
             get_random_position_req.attempts
@@ -1510,21 +1514,29 @@ class PandaMoveItPlannerServer(object):
                 ):
                     # Sample random value for the given joint within the joint limits
                     if (
-                        not arm_joint_commands_valid
-                        and joint in random_arm_joint_values.keys()
+                        joint in random_arm_joint_values.keys()
+                        and not arm_joint_commands_valid
                     ):
-                        random_arm_joint_values[joint] = np.random.uniform(
-                            joint_limits[joint + "_min"],
-                            joint_limits[joint + "_max"],
-                        )
+                        if (
+                            joint_limits[joint + "_min"] != joint_limits[joint + "_max"]
+                        ):  # Only sample if min and max are unequal
+                            random_arm_joint_values[joint] = np.random.uniform(
+                                joint_limits[joint + "_min"],
+                                joint_limits[joint + "_max"],
+                            )
+                        else:
+                            arm_joint_commands_valid = True
                     if (
-                        not hand_joint_commands_valid
-                        and joint in random_hand_joint_values.keys()
+                        joint in random_hand_joint_values.keys()
+                        and not hand_joint_commands_valid
                     ):
-                        random_hand_joint_values[joint] = np.random.uniform(
-                            joint_limits[joint + "_min"],
-                            joint_limits[joint + "_max"],
-                        )
+                        if joint_limits[joint + "_min"] != joint_limits[joint + "_max"]:
+                            random_hand_joint_values[joint] = np.random.uniform(
+                                joint_limits[joint + "_min"],
+                                joint_limits[joint + "_max"],
+                            )
+                        else:
+                            hand_joint_commands_valid = True
 
                 # Check if joint positions are valid (Plan is not empty)
                 if not arm_joint_commands_valid:
@@ -1646,6 +1658,10 @@ class PandaMoveItPlannerServer(object):
         .. note::
             Additionally also returns the joint_positions that relate to the random EE
             pose.
+
+        .. important::
+            Please be aware that when the `min` and `max` boundary of a EE coordinate
+            are equal the dimension is assumed to be be unbounded.
         """
         max_attempts = (
             get_random_ee_pose_req.attempts
@@ -1705,10 +1721,32 @@ class PandaMoveItPlannerServer(object):
                 )
 
                 # Create ee_pose msg
+                # NOTE: Only use boundary when {x,y,z}_min and {x,y,z}_max are different
                 random_ee_pose = Pose()
-                random_ee_pose.position.x = sampled_ee_position[0]
-                random_ee_pose.position.y = sampled_ee_position[1]
-                random_ee_pose.position.z = sampled_ee_position[2]
+                random_ee_pose.position.x = (
+                    sampled_ee_position[0]
+                    if (
+                        get_random_ee_pose_req.bounding_region.x_min
+                        != get_random_ee_pose_req.bounding_region.x_max
+                    )
+                    else random_ee_pose_unbounded.pose.position.x
+                )
+                random_ee_pose.position.y = (
+                    sampled_ee_position[1]
+                    if (
+                        get_random_ee_pose_req.bounding_region.y_min
+                        != get_random_ee_pose_req.bounding_region.y_max
+                    )
+                    else random_ee_pose_unbounded.pose.position.y
+                )
+                random_ee_pose.position.z = (
+                    sampled_ee_position[2]
+                    if (
+                        get_random_ee_pose_req.bounding_region.z_min
+                        != get_random_ee_pose_req.bounding_region.z_max
+                    )
+                    else random_ee_pose_unbounded.pose.position.z
+                )
                 random_ee_pose.orientation = random_ee_pose_unbounded.pose.orientation
 
                 # Check if pose is valid (No exception and plan is not empty)

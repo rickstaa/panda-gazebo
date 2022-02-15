@@ -145,7 +145,7 @@ if __name__ == "__main__":
     #     "panda_finger_joint1_min",
     #     "panda_finger_joint1_max",
     # ]
-    # req.joint_limits.values = [-0.0, 0.5, 0.2, 0.5, 0.0, 0.04]
+    # req.joint_limits.values = [0.0, 0.1, 0.0, 0.04]
     # get_random_joint_positions_srv = rospy.ServiceProxy(
     #     "panda_moveit_planner_server/get_random_joint_positions",
     #     GetRandomJointPositions,
@@ -155,7 +155,7 @@ if __name__ == "__main__":
 
     # -- Test get random pose service --
     req = GetRandomEePoseRequest()
-    req.bounding_region = BoundingRegion(x_min=0.0, x_max=1.0)
+    req.bounding_region = BoundingRegion(x_min=0.0, x_max=0.5)
     get_random_ee_pose_srv = rospy.ServiceProxy(
         "panda_moveit_planner_server/get_random_ee_pose",
         GetRandomEePose,
