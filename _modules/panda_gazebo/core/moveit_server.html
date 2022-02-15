@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>panda_gazebo.core.moveit_server &mdash; panda-gazebo 2.11.0 documentation</title>
+  <title>panda_gazebo.core.moveit_server &mdash; panda-gazebo 2.12.0 documentation</title>
   
 
   
@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                2.11.0
+                2.12.0
               </div>
             
           
@@ -421,6 +421,12 @@
             <span class="n">GetRandomEePose</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_get_random_ee_pose_callback</span><span class="p">,</span>
         <span class="p">)</span>
+        <span class="n">rospy</span><span class="o">.</span><span class="n">logdebug</span><span class="p">(</span><span class="s2">&quot;Creating &#39;</span><span class="si">%s</span><span class="s2">/set_joint_positions&#39; service.&quot;</span> <span class="o">%</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_name</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_joint_positions_srv</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Service</span><span class="p">(</span>
+            <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/set_joint_positions&quot;</span> <span class="o">%</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+            <span class="n">SetJointPositions</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_joint_positions_callback</span><span class="p">,</span>
+        <span class="p">)</span>
         <span class="k">if</span> <span class="n">load_extra_services</span><span class="p">:</span>
             <span class="n">rospy</span><span class="o">.</span><span class="n">logdebug</span><span class="p">(</span><span class="s2">&quot;Creating &#39;</span><span class="si">%s</span><span class="s2">/panda_arm/get_ee&#39; service.&quot;</span> <span class="o">%</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_name</span><span class="p">())</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_arm_get_ee</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Service</span><span class="p">(</span>
@@ -449,14 +455,6 @@
                 <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/panda_arm/get_ee_rpy&quot;</span> <span class="o">%</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
                 <span class="n">GetEeRpy</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_arm_get_ee_rpy_callback</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">rospy</span><span class="o">.</span><span class="n">logdebug</span><span class="p">(</span>
-                <span class="s2">&quot;Creating &#39;</span><span class="si">%s</span><span class="s2">/set_joint_positions&#39; service.&quot;</span> <span class="o">%</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
-            <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_set_joint_positions_srv</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Service</span><span class="p">(</span>
-                <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/set_joint_positions&quot;</span> <span class="o">%</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
-                <span class="n">SetJointPositions</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_set_joint_positions_callback</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">rospy</span><span class="o">.</span><span class="n">logdebug</span><span class="p">(</span>
                 <span class="s2">&quot;Creating &#39;</span><span class="si">%s</span><span class="s2">/get_controlled_joints&#39; service.&quot;</span> <span class="o">%</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
