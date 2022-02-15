@@ -244,6 +244,12 @@ class PandaMoveItPlannerServer(object):
             GetRandomEePose,
             self._get_random_ee_pose_callback,
         )
+        rospy.logdebug("Creating '%s/set_joint_positions' service." % rospy.get_name())
+        self._set_joint_positions_srv = rospy.Service(
+            "%s/set_joint_positions" % rospy.get_name().split("/")[-1],
+            SetJointPositions,
+            self._set_joint_positions_callback,
+        )
         if load_extra_services:
             rospy.logdebug("Creating '%s/panda_arm/get_ee' service." % rospy.get_name())
             self._arm_get_ee = rospy.Service(
@@ -272,14 +278,6 @@ class PandaMoveItPlannerServer(object):
                 "%s/panda_arm/get_ee_rpy" % rospy.get_name().split("/")[-1],
                 GetEeRpy,
                 self._arm_get_ee_rpy_callback,
-            )
-            rospy.logdebug(
-                "Creating '%s/set_joint_positions' service." % rospy.get_name()
-            )
-            self._set_joint_positions_srv = rospy.Service(
-                "%s/set_joint_positions" % rospy.get_name().split("/")[-1],
-                SetJointPositions,
-                self._set_joint_positions_callback,
             )
             rospy.logdebug(
                 "Creating '%s/get_controlled_joints' service." % rospy.get_name()
