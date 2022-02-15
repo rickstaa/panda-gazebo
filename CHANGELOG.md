@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.12.0](https://github.com/rickstaa/panda-gazebo/compare/v2.11.0...v2.12.0) (2022-02-15)
+
+
+### Features
+
+* **moveit_server:** enable 'set_joint_positions' service by default ([71722bc](https://github.com/rickstaa/panda-gazebo/commit/71722bc684185e730965317af263cc6b2e99bdb7))
+
 ## [2.11.0](https://github.com/rickstaa/panda-gazebo/compare/v2.10.1...v2.11.0) (2022-02-15)
 
 
