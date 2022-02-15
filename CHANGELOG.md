@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.11.0](https://github.com/rickstaa/panda-gazebo/compare/v2.10.1...v2.11.0) (2022-02-15)
+
+
+### Features
+
+* **moveit_server:** handle incorrectly defined bounding regions ([669384a](https://github.com/rickstaa/panda-gazebo/commit/669384a081d6e0cf31d9afb60a922ba930517858))
+
 ## [2.10.0](https://github.com/rickstaa/panda-gazebo/compare/v2.9.4...v2.10.0) (2022-02-09)
 
 
