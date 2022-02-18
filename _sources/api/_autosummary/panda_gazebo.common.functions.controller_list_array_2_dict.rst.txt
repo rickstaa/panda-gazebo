@@ -1,6 +1,0 @@
-panda\_gazebo.common.functions.controller\_list\_array\_2\_dict
-===============================================================
-
-.. currentmodule:: panda_gazebo.common.functions
-
-.. autofunction:: controller_list_array_2_dict
