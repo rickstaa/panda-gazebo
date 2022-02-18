@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>panda_gazebo.exceptions.InputMessageInvalidError &mdash; panda-gazebo 2.12.2 documentation</title>
+  <title>panda_gazebo.common.functions.translate_moveit_error_code &mdash; panda-gazebo 2.12.2 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/modify.css" type="text/css" />
@@ -19,8 +19,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="panda_control_server" href="panda_control_server.html" />
-    <link rel="prev" title="panda_gazebo.exceptions" href="panda_gazebo.exceptions.html" /> 
+    <link rel="next" title="panda_gazebo.common.functions.wrap_space_around" href="panda_gazebo.common.functions.wrap_space_around.html" />
+    <link rel="prev" title="panda_gazebo.common.functions.translate_actionclient_result_error_code" href="panda_gazebo.common.functions.translate_actionclient_result_error_code.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -58,11 +58,13 @@
 <li class="toctree-l1 current"><a class="reference internal" href="../api.html">Code API</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="../api.html#modules">Modules</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="panda_gazebo.core.html">panda_gazebo.core</a></li>
-<li class="toctree-l3"><a class="reference internal" href="panda_gazebo.common.html">panda_gazebo.common</a></li>
-<li class="toctree-l3 current"><a class="reference internal" href="panda_gazebo.exceptions.html">panda_gazebo.exceptions</a><ul class="current">
-<li class="toctree-l4 current"><a class="current reference internal" href="#">panda_gazebo.exceptions.InputMessageInvalidError</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="panda_gazebo.common.html">panda_gazebo.common</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="panda_gazebo.common.controlled_joints_dict.html">panda_gazebo.common.controlled_joints_dict</a></li>
+<li class="toctree-l4"><a class="reference internal" href="panda_gazebo.common.controller_info_dict.html">panda_gazebo.common.controller_info_dict</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="panda_gazebo.common.functions.html">panda_gazebo.common.functions</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="panda_gazebo.exceptions.html">panda_gazebo.exceptions</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../api.html#ros-nodes">ROS nodes</a></li>
@@ -85,10 +87,11 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../api.html">Code API</a> &raquo;</li>
-          <li><a href="panda_gazebo.exceptions.html">panda_gazebo.exceptions</a> &raquo;</li>
-      <li>panda_gazebo.exceptions.InputMessageInvalidError</li>
+          <li><a href="panda_gazebo.common.html">panda_gazebo.common</a> &raquo;</li>
+          <li><a href="panda_gazebo.common.functions.html">panda_gazebo.common.functions</a> &raquo;</li>
+      <li>panda_gazebo.common.functions.translate_moveit_error_code</li>
       <li class="wy-breadcrumbs-aside">
-              <a href="https://github.com/rickstaa/panda-gazebo/blob/noetic/panda_gazebo/docs/source/api/_autosummary/panda_gazebo.exceptions.InputMessageInvalidError.rst" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/rickstaa/panda-gazebo/blob/noetic/panda_gazebo/docs/source/api/_autosummary/panda_gazebo.common.functions.translate_moveit_error_code.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
   </ul>
   <hr/>
@@ -96,35 +99,23 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="panda-gazebo-exceptions-inputmessageinvaliderror">
-<h1>panda_gazebo.exceptions.InputMessageInvalidError<a class="headerlink" href="#panda-gazebo-exceptions-inputmessageinvaliderror" title="Permalink to this headline"></a></h1>
-<dl class="py exception">
-<dt class="sig sig-object py" id="panda_gazebo.exceptions.InputMessageInvalidError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">panda_gazebo.exceptions.</span></span><span class="sig-name descname"><span class="pre">InputMessageInvalidError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">details</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/panda_gazebo/exceptions.html#InputMessageInvalidError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.exceptions.InputMessageInvalidError" title="Permalink to this definition"></a></dt>
-<dd><p>Custom exception that is raised when an input argument to one of the
-panda_gazebo functions is invalid.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="panda_gazebo.exceptions.InputMessageInvalidError.log_message">
-<span class="sig-name descname"><span class="pre">log_message</span></span><a class="headerlink" href="#panda_gazebo.exceptions.InputMessageInvalidError.log_message" title="Permalink to this definition"></a></dt>
-<dd><p>The full log message.</p>
+  <div class="section" id="panda-gazebo-common-functions-translate-moveit-error-code">
+<h1>panda_gazebo.common.functions.translate_moveit_error_code<a class="headerlink" href="#panda-gazebo-common-functions-translate-moveit-error-code" title="Permalink to this headline"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="panda_gazebo.common.functions.translate_moveit_error_code">
+<span class="sig-prename descclassname"><span class="pre">panda_gazebo.common.functions.</span></span><span class="sig-name descname"><span class="pre">translate_moveit_error_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">moveit_error_code</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/panda_gazebo/common/functions.html#translate_moveit_error_code"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.common.functions.translate_moveit_error_code" title="Permalink to this definition"></a></dt>
+<dd><p>Translates a MoveIt error code object into a human readable error message.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>moveit_error_code</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">MoveItErrorCodes</span></code>) – The MoveIt error code object</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Error string that corresponds to the error code.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)">str</a></p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="panda_gazebo.exceptions.InputMessageInvalidError.details">
-<span class="sig-name descname"><span class="pre">details</span></span><a class="headerlink" href="#panda_gazebo.exceptions.InputMessageInvalidError.details" title="Permalink to this definition"></a></dt>
-<dd><p>Dictionary containing extra Exception information.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)">dict</a></p>
-</dd>
-</dl>
-</dd></dl>
-
 </dd></dl>
 
 </div>
@@ -133,8 +124,8 @@ panda_gazebo functions is invalid.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="panda_gazebo.exceptions.html" class="btn btn-neutral float-left" title="panda_gazebo.exceptions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="panda_control_server.html" class="btn btn-neutral float-right" title="panda_control_server" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="panda_gazebo.common.functions.translate_actionclient_result_error_code.html" class="btn btn-neutral float-left" title="panda_gazebo.common.functions.translate_actionclient_result_error_code" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="panda_gazebo.common.functions.wrap_space_around.html" class="btn btn-neutral float-right" title="panda_gazebo.common.functions.wrap_space_around" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

@@ -1,0 +1,6 @@
+panda\_gazebo.common.functions.flatten\_list
+============================================
+
+.. currentmodule:: panda_gazebo.common.functions
+
+.. autofunction:: flatten_list

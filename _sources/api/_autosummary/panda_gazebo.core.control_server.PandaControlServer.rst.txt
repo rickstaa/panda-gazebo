@@ -1,0 +1,32 @@
+panda\_gazebo.core.control\_server.PandaControlServer
+=====================================================
+
+.. currentmodule:: panda_gazebo.core.control_server
+
+.. autoclass:: PandaControlServer
+   :members:
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~PandaControlServer.__init__
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~PandaControlServer.controlled_joints
+      ~PandaControlServer.controllers
+      ~PandaControlServer.gripper_width
+      ~PandaControlServer.joint_controllers
+   
+   
