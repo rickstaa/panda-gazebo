@@ -1,6 +1,0 @@
-panda\_gazebo.common.functions.lower\_first\_char
-=================================================
-
-.. currentmodule:: panda_gazebo.common.functions
-
-.. autofunction:: lower_first_char

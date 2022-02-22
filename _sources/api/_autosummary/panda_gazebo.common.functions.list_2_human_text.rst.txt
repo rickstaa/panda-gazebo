@@ -1,6 +1,0 @@
-panda\_gazebo.common.functions.list\_2\_human\_text
-===================================================
-
-.. currentmodule:: panda_gazebo.common.functions
-
-.. autofunction:: list_2_human_text
