@@ -1,0 +1,6 @@
+panda\_gazebo.common.functions.quaternion\_norm
+===============================================
+
+.. currentmodule:: panda_gazebo.common.functions
+
+.. autofunction:: quaternion_norm

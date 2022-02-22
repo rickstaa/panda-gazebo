@@ -1,0 +1,6 @@
+panda\_gazebo.common.functions.panda\_action\_msg\_2\_control\_msgs\_action\_msg
+================================================================================
+
+.. currentmodule:: panda_gazebo.common.functions
+
+.. autofunction:: panda_action_msg_2_control_msgs_action_msg
