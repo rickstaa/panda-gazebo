@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.13.0](https://github.com/rickstaa/panda-gazebo/compare/v2.12.2...v2.13.0) (2022-02-22)
+
+
+### Features
+
+* update 'franka_ros' submodule ([e655663](https://github.com/rickstaa/panda-gazebo/commit/e6556631de54a87bc56aff1b38603de58c7cec51))
+
 ### [2.12.2](https://github.com/rickstaa/panda-gazebo/compare/v2.12.1...v2.12.2) (2022-02-18)
 
 ### [2.12.1](https://github.com/rickstaa/panda-gazebo/compare/v2.12.0...v2.12.1) (2022-02-16)
