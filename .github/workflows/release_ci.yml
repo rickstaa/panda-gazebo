@@ -11,7 +11,7 @@ jobs:
     outputs:
       on_noetic_devel: ${{ steps.contains_tag.outputs.retval }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - uses: rickstaa/action-contains-tag@v1
@@ -26,7 +26,7 @@ jobs:
     steps:
       # NOTE: Makes sure that the version in the code files are up to date.
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           ref: ${{ github.ref }}
           fetch-depth: 0
@@ -61,7 +61,7 @@ jobs:
     needs: update-code-version
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           ref: noetic
           fetch-depth: 0
