@@ -37,7 +37,7 @@ jobs:
           verbose: "true"
       # Use standard-version to update version in code
       # See. https://github.com/conventional-changelog/standard-version
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: "12"
       - name: Install pnpm
