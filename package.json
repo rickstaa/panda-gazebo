@@ -1,6 +1,6 @@
 {
   "name": "panda-gazebo",
-  "version": "2.13.0",
+  "version": "2.13.1",
   "description": "Gazebo panda simulation created for the Panda environment that is found in the 'ros-gazebo-gym' package.",
   "keywords": [
     "reinforcement-learning",
