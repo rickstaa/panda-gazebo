@@ -58,6 +58,6 @@
     "remark-lint": "9.1.0",
     "remark-preset-lint-recommended": "6.1.1",
     "sort-package-json": "1.57.0",
-    "standard-version": "9.3.2"
+    "standard-version": "9.5.0"
   }
 }
