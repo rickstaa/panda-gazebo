@@ -11,7 +11,7 @@ specifiers:
   remark-cli: 11.0.0
   remark-lint: 9.1.0
   remark-preset-lint-recommended: 6.1.1
-  sort-package-json: 2.2.0
+  sort-package-json: 2.3.0
   standard-version: 9.5.0
 
 devDependencies:
@@ -25,7 +25,7 @@ devDependencies:
   remark-cli: 11.0.0
   remark-lint: 9.1.0
   remark-preset-lint-recommended: 6.1.1
-  sort-package-json: 2.2.0
+  sort-package-json: 2.3.0
   standard-version: 9.5.0
 
 packages:
@@ -3094,8 +3094,8 @@ packages:
     resolution: {integrity: sha512-855pvK+VkU7PaKYPc+Jjnmt4EzejQHyhhF33q31qG8x7maDzkeFhAAThdCYay11CISO+qAMwjOBP+fPZe0IPyg==}
     dev: true
 
-  /sort-package-json/2.2.0:
-    resolution: {integrity: sha512-ux712xsrPqkW+0b51GdmC8QTvImM3wsdip9mNVSQTY9ZV3/1eTAK6jIcQ8Vz9kfN1WHL4wv/pLn89mrqeyQu6A==}
+  /sort-package-json/2.3.0:
+    resolution: {integrity: sha512-710DJwqqPVKRI0B/BzyF/tiTP+Lu5n0BluxrBs6ZA4T1gs2Cr+CXmFW0xr5eGmuh+yZYFRQn6cCxMaxm7aEUJw==}
     hasBin: true
     dependencies:
       detect-indent: 7.0.1
