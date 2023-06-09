@@ -18,14 +18,14 @@ endif
 help:
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
-# Create make clean command
+# Also remove the _autosummary folder on clean.
 .PHONY: clean
 clean:
 	@rm -rf $(BUILDDIR)/*
 	@rm -rf $(SOURCEDIR)/dev/api/_autosummary
 	@echo "Build folder cleaned"
 
-# Publish gh-pages command
+# Publish gh-pages command.
 .PHONY: gh-pages
 gh-pages:
 	cd ../.. && \
