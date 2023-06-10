@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.13.5](https://github.com/rickstaa/panda-gazebo/compare/v2.13.27...v2.13.5) (2023-06-10)
+
+
+### Bug Fixes
+
+* fix package.json syntax error ([b9e4297](https://github.com/rickstaa/panda-gazebo/commit/b9e42978a4cd3b72ca765f852a7ffb6d7313d834))
+
 ## [2.13.0](https://github.com/rickstaa/panda-gazebo/compare/v2.12.2...v2.13.0) (2022-02-22)
 
 

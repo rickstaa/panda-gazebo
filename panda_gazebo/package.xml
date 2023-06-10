@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>panda_gazebo</name>
-  <version>2.13.4</version>
+  <version>2.13.5</version>
   <description>A package that allows you to train several ROS based robots using Gazebo.</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
