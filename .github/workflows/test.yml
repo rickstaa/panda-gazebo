@@ -31,7 +31,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Check markdown code quality using remark-lint
-        uses: reviewdog/action-remark-lint@v2
+        uses: reviewdog/action-remark-lint@v5
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           reporter: github-check
