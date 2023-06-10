@@ -28,7 +28,7 @@ def get_cylinder_mass(radius, height, rho):
     Returns:
         float: The mass [kg].
     """
-    return rho * math.pi * radius ** 2 * height
+    return rho * math.pi * radius**2 * height
 
 
 def get_cube_inertia(height, width, depth, mass):
@@ -46,9 +46,9 @@ def get_cube_inertia(height, width, depth, mass):
 
     return np.array(
         [
-            [(1 / 12) * mass * (width ** 2 + depth ** 2), 0, 0],
-            [0, (1 / 12) * mass * (depth ** 2 + height ** 2), 0],
-            [0, 0, (1 / 12) * mass * (width ** 2 + height ** 2)],
+            [(1 / 12) * mass * (width**2 + depth**2), 0, 0],
+            [0, (1 / 12) * mass * (depth**2 + height**2), 0],
+            [0, 0, (1 / 12) * mass * (width**2 + height**2)],
         ]
     )
 
@@ -82,15 +82,14 @@ def get_cylinder_inertia(radius, height, mass):
 
     return np.array(
         [
-            [(1 / 12) * mass * (3 * radius ** 2 + height ** 2), 0, 0],
-            [0, (1 / 12) * mass * (3 * radius ** 2 + height ** 2), 0],
-            [0, 0, (1 / 2) * mass * radius ** 2],
+            [(1 / 12) * mass * (3 * radius**2 + height**2), 0, 0],
+            [0, (1 / 12) * mass * (3 * radius**2 + height**2), 0],
+            [0, 0, (1 / 2) * mass * radius**2],
         ]
     )
 
 
 if __name__ == "__main__":
-
     # Cue calculations
     print("==Cube==")
     cube_mass = get_cube_mass(

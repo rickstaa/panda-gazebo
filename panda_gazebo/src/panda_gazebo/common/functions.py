@@ -292,7 +292,7 @@ def dict_clean(input_dict):
     for k, v in input_dict.items():
         if isinstance(v, dict):
             v = dict_clean(v)
-        if v not in (u"", None, {}, []):
+        if v not in ("", None, {}, []):
             stripped_dict[k] = v
     return stripped_dict
 

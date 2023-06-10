@@ -17,7 +17,6 @@ if __name__ == "__main__":
     r = rospy.Rate(1)
 
     while not rospy.is_shutdown():
-
         overlay = OverlayText()
         text = "Reward: 12345"
         text_size = 0.0

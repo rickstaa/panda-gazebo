@@ -18,7 +18,6 @@ if __name__ == "__main__":
     pictograms = ["fa-building", "location"]
 
     while not rospy.is_shutdown():
-
         arr = PictogramArray()
         arr.header.frame_id = "world"
         arr.header.stamp = rospy.Time.now()

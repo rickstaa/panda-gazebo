@@ -892,7 +892,7 @@ class PandaControlServer(object):
 
                         # Create joint commands
                         if len(waypoint.positions) != 0:
-                            for (joint, position) in input_command_dict[
+                            for joint, position in input_command_dict[
                                 "position"
                             ].items():  # Add control commands
                                 if joint in current_joint_names:
@@ -910,7 +910,7 @@ class PandaControlServer(object):
                             if not self._autofill_traj_positions:
                                 arm_control_msg.trajectory.points[idx].positions = []
                         if len(waypoint.effort) != 0:
-                            for (joint, effort) in input_command_dict[
+                            for joint, effort in input_command_dict[
                                 "effort"
                             ].items():  # Add control commands
                                 if joint in current_joint_names:
@@ -928,7 +928,7 @@ class PandaControlServer(object):
                             if not self._autofill_traj_positions:
                                 arm_control_msg.trajectory.points[idx].effort = []
                         if len(waypoint.velocities) != 0:
-                            for (joint, velocity) in input_command_dict[
+                            for joint, velocity in input_command_dict[
                                 "velocity"
                             ].items():  # Add control commands
                                 if joint in current_joint_names:
@@ -946,7 +946,7 @@ class PandaControlServer(object):
                             if not self._autofill_traj_positions:
                                 arm_control_msg.trajectory.points[idx].velocities = []
                         if len(waypoint.accelerations) != 0:
-                            for (joint, acceleration) in input_command_dict[
+                            for joint, acceleration in input_command_dict[
                                 "acceleration"
                             ].items():  # Add control commands
                                 if joint in current_joint_names:
@@ -1354,7 +1354,7 @@ class PandaControlServer(object):
         """
         if not self.__joint_controllers:
             joint_controllers_dict = {}
-            for (key, val) in self.controllers.items():
+            for key, val in self.controllers.items():
                 for resources_item in val.claimed_resources:
                     for resource in resources_item.resources:
                         if resource in joint_controllers_dict.keys():

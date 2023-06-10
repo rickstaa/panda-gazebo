@@ -3,7 +3,6 @@
 from panda_gazebo.core.control_switcher import PandaControlSwitcher
 
 if __name__ == "__main__":
-
     # Create control switcher object
     control_switcher = PandaControlSwitcher(connection_timeout=3)
 

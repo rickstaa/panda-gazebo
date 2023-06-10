@@ -1,6 +1,6 @@
 # Github action that updates the code version tags, adds a changelog and drafts a release when
 # a new version tag is added.
-name: Panda-gazebo release CI
+name: Panda-gazebo release
 on:
   push:
     tags:
@@ -43,22 +43,20 @@ jobs:
       # See. https://github.com/conventional-changelog/standard-version
       - uses: actions/setup-node@v3
         with:
-          node-version: "14"
-      - name: Install pnpm
-        run: |
-          npm install -g pnpm
+          node-version: "16"
       - name: Install standard-version
         run: |
-          pnpm install standard-version
+          npm install standard-version
       - name: Make sure the version in all code files is correct
         run: |
-          pnpm run release -- --skip.commit --skip.tag --skip.changelog --release-as ${{ steps.get_semver.outputs.current_version }}
+          npm run release -- --skip.commit --skip.tag --skip.changelog --release-as ${{ steps.get_semver.outputs.current_version }}
       - name: Commit code version changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           branch: noetic
-          file_pattern: panda_gazebo/src/panda_gazebo/version.py panda_gazebo/package.xml package.json
+          file_pattern: panda_gazebo/src/panda_gazebo/_version.py panda_gazebo/package.xml package.json
           commit_message: "chore(release): updates code version to ${{ steps.get_semver.outputs.current_version }}"
+          commit_options: "--no-verify"
   create-release:
     # NOTE: Drafts a release for the new tag
     runs-on: ubuntu-latest
@@ -74,19 +72,11 @@ jobs:
         uses: rickstaa/action-get-semver@v1
         with:
           verbose: "true"
-      - name: Build release changelog
-        id: build_changelog
-        uses: mikepenz/release-changelog-builder-action@main
-        with:
-          configuration: ".github/workflows/release_changelog_config.json"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Draft release
-        uses: actions/create-release@v1
+        uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.get_semver.outputs.current_version }}
-          release_name: ${{ steps.get_semver.outputs.current_version }}
-          body: ${{ steps.build_changelog.outputs.changelog }}
-          draft: false
+          name: ${{ steps.get_semver.outputs.current_version }}
+          generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

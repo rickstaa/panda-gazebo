@@ -9,10 +9,10 @@ def print_xml(i, s, m, v, com, d):
     """Create gazebo xml code for the given joint properties"""
     # Convert joint properties to xml code
     # NOTE: https://www.physicsforums.com/threads/how-does-the-moment-of-inertia-scale.703101/ # noqa: E501
-    v = v / s ** 3
+    v = v / s**3
     com = [x / s for x in com]
     for key in d.keys():
-        d[key] = d[key] / s ** 5 * m / v
+        d[key] = d[key] / s**5 * m / v
     print("link_{}".format(i))
     print("<inertial>")
     print('  <mass value="{}" />'.format(m))

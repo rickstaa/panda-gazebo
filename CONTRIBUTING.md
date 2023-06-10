@@ -1,0 +1,94 @@
+# Contribution guidelines
+
+We love your input! 🚀 We want to make contributing to this project as easy and transparent as possible, whether it's:
+
+*   [Reporting a bug](https://github.com/rickstaa/panda-gazebo/issues).
+*   [Discussing the current state of the code](https://github.com/rickstaa/panda-gazebo/discussions).
+*   [Submitting a fix](https://github.com/rickstaa/panda-gazebo/pulls).
+*   [Proposing new features](https://github.com/rickstaa/panda-gazebo/issues).
+*   Becoming a maintainer.
+
+## We Develop with Github
+
+We use Github to host code, track issues and feature requests, and accept pull requests.
+
+### We Use [Github Flow](https://guides.github.com/introduction/flow/index.html), So All Code Changes Happen Through Pull Requests
+
+Pull requests are the best way to propose changes to the codebase (we use [Github Flow](https://docs.github.com/en/get-started/quickstart/github-flow)). We actively welcome your pull requests:
+
+1.  Fork the repo and create your branch from `main`.
+2.  Add tests if you've added code that should be tested.
+3.  If you've changed APIs, update the documentation.
+4.  If you changed the documentation, please ensure it builds (see [Documentation guidelines](#documentation-guidelines)).
+5.  Ensure the test suite passes (i.e. `npm run test`). If snapshots fail, please check if this is intended and update the snapshots if necessary using the `npm run test:update:snapshot` command.
+6.  Make sure your code lints.
+7.  Commit your changes.
+8.  Create a pull request to pull the changes of your development branch onto the `main` branch.
+9.  Ensure that all the [pull request checks](https://github.com/rickstaa/panda-gazebo/actions) were successful.
+
+### Report bugs using Github's [issues](https://github.com/rickstaa/panda-gazebo/issues)
+
+We use GitHub issues to track public bugs. Report a bug by [opening a new issue](https://github.com/rickstaa/panda-gazebo/issues/new/choose); it's that easy!
+
+#### Write bug reports with detail, background, and sample code
+
+[This is an example](http://stackoverflow.com/q/12488905/180626) of a bug report, and I think it's a good model. Here's [another example from Craig Hockenberry](http://www.openradar.me/11905408), an app developer greatly respected in the community.
+
+**Great Bug Reports** tend to have:
+
+*   A quick summary and/or background.
+*   Steps to reproduce:
+    *   Be specific!
+    *   Give sample code if you can. [A StackOverflow question](http://stackoverflow.com/q/12488905/180626) includes sample code that *anyone* with a base R setup can run to reproduce the error.
+*   What you expected would happen
+*   What happens?
+*   Notes (possibly including why you think this might be happening or stuff you tried that didn't work).
+
+People *love* thorough bug reports. I'm not even kidding.
+
+## Write descriptive commit messages
+
+Ensure you add an excellent descriptive commit message to this repository. A good guide can be found [here](https://www.conventionalcommits.org/en/v1.0.0/). Please check out the [commitizen](https://github.com/commitizen/cz-cli) npm package, as it is beneficial in helping you write good commit messages.
+
+## Use a Consistent coding Style
+
+We use several language guidelines to increase code quality, readability, and usability.
+
+### Python guidelines
+
+*   **Linting:** Please ensure your Python code doesn't contain any errors by checking it with the [flake8 python linter](https://flake8.pycqa.org/en/latest/).
+*   **Formatting:** Please format all your scripts using the [black python formatter](https://github.com/psf/black).
+
+### Markdown guidelines
+
+*   **Linting and formatting:** Please ensure your markdown code contains no errors and is formatted according to the [remark-lint](https://github.com/remarkjs/remark-lint) style guidelines.
+
+## GitHub actions
+
+The [Panda Gazebo](https://github.com/rickstaa/panda-gazebo) package contains several [GitHub actions](https://github.com/rickstaa/panda-gazebo/actions), which check code changes against the language guidelines above. As a result, when the above guidelines are not met, you will receive an **error/warning** when you create a pull request. Some of these actions will make pull requests which you can use to fix some of these violations. For other **errors/warnings**, you are expected to handle them yourself before merging them into the main branch. If you think a coding guideline needs to be corrected or your code structure doesn't allow you to respect the guideline, please state so in the pull request.
+
+## Pre-commit hooks
+
+The [Panda Gazebo](https://github.com/rickstaa/panda-gazebo) package also contains several pre-commit hooks that enforce the guidelines above before committing. To enable these hooks, please:
+
+1.  Install [node](https://nodejs.org/en/download/package-manager).
+2.  Install [python](https://www.python.org/downloads).
+3.  Run `npm install .` and `pip install .[dev]` to install husky and the required linters.
+
+## Release guidelines
+
+There are three ways to ensure a new release is created:
+
+1.  Create a new release using the GitHub draft release tool.
+2.  Create a new release using the GitHub release action. This action will be triggered when a pull request with a version label is merged into the main branch (i.e. `bump:patch`, `bump:minor` or `bump:major`).
+3.  Run the `npm run release` command locally. This command will create a new release and push it to the main branch.
+
+Additionally, please use the [versioning guidelines specified at semver.org](https://semver.org/).
+
+## Documentation guidelines
+
+See the [documentation guidelines](https://rickstaa.dev/panda-gazebo/dev/doc_dev.html) for more information on how to contribute to the documentation.
+
+## Any contributions you make will be under the MIT Software License
+
+In short, when you submit code changes, your submissions are understood to be under the same [MIT License](http://choosealicense.com/licenses/mit/) that covers the project. Feel free to contact the maintainers if that's a concern.

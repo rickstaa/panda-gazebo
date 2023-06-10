@@ -728,12 +728,12 @@ class PandaMoveItPlannerServer(object):
 
             # Update current state dictionary with given joint_position setpoints
             arm_output_command_dict = copy.deepcopy(arm_state_dict)
-            for (joint, position) in input_command_dict.items():  # Update arm
+            for joint, position in input_command_dict.items():  # Update arm
                 if joint in arm_state_dict:
                     arm_output_command_dict[joint] = position
             if control_group in ["hand", "both"]:
                 hand_output_command_dict = copy.deepcopy(hand_state_dict)
-                for (joint, position) in input_command_dict.items():  # Update hand
+                for joint, position in input_command_dict.items():  # Update hand
                     if joint in hand_state_dict:
                         hand_output_command_dict[joint] = position
 

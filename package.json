@@ -1,7 +1,7 @@
 {
   "name": "panda-gazebo",
   "version": "2.13.4",
-  "description": "Gazebo panda simulation created for the Panda environment that is found in the 'ros-gazebo-gym' package.",
+  "description": "A package that contains all the ROS components needed for creating a Panda Emika Franka Gazebo simulation",
   "keywords": [
     "reinforcement-learning",
     "simulation",
@@ -10,9 +10,11 @@
     "gazebo",
     "panda",
     "gym-environments",
+    "gymnasium",
+    "gymnasium-environments",
     "emika-franka"
   ],
-  "homepage": "https://github.com/rickstaa/panda-gazebo#readme",
+  "homepage": "https://github.com/rickstaa/panda-gazebo#panda-gazebo",
   "bugs": {
     "url": "https://github.com/rickstaa/panda-gazebo/issues"
   },
@@ -20,14 +22,13 @@
     "type": "git",
     "url": "git+https://github.com/rickstaa/panda-gazebo.git"
   },
-  "license": "UNLICENSED",
+  "license": "MIT",
   "author": "Rick Staa",
   "scripts": {
     "changelog": "HUSKY=0 standard-version --skip.bump --skip.commit --skip.tag",
-    "preinstall": "npx only-allow pnpm",
     "prepare": "husky install",
     "release": "HUSKY=0 standard-version",
-    "sort": "sort-package-json"
+    "sort": "sort-package-json",
   },
   "commitlint": {
     "extends": [
@@ -47,17 +48,17 @@
     }
   },
   "devDependencies": {
-    "@commitlint/cli": "17.6.1",
-    "@commitlint/config-conventional": "17.6.1",
-    "commitizen": "4.3.0",
-    "cz-conventional-changelog": "3.3.0",
-    "husky": "8.0.1",
+    "@commitlint/cli": "^17.6.1",
+    "@commitlint/config-conventional": "^17.6.1",
+    "commitizen": "^4.3.0",
+    "cz-conventional-changelog": "^3.3.0",
+    "husky": "^8.0.3",
     "lint-staged": "13.2.0",
     "remark": "14.0.2",
     "remark-cli": "11.0.0",
     "remark-lint": "9.1.0",
     "remark-preset-lint-recommended": "6.1.1",
     "sort-package-json": "2.4.0",
-    "standard-version": "9.5.0"
+    "standard-version": "^9.5.0"
   }
 }

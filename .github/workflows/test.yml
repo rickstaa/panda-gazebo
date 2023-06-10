@@ -1,12 +1,30 @@
-# Runs tests after a pull request is merged.
-name: Panda-gazebo
+# Runs several tests when a pull request is created.
+name: Test
 on:
-  push:
-    branches:
-      - noetic
-    tags-ignore:
-      - v*.*.*
+  pull_request:
 jobs:
+  spell-check:
+    name: runner / misspell
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: reviewdog/action-misspell@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: github-check
+          level: warning
+          exclude: 
+            CHANGELOG.md
+  alex: # Checks docs for inconsiderate writing
+    name: runner / alex
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: reviewdog/action-alex@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: github-check
+          level: warning
   markdown-lint: # Lints the markdown code
     name: runner / remark-lint
     runs-on: ubuntu-latest
@@ -49,7 +67,7 @@ jobs:
       - name: Update pip
         run: |
           python -m pip install --upgrade pip
-      - name: Install the panda_gazebo package with its dependencies
+      - name: Install the panda-gym dev dependencies
         if: steps.cache-python-env.outputs.cache-hit != 'true'
         run: |
           pip install -e .[dev]

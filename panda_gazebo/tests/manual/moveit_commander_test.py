@@ -19,7 +19,6 @@ except ImportError:  # For Python 2 compatibility
 
 
 if __name__ == "__main__":
-
     # Initiate MoveIt commander and node
     moveit_commander.roscpp_initialize(sys.argv)
     rospy.init_node("move_group_python_interface_tutorial", anonymous=True)
