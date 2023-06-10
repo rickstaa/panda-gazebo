@@ -28,7 +28,7 @@
     "changelog": "HUSKY=0 standard-version --skip.bump --skip.commit --skip.tag",
     "prepare": "husky install",
     "release": "HUSKY=0 standard-version",
-    "sort": "sort-package-json",
+    "sort": "sort-package-json"
   },
   "commitlint": {
     "extends": [
