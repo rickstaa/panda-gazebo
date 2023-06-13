@@ -1135,7 +1135,7 @@ class PandaControlServer(object):
         message into separate arm and gripper messages.
 
         Args:
-            joint_commands_req (:obj:`~panda_gazebo.msg.SetJointControlCommandRequest`): 
+            joint_commands_req (:obj:`~panda_gazebo.msg.SetJointControlCommandRequest`):
                 The joint control command message.
             control_type (str): The type of control that is being executed. Options are
                 ``effort``, ``position`` and ``trajectory``
