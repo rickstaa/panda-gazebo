@@ -54,7 +54,7 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           branch: noetic
-          file_pattern: panda_gazebo/src/panda_gazebo/_version.py panda_gazebo/package.xml package.json
+          file_pattern: panda_gazebo/src//panda_gazebo_version.py panda_gazebo/package.xml package.json
           commit_message: "chore(release): updates code version to ${{ steps.get_semver.outputs.current_version }}"
           commit_options: "--no-verify"
   create-release:
