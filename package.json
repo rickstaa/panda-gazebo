@@ -1,6 +1,6 @@
 {
   "name": "panda-gazebo",
-  "version": "2.13.28",
+  "version": "2.13.29",
   "description": "A package that contains all the ROS components needed for creating a Panda Emika Franka Gazebo simulation",
   "keywords": [
     "simulation",

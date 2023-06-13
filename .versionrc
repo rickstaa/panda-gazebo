@@ -1,7 +1,7 @@
 {
   "bumpFiles": [
     {
-      "filename": "panda_gazebo/src/panda_gazebo/version.py",
+      "filename": "panda_gazebo/src/panda_gazebo/_version.py",
       "updater": ".standard-version/_version.py.updater.js"
     },
     {
