@@ -1,0 +1,27 @@
+name: Docs
+on:
+  push:
+    tags:
+      - v*.*.*
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v3
+      - name: Install dependencies
+        run: |
+          pip install -r panda_gazebo/requirements/doc_requirements.txt
+      - name: Sphinx build
+        run: |
+          sphinx-build docs/source docs/build
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          publish_branch: gh-pages
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: panda_gazebo/docs/build/
+          force_orphan: true
