@@ -69,7 +69,7 @@ jobs:
       - name: Install the panda-gym dev dependencies
         if: steps.cache-python-env.outputs.cache-hit != 'true'
         run: |
-          pip install -r requirements/dev_requirements.txt
+          pip install -r panda_gazebo/requirements/dev_requirements.txt
       - name: flake8 Lint
         uses: reviewdog/action-flake8@v3
         with:
