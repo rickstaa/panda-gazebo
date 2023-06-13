@@ -19,7 +19,7 @@ Additionally, the Python dependencies can be installed using the following `pip`
 
 .. code-block:: bash
 
-    pip install -r requirements/docs_requirements.txt
+    pip install -r requirements/doc_requirements.txt
 
 .. _`sphinx`: http://www.sphinx-doc.org/en/master
 .. _`pip`: https://pypi.org/project/pip/
