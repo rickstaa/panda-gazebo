@@ -121,8 +121,8 @@ def panda_action_msg_2_control_msgs_action_msg(panda_action_msg):
 
 
 def controller_list_array_2_dict(controller_list_msgs):
-    """Converts a :controller_manager_msgs:`Controller_manager/list_controllers
-    <html/srv/ListControllers.html>` message into a controller information dictionary.
+    """Converts a :controller_manager_msgs:`Controller_manager/list_controllers <html/srv/ListControllers.html>`
+    message into a controller information dictionary.
 
     Args:
         controller_list_msgs (:obj:`controller_manager_msgs.srv.ListControllersResponse`):

@@ -1,9 +1,13 @@
 #!/usr/bin/env python
 """Small python ROS node that can be used to set the logging level of the
-'franka_gazebo' node."""
+`franka_gazebo`_ node.
+
+.. _franka_gazebo: https://github.com/frankaemika/franka_ros/tree/develop/franka_gazebo
+"""
 
 import argparse
 import sys
+
 import rospy
 from roscpp.srv import SetLoggerLevel, SetLoggerLevelRequest
 

@@ -52,7 +52,7 @@ jobs:
       - name: Install the panda_gazebo package with its dependencies
         if: steps.cache-python-env.outputs.cache-hit != 'true'
         run: |
-          pip install -e .[dev]
+          pip install -r requirements/dev_requirements.txt
       - name: flake8 Lint
         uses: reviewdog/action-flake8@v3
         with:

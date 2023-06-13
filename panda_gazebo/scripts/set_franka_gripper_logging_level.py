@@ -1,9 +1,13 @@
 #!/usr/bin/env python
 """Small python ROS node that can be used to set the logging level of the
-'franka_gripper' node."""
+`franka_gripper`_ node.
+
+.. _franka_gripper: https://github.com/frankaemika/franka_ros/tree/develop/franka_gripper
+""" # noqa: E501
 
 import argparse
 import sys
+
 import rospy
 from roscpp.srv import SetLoggerLevel, SetLoggerLevelRequest
 

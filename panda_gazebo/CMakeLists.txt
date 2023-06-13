@@ -111,9 +111,9 @@ generate_messages(
 # Generate dynamic reconfigure parameters in the 'cfg' folder
 generate_dynamic_reconfigure_options(
   cfg/dyn_reconf/MoveitServerDynReconf.cfg
-  # NOTE: The entries below are disbabled as it is only needed for some test scripts
-  # cfg/dyn_reconf/PositionControlTestDynReconf.cfg
-  # cfg/dyn_reconf/EffortControlTestDynReconf.cfg
+  # NOTE: The entries below can be disabled since they are only needed for some test scripts
+  cfg/dyn_reconf/PositionControlTestDynReconf.cfg
+  cfg/dyn_reconf/EffortControlTestDynReconf.cfg
 )
 
 ###################################
