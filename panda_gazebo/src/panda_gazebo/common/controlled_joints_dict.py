@@ -12,7 +12,7 @@ CONTROLLED_JOINTS_DICT = {
 
 class ControlledJointsDict(dict):
     """Used for storing information about the currently controlled joints.
-    This class overloads the normal `dict` class in order to pre-initialize the
+    This class overloads the normal ``dict`` class in order to pre-initialize the
     dictionary with the needed keys.
     """
 

@@ -14,9 +14,9 @@
 
   <!-- Url tags are optional, but multiple are allowed, one per tag -->
   <!-- Optional attribute type can be: website, bugtracker, or repository -->
-  <url type="website">https://rickstaa.github.io/openai_sim</url>
-  <url type="repository">https://github.com/rickstaa/openai_sim</url>
-  <url type="bugtracker">https://github.com/rickstaa/openai_sim/issues</url>
+  <url type="website">https://rickstaa.dev/panda-gazebo/</url>
+  <url type="repository">https://github.com/rickstaa/panda-gazebo</url>
+  <url type="bugtracker">https://github.com/rickstaa/panda-gazebo/issues</url>
 
   <!-- Author tags are optional, multiple are allowed, one per tag -->
   <!-- Authors do not have to be maintainers, but could be -->
@@ -55,6 +55,8 @@
   <build_depend>actionlib</build_depend>
   <build_depend>actionlib_msgs</build_depend>
   <build_depend>control_msgs</build_depend>
+  <build_depend>python-catkin-pkg</build_depend>
+  <build_depend>python3-catkin-tools</build_depend>
 
   <!--Extra build dependencies
     NOTE: Disabled by default as they are only needed for some test scripts
@@ -97,10 +99,18 @@
 
   <!-- Python packages -->
 
+  <!-- Documentation dependencies -->
+  <doc_depend>rosdoc_lite</doc_depend>
+  <doc_depend>python3-sphinx</doc_depend>
+  <doc_depend>python3-sphinx-rtd-theme</doc_depend>
+  
   <!-- The export tag contains other, unspecified, tags (Used for metapackages and
   Plugins -->
   <export>
     <!-- <metapackage /> -->
+
+    <!-- Documentation -->
+    <rosdoc config="rosdoc.yaml"/> 
 
     <!--Export gazebo models and worlds-->
     <gazebo_ros gazebo_model_path="${prefix}/resources/models"/>

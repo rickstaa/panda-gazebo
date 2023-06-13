@@ -73,7 +73,7 @@ The [Panda Gazebo](https://github.com/rickstaa/panda-gazebo) package also contai
 
 1.  Install [node](https://nodejs.org/en/download/package-manager).
 2.  Install [python](https://www.python.org/downloads).
-3.  Run `npm install .` and `pip install .[dev]` to install husky and the required linters.
+3.  Run `npm install .` and `pip install -r requirements/dev_requirements.txt` to install husky and the required linters.
 
 ## Release guidelines
 

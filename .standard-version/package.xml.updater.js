@@ -5,7 +5,7 @@
 /**
  * Reads the current version from the Python configuration file.
  */
- module.exports.readVersion = function (contents) {
+module.exports.readVersion = function (contents) {
   // console.debug(`file contents:\n\n${contents}`);
   const version = contents.match(/(?<=<version>)\d+\.\d+\.\d+(?=<\/version>)/g)[0];
   // console.debug("found version:", version);

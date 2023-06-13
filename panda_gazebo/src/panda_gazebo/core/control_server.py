@@ -26,47 +26,36 @@ Extra services:
 
 import copy
 import os
-import time
 import sys
+import time
 from itertools import compress
 
-from actionlib import SimpleActionClient, SimpleActionServer
 import control_msgs.msg as control_msgs
 import numpy as np
 import rospy
-from controller_manager_msgs.srv import ListControllers, ListControllersRequest
+from actionlib import SimpleActionClient, SimpleActionServer
+from actionlib_msgs.msg import GoalStatus
 from control_msgs.msg import GripperCommandAction, GripperCommandGoal
+from controller_manager_msgs.srv import ListControllers, ListControllersRequest
 from panda_gazebo.common import ControlledJointsDict
 from panda_gazebo.common.functions import (
-    action_server_exists,
-    controller_list_array_2_dict,
-    get_unique_list,
-    get_duplicate_list,
-    list_2_human_text,
-    lower_first_char,
+    action_server_exists, controller_list_array_2_dict, get_duplicate_list,
+    get_unique_list, list_2_human_text, lower_first_char,
     panda_action_msg_2_control_msgs_action_msg,
-    translate_actionclient_result_error_code,
-)
+    translate_actionclient_result_error_code)
 from panda_gazebo.core.group_publisher import GroupPublisher
 from panda_gazebo.exceptions import InputMessageInvalidError
-from panda_gazebo.msg import FollowJointTrajectoryAction, FollowJointTrajectoryResult
-from panda_gazebo.srv import (
-    GetControlledJoints,
-    GetControlledJointsResponse,
-    SetGripperWidth,
-    SetGripperWidthRequest,
-    SetGripperWidthResponse,
-    SetJointCommands,
-    SetJointCommandsResponse,
-    SetJointEfforts,
-    SetJointEffortsResponse,
-    SetJointPositions,
-    SetJointPositionsResponse,
-)
+from panda_gazebo.msg import (FollowJointTrajectoryAction,
+                              FollowJointTrajectoryResult)
+from panda_gazebo.srv import (GetControlledJoints, GetControlledJointsResponse,
+                              SetGripperWidth, SetGripperWidthRequest,
+                              SetGripperWidthResponse, SetJointCommands,
+                              SetJointCommandsResponse, SetJointEfforts,
+                              SetJointEffortsResponse, SetJointPositions,
+                              SetJointPositionsResponse)
 from rospy.exceptions import ROSException, ROSInterruptException
 from sensor_msgs.msg import JointState
 from std_msgs.msg import Float64
-from actionlib_msgs.msg import GoalStatus
 
 # Global script variables
 GRASP_EPSILON = 0.003  # NOTE: Uses 'kGraspRestingThreshold' from 'franka_gripper.sim.h'
@@ -115,11 +104,6 @@ class PandaControlServer(object):
 
     Attributes:
         joint_states (:obj:`sensor_msgs.JointState`): The current joint states.
-        gripper_width (float): The current gripper width.
-        controllers (dict): Dictionary with information about the currently loaded
-            controllers.
-        joint_controllers (dict): Dictionary containing the controllers that can control
-            a given panda joint.
         arm_joint_positions_threshold (float): The current threshold for determining
             whether the arm joint positions are within the given setpoint.
         arm_joint_efforts_threshold (float): The current threshold for determining
@@ -1151,10 +1135,10 @@ class PandaControlServer(object):
         message into separate arm and gripper messages.
 
         Args:
-            joint_commands_req :obj:`~panda_gazebo.msg.SetJointControlCommandRequest`):
+            joint_commands_req (:obj:`~panda_gazebo.msg.SetJointControlCommandRequest`):
                 The joint control command message.
-            control_type (str): The type of control that is being executed. Options
-                are ``effort``, ``position`` and ``trajectory``.
+            control_type (str): The type of control that is being executed. Options are
+                ``effort``, ``position`` and ``trajectory``
 
         Returns:
             (tuple): tuple containing:

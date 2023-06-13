@@ -14,7 +14,7 @@ The following dependencies are required to run the :panda_gazebo:`panda_gazebo <
 Clone instructions
 ------------------
 
-To use this workspace, clone the repository inside your a catkin workspace folder. Since the repository contains several git
+To use this workspace, clone the repository inside your catkin workspace folder. Since the repository contains several git
 submodules to use all the features, it needs to be cloned using the ``--recurse-submodules`` argument:
 
 .. code-block:: bash
@@ -31,14 +31,14 @@ can pull the submodules using the following git command:
 Build instructions
 ------------------
 
-After you cloned the repository, you have to build the `libfranka`_ library from the source (see `the franka documentation`_).
+After you cloned the repository, you must build the `libfranka`_ library from the source (see `the franka documentation`_).
 After you build `libfranka`_ from source, you have to install the system dependencies using the `rosdep tool`_:
 
 .. code-block:: bash
 
     rosdep install --from-path src --ignore-src -r -y --skip-keys libfranka
 
-When this command finishes you can build the ROS packages inside the catkin workspace using the following build command:
+When this command finishes, you can build the ROS packages inside the catkin workspace using the following build command:
 
 .. code-block:: bash
 

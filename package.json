@@ -3,15 +3,11 @@
   "version": "2.13.28",
   "description": "A package that contains all the ROS components needed for creating a Panda Emika Franka Gazebo simulation",
   "keywords": [
-    "reinforcement-learning",
     "simulation",
     "openai-gym",
     "ros",
     "gazebo",
     "panda",
-    "gym-environments",
-    "gymnasium",
-    "gymnasium-environments",
     "emika-franka"
   ],
   "homepage": "https://github.com/rickstaa/panda-gazebo#panda-gazebo",
