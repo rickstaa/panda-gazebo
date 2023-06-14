@@ -1,0 +1,27 @@
+{
+    "description": "A package that contains all the ROS components needed for creating a Panda Emika Franka Gazebo simulation",
+    "license": "MIT",
+    "title": "rickstaa/panda-gazebo",
+    "upload_type": "software",
+    "keywords": [
+        "simulation",
+        "openai-gym",
+        "ros",
+        "gazebo",
+        "panda",
+        "emika-franka"
+    ],
+    "creators": [
+        {
+            "orcid": "0000-0003-4835-2040",
+            "affiliation": "TU Delft",
+            "name": "Rick Staa"
+        },
+        {
+            "orcid": "0000-0003-1121-9879",
+            "affiliation": "The University of Manchester",
+            "name": "Wei Pan"
+        }
+    ],
+    "access_right": "open"
+}

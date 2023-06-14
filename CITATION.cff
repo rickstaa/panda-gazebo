@@ -1,0 +1,34 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+cff-version: 1.2.0
+title: rickstaa/panda-gazebo
+message: >-
+  If you want to cite this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Rick
+    family-names: Staa
+    affiliation: TU Delft
+    orcid: 'https://orcid.org/0000-0003-4835-2040'
+  - given-names: Wei
+    family-names: Pan
+    affiliation: The University of Manchester
+    orcid: 'https://orcid.org/0000-0003-1121-9879'
+identifiers:
+  - type: url
+    value: 'https://zenodo.org/badge/latestdoi/353980386'
+repository-code: 'https://github.com/rickstaa/stable-gym'
+abstract: >-
+  Several gymnasium environments with cost functions
+  compatible with (stable) RL agents (i.e. positive
+  definite).
+keywords:
+  - reinforcement-learning
+  - simulation
+  - stability
+  - openai-gym
+  - gym-environments
+  - gymnasium
+  - gymnasium-environments
+license: MIT
