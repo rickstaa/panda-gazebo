@@ -48,7 +48,7 @@ People *love* thorough bug reports. I'm not even kidding.
 
 ## Write descriptive commit messages
 
-Ensure you add an excellent descriptive commit message to this repository. A good guide can be found [here](https://www.conventionalcommits.org/en/v1.0.0/). Please check out the [commitizen](https://github.com/commitizen/cz-cli) npm package, as it is beneficial in helping you write good commit messages.
+Ensure you add an excellent descriptive commit message to this repository. A good guide can be found [here](https://www.conventionalcommits.org/en/v1.0.0/). When writing commit messages, please follow the [conventional commits specifications](https://www.conventionalcommits.org/en/v1.0.0/). Additionally, you are recommended to check out the [commitizen](https://github.com/commitizen/cz-cli) npm package, as it is beneficial in helping you write good commit messages.
 
 ## Use a Consistent coding Style
 
@@ -77,13 +77,7 @@ The [Panda Gazebo](https://github.com/rickstaa/panda-gazebo) package also contai
 
 ## Release guidelines
 
-There are three ways to ensure a new release is created:
-
-1.  Create a new release using the GitHub draft release tool.
-2.  Create a new release using the GitHub release action. This action will be triggered when a pull request with a version label is merged into the main branch (i.e. `bump:patch`, `bump:minor` or `bump:major`).
-3.  Run the `npm run release` command locally. This command will create a new release and push it to the main branch.
-
-Additionally, please use the [versioning guidelines specified at semver.org](https://semver.org/).
+Releases are handled automatically by the [release-please-action](https://github.com/google-github-actions/release-please-action). This action uses the [release-please](https://github.com/googleapis/release-please) tool to create release pull requests based on the commits automatically. When writing commit messages, you must follow the [Commit guidelines](#Write-descriptive-commit-messages) since this expects you to adhere to the [conventional commits specifications](https://www.conventionalcommits.org/en/v1.0.0/). For more information on how this tool works, see [the release-please documentation](https://github.com/googleapis/release-please).
 
 ## Documentation guidelines
 
