@@ -17,7 +17,7 @@ jobs:
           pip install -r panda_gazebo/requirements/doc_requirements.txt
       - name: Sphinx build
         run: |
-          sphinx-build docs/source docs/build
+          rosdoc_lite ..
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
