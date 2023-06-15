@@ -37,8 +37,8 @@ jobs:
         - name: Compile ROS package with Catkin Tools
           uses: addnab/docker-run-action@v3
           with:
-            image:    panda_gazebo:noetic
-            options:  -v ${{github.workspace}}/src:/src/ -v ${{github.workspace}}/devel:/devel/
+            image: panda_gazebo:noetic
+            options: -v ${{github.workspace}}/src:/src/ -v ${{github.workspace}}/devel:/devel/
             run: |
                 rosdep install --from-paths /src --ignore-src --rosdistro noetic -y --simulate  # Check if all dependencies were in the Docker File
                 apt-get update
@@ -49,14 +49,14 @@ jobs:
         - name: Build the ROS package documentation
           uses: addnab/docker-run-action@v3
           with:
-            image:    panda_gazebo:noetic
+            image: panda_gazebo:noetic
             shell: bash
-            options:  -v ${{github.workspace}}/devel:/devel/
+            options: -v ${{github.workspace}}/src:/src/ -v ${{github.workspace}}/devel:/devel/
             run: |
-                . /devel/setup.bash
-                pip install -r panda_gazebo/requirements/doc_requirements.txt
                 ls
                 ls ..
+                . /devel/setup.bash
+                pip install -r ../src/panda_gazebo/requirements/doc_requirements.txt
                 rosdoc_lite ../src/panda_gazebo
 
         - name: Deploy
