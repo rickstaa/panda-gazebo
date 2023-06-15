@@ -1,0 +1,20 @@
+name: ROS Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  ROS-test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Build Docker Image
+      run: docker build -t ros_test -f Dockerfile.noetic .
+      
+    - name: Check if catkin package builds
+      run: docker run --rm bash -c "catkin build"
