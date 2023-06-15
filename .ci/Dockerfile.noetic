@@ -9,4 +9,33 @@ RUN apt-get update && apt-get install -y \
     ros-noetic-libfranka \
     libeigen3-dev \
     ros-noetic-rosdoc-lite \
+    liburdfdom-tools \
+    python3-bs4 \
+    python3-html5lib \
+    python3-lxml \
+    python3-pyassimp \
+    python3-soupsieve \
+    python3-webencodings \
+    ros-noetic-eigen-stl-containers \
+    ros-noetic-eigenpy \
+    ros-noetic-fcl \
+    ros-noetic-geometric-shapes \
+    ros-noetic-moveit-core \
+    ros-noetic-moveit-kinematics \
+    ros-noetic-moveit-msgs \
+    ros-noetic-moveit-ros-manipulation \
+    ros-noetic-moveit-ros-move-group \
+    ros-noetic-moveit-ros-occupancy-map-monitor \
+    ros-noetic-moveit-ros-planning \
+    ros-noetic-moveit-ros-planning-interface \
+    ros-noetic-moveit-ros-warehouse \
+    ros-noetic-object-recognition-msgs \
+    ros-noetic-octomap \
+    ros-noetic-octomap-msgs \
+    ros-noetic-pybind11-catkin \
+    ros-noetic-random-numbers \
+    ros-noetic-ruckig \
+    ros-noetic-srdfdom \
+    ros-noetic-urdfdom-py \
+    ros-noetic-warehouse-ros \
     && rm -rf /var/lib/apt/lists/*
