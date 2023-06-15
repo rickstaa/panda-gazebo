@@ -10,11 +10,23 @@ jobs:
   ROS-test:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
+    - uses: docker/setup-buildx-action@v2
 
     - name: Build Docker Image
-      run: docker build -t ros_test -f Dockerfile.noetic .
-      
-    - name: Check if catkin package builds
-      run: docker run --rm bash -c "catkin build"
+      uses: docker/build-push-action@v4
+      with:
+        tags: ros-test:latest
+        file: .ci/Dockerfile.noetic
+        push: false
+        load: true
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+    
+    - name: Build ROS package
+      uses: addnab/docker-run-action@v3
+      with:
+        image: ros-test:latest
+        shell: bash
+        run: |
+          . /opt/ros/noetic/setup.bash
+          catkin build
