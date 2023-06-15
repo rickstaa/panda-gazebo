@@ -1,0 +1,26 @@
+FROM osrf/ros:noetic-desktop-full
+
+# Install system dependencies + preknown ROS dependencies.
+# NOTE: dependencies are found using the `rosdep install --from-path src --ignore-src -r -y --simulate --reinstall .` command.
+RUN apt-get update && apt-get install -y \
+    python3-catkin-pkg \
+    python3-catkin-tools \
+    libgtest-dev \
+    ros-noetic-libfranka \
+    libeigen3-dev \
+    ros-noetic-joint-trajectory-controller \
+    ros-noetic-moveit-ros-move-group \
+    ros-noetic-moveit-fake-controller-manager \
+    ros-noetic-moveit-kinematics \
+    ros-noetic-moveit-planners-ompl \
+    ros-noetic-moveit-ros-visualization \
+    ros-noetic-moveit-setup-assistant \
+    ros-noetic-moveit-simple-controller-manager \
+    ros-noetic-moveit-visual-tools \
+    ros-noetic-moveit \
+    ros-noetic-effort-controllers \
+    ros-noetic-combined-robot-hw \
+    ros-noetic-moveit-commander \
+    ros-noetic-rosdoc-lite \
+    python3-pip \
+    && rm -rf /var/lib/apt/lists/*

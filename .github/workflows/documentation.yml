@@ -8,20 +8,58 @@ permissions:
   contents: write
 jobs:
   docs:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-      - name: Install dependencies
-        run: |
-          pip install -r panda_gazebo/requirements/doc_requirements.txt
-      - name: Sphinx build
-        run: |
-          rosdoc_lite ..
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          publish_branch: gh-pages
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: panda_gazebo/docs/build/
-          force_orphan: true
+        - name: Prepare
+          run: |
+            mkdir -p ${{github.workspace}}/src  
+            mkdir -p ${{github.workspace}}/devel     
+    
+        - uses: docker/setup-buildx-action@v2
+    
+        - name: Checkout
+          uses: actions/checkout@v3
+          with:
+            path: src
+            submodules: true
+    
+        - name: Build Docker Image
+          uses: docker/build-push-action@v2
+          with:
+            tags: panda_gazebo:noetic
+            file: .ci/Dockerfile.noetic
+            push: false
+            load: true
+            cache-from: type=gha
+            cache-to: type=gha,mode=max
+      
+        - name: Compile ROS package with Catkin Tools
+          uses: addnab/docker-run-action@v3
+          with:
+            image: panda_gazebo:noetic
+            options: -v ${{github.workspace}}/src:/src/ -v ${{github.workspace}}/devel:/devel/
+            run: |
+                rosdep install --from-paths /src --ignore-src --rosdistro noetic -y --simulate  # Check if all dependencies were in the Docker File
+                apt-get update
+                rosdep install --from-paths /src --ignore-src --rosdistro noetic -y
+                catkin config --init --extend /opt/ros/noetic
+                catkin build --interleave-output --verbose
+
+        - name: Build the ROS package documentation
+          uses: addnab/docker-run-action@v3
+          with:
+            image: panda_gazebo:noetic
+            shell: bash
+            options: -v ${{github.workspace}}/src:/src/ -v ${{github.workspace}}/devel:/devel/
+            run: |
+                . /devel/setup.bash
+                pip install -r ../src/panda_gazebo/requirements/doc_requirements.txt
+                rosdoc_lite ../src/panda_gazebo -o ../src/panda_gazebo/docs/build
+
+        - name: Deploy
+          uses: peaceiris/actions-gh-pages@v3
+          with:
+            publish_branch: gh-pages
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+            publish_dir: src/panda_gazebo/docs/build/html
+            force_orphan: true

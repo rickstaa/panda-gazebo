@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>panda_gazebo.common.functions &mdash; Panda Gazebo 2.14.3 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/modify.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.14.3
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../get_started/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../get_started/usage.html">How to use</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../dev/contributing.html">Contribute to panda-gazebo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../dev/doc_dev.html">Release documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../dev/license.html">License</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../autoapi/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Panda Gazebo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../../panda_gazebo.html">panda_gazebo</a></li>
+      <li class="breadcrumb-item active">panda_gazebo.common.functions</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for panda_gazebo.common.functions</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Module containing some additional functions used in the</span>
+<span class="sd">:panda_gazebo:`panda_gazebo &lt;&gt;` package.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">copy</span>
+
+<span class="kn">import</span> <span class="nn">control_msgs.msg</span> <span class="k">as</span> <span class="nn">control_msgs</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">rospy</span>
+<span class="kn">from</span> <span class="nn">actionlib_msgs.msg</span> <span class="kn">import</span> <span class="n">GoalStatusArray</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linalg</span><span class="p">,</span> <span class="n">nan</span>
+<span class="kn">from</span> <span class="nn">panda_gazebo.msg</span> <span class="kn">import</span> <span class="n">FollowJointTrajectoryGoal</span>
+<span class="kn">from</span> <span class="nn">rospy.exceptions</span> <span class="kn">import</span> <span class="n">ROSException</span>
+<span class="kn">from</span> <span class="nn">sensor_msgs.msg</span> <span class="kn">import</span> <span class="n">JointState</span>
+<span class="kn">from</span> <span class="nn">trajectory_msgs.msg</span> <span class="kn">import</span> <span class="n">JointTrajectoryPoint</span>
+
+
+<span class="c1">#################################################</span>
+<span class="c1"># Type conversion functions #####################</span>
+<span class="c1">#################################################</span>
+<div class="viewcode-block" id="joint_state_dict_2_joint_state_msg"><a class="viewcode-back" href="../../../autoapi/panda_gazebo/common/functions/index.html#panda_gazebo.common.functions.joint_state_dict_2_joint_state_msg">[docs]</a><span class="k">def</span> <span class="nf">joint_state_dict_2_joint_state_msg</span><span class="p">(</span><span class="n">joint_state_dict</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;position&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts a joint_state dictionary into a JointState msgs.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        joint_state_dict (dict): Dictionary specifying joint values for each joint</span>
+<span class="sd">            (key).</span>
+<span class="sd">        type (str, optional): The state type. Options are ``velocity``, ``effort`` and</span>
+<span class="sd">            ``position``. Defaults to &quot;position&quot;.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :obj:`sensor_msgs.msg.JointState`: A JoinState message.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">resp</span> <span class="o">=</span> <span class="n">JointState</span><span class="p">()</span>
+    <span class="n">resp</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">joint_state_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;velocity&quot;</span><span class="p">:</span>
+        <span class="n">resp</span><span class="o">.</span><span class="n">velocity</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">joint_state_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    <span class="k">elif</span> <span class="nb">type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;effort&quot;</span><span class="p">:</span>
+        <span class="n">resp</span><span class="o">.</span><span class="n">effort</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">joint_state_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">resp</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">joint_state_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">resp</span></div>
+
+
+<div class="viewcode-block" id="action_dict_2_joint_trajectory_msg"><a class="viewcode-back" href="../../../autoapi/panda_gazebo/common/functions/index.html#panda_gazebo.common.functions.action_dict_2_joint_trajectory_msg">[docs]</a><span class="k">def</span> <span class="nf">action_dict_2_joint_trajectory_msg</span><span class="p">(</span>
+    <span class="n">action_dict</span><span class="p">,</span> <span class="n">create_time_axis</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">time_axis_step</span><span class="o">=</span><span class="mf">0.01</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts an action dictionary into a panda_gazebo ``FollowJointTrajectoryGoal``</span>
+<span class="sd">    msgs.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        action_dict (dict): Dictionary containing actions and joints.</span>
+<span class="sd">        create_time_axis (bool): Whether you want to automatically create a joint</span>
+<span class="sd">            trajectory time axis if it is not yet present.</span>
+<span class="sd">        time_axis_step (float): The size of the time steps used for generating the time</span>
+<span class="sd">            axis.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :obj:`panda_gazebo.msg.FollowJointTrajectoryGoal`: New FollowJointTrajectoryGoal</span>
+<span class="sd">            message.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValuesError: When the action_dict is invalid.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">goal_msg</span> <span class="o">=</span> <span class="n">FollowJointTrajectoryGoal</span><span class="p">()</span>
+    <span class="n">goal_msg</span><span class="o">.</span><span class="n">create_time_axis</span> <span class="o">=</span> <span class="n">create_time_axis</span>
+    <span class="n">goal_msg</span><span class="o">.</span><span class="n">time_axis_step</span> <span class="o">=</span> <span class="n">time_axis_step</span>
+
+    <span class="c1"># Handle multiple waypoints</span>
+    <span class="k">if</span> <span class="nb">all</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">action_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())]):</span>
+        <span class="n">waypoints_actions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="nb">list</span><span class="p">(</span><span class="n">action_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="p">(</span>
+        <span class="nb">all</span><span class="p">([</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">action_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()])</span>
+        <span class="ow">and</span> <span class="nb">all</span><span class="p">([</span><span class="n">item</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">action_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()])</span>
+        <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">item</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="nb">list</span><span class="p">(</span><span class="n">action_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
+                <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">action_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+    <span class="p">):</span>
+        <span class="n">waypoints_actions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">action_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Joint trajectory message could not be created since the action values &quot;</span>
+            <span class="s2">&quot;in the action dict are invalid. Please make sure that each joint contains &quot;</span>
+            <span class="s2">&quot;an equal amount of joint commands, one for each waypoint.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Create and return joint trajectory message</span>
+    <span class="k">for</span> <span class="n">waypoint</span> <span class="ow">in</span> <span class="n">waypoints_actions</span><span class="p">:</span>
+        <span class="n">wp</span> <span class="o">=</span> <span class="n">JointTrajectoryPoint</span><span class="p">()</span>
+        <span class="n">wp</span><span class="o">.</span><span class="n">positions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">waypoint</span><span class="p">)</span>
+        <span class="n">goal_msg</span><span class="o">.</span><span class="n">trajectory</span><span class="o">.</span><span class="n">joint_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">action_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">goal_msg</span><span class="o">.</span><span class="n">trajectory</span><span class="o">.</span><span class="n">points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">goal_msg</span></div>
+
+
+<div class="viewcode-block" id="panda_action_msg_2_control_msgs_action_msg"><a class="viewcode-back" href="../../../autoapi/panda_gazebo/common/functions/index.html#panda_gazebo.common.functions.panda_action_msg_2_control_msgs_action_msg">[docs]</a><span class="k">def</span> <span class="nf">panda_action_msg_2_control_msgs_action_msg</span><span class="p">(</span><span class="n">panda_action_msg</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts a panda_gazebo FollowJointTrajectoryActionGoal action message</span>
+<span class="sd">    into a :control_msgs:`control_msgs/FollowJointTrajectoryGoal</span>
+<span class="sd">    &lt;html/action/FollowJointTrajectory.html&gt;` action message.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        panda_action_msg :obj:`control_msgs.msg.FollowJointTrajectoryGoal`: Panda_gazebo</span>
+<span class="sd">            follow joint trajectory goal message.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :obj:`control_msgs.msg.FollowJointTrajectoryGoal`: Control_msgs follow joint</span>
+<span class="sd">            trajectory goal message</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">control_msgs_action_msg</span> <span class="o">=</span> <span class="n">control_msgs</span><span class="o">.</span><span class="n">FollowJointTrajectoryGoal</span><span class="p">()</span>
+    <span class="n">control_msgs_action_msg</span><span class="o">.</span><span class="n">trajectory</span> <span class="o">=</span> <span class="n">panda_action_msg</span><span class="o">.</span><span class="n">trajectory</span>
+    <span class="n">control_msgs_action_msg</span><span class="o">.</span><span class="n">goal_time_tolerance</span> <span class="o">=</span> <span class="n">panda_action_msg</span><span class="o">.</span><span class="n">goal_time_tolerance</span>
+    <span class="n">control_msgs_action_msg</span><span class="o">.</span><span class="n">goal_tolerance</span> <span class="o">=</span> <span class="n">panda_action_msg</span><span class="o">.</span><span class="n">goal_tolerance</span>
+    <span class="n">control_msgs_action_msg</span><span class="o">.</span><span class="n">path_tolerance</span> <span class="o">=</span> <span class="n">panda_action_msg</span><span class="o">.</span><span class="n">path_tolerance</span>
+    <span class="k">return</span> <span class="n">control_msgs_action_msg</span></div>
+
+
+<div class="viewcode-block" id="controller_list_array_2_dict"><a class="viewcode-back" href="../../../autoapi/panda_gazebo/common/functions/index.html#panda_gazebo.common.functions.controller_list_array_2_dict">[docs]</a><span class="k">def</span> <span class="nf">controller_list_array_2_dict</span><span class="p">(</span><span class="n">controller_list_msgs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts a :controller_manager_msgs:`Controller_manager/list_controllers &lt;html/srv/ListControllers.html&gt;`</span>
+<span class="sd">    message into a controller information dictionary.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        controller_list_msgs (:obj:`controller_manager_msgs.srv.ListControllersResponse`):</span>
+<span class="sd">            Controller_manager/list_controllers service response message.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: Dictionary containing information about all the available controllers.</span>
+<span class="sd">    &quot;&quot;&quot;</span>  <span class="c1"># noqa: E501</span>
+    <span class="n">controller_list_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">controller</span> <span class="ow">in</span> <span class="n">controller_list_msgs</span><span class="o">.</span><span class="n">controller</span><span class="p">:</span>
+        <span class="n">controller_name</span> <span class="o">=</span> <span class="n">controller</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">controller_list_dict</span><span class="p">[</span><span class="n">controller_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">controller</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">controller_list_dict</span></div>
+
+
+<div class="viewcode-block" id="translate_actionclient_result_error_code"><a class="viewcode-back" href="../../../autoapi/panda_gazebo/common/functions/index.html#panda_gazebo.common.functions.translate_actionclient_result_error_code">[docs]</a><span class="k">def</span> <span class="nf">translate_actionclient_result_error_code</span><span class="p">(</span><span class="n">actionclient_retval</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Translates the error code returned by the SimpleActionClient.get_result()</span>
+<span class="sd">    function into a human readable error message.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        actionclient_retval (:obj:`control_msgs.msg.FollowJointTrajectoryResult`): The</span>
+<span class="sd">            result that is returned by the</span>
+<span class="sd">            :func:`actionlib.simple_action_client.SimpleActionClient.get_result()`</span>
+<span class="sd">            function.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: Error string that corresponds to the error code.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">actionclient_retval</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">error_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">value</span><span class="p">:</span> <span class="n">attr</span>
+            <span class="k">for</span> <span class="n">attr</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">actionclient_retval</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">attr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;_&quot;</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">isupper</span><span class="p">,</span> <span class="n">attr</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)))</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">error_dict</span><span class="p">[</span><span class="n">actionclient_retval</span><span class="o">.</span><span class="n">error_code</span><span class="p">]</span>
+            <span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="o">.</span><span class="n">capitalize</span><span class="p">()</span>
+            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot;.&quot;</span>
+            <span class="k">if</span> <span class="n">error_dict</span><span class="p">[</span><span class="n">actionclient_retval</span><span class="o">.</span><span class="n">error_code</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;SUCCESSFUL&quot;</span>
+            <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;No goal set&quot;</span></div>
+
+
+<div class="viewcode-block" id="translate_moveit_error_code"><a class="viewcode-back" href="../../../autoapi/panda_gazebo/common/functions/index.html#panda_gazebo.common.functions.translate_moveit_error_code">[docs]</a><span class="k">def</span> <span class="nf">translate_moveit_error_code</span><span class="p">(</span><span class="n">moveit_error_code</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Translates a MoveIt error code object into a human readable error message.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        moveit_error_code (:obj:`~moveit_msgs.msg._MoveItErrorCodes.MoveItErrorCodes`):</span>
+<span class="sd">            The MoveIt error code object</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: Error string that corresponds to the error code.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">error_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">value</span><span class="p">:</span> <span class="n">attr</span>
+        <span class="k">for</span> <span class="n">attr</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">moveit_error_code</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">attr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;_&quot;</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">isupper</span><span class="p">,</span> <span class="n">attr</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)))</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">error_dict</span><span class="p">[</span><span class="n">moveit_error_code</span><span class="o">.</span><span class="n">val</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span>
+        <span class="k">if</span> <span class="n">error_dict</span><span class="p">[</span><span class="n">moveit_error_code</span><span class="o">.</span><span class="n">val</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;SUCCESSFUL&quot;</span>
+        <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+    <span class="p">)</span></div>
+
+
+<span class="c1">#################################################</span>
+<span class="c1"># List dict and text manipulation functions #####</span>
+<span class="c1">#################################################</span>
+<div class="viewcode-block" id="lower_first_char"><a class="viewcode-back" href="../../../autoapi/panda_gazebo/common/functions/index.html#panda_gazebo.common.functions.lower_first_char">[docs]</a><span class="k">def</span> <span class="nf">lower_first_char</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;De-capitalize the first letter of a string.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        string (str): The input string.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: The de-capitalized string.</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        This function is not the exact opposite of the capitalize function of the</span>
+<span class="sd">        standard library. For example, capitalize(&#39;abC&#39;) returns Abc rather than AbC.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">string</span><span class="p">:</span>  <span class="c1"># Added to handle case where s == None</span>
+        <span class="k">return</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">string</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">+</span> <span class="n">string</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span></div>
+
+
+<div class="viewcode-block" id="wrap_space_around"><a class="viewcode-back" href="../../../autoapi/panda_gazebo/common/functions/index.html#panda_gazebo.common.functions.wrap_space_around">[docs]</a><span class="k">def</span> <span class="nf">wrap_space_around</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrap one additional space around text if it is not already present.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        text (str): Text</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: Text with extra spaces around it.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">text</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot; &quot;</span> <span class="ow">and</span> <span class="n">text</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot; &quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">text</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span>
+    <span class="k">elif</span> <span class="n">text</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot; &quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">text</span>
+    <span class="k">elif</span> <span class="n">text</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot; &quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">text</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">text</span></div>
+
+
+<div class="viewcode-block" id="list_2_human_text"><a class="viewcode-back" href="../../../autoapi/panda_gazebo/common/functions/index.html#panda_gazebo.common.functions.list_2_human_text">[docs]</a><span class="k">def</span> <span class="nf">list_2_human_text</span><span class="p">(</span><span class="n">input_list</span><span class="p">,</span> <span class="n">separator</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="n">end_separator</span><span class="o">=</span><span class="s2">&quot;&amp;&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Function converts a list of values into human readable sentence.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        Using this function a list of 4 items ``[item1, item2, item3, item4]`` becomes</span>
+<span class="sd">        ``item2, item3 and item4``.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        input_list (list): A input list.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: A human readable string that can be printed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Add spaces around separators if not present</span>
+    <span class="n">separator</span> <span class="o">=</span> <span class="n">wrap_space_around</span><span class="p">(</span><span class="n">separator</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">end_separator</span> <span class="o">=</span> <span class="n">wrap_space_around</span><span class="p">(</span><span class="n">end_separator</span><span class="p">)</span>
+
+    <span class="c1"># Create human readable comma deliminated text</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_list</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="n">separator</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">input_list</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span>
+                <span class="o">+</span> <span class="n">end_separator</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">input_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">input_list</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="n">input_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">input_list</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="n">separator</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">input_list</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span>
+                <span class="o">+</span> <span class="n">end_separator</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">input_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">input_list</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">input_list</span></div>
+
+
+<div class="viewcode-block" id="dict_clean"><a class="viewcode-back" href="../../../autoapi/panda_gazebo/common/functions/index.html#panda_gazebo.common.functions.dict_clean">[docs]</a><span class="k">def</span> <span class="nf">dict_clean</span><span class="p">(</span><span class="n">input_dict</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Removes empty dictionary keys from a dictionary and returns a cleaned up</span>
+<span class="sd">    dictionary. Empty meaning an empty list, string or dict or a None value.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        input_dict (dict):The input dictionary.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: The cleaned dictionary</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">stripped_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">input_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">dict_clean</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">v</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">{},</span> <span class="p">[]):</span>
+            <span class="n">stripped_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+    <span class="k">return</span> <span class="n">stripped_dict</span></div>
+
+
+<div class="viewcode-block" id="get_unique_list"><a class="viewcode-back" href="../../../autoapi/panda_gazebo/common/functions/index.html#panda_gazebo.common.functions.get_unique_list">[docs]</a><span class="k">def</span> <span class="nf">get_unique_list</span><span class="p">(</span><span class="n">input_list</span><span class="p">,</span> <span class="n">trim</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Removes non-unique items from a list.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        input_list (list): The input list.</span>
+<span class="sd">        trim (list, optional): Trim empty items. Defaults to ``True``.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: The new list containing only unique items.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">trim</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">({</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">input_list</span> <span class="k">if</span> <span class="n">item</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">})</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">({</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">input_list</span><span class="p">})</span></div>
+
+
+<div class="viewcode-block" id="get_duplicate_list"><a class="viewcode-back" href="../../../autoapi/panda_gazebo/common/functions/index.html#panda_gazebo.common.functions.get_duplicate_list">[docs]</a><span class="k">def</span> <span class="nf">get_duplicate_list</span><span class="p">(</span><span class="n">input_list</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the duplicates in a list.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        input_list (list): The input list.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: The new list containing only the itesm that had duplicates.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">input_list</span> <span class="k">if</span> <span class="n">input_list</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">]))</span></div>
+
+
+<div class="viewcode-block" id="flatten_list"><a class="viewcode-back" href="../../../autoapi/panda_gazebo/common/functions/index.html#panda_gazebo.common.functions.flatten_list">[docs]</a><span class="k">def</span> <span class="nf">flatten_list</span><span class="p">(</span><span class="n">input_list</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Function used to flatten a list containing sublists. It does this by calling</span>
+<span class="sd">    itself recursively.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        input_list (list): A list containing strings or other lists.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: The flattened list.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">flattened_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">list_item</span> <span class="ow">in</span> <span class="n">input_list</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">list_item</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">list</span><span class="p">:</span>
+            <span class="n">flattened_list</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+                <span class="n">flatten_list</span><span class="p">(</span><span class="n">list_item</span><span class="p">)</span>
+            <span class="p">)</span>  <span class="c1"># NOTE: Calls itself recursively</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">flattened_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">list_item</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">flattened_list</span></div>
+
+
+<span class="c1">#################################################</span>
+<span class="c1"># Other functions ###############################</span>
+<span class="c1">#################################################</span>
+<div class="viewcode-block" id="action_server_exists"><a class="viewcode-back" href="../../../autoapi/panda_gazebo/common/functions/index.html#panda_gazebo.common.functions.action_server_exists">[docs]</a><span class="k">def</span> <span class="nf">action_server_exists</span><span class="p">(</span><span class="n">topic_name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks whether a topic contains an action server</span>
+<span class="sd">    is running.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        topic_name (str): Action server topic name.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        bool: Boolean specifying whether the action service exists.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Strip action server specific topics from topic name</span>
+    <span class="k">if</span> <span class="n">topic_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;cancel&quot;</span><span class="p">,</span> <span class="s2">&quot;feedback&quot;</span><span class="p">,</span> <span class="s2">&quot;goal&quot;</span><span class="p">,</span> <span class="s2">&quot;result&quot;</span><span class="p">,</span> <span class="s2">&quot;status&quot;</span><span class="p">]:</span>
+        <span class="n">topic_name</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">topic_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">topic_name</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;/&quot;</span><span class="p">:</span>
+        <span class="n">topic_name</span> <span class="o">=</span> <span class="n">topic_name</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># Validate if action server topic exists</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">rospy</span><span class="o">.</span><span class="n">wait_for_message</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/status&quot;</span> <span class="o">%</span> <span class="n">topic_name</span><span class="p">,</span> <span class="n">GoalStatusArray</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">ROSException</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="c1"># Check if topic contains action client</span>
+    <span class="n">exists</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_published_topics</span><span class="p">():</span>
+        <span class="k">if</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/status&quot;</span> <span class="o">%</span> <span class="n">topic_name</span> <span class="ow">in</span> <span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="s2">&quot;actionlib_msgs&quot;</span> <span class="ow">in</span> <span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="n">exists</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">exists</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="n">exists</span></div>
+
+
+<div class="viewcode-block" id="quaternion_norm"><a class="viewcode-back" href="../../../autoapi/panda_gazebo/common/functions/index.html#panda_gazebo.common.functions.quaternion_norm">[docs]</a><span class="k">def</span> <span class="nf">quaternion_norm</span><span class="p">(</span><span class="n">quaternion</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculates the norm of a quaternion.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        Quaternion (:obj:`geometry_msgs.msg.Quaternion`): A quaternion.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float: The norm of the quaternion.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">([</span><span class="n">quaternion</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">quaternion</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">quaternion</span><span class="o">.</span><span class="n">z</span><span class="p">,</span> <span class="n">quaternion</span><span class="o">.</span><span class="n">w</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="normalize_quaternion"><a class="viewcode-back" href="../../../autoapi/panda_gazebo/common/functions/index.html#panda_gazebo.common.functions.normalize_quaternion">[docs]</a><span class="k">def</span> <span class="nf">normalize_quaternion</span><span class="p">(</span><span class="n">quaternion</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Normalizes a given quaternion.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        quaternion (:obj:`geometry_msgs.msg.Quaternion`): A quaternion.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :obj:`geometry_msgs.msg.Quaternion`: The normalized quaternion.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">quaternion</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span>
+        <span class="n">quaternion</span>
+    <span class="p">)</span>  <span class="c1"># Make sure the original object is not changed</span>
+    <span class="n">norm</span> <span class="o">=</span> <span class="n">quaternion_norm</span><span class="p">(</span><span class="n">quaternion</span><span class="p">)</span>
+
+    <span class="c1"># Normalize quaternion</span>
+    <span class="k">if</span> <span class="n">norm</span> <span class="o">==</span> <span class="n">nan</span><span class="p">:</span>
+        <span class="c1"># test</span>
+        <span class="n">rospy</span><span class="o">.</span><span class="n">logwarn</span><span class="p">(</span>
+            <span class="s2">&quot;Quaternion could not be normalized since the norm could not be &quot;</span>
+            <span class="s2">&quot;calculated.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">norm</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>  <span class="c1"># Transform to identity</span>
+        <span class="n">quaternion</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">quaternion</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">quaternion</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">quaternion</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">quaternion</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">quaternion</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="n">norm</span>
+        <span class="n">quaternion</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">quaternion</span><span class="o">.</span><span class="n">y</span> <span class="o">/</span> <span class="n">norm</span>
+        <span class="n">quaternion</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">quaternion</span><span class="o">.</span><span class="n">z</span> <span class="o">/</span> <span class="n">norm</span>
+        <span class="n">quaternion</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="n">quaternion</span><span class="o">.</span><span class="n">w</span> <span class="o">/</span> <span class="n">norm</span>
+    <span class="k">return</span> <span class="n">quaternion</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Rick Staa.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

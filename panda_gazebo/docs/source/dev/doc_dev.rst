@@ -11,9 +11,8 @@ Building the :panda_gazebo:`panda_gazebo <>` documentation requires `sphinx`_,
 the ``panda_gazebo`` package and several system and python packages. To install the system dependencies, run the following command
 inside your catkin workspace:
 
-```bash
-rosdep install --from-path src --ignore-src -r -y --skip-keys libfranka -t doc
-```
+.. code-block:: bash
+    rosdep install --from-path src --ignore-src -r -y -t doc
 
 Additionally, the Python dependencies can be installed using the following `pip`_ command inside the ``./panda_gazebo`` folder:
 
