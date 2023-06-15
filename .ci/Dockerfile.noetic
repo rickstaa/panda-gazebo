@@ -1,19 +1,6 @@
 FROM osrf/ros:noetic-desktop-focal
 
 # Install system dependencies
-RUN apt update && apt-get install -y \
-    ros-noetic-libfranka \
+RUN apt-get update && apt-get install -y \
     python3-catkin-tools \
     && rm -rf /var/lib/apt/lists/*
-
-# Build the catkin workspace
-RUN mkdir -p /catkin_ws/src
-WORKDIR /catkin_ws
-ADD ./franka_ros /catkin_ws/src/franka_ros
-ADD ./panda_gazebo /catkin_ws/src/panda_gazebo
-ADD ./panda_moveit_config /catkin_ws/src/panda_moveit_config
-
-# Install ROS dependencies
-RUN apt update && \
-    rosdep install --from-path /catkin_ws/src --ignore-src -r -y && \
-    rm -rf /var/lib/apt/lists/*
