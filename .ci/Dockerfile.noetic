@@ -1,4 +1,4 @@
-FROM osrf/ros:noetic-desktop-focal
+FROM osrf/ros:noetic-desktop-full
 
 # Install system dependencies + preknown ROS dependencies.
 # NOTE: dependencies are found using the `rosdep install --from-path src --ignore-src -r -y --simulate --reinstall .` command.
