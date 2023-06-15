@@ -8,4 +8,5 @@ RUN apt-get update && apt-get install -y \
     libgtest-dev \
     ros-noetic-libfranka \
     libeigen3-dev \
+    ros-noetic-rosdoc-lite \
     && rm -rf /var/lib/apt/lists/*

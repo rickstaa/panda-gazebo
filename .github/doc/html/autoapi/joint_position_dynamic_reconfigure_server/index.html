@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>joint_position_dynamic_reconfigure_server &mdash; Panda Gazebo 2.14.3 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/modify.css" type="text/css" />
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="joint_effort_dynamic_reconfigure_server" href="../joint_effort_dynamic_reconfigure_server/index.html" />
+    <link rel="prev" title="set_franka_gazebo_logging_level" href="../set_franka_gazebo_logging_level/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.14.3
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../get_started/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../get_started/usage.html">How to use</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../dev/contributing.html">Contribute to panda-gazebo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dev/doc_dev.html">Release documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dev/license.html">License</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../index.html#ros-api">ROS API</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html#python-api">Python API</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../panda_gazebo/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">panda_gazebo</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../panda_control_server/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">panda_control_server</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../panda_moveit_server/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">panda_moveit_server</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../set_franka_gazebo_logging_level/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">set_franka_gazebo_logging_level</span></code></a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">joint_position_dynamic_reconfigure_server</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#module-contents">Module Contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../joint_effort_dynamic_reconfigure_server/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">joint_effort_dynamic_reconfigure_server</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../set_franka_gripper_logging_level/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">set_franka_gripper_logging_level</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Panda Gazebo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
+      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">joint_position_dynamic_reconfigure_server</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/rickstaa/Panda Gazebo/blob/noetic/panda_gazebo/docs/source/autoapi/joint_position_dynamic_reconfigure_server/index.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-joint_position_dynamic_reconfigure_server">
+<span id="joint-position-dynamic-reconfigure-server"></span><h1><a class="reference internal" href="#module-joint_position_dynamic_reconfigure_server" title="joint_position_dynamic_reconfigure_server"><code class="xref py py-mod docutils literal notranslate"><span class="pre">joint_position_dynamic_reconfigure_server</span></code></a><a class="headerlink" href="#module-joint_position_dynamic_reconfigure_server" title="Permalink to this heading"></a></h1>
+<p>Small node that spins up a dynamic reconfigure server that can be used to change the
+joint positions.</p>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this heading"></a></h2>
+<section id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this heading"></a></h3>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#joint_position_dynamic_reconfigure_server.JointPositionDynamicReconfigureServer" title="joint_position_dynamic_reconfigure_server.JointPositionDynamicReconfigureServer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">JointPositionDynamicReconfigureServer</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="attributes">
+<h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this heading"></a></h3>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#joint_position_dynamic_reconfigure_server.position_dyn_server" title="joint_position_dynamic_reconfigure_server.position_dyn_server"><code class="xref py py-obj docutils literal notranslate"><span class="pre">position_dyn_server</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="joint_position_dynamic_reconfigure_server.JointPositionDynamicReconfigureServer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">joint_position_dynamic_reconfigure_server.</span></span><span class="sig-name descname"><span class="pre">JointPositionDynamicReconfigureServer</span></span><a class="reference internal" href="../../_modules/joint_position_dynamic_reconfigure_server.html#JointPositionDynamicReconfigureServer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#joint_position_dynamic_reconfigure_server.JointPositionDynamicReconfigureServer" title="Permalink to this definition"></a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="joint_position_dynamic_reconfigure_server.JointPositionDynamicReconfigureServer.callback">
+<span class="sig-name descname"><span class="pre">callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/joint_position_dynamic_reconfigure_server.html#JointPositionDynamicReconfigureServer.callback"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#joint_position_dynamic_reconfigure_server.JointPositionDynamicReconfigureServer.callback" title="Permalink to this definition"></a></dt>
+<dd><p>Dynamic reconfigure callback function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dynamic_reconfigure.encoding.Config</span></code>) – The current dynamic
+reconfigure configuration object.</p></li>
+<li><p><strong>level</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – Bitmask that gives information about which parameter has been
+changed.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Modified dynamic reconfigure</dt><dd><p>configuration object.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Config</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="joint_position_dynamic_reconfigure_server.position_dyn_server">
+<span class="sig-prename descclassname"><span class="pre">joint_position_dynamic_reconfigure_server.</span></span><span class="sig-name descname"><span class="pre">position_dyn_server</span></span><a class="reference internal" href="../../_modules/joint_position_dynamic_reconfigure_server.html#position_dyn_server"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#joint_position_dynamic_reconfigure_server.position_dyn_server" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../set_franka_gazebo_logging_level/index.html" class="btn btn-neutral float-left" title="set_franka_gazebo_logging_level" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../joint_effort_dynamic_reconfigure_server/index.html" class="btn btn-neutral float-right" title="joint_effort_dynamic_reconfigure_server" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Rick Staa.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

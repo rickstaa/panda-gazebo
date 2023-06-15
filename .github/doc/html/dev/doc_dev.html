@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Release documentation &mdash; Panda Gazebo 2.14.3 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/modify.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="License" href="license.html" />
+    <link rel="prev" title="Contribute to panda-gazebo" href="contributing.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.14.3
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../get_started/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../get_started/usage.html">How to use</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contribute to panda-gazebo</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Release documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#install-requirements">Install requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#build-the-documentation">Build the documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#deploying">Deploying</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Panda Gazebo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Release documentation</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/rickstaa/Panda Gazebo/blob/noetic/panda_gazebo/docs/source/dev/doc_dev.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="release-documentation">
+<h1><a class="toc-backref" href="#id1" role="doc-backlink">Release documentation</a><a class="headerlink" href="#release-documentation" title="Permalink to this heading"></a></h1>
+<nav class="contents" id="table-of-contents">
+<p class="topic-title">Table of Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#release-documentation" id="id1">Release documentation</a></p>
+<ul>
+<li><p><a class="reference internal" href="#install-requirements" id="id2">Install requirements</a></p></li>
+<li><p><a class="reference internal" href="#build-the-documentation" id="id3">Build the documentation</a></p></li>
+<li><p><a class="reference internal" href="#deploying" id="id4">Deploying</a></p></li>
+</ul>
+</li>
+</ul>
+</nav>
+<section id="install-requirements">
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">Install requirements</a><a class="headerlink" href="#install-requirements" title="Permalink to this heading"></a></h2>
+<p>Building the <a class="reference external" href="https://github.com/rickstaa/panda-gazebo/">panda_gazebo</a> documentation requires <a class="reference external" href="http://www.sphinx-doc.org/en/master">sphinx</a>,
+the <code class="docutils literal notranslate"><span class="pre">panda_gazebo</span></code> package and several system and python packages. To install the system dependencies, run the following command
+inside your catkin workspace:</p>
+<p><code class="docutils literal notranslate"><span class="pre">`bash</span>
+<span class="pre">rosdep</span> <span class="pre">install</span> <span class="pre">--from-path</span> <span class="pre">src</span> <span class="pre">--ignore-src</span> <span class="pre">-r</span> <span class="pre">-y</span> <span class="pre">--skip-keys</span> <span class="pre">libfranka</span> <span class="pre">-t</span> <span class="pre">doc</span>
+<span class="pre">`</span></code></p>
+<p>Additionally, the Python dependencies can be installed using the following <a class="reference external" href="https://pypi.org/project/pip/">pip</a> command inside the <code class="docutils literal notranslate"><span class="pre">./panda_gazebo</span></code> folder:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements/doc_requirements.txt
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You can also install these requirements in a virtual environment. If you want to do so, you are advised to use the
+<a class="reference external" href="https://docs.python.org/3/library/venv.html">venv</a> package instead of <a class="reference external" href="https://docs.conda.io/en/latest/">Conda</a> since the latter is known to cause issues when used with ROS. If you use the
+<a class="reference external" href="https://docs.python.org/3/library/venv.html">venv</a> package, please use the <cite>–system-site-packages</cite> flag when creating the virtual environment. This will
+ensure all the ROS system packages are available in the virtual environment. This is required because the <a class="reference external" href="http://www.sphinx-doc.org/en/master">sphinx</a>
+package needs to be able to import the <cite>panda_gazebo</cite> ROS package.</p>
+</div>
+</section>
+<section id="build-the-documentation">
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Build the documentation</a><a class="headerlink" href="#build-the-documentation" title="Permalink to this heading"></a></h2>
+<p>To build the Python and ROS documentation, go into the <a class="reference external" href="https://github.com/rickstaa/panda-gazebo/tree/noetic/panda_gazebo/docs">docs/</a> directory and run the
+<code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">docs</span></code> command. This command will use <a class="reference external" href="http://wiki.ros.org/rosdoc_lite">rosdoc_lite</a> and <a class="reference external" href="http://www.sphinx-doc.org/en/master">sphinx</a> to generate the
+html documentation inside the <code class="docutils literal notranslate"><span class="pre">docs/build/html</span></code> directory. If the documentation is successfully built, you can also use the
+<code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">linkcheck</span></code> command to check for broken links.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you used a virtual environment, ensure you are in the environment where you installed the panda_gazebo package with its
+dependencies.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You can also use the <cite>make html</cite> command to build the documentation. Although warnings and errors are now coloured, it does not produce the
+accompanying ROS package documentation.</p>
+</div>
+</section>
+<section id="deploying">
+<h2><a class="toc-backref" href="#id4" role="doc-backlink">Deploying</a><a class="headerlink" href="#deploying" title="Permalink to this heading"></a></h2>
+<p>The documentation is automatically built and deployed to the Github Pages site by the <a class="reference external" href="https://github.com/rickstaa/panda-gazebo/actions/workflows/documentation.yml">Docs workflow</a> when a new version
+is released. You must <a class="reference external" href="https://rickstaa.dev/panda-gazebo/dev/contributing.html#release-guidelines">create a new release</a> to deploy documentation to the Github Pages. Additionally, you can manually
+deploy the documentation through the <a class="reference external" href="https://docs.github.com/en/actions/using-workflows/triggering-a-workflow#defining-inputs-for-manually-triggered-workflows">GitHub action interface</a> by running the <a class="reference external" href="https://github.com/rickstaa/panda-gazebo/actions/workflows/documentation.yml">Docs workflow</a>.</p>
+<p>If you used a virtual environment, ensure you are in the environment where you installed the panda_gazebo package with its dependencies.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="contributing.html" class="btn btn-neutral float-left" title="Contribute to panda-gazebo" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="license.html" class="btn btn-neutral float-right" title="License" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Rick Staa.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

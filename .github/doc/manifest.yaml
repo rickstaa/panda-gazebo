@@ -1,0 +1,56 @@
+actions:
+- FollowJointTrajectory
+authors: Rick Staa <rick.staa@outlook.com>
+brief: ''
+bugtracker: https://github.com/rickstaa/panda-gazebo/issues
+depends:
+- rviz
+- gazebo_msgs
+- actionlib_msgs
+- python3-catkin-tools
+- joint_trajectory_controller
+- controller_manager_msgs
+- franka_description
+- catkin
+- trajectory_msgs
+- moveit
+- rospy
+- geometry_msgs
+- python3-catkin-pkg
+- effort_controllers
+- panda_moveit_config
+- message_runtime
+- gazebo_ros
+- sensor_msgs
+- position_controllers
+- franka_gazebo
+- actionlib
+- std_msgs
+- control_msgs
+- message_generation
+description: A package that allows you to train several ROS based robots using Gazebo.
+license: Rick Staa copyright
+maintainers: Rick Staa <rick.staa@outlook.com>
+msgs:
+- JointLimits
+- BoundingRegion
+package_type: package
+repo_url: https://github.com/rickstaa/panda-gazebo
+srvs:
+- SetJointEfforts
+- GetEeRpy
+- GetRandomJointPositions
+- GetRandomEePose
+- SetJointPositions
+- AddBox
+- GetEe
+- GetControlledJoints
+- SetGripperWidth
+- AddPlane
+- SetJointCommands
+- GetEePose
+- SetEePose
+- GetMoveItControlledJoints
+- GetEePoseJointConfig
+- SetEe
+url: https://rickstaa.dev/panda-gazebo/
