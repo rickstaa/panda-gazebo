@@ -55,12 +55,12 @@ jobs:
             run: |
                 . /devel/setup.bash
                 pip install -r ../src/panda_gazebo/requirements/doc_requirements.txt
-                rosdoc_lite ../src/panda_gazebo -o ../src/panda_gazebo/docs/build/
+                rosdoc_lite ../src/panda_gazebo -o ../src/panda_gazebo/docs/build
 
         - name: Deploy
           uses: peaceiris/actions-gh-pages@v3
           with:
             publish_branch: gh-pages
             github_token: ${{ secrets.GITHUB_TOKEN }}
-            publish_dir: src/panda_gazebo/docs/build/
+            publish_dir: src/panda_gazebo/docs/build/html
             force_orphan: true
