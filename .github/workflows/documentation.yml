@@ -55,6 +55,8 @@ jobs:
             run: |
                 . /devel/setup.bash
                 pip install -r panda_gazebo/requirements/doc_requirements.txt
+                ls
+                ls ..
                 rosdoc_lite ../src/panda_gazebo
 
         - name: Deploy
