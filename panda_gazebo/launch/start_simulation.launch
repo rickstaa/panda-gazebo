@@ -11,7 +11,7 @@
   <arg name="physics" default="dart" doc="The physics engine used by gazebo"/>
   <!--Control arguments-->
   <!--    The control type used for controlling the robot (Options: Trajectory, position, effort)-->
-  <arg name="control_type" default="effort" doc="The type of control used for controlling the arm. Options: trajectory, position, effort"/>
+  <arg name="control_type" default="trajectory" doc="The type of control used for controlling the arm. Options: trajectory, position, effort"/>
 
   <!--Launch gazebo environment-->
   <include file="$(find panda_gazebo)/launch/start_world.launch.xml">
