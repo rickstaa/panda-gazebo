@@ -50,9 +50,10 @@ jobs:
           uses: addnab/docker-run-action@v3
           with:
             image:    panda_gazebo:noetic
+            shell: bash
             options:  ${{github.workspace}}/devel:/devel/
             run: |
-                source /devel/setup.bash
+                . /devel/setup.bash
                 pip install -r panda_gazebo/requirements/doc_requirements.txt
                 rosdoc_lite ../src/panda_gazebo
 
