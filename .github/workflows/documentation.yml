@@ -53,8 +53,6 @@ jobs:
             shell: bash
             options: -v ${{github.workspace}}/src:/src/ -v ${{github.workspace}}/devel:/devel/
             run: |
-                ls
-                ls ..
                 . /devel/setup.bash
                 pip install -r ../src/panda_gazebo/requirements/doc_requirements.txt
                 rosdoc_lite ../src/panda_gazebo
