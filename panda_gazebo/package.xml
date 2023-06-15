@@ -55,7 +55,7 @@
   <build_depend>actionlib</build_depend>
   <build_depend>actionlib_msgs</build_depend>
   <build_depend>control_msgs</build_depend>
-  <build_depend>python-catkin-pkg</build_depend>
+  <build_depend>python3-catkin-pkg</build_depend>
   <build_depend>python3-catkin-tools</build_depend>
 
   <!--Extra build dependencies
