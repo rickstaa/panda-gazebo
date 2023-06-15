@@ -55,7 +55,7 @@ jobs:
             run: |
                 . /devel/setup.bash
                 pip install -r ../src/panda_gazebo/requirements/doc_requirements.txt
-                rosdoc_lite ../src/panda_gazebo
+                rosdoc_lite ../src/panda_gazebo -o ../src/panda_gazebo/docs/build/
 
         - name: Deploy
           uses: peaceiris/actions-gh-pages@v3
