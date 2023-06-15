@@ -51,7 +51,7 @@ jobs:
           with:
             image:    panda_gazebo:noetic
             shell: bash
-            options:  ${{github.workspace}}/devel:/devel/
+            options:  -v ${{github.workspace}}/devel:/devel/
             run: |
                 . /devel/setup.bash
                 pip install -r panda_gazebo/requirements/doc_requirements.txt
