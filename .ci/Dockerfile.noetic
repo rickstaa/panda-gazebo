@@ -1,6 +1,11 @@
 FROM osrf/ros:noetic-desktop-focal
 
-# Install system dependencies
+# Install system dependencies + preknown ROS dependencies.
+# NOTE: dependencies are found using the `rosdep install --from-path src --ignore-src -r -y --simulate --reinstall .` command.
 RUN apt-get update && apt-get install -y \
+    python3-catkin-pkg \
     python3-catkin-tools \
+    libgtest-dev \
+    ros-noetic-libfranka \
+    libeigen3-dev \
     && rm -rf /var/lib/apt/lists/*

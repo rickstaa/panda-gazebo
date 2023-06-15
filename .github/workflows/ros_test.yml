@@ -17,6 +17,8 @@ jobs:
         mkdir -p ${{github.workspace}}/build     
         mkdir -p ${{github.workspace}}/devel     
 
+    - uses: docker/setup-buildx-action@v2
+
     - name: Checkout
       uses: actions/checkout@v3
       with:
@@ -29,12 +31,23 @@ jobs:
         tags: panda_gazebo:noetic
         file: .ci/Dockerfile.noetic
         push: false
+        load: true
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
   
     - name: Compile ROS package with Catkin Tools
       uses: addnab/docker-run-action@v3
       with:
         image:    panda_gazebo:noetic
-        options:  -v ${{github.workspace}}/src:/ros/src/  # only mount source here
-        run: |
-            catkin config --workspace /ros/ --init --extend /opt/ros/noetic --cmake-args -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-            catkin build --workspace /ros/ --interleave-output --verbose
+        options:  -v ${{github.workspace}}/src:/src/ -v ${{github.workspace}}/devel:/devel/
+        run: | # Double check if dockerfile contained all the necessary dependencies
+            apt-get update
+            rosdep install --from-paths /src --ignore-src --rosdistro noetic -y
+            catkin config --init --extend /opt/ros/noetic
+            catkin build --interleave-output --verbose
+    
+    - name: Print folder contents
+      run: |
+        ls -la ${{github.workspace}}/src
+        ls -la ${{github.workspace}}/build
+        ls -la ${{github.workspace}}/devel
