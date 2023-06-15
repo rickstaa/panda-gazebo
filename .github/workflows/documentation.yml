@@ -1,10 +1,9 @@
 name: Docs
 on:
-  # push:
-  #   tags:
-  #     - v*.*.*
-  # workflow_dispatch:
-  pull_request:
+  push:
+    tags:
+      - v*.*.*
+  workflow_dispatch:
 permissions:
   contents: write
 jobs:
