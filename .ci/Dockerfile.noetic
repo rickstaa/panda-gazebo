@@ -8,7 +8,6 @@ RUN apt-get update && apt-get install -y \
     libgtest-dev \
     ros-noetic-libfranka \
     libeigen3-dev \
-    ros-noetic-rosdoc-lite \
     ros-noetic-joint-trajectory-controller \
     ros-noetic-moveit-ros-move-group \
     ros-noetic-moveit-fake-controller-manager \
@@ -22,4 +21,6 @@ RUN apt-get update && apt-get install -y \
     ros-noetic-effort-controllers \
     ros-noetic-combined-robot-hw \
     ros-noetic-moveit-commander \
+    ros-noetic-rosdoc-lite \
+    python3-pip \
     && rm -rf /var/lib/apt/lists/*
