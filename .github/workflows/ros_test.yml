@@ -38,7 +38,8 @@ jobs:
       with:
         image:    panda_gazebo:noetic
         options:  -v ${{github.workspace}}/src:/src/ -v ${{github.workspace}}/devel:/devel/
-        run: | # Double check if dockerfile contained all the necessary dependencies
+        run: |
+            rosdep install --from-paths /src --ignore-src --rosdistro noetic -y --simulate  # Check if all dependencies were in the Docker File
             apt-get update
             rosdep install --from-paths /src --ignore-src --rosdistro noetic -y
             catkin config --init --extend /opt/ros/noetic
