@@ -12,6 +12,7 @@ the ``panda_gazebo`` package and several system and python packages. To install 
 inside your catkin workspace:
 
 .. code-block:: bash
+
     rosdep install --from-path src --ignore-src -r -y -t doc
 
 Additionally, the Python dependencies can be installed using the following `pip`_ command inside the ``./panda_gazebo`` folder:
