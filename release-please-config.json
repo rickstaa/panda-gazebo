@@ -1,7 +1,7 @@
 {
     "packages": {
-        "./panda_gazebo": {
-            "changelog-path": "../CHANGELOG.md",
+        "panda_gazebo": {
+            "changelog-path": "CHANGELOG.md",
             "release-type": "python",
             "bump-minor-pre-major": false,
             "bump-patch-for-minor-pre-major": false,
