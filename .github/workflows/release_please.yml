@@ -4,7 +4,7 @@ name: Panda Gazebo release
 on:
   push:
     branches:
-      - main
+      - noetic
 
 permissions:
   contents: write
