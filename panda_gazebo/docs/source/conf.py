@@ -103,7 +103,7 @@ html_theme_options = {"logo_only": True}
 html_context = {
     "display_github": True,  # Add 'Edit on Github' link instead of 'View page source'
     "github_user": "rickstaa",
-    "github_repo": project,
+    "github_repo": "panda-gazebo",
     "github_version": "noetic",
     "conf_py_path": "/panda_gazebo/docs/source/",  # needs leading and trailing slashes!
 }
