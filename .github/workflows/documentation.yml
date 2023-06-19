@@ -24,7 +24,7 @@ jobs:
             submodules: true
     
         - name: Build Docker Image
-          uses: docker/build-push-action@v2
+          uses: docker/build-push-action@v4
           with:
             tags: panda_gazebo:noetic
             file: .ci/Dockerfile.noetic
