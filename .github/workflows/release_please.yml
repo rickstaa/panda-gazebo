@@ -1,4 +1,4 @@
-# Github action that uses the 'release-please' tool to update the version, changelog 
+# Github action that uses the 'release-please' tool to update the version, changelog
 # and create new releases.
 name: Panda Gazebo release
 on:
@@ -16,5 +16,5 @@ jobs:
     steps:
       - uses: rickstaa/release-please-action@optional_pyproject_toml
         with:
-          token: ${{ secrets.GA_PUBLIC_PAT }}
+          token: ${{ secrets.PLEASE_RELEASE_PAT }}
           command: manifest
