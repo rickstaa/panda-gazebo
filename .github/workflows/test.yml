@@ -13,7 +13,8 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           reporter: github-check
           level: warning
-          exclude: CHANGELOG.md
+          exclude: |
+            ./CHANGELOG.md
   alex: # Checks docs for inconsiderate writing
     name: runner / alex
     runs-on: ubuntu-latest

@@ -72,7 +72,7 @@ from std_msgs.msg import Float64
 # Global script variables
 GRASP_EPSILON = 0.003  # NOTE: Uses 'kGraspRestingThreshold' from 'franka_gripper.sim.h'
 GRASP_SPEED = 0.1  # NOTE: Uses 'kDefaultGripperActionSpeed' from 'franka_gripper.sim.h'
-GRASP_FORCE = 10  # Panda force information: {Continious force: 70N, max_force: 140 N}
+GRASP_FORCE = 10  # Panda force information: {continuous force: 70N, max_force: 140 N}
 WAIT_TILL_DONE_TIMEOUT = 5  # How long to wait on a action [s].
 DIRNAME = os.path.dirname(__file__)
 PANDA_JOINTS = {

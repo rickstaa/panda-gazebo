@@ -263,7 +263,7 @@ class PandaControlSwitcher(object):
 
     def wait_for_control_type(self, control_group, control_type, timeout=None, rate=10):
         """Function that can be used to wait till all the controllers used for a given
-        'control_group' and 'control_type' are running. Usefull 6 when you expect a
+        'control_group' and 'control_type' are running. Useful 6 when you expect a
         launch file to load certain controllers.
 
         Args:
