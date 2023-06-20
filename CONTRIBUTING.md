@@ -4,11 +4,11 @@
 
 We love your input! 🚀 We want to make contributing to this project as easy and transparent as possible, whether it's:
 
-* [Reporting a bug](https://github.com/rickstaa/panda-gazebo/issues).
-* [Discussing the current state of the code](https://github.com/rickstaa/panda-gazebo/discussions).
-* [Submitting a fix](https://github.com/rickstaa/panda-gazebo/pulls).
-* [Proposing new features](https://github.com/rickstaa/panda-gazebo/issues).
-* Becoming a maintainer.
+*   [Reporting a bug](https://github.com/rickstaa/panda-gazebo/issues).
+*   [Discussing the current state of the code](https://github.com/rickstaa/panda-gazebo/discussions).
+*   [Submitting a fix](https://github.com/rickstaa/panda-gazebo/pulls).
+*   [Proposing new features](https://github.com/rickstaa/panda-gazebo/issues).
+*   Becoming a maintainer.
 
 ## We Develop with Github
 
@@ -20,15 +20,15 @@ We use Github to host code, track issues and feature requests, and accept pull r
 
 Pull requests are the best way to propose changes to the codebase (we use [Github Flow](https://docs.github.com/en/get-started/quickstart/github-flow)). We actively welcome your pull requests:
 
-1. Fork the repo and create your branch from `main`.
-2. Add tests if you've added code that should be tested.
-3. If you've changed APIs, update the documentation.
-4. If you changed the documentation, please ensure it builds (see [Documentation guidelines](#documentation-guidelines)).
-5. Ensure the test suite passes (i.e. `npm run test`). If snapshots fail, please check if this is intended and update the snapshots if necessary using the `npm run test:update:snapshot` command.
-6. Make sure your code lints.
-7. Commit your changes.
-8. Create a pull request to pull the changes of your development branch onto the `main` branch.
-9. Ensure that all the [pull request checks](https://github.com/rickstaa/panda-gazebo/actions) were successful.
+1.  Fork the repo and create your branch from `main`.
+2.  Add tests if you've added code that should be tested.
+3.  If you've changed APIs, update the documentation.
+4.  If you changed the documentation, please ensure it builds (see [Documentation guidelines](#documentation-guidelines)).
+5.  Ensure the test suite passes (i.e. `npm run test`). If snapshots fail, please check if this is intended and update the snapshots if necessary using the `npm run test:update:snapshot` command.
+6.  Make sure your code lints.
+7.  Commit your changes.
+8.  Create a pull request to pull the changes of your development branch onto the `main` branch.
+9.  Ensure that all the [pull request checks](https://github.com/rickstaa/panda-gazebo/actions) were successful.
 
 ### Report bugs using Github's [issues](https://github.com/rickstaa/panda-gazebo/issues)
 
@@ -42,13 +42,13 @@ We use GitHub issues to track public bugs. Report a bug by [opening a new issue]
 
 **Great Bug Reports** tend to have:
 
-* A quick summary and/or background.
-* Steps to reproduce:
-  * Be specific!
-  * Give sample code if you can. [A StackOverflow question](http://stackoverflow.com/q/12488905/180626) includes sample code that *anyone* with a base R setup can run to reproduce the error.
-* What you expected would happen
-* What happens?
-* Notes (possibly including why you think this might be happening or stuff you tried that didn't work).
+*   A quick summary and/or background.
+*   Steps to reproduce:
+    *   Be specific!
+    *   Give sample code if you can. [A StackOverflow question](http://stackoverflow.com/q/12488905/180626) includes sample code that *anyone* with a base R setup can run to reproduce the error.
+*   What you expected would happen
+*   What happens?
+*   Notes (possibly including why you think this might be happening or stuff you tried that didn't work).
 
 People *love* thorough bug reports. I'm not even kidding.
 
@@ -64,12 +64,12 @@ We use several language guidelines to increase code quality, readability, and us
 
 <!--alex ignore black -->
 
-* **Linting:** Please ensure your Python code doesn't contain any errors by checking it with the [flake8 python linter](https://flake8.pycqa.org/en/latest/).
-* **Formatting:** Please format all your scripts using the [black python formatter](https://github.com/psf/black).
+*   **Linting:** Please ensure your Python code doesn't contain any errors by checking it with the [flake8 python linter](https://flake8.pycqa.org/en/latest/).
+*   **Formatting:** Please format all your scripts using the [black python formatter](https://github.com/psf/black).
 
 ### Markdown guidelines
 
-* **Linting and formatting:** Please ensure your markdown code contains no errors and is formatted according to the [remark-lint](https://github.com/remarkjs/remark-lint) style guidelines.
+*   **Linting and formatting:** Please ensure your markdown code contains no errors and is formatted according to the [remark-lint](https://github.com/remarkjs/remark-lint) style guidelines.
 
 ## GitHub actions
 
@@ -79,9 +79,9 @@ The [Panda Gazebo](https://github.com/rickstaa/panda-gazebo) package contains se
 
 The [Panda Gazebo](https://github.com/rickstaa/panda-gazebo) package also contains several pre-commit hooks that enforce the guidelines above before committing. To enable these hooks, please:
 
-1. Install [node](https://nodejs.org/en/download/package-manager).
-2. Install [python](https://www.python.org/downloads).
-3. Run `npm install .` and `pip install -r requirements/dev_requirements.txt` to install husky and the required linters.
+1.  Install [node](https://nodejs.org/en/download/package-manager).
+2.  Install [python](https://www.python.org/downloads).
+3.  Run `npm install .` and `pip install -r requirements/dev_requirements.txt` to install husky and the required linters.
 
 ## Release guidelines
 
