@@ -19,15 +19,15 @@ except ImportError:  # For Python 2 compatibility
 
 
 if __name__ == "__main__":
-    # Initiate MoveIt commander and node
+    # Initiate MoveIt commander and node.
     moveit_commander.roscpp_initialize(sys.argv)
     rospy.init_node("move_group_python_interface_tutorial", anonymous=True)
 
-    # Create commanders
+    # Create commanders.
     robot = moveit_commander.RobotCommander()
     scene = moveit_commander.PlanningSceneInterface()
 
-    # Load arm and hand groups
+    # Load arm and hand groups.
     move_group = moveit_commander.MoveGroupCommander("panda_arm")
     hand_move_group = moveit_commander.MoveGroupCommander("hand")
 
@@ -49,7 +49,7 @@ if __name__ == "__main__":
     group_names = robot.get_group_names()
     print("============ Available Planning Groups:", robot.get_group_names())
 
-    # Sometimes for debugging it is useful to print the entire state of the
+    # Sometimes for debugging it is useful to print the entire state of the.
     # robot:
     print("============ Printing robot state")
     print(robot.get_current_state())
@@ -82,7 +82,7 @@ if __name__ == "__main__":
 
     # # # METHOD 2
     # # # The go command can be called with joint values, poses, or without any
-    # # # parameters if you have already set the pose or joint target for the group
+    # # # parameters if you have already set the pose or joint target for the group.
     # # move_group.go(joint_goal, wait=True)
 
     # # # Calling ``stop()`` ensures that there is no residual movement

@@ -17,8 +17,8 @@ from panda_gazebo.core.control_server import PandaControlServer
 if __name__ == "__main__":  # noqa: C901
     rospy.init_node("panda_control_server")
 
-    # Get ROS parameters
-    try:  # Auto fill joint traj position field if left empty
+    # Get ROS parameters.
+    try:  # Auto fill joint traj position field if left empty.
         autofill_traj_positions = rospy.get_param("~autofill_traj_positions")
     except KeyError:
         autofill_traj_positions = False
@@ -26,19 +26,19 @@ if __name__ == "__main__":  # noqa: C901
         load_gripper = rospy.get_param("~load_gripper")
     except KeyError:
         load_gripper = True
-    try:  # Check if set joint commands service should be loaded
+    try:  # Check if set joint commands service should be loaded.
         load_set_joint_commands_service = rospy.get_param(
             "~load_set_joint_commands_service"
         )
     except KeyError:
         load_set_joint_commands_service = True
-    try:  # Check if arm follow joint trajectory action should be loaded
+    try:  # Check if arm follow joint trajectory action should be loaded.
         load_arm_follow_joint_trajectory_action = rospy.get_param(
             "~load_arm_follow_joint_trajectory_action"
         )
     except KeyError:
         load_arm_follow_joint_trajectory_action = False
-    try:  # Check if extra services should be loaded
+    try:  # Check if extra services should be loaded.
         load_extra_services = rospy.get_param("~load_extra_services")
     except KeyError:
         load_extra_services = False
@@ -51,7 +51,7 @@ if __name__ == "__main__":  # noqa: C901
     except KeyError:
         controllers_check_rate = 0.1
 
-    # Start control server
+    # Start control server.
     control_server = PandaControlServer(
         autofill_traj_positions=autofill_traj_positions,
         load_gripper=load_gripper,
@@ -61,4 +61,4 @@ if __name__ == "__main__":  # noqa: C901
         brute_force_grasping=brute_force_grasping,
         controllers_check_rate=controllers_check_rate,
     )
-    rospy.spin()  # Maintain the service open
+    rospy.spin()  # Maintain the service open.

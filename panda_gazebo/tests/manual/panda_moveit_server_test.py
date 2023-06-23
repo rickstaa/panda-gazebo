@@ -129,7 +129,7 @@ if __name__ == "__main__":
     # resp = set_ee_srv.call(req)
     # print(resp.message)
 
-    # # Set back
+    # # Set back.
     # req = SetEeRequest()
     # req.ee_name = "panda_link8"
     # set_ee_srv = rospy.ServiceProxy(

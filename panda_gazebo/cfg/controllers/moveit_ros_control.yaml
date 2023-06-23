@@ -1,5 +1,5 @@
-# Configuration that contains the MoveIt config values for when the hand is attached
-# Make controllers visible to MoveIt
+# Configuration that contains the MoveIt config values for when the hand is attached.
+# Make controllers visible to MoveIt.
 move_group:
   controller_list:
     - name: panda_arm_controller

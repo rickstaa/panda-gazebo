@@ -17,7 +17,7 @@ from panda_gazebo.core.moveit_server import PandaMoveItPlannerServer
 if __name__ == "__main__":
     rospy.init_node("panda_moveit_planner_server")
 
-    # Get private parameters specified in the launch file
+    # Get private parameters specified in the launch file.
     try:
         arm_ee_link = rospy.get_param("~end_effector")
     except KeyError:
@@ -26,20 +26,20 @@ if __name__ == "__main__":
         load_gripper = rospy.get_param("~load_gripper")
     except KeyError:
         load_gripper = True
-    try:  # Check if set ee pose service should be loaded
+    try:  # Check if set ee pose service should be loaded.
         load_set_ee_pose_service = rospy.get_param("~load_set_ee_pose_service")
     except KeyError:
         load_set_ee_pose_service = True
-    try:  # Check if extra services should be loaded
+    try:  # Check if extra services should be loaded.
         load_extra_services = rospy.get_param("~load_extra_services")
     except KeyError:
         load_extra_services = False
 
-    # Start MoveIt planner server
+    # Start MoveIt planner server.
     moveit_planner_server = PandaMoveItPlannerServer(
         arm_ee_link=arm_ee_link,
         load_gripper=load_gripper,
         load_set_ee_pose_service=load_set_ee_pose_service,
         load_extra_services=load_extra_services,
     )
-    rospy.spin()  # Maintain the service open
+    rospy.spin()  # Maintain the service open.

@@ -14,7 +14,7 @@ from roscpp.srv import SetLoggerLevel, SetLoggerLevelRequest
 if __name__ == "__main__":
     rospy.init_node("set_franka_gripper_logger_level")
 
-    # Get input argument
+    # Get input argument.
     parser = argparse.ArgumentParser(description="Retrieve log level")
     parser.add_argument(
         "-l", "--level", nargs="?", type=str, default="warn", help="logging level"

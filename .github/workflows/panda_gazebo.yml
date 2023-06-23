@@ -7,7 +7,7 @@ on:
     tags-ignore:
       - v*.*.*
 jobs:
-  markdown-lint: # Lints the markdown code
+  markdown-lint: # Lints the markdown code.
     name: runner / remark-lint
     runs-on: ubuntu-latest
     steps:
@@ -18,7 +18,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           reporter: github-check
           level: warning
-  black: # Check python code format
+  black: # Check python code format.
     name: runner / black
     runs-on: ubuntu-latest
     steps:
@@ -28,7 +28,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           reporter: github-check
           level: warning
-  flake8: # Lints python code
+  flake8: # Lints python code.
     name: runner / flake8
     runs-on: ubuntu-latest
     steps:

@@ -14,7 +14,7 @@ from roscpp.srv import SetLoggerLevel, SetLoggerLevelRequest
 if __name__ == "__main__":
     rospy.init_node("set_franka_gazebo_logger_level")
 
-    # Get input argument
+    # Get input argument.
     parser = argparse.ArgumentParser(description="Retrieve log level")
     parser.add_argument(
         "-l", "--level", nargs="?", type=str, default="error", help="logging level"

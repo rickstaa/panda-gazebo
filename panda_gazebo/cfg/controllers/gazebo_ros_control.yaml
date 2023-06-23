@@ -1,4 +1,4 @@
-# Configuration file that contains the gazebo ros_control configuration values
+# Configuration file that contains the gazebo ros_control configuration values.
 gazebo_ros_control:
   pid_gains:
     panda_joint1: { p: 600, d: 30, i: 0.0 }

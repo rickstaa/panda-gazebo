@@ -57,7 +57,7 @@ autoapi_dirs = [
     ),
 ]
 
-# Extensions settings
+# Extensions settings.
 autoapi_member_order = "bysource"
 autoapi_options = [
     "members",
@@ -68,7 +68,7 @@ autoapi_options = [
 ]
 autoapi_template_dir = "_templates/autoapi"
 
-# Add mappings
+# Add mappings.
 intersphinx_mapping = {
     "python3": ("https://docs.python.org/3", None),
     "numpy": ("https://numpy.org/doc/stable", None),
@@ -79,7 +79,7 @@ templates_path = ["_templates"]
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-# This patterns also effect to html_static_path and html_extra_path
+# This patterns also effect to html_static_path and html_extra_path.
 exclude_patterns = []
 
 # -- Options for HTML output -------------------------------------------------

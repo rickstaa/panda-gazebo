@@ -1,5 +1,5 @@
 # Configuration file that contains the configuration values for setting up the panda
-# effort controllers
+# effort controllers.
 panda_arm_joint1_effort_controller:
   type: effort_controllers/JointEffortController
   joint: panda_joint1

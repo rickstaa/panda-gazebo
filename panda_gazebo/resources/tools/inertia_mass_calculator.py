@@ -6,7 +6,7 @@ import math
 
 import numpy as np
 
-# Script settings
+# Script settings.
 CUBE_WIDTH = 0.02
 CUBE_DEPTH = 0.032
 CUBE_HEIGHT = 0.064
@@ -90,7 +90,7 @@ def get_cylinder_inertia(radius, height, mass):
 
 
 if __name__ == "__main__":
-    # Cue calculations
+    # Cue calculations.
     print("==Cube==")
     cube_mass = get_cube_mass(
         height=CUBE_HEIGHT, width=CUBE_WIDTH, depth=CUBE_DEPTH, rho=MATERIAL_DENSITY
@@ -103,7 +103,7 @@ if __name__ == "__main__":
     print(I_cube)
     print("\n")
 
-    # Cylinder calculations
+    # Cylinder calculations.
     print("==Cylinder==")
     cylinder_mass = get_cylinder_mass(
         radius=CYLINDER_RADIUS, height=CYLINDER_HEIGHT, rho=MATERIAL_DENSITY

@@ -154,7 +154,7 @@ class PandaMoveItPlannerServer(object):
                 )
                 sys.exit(0)
 
-        # Initialize group commanders
+        # Initialize group commanders.
         try:
             rospy.logdebug("Initialize MoveIt Panda arm commander.")
             self.move_group_arm = moveit_commander.MoveGroupCommander(arm_move_group)
@@ -200,7 +200,7 @@ class PandaMoveItPlannerServer(object):
             queue_size=10,
         )
 
-        # Retrieve parameters and create dynamic reconfigure server
+        # Retrieve parameters and create dynamic reconfigure server.
         # NOTE: Used to change the max velocity and acceleration scaling that is used
         # by the MoveIt control server.
         self._get_params()
@@ -210,7 +210,7 @@ class PandaMoveItPlannerServer(object):
         # Create node services services ########
         ########################################
 
-        # Create main PandaMoveItPlannerServer services
+        # Create main PandaMoveItPlannerServer services.
         rospy.loginfo("Creating '%s' services." % rospy.get_name())
         if load_set_ee_pose_service:
             rospy.logdebug(
@@ -308,7 +308,7 @@ class PandaMoveItPlannerServer(object):
                     self._hand_set_joint_positions_callback,
                 )
 
-        # Planning scene services
+        # Planning scene services.
         rospy.logdebug(
             "Creating '%s/planning_scene/add_box' service." % rospy.get_name()
         )
@@ -328,7 +328,7 @@ class PandaMoveItPlannerServer(object):
 
         rospy.loginfo("'%s' services created successfully." % rospy.get_name())
 
-        # Initiate service msgs
+        # Initiate service msgs.
         self.ee_pose_target = Pose()
         self.joint_positions_target = {}
 
@@ -354,7 +354,7 @@ class PandaMoveItPlannerServer(object):
             else [],
         }
 
-        # Retrieve joint state mask
+        # Retrieve joint state mask.
         # NOTE: Used to split joint_states into arm and hand
         self._arm_states_mask = [
             joint in self._controlled_joints_dict["arm"]
@@ -416,7 +416,7 @@ class PandaMoveItPlannerServer(object):
         """
         control_group = control_group.lower()
 
-        # Execute
+        # Execute.
         retval = []
         if control_group == "arm":
             (arm_plan_retval, _, _, error_code) = self.move_group_arm.plan()
@@ -449,7 +449,7 @@ class PandaMoveItPlannerServer(object):
                 rospy.logwarn("Hand commands not executed since gripper is not loaded.")
                 retval.append(False)
         elif control_group == "both":
-            # Get hand plan
+            # Get hand plan.
             if not self._load_gripper:
                 rospy.logwarn_once(
                     "Hand commands not executed since gripper is not loaded."
@@ -457,7 +457,7 @@ class PandaMoveItPlannerServer(object):
             else:
                 (hand_plan_retval, _, _, error_code) = self.move_group_hand.plan()
 
-            # Get arm plan
+            # Get arm plan.
             (arm_plan_retval, _, _, error_code) = self.move_group_arm.plan()
 
             # Execute arm/hand plans
@@ -520,7 +520,7 @@ class PandaMoveItPlannerServer(object):
         joint_positions = list(input_msg.joint_positions)
         control_group = control_group.lower()
 
-        # Validate control_group
+        # Validate control_group.
         if control_group not in ["arm", "hand", "both"]:
             logwarn_msg = (
                 "The '%s' control group does not exist. Please specify a valid control "
@@ -543,7 +543,7 @@ class PandaMoveItPlannerServer(object):
                 log_message=logwarn_msg,
             )
         elif control_group == "both" and not self._load_gripper:
-            # Change to arm if the hand is not loaded
+            # Change to arm if the hand is not loaded.
             control_group = "arm"
 
         # Get controlled joints, throw warning if control group is incorrect.
@@ -559,7 +559,7 @@ class PandaMoveItPlannerServer(object):
                 ]
             )
 
-        # Get the current state of the arm and hand
+        # Get the current state of the arm and hand.
         arm_state_dict = dict(
             zip(
                 self.move_group_arm.get_active_joints(),
@@ -577,7 +577,7 @@ class PandaMoveItPlannerServer(object):
         # Generate 'moveit_commander' control command
         controlled_joints_size = len(controlled_joints)
         if len(joint_names) == 0:
-            # Check if enough joint position commands were given
+            # Check if enough joint position commands were given.
             if len(joint_positions) > controlled_joints_size:
                 logwarn_msg = (
                     "You specified %s while the Panda Robot %s only %s %s. Only the "
@@ -610,7 +610,7 @@ class PandaMoveItPlannerServer(object):
                 )
                 rospy.logwarn(logwarn_msg)
 
-                # Remove the extra joint commands
+                # Remove the extra joint commands.
                 joint_positions = joint_positions[:controlled_joints_size]
             elif len(joint_positions) < controlled_joints_size:
                 logwarn_msg = (
@@ -639,7 +639,7 @@ class PandaMoveItPlannerServer(object):
                 )
                 rospy.logwarn(logwarn_msg)
 
-                # Fill the missing joint commands
+                # Fill the missing joint commands.
                 if control_group == "both":
                     joint_states = (
                         list(arm_state_dict.values()) + list(hand_state_dict.values())
@@ -655,7 +655,7 @@ class PandaMoveItPlannerServer(object):
                     )
                 joint_positions = joint_positions + joint_states[len(joint_positions) :]
 
-            # Return moveit_commander_control command dictionary
+            # Return moveit_commander_control command dictionary.
             if control_group == "arm":
                 control_commands = {"arm": joint_positions}
             elif control_group == "hand":
@@ -667,7 +667,7 @@ class PandaMoveItPlannerServer(object):
                 }
             return control_commands
         else:
-            # Check if enough control values were given
+            # Check if enough control values were given.
             if len(joint_names) != len(joint_positions):
                 logwarn_msg = (
                     "You specified %s while the 'joint_names' field of the "
@@ -703,7 +703,7 @@ class PandaMoveItPlannerServer(object):
                     },
                 )
 
-            # Validate joint_names
+            # Validate joint_names.
             invalid_joint_names = [
                 joint_name
                 for joint_name in joint_names
@@ -711,7 +711,7 @@ class PandaMoveItPlannerServer(object):
             ]
             input_command_dict = dict(zip(joint_names, joint_positions))
             if len(invalid_joint_names) != 0:
-                # Remove invalid keys and throw warning
+                # Remove invalid keys and throw warning.
                 [input_command_dict.pop(joint, None) for joint in invalid_joint_names]
                 logwarn_msg = (
                     "Ignoring %s %s since %s invalid. Valid joint names for "
@@ -726,18 +726,18 @@ class PandaMoveItPlannerServer(object):
                 )
                 rospy.logwarn(logwarn_msg)
 
-            # Update current state dictionary with given joint_position setpoints
+            # Update current state dictionary with given joint_position setpoints.
             arm_output_command_dict = copy.deepcopy(arm_state_dict)
-            for joint, position in input_command_dict.items():  # Update arm
+            for joint, position in input_command_dict.items():  # Update arm.
                 if joint in arm_state_dict:
                     arm_output_command_dict[joint] = position
             if control_group in ["hand", "both"]:
                 hand_output_command_dict = copy.deepcopy(hand_state_dict)
-                for joint, position in input_command_dict.items():  # Update hand
+                for joint, position in input_command_dict.items():  # Update hand.
                     if joint in hand_state_dict:
                         hand_output_command_dict[joint] = position
 
-            # Return moveit_commander_control command dictionary
+            # Return moveit_commander_control command dictionary.
             if control_group == "arm":
                 control_commands = {"arm": list(arm_output_command_dict.values())}
             elif control_group == "hand":
@@ -774,7 +774,7 @@ class PandaMoveItPlannerServer(object):
             ).format(**config)
         )
         if level == -1:
-            # Update initial values to user supplied parameters
+            # Update initial values to user supplied parameters.
             if self._max_velocity_scaling:
                 if self._max_velocity_scaling < 0.0 or self._max_velocity_scaling > 1.0:
                     rospy.logwarn(
@@ -797,7 +797,7 @@ class PandaMoveItPlannerServer(object):
                     "max_acceleration_scaling_factor"
                 ] = self._max_acceleration_scaling
 
-            # Set initial scaling factors
+            # Set initial scaling factors.
             self.move_group_arm.set_max_velocity_scaling_factor(
                 config["max_velocity_scaling_factor"]
             )
@@ -812,7 +812,7 @@ class PandaMoveItPlannerServer(object):
                     config["max_acceleration_scaling_factor"]
                 )
         elif level == 0:
-            # Update move group velocity settings
+            # Update move group velocity settings.
             self.move_group_arm.set_max_velocity_scaling_factor(
                 config["max_velocity_scaling_factor"]
             )
@@ -821,7 +821,7 @@ class PandaMoveItPlannerServer(object):
                     config["max_velocity_scaling_factor"]
                 )
         elif level == 1:
-            # Update move group acceleration settings
+            # Update move group acceleration settings.
             self.move_group_arm.set_max_acceleration_scaling_factor(
                 config["max_acceleration_scaling_factor"]
             )
@@ -849,7 +849,7 @@ class PandaMoveItPlannerServer(object):
             else MAX_RANDOM_SAMPLES
         )
 
-        # Make sure quaternion is normalized
+        # Make sure quaternion is normalized.
         if quaternion_norm(get_ee_pose_joint_configuration.pose.orientation) != 1.0:
             rospy.logwarn(
                 "The quaternion in the set ee pose was normalized since moveit expects "
@@ -868,17 +868,17 @@ class PandaMoveItPlannerServer(object):
         pose_target.position.y = get_ee_pose_joint_configuration.pose.position.y
         pose_target.position.z = get_ee_pose_joint_configuration.pose.position.z
 
-        # Retrieve joint configurations
+        # Retrieve joint configurations.
         resp = GetEePoseJointConfigResponse()
         n_sample = 0
-        while True:  # Continue till joint positions are valid or max samples size
+        while True:  # Continue till joint positions are valid or max samples size.
             rospy.logdebug("Retrieving joint configuration for given EE pose.")
             try:
                 retval, plan, _, _ = self.move_group_arm.plan(pose_target)
             except MoveItCommanderException:
                 retval = False
 
-            # Check if joint config was retrieved
+            # Check if joint config was retrieved.
             if retval:
                 resp.joint_names = list(plan.joint_trajectory.joint_names)
                 resp.joint_positions = list(plan.joint_trajectory.points[-1].positions)
@@ -909,7 +909,7 @@ class PandaMoveItPlannerServer(object):
             :obj:`panda_gazebo.srv.SetEePoseResponse`: Response message containing (
                 success bool, message).
         """
-        # Make sure quaternion is normalized
+        # Make sure quaternion is normalized.
         if quaternion_norm(set_ee_pose_req.pose.orientation) != 1.0:
             rospy.logwarn(
                 "The quaternion in the set ee pose was normalized since moveit expects "
@@ -919,7 +919,7 @@ class PandaMoveItPlannerServer(object):
                 set_ee_pose_req.pose.orientation
             )
 
-        # Fill trajectory message
+        # Fill trajectory message.
         rospy.logdebug("Setting ee pose.")
         resp = SetEePoseResponse()
         self.ee_pose_target.orientation.x = set_ee_pose_req.pose.orientation.x
@@ -930,13 +930,13 @@ class PandaMoveItPlannerServer(object):
         self.ee_pose_target.position.y = set_ee_pose_req.pose.position.y
         self.ee_pose_target.position.z = set_ee_pose_req.pose.position.z
 
-        # Send trajectory message and return response
+        # Send trajectory message and return response.
         try:
             self.move_group_arm.set_pose_target(self.ee_pose_target)
             retval = self._execute(control_group="arm")
             self.move_group_arm.clear_pose_targets()
 
-            # Check if setpoint execution was successful
+            # Check if setpoint execution was successful.
             if not all(retval):
                 resp.success = False
                 resp.message = "Ee pose could not be set"
@@ -976,7 +976,7 @@ class PandaMoveItPlannerServer(object):
                 )
             )
 
-        # Create moveit_commander command
+        # Create moveit_commander command.
         resp = SetJointPositionsResponse()
         try:
             moveit_commander_commands = self._create_joint_positions_commands(
@@ -991,7 +991,7 @@ class PandaMoveItPlannerServer(object):
             resp.message = e.args[0]
             return resp
 
-        # Set joint positions setpoint
+        # Set joint positions setpoint.
         arm_joint_states = self.move_group_arm.get_current_joint_values()
         rospy.logdebug("Current arm joint positions: %s" % arm_joint_states)
         if self._load_gripper:
@@ -1023,7 +1023,7 @@ class PandaMoveItPlannerServer(object):
                 set_joint_value_target_success_bool.append(False)
                 set_joint_value_target_error_msg.append(e.args[0])
 
-        # Print error message if an error occurred and return
+        # Print error message if an error occurred and return.
         if set_joint_value_target_error_msg:
             if len(set_joint_value_target_error_msg) > 1:
                 log_warn_string = "arm and hand"
@@ -1052,7 +1052,7 @@ class PandaMoveItPlannerServer(object):
             resp.message = "Failed to set %s setpoints." % log_warn_string
             return resp
 
-        # Execute setpoints
+        # Execute setpoints.
         rospy.logdebug("Executing joint positions setpoint.")
         try:
             retval = self._execute()
@@ -1095,7 +1095,7 @@ class PandaMoveItPlannerServer(object):
                 )
             )
 
-        # Create moveit_commander command
+        # Create moveit_commander command.
         resp = SetJointPositionsResponse()
         try:
             moveit_commander_commands = self._create_joint_positions_commands(
@@ -1110,7 +1110,7 @@ class PandaMoveItPlannerServer(object):
             resp.message = e.args[0]
             return resp
 
-        # Set joint positions setpoint
+        # Set joint positions setpoint.
         arm_joint_states = self.move_group_arm.get_current_joint_values()
         rospy.logdebug("Current arm joint positions: %s" % arm_joint_states)
         self.joint_positions_target = moveit_commander_commands
@@ -1128,7 +1128,7 @@ class PandaMoveItPlannerServer(object):
             resp.message = "Failed to set arm setpoints."
             return resp
 
-        # Execute setpoint
+        # Execute setpoint.
         rospy.logdebug("Executing joint positions setpoint.")
         try:
             retval = self._execute(control_group="arm")
@@ -1171,7 +1171,7 @@ class PandaMoveItPlannerServer(object):
                 )
             )
 
-        # Create moveit_commander command
+        # Create moveit_commander command.
         resp = SetJointPositionsResponse()
         try:
             moveit_commander_commands = self._create_joint_positions_commands(
@@ -1186,7 +1186,7 @@ class PandaMoveItPlannerServer(object):
             resp.message = e.args[0]
             return resp
 
-        # Set joint positions setpoint
+        # Set joint positions setpoint.
         hand_joint_states = self.move_group_hand.get_current_joint_values()
         rospy.logdebug("Current hand joint positions: %s" % hand_joint_states)
         self.joint_positions_target = moveit_commander_commands
@@ -1206,7 +1206,7 @@ class PandaMoveItPlannerServer(object):
             resp.message = "Failed to set arm setpoints."
             return resp
 
-        # Execute setpoints
+        # Execute setpoints.
         rospy.logdebug("Executing joint positions setpoint.")
         try:
             retval = self._execute(control_group="hand")
@@ -1289,7 +1289,7 @@ class PandaMoveItPlannerServer(object):
         """
         rospy.logdebug("Setting ee to '%s'." % set_ee_req.ee_name)
         resp = SetEeResponse()
-        if self._link_exists(set_ee_req.ee_name):  # Check if valid
+        if self._link_exists(set_ee_req.ee_name):  # Check if valid.
             try:
                 self.move_group_arm.set_end_effector_link(set_ee_req.ee_name)
             except MoveItCommanderException as e:
@@ -1344,7 +1344,7 @@ class PandaMoveItPlannerServer(object):
                 for joint_limit_name in get_random_position_req.joint_limits.names
             ]
 
-            # Check if limit names and limit values are of equal length
+            # Check if limit names and limit values are of equal length.
             if len(get_random_position_req.joint_limits.names) != len(
                 get_random_position_req.joint_limits.values
             ):
@@ -1357,7 +1357,7 @@ class PandaMoveItPlannerServer(object):
                 )
                 get_random_position_req.joint_limits.names = []
                 get_random_position_req.joint_limits.values = []
-            else:  # Check if the names in the joint_limits message are valid
+            else:  # Check if the names in the joint_limits message are valid.
                 valid_joint_names = flatten_list(
                     [
                         [joint + "_min", joint + "_max"]
@@ -1369,7 +1369,7 @@ class PandaMoveItPlannerServer(object):
                     if name not in valid_joint_names:
                         invalid_joint_names.append(name)
 
-                # Throw warning and remove invalid joint limits
+                # Throw warning and remove invalid joint limits.
                 if len(invalid_joint_names) != 0:
                     warn_strings = (
                         [
@@ -1410,7 +1410,7 @@ class PandaMoveItPlannerServer(object):
                         if joint_limit_name not in invalid_joint_names
                     ]
 
-                # Check if a joint limit both has a min and max specified
+                # Check if a joint limit both has a min and max specified.
                 limited_joints = get_unique_list(
                     [
                         name.replace("_min", "").replace("_max", "")
@@ -1464,7 +1464,7 @@ class PandaMoveItPlannerServer(object):
                 )
             )
 
-        # Retrieve random joint position values
+        # Retrieve random joint position values.
         get_random_arm_joint_positions_srvs_exception = False
         get_random_hand_joint_positions_srvs_exception = False
         try:
@@ -1487,7 +1487,7 @@ class PandaMoveItPlannerServer(object):
         random_hand_joint_values = (
             random_hand_joint_values_unbounded.copy() if self._load_gripper else {}
         )
-        if not joint_limits:  # If no joint limits were given
+        if not joint_limits:  # If no joint limits were given.
             if (
                 not get_random_arm_joint_positions_srvs_exception
                 and not get_random_hand_joint_positions_srvs_exception
@@ -1497,12 +1497,12 @@ class PandaMoveItPlannerServer(object):
             else:
                 resp.success = False
                 resp.message = "Random joint position could not be retrieved."
-        else:  # Joint limits were set
-            # Try to find random joint values within the joint limits
+        else:  # Joint limits were set.
+            # Try to find random joint values within the joint limits.
             n_sample = 0
             arm_joint_commands_valid = False
             hand_joint_commands_valid = False if self._load_gripper else True
-            while True:  # Continue till joint positions are valid or max samples size
+            while True:  # Continue till joint positions are valid or max samples size.
                 rospy.logdebug("Retrieving valid random joint positions.")
                 for joint in get_unique_list(
                     [
@@ -1510,14 +1510,14 @@ class PandaMoveItPlannerServer(object):
                         for joint_limit_names in joint_limits.keys()
                     ]
                 ):
-                    # Sample random value for the given joint within the joint limits
+                    # Sample random value for the given joint within the joint limits.
                     if (
                         joint in random_arm_joint_values.keys()
                         and not arm_joint_commands_valid
                     ):
                         if (
                             joint_limits[joint + "_min"] != joint_limits[joint + "_max"]
-                        ):  # Only sample if min and max are unequal
+                        ):  # Only sample if min and max are unequal.
                             random_arm_joint_values[joint] = np.random.uniform(
                                 joint_limits[joint + "_min"],
                                 joint_limits[joint + "_max"],
@@ -1561,8 +1561,8 @@ class PandaMoveItPlannerServer(object):
                         hand_joint_commands_valid = False
 
                 # Set success boolean and break out of loop if joint positions are valid
-                # otherwise keep sampling till the max sample limit has been reached
-                if arm_joint_commands_valid and hand_joint_commands_valid:  # If valid
+                # otherwise keep sampling till the max sample limit has been reached.
+                if arm_joint_commands_valid and hand_joint_commands_valid:  # If valid.
                     resp.success = True
                     resp.message = "Everything went OK"
                     break
@@ -1607,9 +1607,9 @@ class PandaMoveItPlannerServer(object):
                         "Failed to sample valid random joint positions from the "
                         "bounding region. Trying again."
                     )
-                    n_sample += 1  # Increase sampling counter
+                    n_sample += 1  # Increase sampling counter.
 
-        # Fill and resturn response message
+        # Fill and resturn response message.
         resp.joint_names = (
             flatten_list(
                 [
@@ -1667,7 +1667,7 @@ class PandaMoveItPlannerServer(object):
             else MAX_RANDOM_SAMPLES
         )
 
-        # Get a random ee pose
+        # Get a random ee pose.
         try:
             random_ee_pose_unbounded = self.move_group_arm.get_random_pose()
             get_random_pose_srvs_exception = False
@@ -1688,7 +1688,7 @@ class PandaMoveItPlannerServer(object):
                 ]
             )
             == 0.0
-        ):  # No bounding region was set
+        ):  # No bounding region was set.
             if not get_random_pose_srvs_exception:
                 resp.success = True
                 resp.message = "Everything went OK"
@@ -1696,14 +1696,14 @@ class PandaMoveItPlannerServer(object):
             else:
                 resp.success = False
                 resp.message = "Random ee pose could not be retrieved."
-        else:  # A bounding region was set
-            # Try to find a valid ee_pose within the bounding region
+        else:  # A bounding region was set.
+            # Try to find a valid ee_pose within the bounding region.
             n_sample = 0
             ee_pose_valid = False
-            while True:  # Continue till ee pose is valid or max samples size
+            while True:  # Continue till ee pose is valid or max samples size.
                 rospy.logdebug("Retrieving a valid random end effector pose.")
 
-                # Sample ee position from bounding region
+                # Sample ee position from bounding region.
                 sampled_ee_position = np.random.uniform(
                     [
                         get_random_ee_pose_req.bounding_region.x_min,
@@ -1718,7 +1718,7 @@ class PandaMoveItPlannerServer(object):
                     size=3,
                 )
 
-                # Create ee_pose msg
+                # Create ee_pose msg.
                 # NOTE: Only use boundary when {x,y,z}_min and {x,y,z}_max are different
                 random_ee_pose = Pose()
                 random_ee_pose.position.x = (
@@ -1757,8 +1757,8 @@ class PandaMoveItPlannerServer(object):
                     ee_pose_valid = False
 
                 # Fill response message and break out of loop and if ee pose is valid
-                # otherwise keep sampling till the max sample limit has been reached
-                if ee_pose_valid:  # If valid
+                # otherwise keep sampling till the max sample limit has been reached.
+                if ee_pose_valid:  # If valid.
                     resp.success = True
                     resp.message = "Everything went OK"
                     resp.ee_pose = random_ee_pose
@@ -1848,7 +1848,7 @@ class PandaMoveItPlannerServer(object):
             orientation=normalize_quaternion(add_box_req.pose.orientation),
         )
 
-        # Send request
+        # Send request.
         resp = AddBoxResponse()
         try:
             self.scene.add_box(
@@ -1863,7 +1863,7 @@ class PandaMoveItPlannerServer(object):
             resp.message = "Box could not be added"
             return resp
 
-        # Return response
+        # Return response.
         resp.success = True
         resp.message = "Everything went OK"
         return resp
@@ -1886,7 +1886,7 @@ class PandaMoveItPlannerServer(object):
             orientation=normalize_quaternion(add_plane_req.pose.orientation),
         )
 
-        # Send request
+        # Send request.
         resp = AddPlaneResponse()
         try:
             self.scene.add_plane(
@@ -1904,7 +1904,7 @@ class PandaMoveItPlannerServer(object):
             resp.message = "Plane could not be added"
             return resp
 
-        # Return response
+        # Return response.
         resp.success = True
         resp.message = "Everything went OK"
         return resp

@@ -15,7 +15,7 @@ class JointEffortDynamicReconfigureServer:
     def __init__(self):
         self.srv = Server(JointEffortConfig, self.callback)
 
-        # Create joint effort publishers
+        # Create joint effort publishers.
         self.arm_joint1_pub = rospy.Publisher(
             "panda_arm_joint1_effort_controller/command", Float64, queue_size=10
         )
@@ -74,7 +74,7 @@ class JointEffortDynamicReconfigureServer:
             ).format(**config)
         )
 
-        # Set initial joint states
+        # Set initial joint states.
         if level == -1:
             joint_states = rospy.wait_for_message("joint_states", JointState)
             position_dict = dict(zip(joint_states.name, joint_states.position))
@@ -87,7 +87,7 @@ class JointEffortDynamicReconfigureServer:
                 )
             )
 
-        # Write joint positions to controller topics
+        # Write joint positions to controller topics.
         if level > -1 and level < 7:
             self.arm_pubs[level].publish(list(config.values())[level])
         elif level in [7, 8] and self.gripper_connected:

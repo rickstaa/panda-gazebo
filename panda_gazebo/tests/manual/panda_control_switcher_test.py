@@ -3,10 +3,10 @@
 from panda_gazebo.core.control_switcher import PandaControlSwitcher
 
 if __name__ == "__main__":
-    # Create control switcher object
+    # Create control switcher object.
     control_switcher = PandaControlSwitcher(connection_timeout=3)
 
-    # Switch controllers
+    # Switch controllers.
     arm_switch_resp = control_switcher.switch(
         control_group="arm", control_type="effort"
     )

@@ -18,7 +18,7 @@ TIME = 10
 if __name__ == "__main__":
     rospy.init_node("position_joint_trajectory_controller_test")
 
-    # Create action client
+    # Create action client.
     follow_joint_traj_client = actionlib.SimpleActionClient(
         "/panda/position_joint_trajectory_controller/follow_joint_trajectory",
         FollowJointTrajectoryAction,
@@ -31,11 +31,11 @@ if __name__ == "__main__":
         rospy.logerr("Shutting down")
         sys.exit(0)
 
-    # Get starting state
+    # Get starting state.
     joint_states = rospy.wait_for_message("/panda/joint_states", JointState)
     joint_states_dict = dict(zip(joint_states.name, joint_states.position))
 
-    # Create action client goal
+    # Create action client goal.
     header = Header()
     goal = FollowJointTrajectoryGoal()
     goal.trajectory.joint_names = [
@@ -64,7 +64,7 @@ if __name__ == "__main__":
         point.time_from_start = rospy.Time.from_sec(t)
         goal.trajectory.points.append(point)
 
-    # Send goal
+    # Send goal.
     follow_joint_traj_client.send_goal(goal)
     pub = rospy.Publisher("/panda/control_signal", JointState, queue_size=10)
     rate = rospy.Rate(1 / TIMESTEP)
