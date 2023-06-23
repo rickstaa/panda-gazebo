@@ -89,7 +89,7 @@ MAX_RANDOM_SAMPLES = 5
 
 class PandaMoveItPlannerServer(object):
     """Used to control or request information from the Panda Robot. This is done using
-    the MoveIt `moveit_commander` module.
+    the MoveIt :mod:`moveit_commander` module.
 
     Attributes:
         robot (:obj:`moveit_commander.robot.RobotCommander`): The MoveIt robot
@@ -497,7 +497,7 @@ class PandaMoveItPlannerServer(object):
     def _create_joint_positions_commands(  # noqa: C901
         self, input_msg, control_group="both"
     ):
-        """Converts the service input message in `moveit_commander` compatible joint
+        """Converts the service input message in :mod:`moveit_commander` compatible joint
         position setpoint commands. While doing this it also verifies whether the given
         input message is valid.
 
@@ -1319,8 +1319,8 @@ class PandaMoveItPlannerServer(object):
                 containing the random joints positions.
 
         .. important::
-            Please be aware that when the `min` and `max` boundaries of a joint are set
-            to be equal the joint is assumed to be unbounded.
+            Please be aware that when the ``min`` and ``max`` boundaries of a joint are
+            set to be equal the joint is assumed to be unbounded.
         """
         max_attempts = (
             get_random_position_req.attempts
@@ -1658,7 +1658,7 @@ class PandaMoveItPlannerServer(object):
             pose.
 
         .. important::
-            Please be aware that when the `min` and `max` boundary of a EE coordinate
+            Please be aware that when the ``min`` and ``max`` boundary of a EE coordinate
             are equal the dimension is assumed to be be unbounded.
         """
         max_attempts = (

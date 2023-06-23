@@ -24,7 +24,7 @@ modes that can be selected using the ``control_mode`` argument:
 
 .. Note::
 
-    You can test different control modes using the :py:mod:`joint_effort_dynamic_reconfigure_server` and :py:mod:`joint_position_dynamic_reconfigure_server` nodes. 
+    You can test different control modes using the :mod:`joint_effort_dynamic_reconfigure_server` and :mod:`joint_position_dynamic_reconfigure_server` nodes. 
     These nodes allow you to send joint efforts and joint positions to the robot. To learn more about utilizing these dynamic reconfigure servers, refer to the 
     documentation of the `dynamic_reconfigure`_ and `rqt_reconfigure`_ ROS packages.
 
