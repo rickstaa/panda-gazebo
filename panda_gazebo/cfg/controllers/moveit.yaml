@@ -1,5 +1,5 @@
 # Configuration that contains the general MoveIt configuration values.
-# MoveIt-specific simulation settings
+# MoveIt-specific simulation settings.
 move_group:
   moveit_sim_hw_interface:
     joint_model_group: panda_arm

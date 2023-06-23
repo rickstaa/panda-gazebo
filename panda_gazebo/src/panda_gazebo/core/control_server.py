@@ -726,7 +726,7 @@ class PandaControlServer(object):
                     )
                     rospy.logwarn_once(logwarn_message)
 
-            # Loop through input message trajectory waypoints and add control commands.
+            # Loop through input message trajectory waypoints and add control commands
             # to the new trajectory control message.
             # NOTE: We make sure empty position/velocity/acceleration and effort fields
             # stay empty to keep coherent to the original action server. For the
