@@ -25,7 +25,7 @@ from panda_gazebo.common import ControllerInfoDict
 from panda_gazebo.common.functions import dict_clean, flatten_list, get_unique_list
 from rospy.exceptions import ROSException, ROSInterruptException
 
-# Global script vars
+# Global script vars.
 ARM_CONTROLLERS = {
     "end_effector": "panda_arm_controller",
     "trajectory": "panda_arm_controller",
@@ -100,7 +100,7 @@ class PandaControlSwitcher(object):
         self._controller_manager_response_timeout = 3
         self._controller_spawner_wait_timeout = 5
 
-        # Connect to controller_manager services
+        # Connect to controller_manager services.
         try:
             switch_controller_srv_topic = "%s/controller_manager/switch_controller" % (
                 robot_name_space
@@ -161,12 +161,12 @@ class PandaControlSwitcher(object):
             ListControllersRequest()
         )
 
-        # Check which Panda controllers are running
+        # Check which Panda controllers are running.
         controllers_state = ControllerInfoDict()
         for controller in list_controllers_resp.controller:
             categorized = False
 
-            # Add Panda controllers to controllers_state
+            # Add Panda controllers to controllers_state.
             for control_group, control_group_items in CONTROLLER_DICT.items():
                 for control_type, controller_names in control_group_items.items():
                     if controller.name in controller_names:
@@ -184,7 +184,7 @@ class PandaControlSwitcher(object):
                                 control_type
                             ].append(controller.name)
 
-            # Add non Panda controllers to controllers_state
+            # Add non Panda controllers to controllers_state.
             if not categorized:
                 if controller.state == "running":
                     controllers_state["other"]["running"][control_type].append(
@@ -211,16 +211,16 @@ class PandaControlSwitcher(object):
         Returns:
             bool: Success boolean or success boolean list.
         """
-        # Create load_controller request
+        # Create load_controller request.
         if isinstance(controllers, str):
-            # Send load controller request
+            # Send load controller request.
             resp = self._load_controller_client(LoadControllerRequest(name=controllers))
             return [resp.ok]
         elif isinstance(controllers, list):
-            # Loop through controllers and request to load them
+            # Loop through controllers and request to load them.
             resp = []
             for controller in controllers:
-                # Send load controller request
+                # Send load controller request.
                 resp.append(
                     self._load_controller_client(
                         LoadControllerRequest(name=controller)
@@ -327,7 +327,7 @@ class PandaControlSwitcher(object):
         if not verbose:
             verbose = self.verbose
 
-        # Validate input arguments
+        # Validate input arguments.
         control_type = control_type.lower()
         control_group = control_group.lower()
         if isinstance(control_group, list):
@@ -361,7 +361,7 @@ class PandaControlSwitcher(object):
         else:
             switch_timeout = timeout
 
-        # Get active controllers
+        # Get active controllers.
         # NOTE: Here we wait a bit till we are sure the controller_spawner is ready
         start_time = time.time()
         controllers_state = {}
@@ -371,7 +371,7 @@ class PandaControlSwitcher(object):
         ) and time.time() - start_time <= self._controller_spawner_wait_timeout:
             controllers_state = self._list_controllers_state()
 
-        # Generate switch controller msg
+        # Generate switch controller msg.
         prev_control_type = (
             str(list(controllers_state[control_group]["running"].keys())[0])
             if (
@@ -401,24 +401,24 @@ class PandaControlSwitcher(object):
             loaded_control_types = []
         if (
             control_type in running_control_types
-        ):  # If control type controllers are already running
+        ):  # If control type controllers are already running.
             controller_already_running = True
-        elif control_type in stopped_control_types:  # If controller was stopped
-            # Fill the start_controllers field of the switch control message
+        elif control_type in stopped_control_types:  # If controller was stopped.
+            # Fill the start_controllers field of the switch control message.
             switch_controller_msg.start_controllers = (
                 CONTROLLER_DICT[control_group][control_type]
                 if isinstance(CONTROLLER_DICT[control_group][control_type], list)
                 else [CONTROLLER_DICT[control_group][control_type]]
             )
 
-            # Fill the stop_controllers field of the switch control message
+            # Fill the stop_controllers field of the switch control message.
             switch_controller_msg.stop_controllers = flatten_list(
                 controllers_state[control_group]["running"].values()
             )
         elif (
             control_type not in loaded_control_types
-        ):  # Try to load the controllers if not yet loaded
-            # Load the required controllers
+        ):  # Try to load the controllers if not yet loaded.
+            # Load the required controllers.
             if load_controllers:
                 retval = self._load(CONTROLLER_DICT[control_group][control_type])
                 failed_controllers = list(
@@ -442,16 +442,16 @@ class PandaControlSwitcher(object):
                 resp.prev_control_type = prev_control_type
                 return resp
 
-            # Check if all controllers were loaded successfully
+            # Check if all controllers were loaded successfully.
             if len(failed_controllers) == 0:
-                # Fill the start_controllers field of the switch control message
+                # Fill the start_controllers field of the switch control message.
                 switch_controller_msg.start_controllers = (
                     CONTROLLER_DICT[control_group][control_type]
                     if isinstance(CONTROLLER_DICT[control_group][control_type], list)
                     else [CONTROLLER_DICT[control_group][control_type]]
                 )
 
-                # Fill the stop_controllers field of the switch control message
+                # Fill the stop_controllers field of the switch control message.
                 switch_controller_msg.stop_controllers = running_controllers
             else:
                 if (
@@ -471,17 +471,17 @@ class PandaControlSwitcher(object):
                 resp.prev_control_type = prev_control_type
                 return resp
         else:
-            # Fill the start_controllers field of the switch control message
+            # Fill the start_controllers field of the switch control message.
             switch_controller_msg.start_controllers = (
                 CONTROLLER_DICT[control_group][control_type]
                 if isinstance(CONTROLLER_DICT[control_group][control_type], list)
                 else [CONTROLLER_DICT[control_group][control_type]]
             )
 
-            # Fill the stop_controllers field of the switch control message
+            # Fill the stop_controllers field of the switch control message.
             switch_controller_msg.stop_controllers = running_controllers
 
-        # Send switch_controller msgs
+        # Send switch_controller msgs.
         if not controller_already_running:
             rospy.logdebug(
                 "Switching Panda %s control type to '%s'."

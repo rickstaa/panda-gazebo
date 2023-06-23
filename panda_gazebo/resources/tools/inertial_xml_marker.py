@@ -7,7 +7,7 @@ from __future__ import print_function
 
 def print_xml(i, s, m, v, com, d):
     """Create gazebo xml code for the given joint properties"""
-    # Convert joint properties to xml code
+    # Convert joint properties to xml code.
     # NOTE: https://www.physicsforums.com/threads/how-does-the-moment-of-inertia-scale.703101/ # noqa: E501
     v = v / s**3
     com = [x / s for x in com]
@@ -142,7 +142,7 @@ if __name__ == "__main__":
     }
     print_xml(7, s, m, v, com, d)
 
-    # hand
+    # hand.
     m = 0.73
     v = 0.487946
     com = (0, 0.015244, 0.275912)
@@ -156,7 +156,7 @@ if __name__ == "__main__":
     }
     print_xml(10, s, m, v, com, d)
 
-    # left_finger
+    # left_finger.
     m = 0.1
     v = 0.011221
     com = (0, 0.145644, 0.227941)
@@ -170,7 +170,7 @@ if __name__ == "__main__":
     }
     print_xml(11, s, m, v, com, d)
 
-    # right_finger
+    # right_finger.
     m = 0.1
     v = 0.011221
     com = (0, 0.145644, 0.227941)

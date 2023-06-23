@@ -32,7 +32,7 @@ if __name__ == "__main__":
                 msg.header.stamp = rospy.Time.now()
                 msg.pose.position = Point(x=0.0, y=-1.0, z=1.0)
 
-            # It has to be like this to have them vertically orient the icons
+            # It has to be like this to have them vertically orient the icons.
             msg.pose.orientation.w = 0.7
             msg.pose.orientation.x = 0
             msg.pose.orientation.y = -0.7

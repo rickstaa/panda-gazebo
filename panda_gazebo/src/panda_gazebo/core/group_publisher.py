@@ -19,7 +19,7 @@ class GroupPublisher(list):
         Raises:
             ValueError: If list does not only contain ROS publishers.
         """
-        # Validate if list contains publisher objects
+        # Validate if list contains publisher objects.
         if type(iterable) is list:
             for publisher in iterable:
                 if type(publisher) is not rospy.Publisher:
@@ -43,7 +43,7 @@ class GroupPublisher(list):
         Raises:
             ValueError: If something went wrong during publishing.
         """
-        # Validate input messages
+        # Validate input messages.
         if self.__len__() == 0:
             raise ValueError(
                 "Message could not be published since GroupPublisher "
@@ -63,7 +63,7 @@ class GroupPublisher(list):
                     "messages." % (len(messages), self.__len__(), self.__len__())
                 )
 
-        # Publish messages to the publishers
+        # Publish messages to the publishers.
         if type(messages) is not list:
             self[0].publish(messages)
         else:

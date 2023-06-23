@@ -15,7 +15,7 @@ jobs:
           level: warning
           exclude: |
             ./CHANGELOG.md
-  alex: # Checks docs for inconsiderate writing
+  alex: # Checks docs for inconsiderate writing.
     name: runner / alex
     runs-on: ubuntu-latest
     steps:
@@ -25,7 +25,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           reporter: github-check
           level: warning
-  markdown-lint: # Lints the markdown code
+  markdown-lint: # Lints the markdown code.
     name: runner / remark-lint
     runs-on: ubuntu-latest
     steps:
@@ -36,7 +36,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           reporter: github-check
           level: warning
-  black: # Check python code format
+  black: # Check python code format.
     name: runner / black
     runs-on: ubuntu-latest
     steps:
@@ -46,7 +46,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           reporter: github-check
           level: warning
-  flake8: # Lints python code
+  flake8: # Lints python code.
     name: runner / flake8
     runs-on: ubuntu-latest
     steps:

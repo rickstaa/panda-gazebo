@@ -13,12 +13,12 @@ help:
 
 .PHONY: help Makefile
 
-# Build the docs through rosdoc_lite
+# Build the docs through rosdoc_lite.
 docs:
 	git submodule update --init --recursive
 	rosdoc_lite .. -o $(BUILDDIR)
 
-# Build the docs through sphinx
+# Build the docs through sphinx.
 html:
 	git submodule update --init --recursive
 	@$(SPHINXBUILD) -M html "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)

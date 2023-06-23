@@ -22,6 +22,6 @@ class InputMessageInvalidError(Exception):
         """
         super().__init__(message)
 
-        # Set attributes
+        # Set attributes.
         self.log_message = log_message
         self.details = details

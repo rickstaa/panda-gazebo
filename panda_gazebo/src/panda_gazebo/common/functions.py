@@ -65,7 +65,7 @@ def action_dict_2_joint_trajectory_msg(
     goal_msg.create_time_axis = create_time_axis
     goal_msg.time_axis_step = time_axis_step
 
-    # Handle multiple waypoints
+    # Handle multiple waypoints.
     if all([np.isscalar(item) for item in list(action_dict.values())]):
         waypoints_actions = np.array(
             [
@@ -90,7 +90,7 @@ def action_dict_2_joint_trajectory_msg(
             "an equal amount of joint commands, one for each waypoint."
         )
 
-    # Create and return joint trajectory message
+    # Create and return joint trajectory message.
     for waypoint in waypoints_actions:
         wp = JointTrajectoryPoint()
         wp.positions = list(waypoint)
@@ -246,11 +246,11 @@ def list_2_human_text(input_list, separator=",", end_separator="&"):
     Returns:
         str: A human readable string that can be printed.
     """
-    # Add spaces around separators if not present
+    # Add spaces around separators if not present.
     separator = wrap_space_around(separator)[1:]
     end_separator = wrap_space_around(end_separator)
 
-    # Create human readable comma deliminated text
+    # Create human readable comma deliminated text.
     if isinstance(input_list, list):
         if len(input_list) > 1:
             return (
@@ -359,19 +359,19 @@ def action_server_exists(topic_name):
     Returns:
         bool: Boolean specifying whether the action service exists.
     """
-    # Strip action server specific topics from topic name
+    # Strip action server specific topics from topic name.
     if topic_name.split("/")[-1] in ["cancel", "feedback", "goal", "result", "status"]:
         topic_name = "/".join(topic_name.split("/")[:-1])
     if topic_name[-1] == "/":
         topic_name = topic_name[:-1]
 
-    # Validate if action server topic exists
+    # Validate if action server topic exists.
     try:
         rospy.wait_for_message("%s/status" % topic_name, GoalStatusArray, timeout=5)
     except ROSException:
         return False
 
-    # Check if topic contains action client
+    # Check if topic contains action client.
     exists = False
     for item in rospy.get_published_topics():
         if "%s/status" % topic_name in item[0]:
@@ -405,17 +405,17 @@ def normalize_quaternion(quaternion):
     """
     quaternion = copy.deepcopy(
         quaternion
-    )  # Make sure the original object is not changed
+    )  # Make sure the original object is not changed.
     norm = quaternion_norm(quaternion)
 
-    # Normalize quaternion
+    # Normalize quaternion.
     if norm == nan:
-        # test
+        # test.
         rospy.logwarn(
             "Quaternion could not be normalized since the norm could not be "
             "calculated."
         )
-    elif norm == 0.0:  # Transform to identity
+    elif norm == 0.0:  # Transform to identity.
         quaternion.x = 0.0
         quaternion.y = 0.0
         quaternion.z = 0.0

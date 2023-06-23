@@ -69,7 +69,7 @@ from rospy.exceptions import ROSException, ROSInterruptException
 from sensor_msgs.msg import JointState
 from std_msgs.msg import Float64
 
-# Global script variables
+# Global script variables.
 GRASP_EPSILON = 0.003  # NOTE: Uses 'kGraspRestingThreshold' from 'franka_gripper.sim.h'
 GRASP_SPEED = 0.1  # NOTE: Uses 'kDefaultGripperActionSpeed' from 'franka_gripper.sim.h'
 GRASP_FORCE = 10  # Panda force information: {continuous force: 70N, max_force: 140 N}
@@ -107,8 +107,8 @@ ARM_EFFORT_CONTROLLERS = [
 ]
 ARM_TRAJ_CONTROLLERS = ["panda_arm_controller"]
 HAND_CONTROLLERS = ["franka_gripper"]
-CONTROLLER_INFO_RATE = 1 / 10  # Rate [hz] for retrieving controller information
-CONNECTION_TIMEOUT = 10  # Service connection timeout [s]
+CONTROLLER_INFO_RATE = 1 / 10  # Rate [hz] for retrieving controller information.
+CONNECTION_TIMEOUT = 10  # Service connection timeout [s].
 
 
 class PandaControlServer(object):
@@ -176,7 +176,7 @@ class PandaControlServer(object):
         self.__controlled_joints = {}
         self.__joint_controllers = {}
 
-        # Disable the gripper width reached check used in the
+        # Disable the gripper width reached check used in the.
         # franka_gripper/gripper_action` when the `max_effort` is bigger than 0.0.
         if brute_force_grasping:
             rospy.set_param("/franka_gripper/gripper_action/width_tolerance", 0.1)
@@ -185,7 +185,7 @@ class PandaControlServer(object):
         # Create Panda control services ########
         ########################################
 
-        # Create main PandaControlServer services
+        # Create main PandaControlServer services.
         # NOTE: These services wrap around the controller command topics created by
         # the `ros_control` package to allow the user to wait for control commands
         # and specify incomplete joint control commands (i.e. joint commands that do
@@ -248,7 +248,7 @@ class PandaControlServer(object):
         # services and messages. ###############
         ########################################
         if load_set_joint_commands_service:
-            # Create arm joint position controller publishers
+            # Create arm joint position controller publishers.
             self._arm_joint_position_pub = GroupPublisher()
             for position_controller in ARM_POSITION_CONTROLLERS:
                 self._arm_joint_position_pub.append(
@@ -259,7 +259,7 @@ class PandaControlServer(object):
                     )
                 )
 
-            # Create arm joint effort publishers
+            # Create arm joint effort publishers.
             self._arm_joint_effort_pub = GroupPublisher()
             for effort_controller in ARM_EFFORT_CONTROLLERS:
                 self._arm_joint_effort_pub.append(
@@ -270,7 +270,7 @@ class PandaControlServer(object):
                     )
                 )
 
-        # Connect to controller_manager services
+        # Connect to controller_manager services.
         try:
             rospy.logdebug(
                 "Connecting to 'controller_manager/list_controllers' service."
@@ -293,20 +293,20 @@ class PandaControlServer(object):
             )
             sys.exit(0)
 
-        # Connect to the gripper command action server
+        # Connect to the gripper command action server.
         if self._load_gripper:
             franka_gripper_command_topic = "franka_gripper/gripper_action"
             rospy.logdebug(
                 "Connecting to '%s' action service." % franka_gripper_command_topic
             )
             if action_server_exists(franka_gripper_command_topic):
-                # Connect to robot control action server
+                # Connect to robot control action server.
                 self._gripper_command_client = SimpleActionClient(
                     franka_gripper_command_topic,
                     GripperCommandAction,
                 )
 
-                # Waits until the action server has started up
+                # Waits until the action server has started up.
                 retval = self._gripper_command_client.wait_for_server(
                     timeout=rospy.Duration.from_sec(CONNECTION_TIMEOUT)
                 )
@@ -331,7 +331,7 @@ class PandaControlServer(object):
         # Connect joint state subscriber #######
         ########################################
 
-        # Retrieve current robot joint state and effort information
+        # Retrieve current robot joint state and effort information.
         self.joint_states = None
         while self.joint_states is None and not rospy.is_shutdown():
             try:
@@ -344,7 +344,7 @@ class PandaControlServer(object):
                     % "joint_states"
                 )
 
-        # Create joint_state subscriber
+        # Create joint_state subscriber.
         self._joint_states_sub = rospy.Subscriber(
             "joint_states", JointState, self._joint_states_cb, queue_size=1
         )
@@ -362,19 +362,19 @@ class PandaControlServer(object):
         #     field is set to True.
         if load_arm_follow_joint_trajectory_action:
             # Connect to original 'panda_arm_controller/follow_joint_trajectory' action
-            # server
+            # server.
             rospy.logdebug(
                 "Connecting to '%s' action service."
                 % "panda_arm_controller/follow_joint_trajectory"
             )
             if action_server_exists("panda_arm_controller/follow_joint_trajectory"):
-                # Connect to robot control action server
+                # Connect to robot control action server.
                 self._arm_joint_traj_client = SimpleActionClient(
                     "panda_arm_controller/follow_joint_trajectory",
                     control_msgs.FollowJointTrajectoryAction,
                 )
 
-                # Waits until the action server has started up
+                # Waits until the action server has started up.
                 retval = self._arm_joint_traj_client.wait_for_server(
                     timeout=rospy.Duration(secs=5)
                 )
@@ -395,7 +395,7 @@ class PandaControlServer(object):
                     % ("panda_arm_controller/follow_joint_trajectory")
                 )
 
-            # Setup a new Panda arm joint trajectory action server
+            # Setup a new Panda arm joint trajectory action server.
             rospy.logdebug(
                 "Creating '%s/panda_arm/follow_joint_trajectory' service."
                 % rospy.get_name()
@@ -445,7 +445,7 @@ class PandaControlServer(object):
         else:
             control_type = control_type.lower()
 
-        # Compute the state masks
+        # Compute the state masks.
         arm_states_mask = [
             joint in self.controlled_joints[control_type]["arm"]
             for joint in self.joint_states.name
@@ -466,10 +466,10 @@ class PandaControlServer(object):
             return False
 
         # Wait till robot positions/efforts reach the setpoint or the velocities are
-        # not changing anymore
+        # not changing anymore.
         timeout_time = rospy.get_rostime() + rospy.Duration.from_sec(timeout)
         while not rospy.is_shutdown() and rospy.get_rostime() < timeout_time:
-            # Wait till joint positions are within range or arm not changing anymore
+            # Wait till joint positions are within range or arm not changing anymore.
             joint_states = (
                 np.array(list(compress(self.joint_states.position, arm_states_mask)))
                 if control_type == "position"
@@ -485,7 +485,7 @@ class PandaControlServer(object):
                 np.array(joint_setpoint), joint_states[len(joint_setpoint) :]
             )
 
-            # Add current state to state_buffer and delete oldest entry
+            # Add current state to state_buffer and delete oldest entry.
             state_buffer = np.full((2, len(joint_states)), np.nan)
             grad_buffer = np.full((2, len(joint_states)), np.nan)
             state_buffer = np.delete(
@@ -493,22 +493,22 @@ class PandaControlServer(object):
             )
             grad_buffer = np.gradient(state_buffer, axis=0)
 
-            # Check if setpoint is reached
+            # Check if setpoint is reached.
             if check_gradient:  # Check position/effort and gradients
                 if (
                     np.linalg.norm(joint_states - joint_setpoint_tmp)
-                    <= state_threshold  # Check if difference norm is within threshold
+                    <= state_threshold  # Check if difference norm is within threshold.
                 ) or all(
                     [
                         (np.abs(val) <= grad_threshold and val != 0.0)
                         for val in grad_buffer[-1]
-                    ]  # Check if all velocities are close to zero
+                    ]  # Check if all velocities are close to zero.
                 ):
                     break
             else:  # Only check position/effort
                 if (
                     np.linalg.norm(joint_states - joint_setpoint_tmp)
-                    <= state_threshold  # Check if difference norm is within threshold
+                    <= state_threshold  # Check if difference norm is within threshold.
                 ):
                     break
 
@@ -563,7 +563,7 @@ class PandaControlServer(object):
             ],
         }
 
-        # Initiate new arm action server messages using the current robot state
+        # Initiate new arm action server messages using the current robot state.
         arm_control_msg = copy.deepcopy(input_msg)
         arm_control_msg.trajectory.joint_names = controlled_joints
         for idx, waypoint in enumerate(input_msg.trajectory.points):
@@ -579,7 +579,7 @@ class PandaControlServer(object):
             )
 
         # Retrieve the length of the positions/velocities/accelerations and efforts in
-        # all the trajectory waypoints
+        # all the trajectory waypoints.
         waypoints_lengths_array = {
             "position": [
                 len(waypoint.positions) for waypoint in input_msg.trajectory.points
@@ -595,19 +595,19 @@ class PandaControlServer(object):
             ],
         }
 
-        # Validate time axis step size and throw warning if invalid
+        # Validate time axis step size and throw warning if invalid.
         if input_msg.time_axis_step <= 0.0 and input_msg.create_time_axis:
             rospy.logwarn(
                 "A time axis step size of %s is not supported. Please supply a time "
                 "axis step greater than 0.0 if you want to automatically create the "
                 "trajectory time axis." % input_msg.time_axis_step
             )
-            input_msg.create_time_axis = False  # Disable time axis generation
+            input_msg.create_time_axis = False  # Disable time axis generation.
 
-        # Check action server goal request message
-        if len(input_joint_names) == 0:  # If not joint_names were given
+        # Check action server goal request message.
+        if len(input_joint_names) == 0:  # If not joint_names were given.
             # Check if the number of joint positions/velocities/accelerations or
-            # efforts is unequal to the the number of joints
+            # efforts is unequal to the the number of joints.
             waypoints_lengths_not_equal_to_joints = [
                 any(
                     [
@@ -635,10 +635,10 @@ class PandaControlServer(object):
                 ),
             ]
 
-            # Check if trajectory message is valid
+            # Check if trajectory message is valid.
             if any(waypoints_lengths_not_equal_to_joints):
                 # Check if the number of joint positions/velocities/accelerations or
-                # efforts is equal to the number of joints
+                # efforts is equal to the number of joints.
                 waypoints_lengths_to_big = {
                     "positions": any(
                         [
@@ -692,7 +692,7 @@ class PandaControlServer(object):
                     ),
                 }
 
-                # Throw error if not equal
+                # Throw error if not equal.
                 if any(waypoints_lengths_to_big.values()):
                     invalid_fields_string = list_2_human_text(
                         [key for key, val in waypoints_lengths_to_big.items() if val]
@@ -726,8 +726,8 @@ class PandaControlServer(object):
                     )
                     rospy.logwarn_once(logwarn_message)
 
-            # Loop through input message trajectory waypoints and add control commands
-            # to the new trajectory control message
+            # Loop through input message trajectory waypoints and add control commands.
+            # to the new trajectory control message.
             # NOTE: We make sure empty position/velocity/acceleration and effort fields
             # stay empty to keep coherent to the original action server. For the
             # position field this behaviour can be changed by setting the
@@ -743,13 +743,13 @@ class PandaControlServer(object):
                         idx
                     ].time_from_start = time_axis_tmp
 
-                # Add joint commands
+                # Add joint commands.
                 if len(waypoint.positions) != 0:
                     arm_control_msg.trajectory.points[idx].positions[
                         : len(waypoint.positions)
                     ] = list(waypoint.positions)
                 else:
-                    # Make sure empty position field stays empty
+                    # Make sure empty position field stays empty.
                     if not self._autofill_traj_positions:
                         arm_control_msg.trajectory.points[idx].positions = []
                 if len(waypoint.effort) != 0:
@@ -757,27 +757,27 @@ class PandaControlServer(object):
                         : len(waypoint.effort)
                     ] = list(waypoint.effort)
                 else:
-                    # Make sure empty effort field stays empty
+                    # Make sure empty effort field stays empty.
                     arm_control_msg.trajectory.points[idx].effort = []
                 if len(waypoint.velocities) != 0:
                     arm_control_msg.trajectory.points[idx].velocities[
                         : len(waypoint.velocities)
                     ] = list(waypoint.velocities)
                 else:
-                    # Make sure empty velocity field stays empty
+                    # Make sure empty velocity field stays empty.
                     arm_control_msg.trajectory.points[idx].velocities = []
                 if len(waypoint.accelerations) != 0:
                     arm_control_msg.trajectory.points[idx].accelerations[
                         : len(waypoint.accelerations)
                     ] = list(waypoint.accelerations)
                 else:
-                    # Make sure empty acceleration field stays empty
+                    # Make sure empty acceleration field stays empty.
                     arm_control_msg.trajectory.points[idx].accelerations = []
 
             return panda_action_msg_2_control_msgs_action_msg(arm_control_msg)
-        else:  # If joints were specified
+        else:  # If joints were specified.
             # Check if the number of joint positions/velocities/accelerations or
-            # efforts is unequal to the the number of joints
+            # efforts is unequal to the the number of joints.
             waypoints_length_not_equal = {
                 "positions": any(
                     [
@@ -805,7 +805,7 @@ class PandaControlServer(object):
                 ),
             }
 
-            # Check if enough control values were given throw error if needed
+            # Check if enough control values were given throw error if needed.
             if any(waypoints_length_not_equal.values()):
                 invalid_fields_string = list_2_human_text(
                     [key for key, val in waypoints_length_not_equal.items() if val]
@@ -824,13 +824,13 @@ class PandaControlServer(object):
                     details={"joint_names_length": len(input_joint_names)},
                 )
             else:
-                # Validate joint_names and throw error if needed
+                # Validate joint_names and throw error if needed.
                 invalid_joint_names = [
                     joint_name
                     for joint_name in input_joint_names
                     if joint_name not in controlled_joints
                 ]
-                if len(invalid_joint_names) != 0:  # Joint names invalid
+                if len(invalid_joint_names) != 0:  # Joint names invalid.
                     logwarn_msg_strings = [
                         "Joint" if len(invalid_joint_names) == 1 else "Joints",
                         "was" if len(invalid_joint_names) == 1 else "were",
@@ -855,7 +855,7 @@ class PandaControlServer(object):
                     )
                 else:
                     # Loop through waypoints and create the new joint trajectory control
-                    # message
+                    # message.
                     # NOTE: We make sure empty position/velocity/acceleration and
                     # effort fields stay empty to keep coherent to the original action
                     # server. For the position field this behaviour can be changed by
@@ -886,11 +886,11 @@ class PandaControlServer(object):
                                 idx
                             ].time_from_start = time_axis_tmp
 
-                        # Create joint commands
+                        # Create joint commands.
                         if len(waypoint.positions) != 0:
                             for joint, position in input_command_dict[
                                 "position"
-                            ].items():  # Add control commands
+                            ].items():  # Add control commands.
                                 if joint in current_joint_names:
                                     arm_control_msg.trajectory.points[idx].positions[
                                         [
@@ -902,13 +902,13 @@ class PandaControlServer(object):
                                         ][0]
                                     ] = position
                         else:
-                            # Make sure empty position field stays empty
+                            # Make sure empty position field stays empty.
                             if not self._autofill_traj_positions:
                                 arm_control_msg.trajectory.points[idx].positions = []
                         if len(waypoint.effort) != 0:
                             for joint, effort in input_command_dict[
                                 "effort"
-                            ].items():  # Add control commands
+                            ].items():  # Add control commands.
                                 if joint in current_joint_names:
                                     arm_control_msg.trajectory.points[idx].effort[
                                         [
@@ -920,13 +920,13 @@ class PandaControlServer(object):
                                         ][0]
                                     ] = effort
                         else:
-                            # Make sure empty position field stays empty
+                            # Make sure empty position field stays empty.
                             if not self._autofill_traj_positions:
                                 arm_control_msg.trajectory.points[idx].effort = []
                         if len(waypoint.velocities) != 0:
                             for joint, velocity in input_command_dict[
                                 "velocity"
-                            ].items():  # Add control commands
+                            ].items():  # Add control commands.
                                 if joint in current_joint_names:
                                     arm_control_msg.trajectory.points[idx].velocities[
                                         [
@@ -938,13 +938,13 @@ class PandaControlServer(object):
                                         ][0]
                                     ] = velocity
                         else:
-                            # Make sure empty velocity field stays empty
+                            # Make sure empty velocity field stays empty.
                             if not self._autofill_traj_positions:
                                 arm_control_msg.trajectory.points[idx].velocities = []
                         if len(waypoint.accelerations) != 0:
                             for joint, acceleration in input_command_dict[
                                 "acceleration"
-                            ].items():  # Add control commands
+                            ].items():  # Add control commands.
                                 if joint in current_joint_names:
                                     arm_control_msg.trajectory.points[
                                         idx
@@ -958,7 +958,7 @@ class PandaControlServer(object):
                                         ][0]
                                     ] = acceleration
                         else:
-                            # Make sure empty velocity field stays empty
+                            # Make sure empty velocity field stays empty.
                             if not self._autofill_traj_positions:
                                 arm_control_msg.trajectory.points[
                                     idx
@@ -1000,11 +1000,11 @@ class PandaControlServer(object):
                 input_joint_names = input_msg.joint_names
                 control_input = input_msg.joint_efforts
 
-        # Validate and handle service request input
+        # Validate and handle service request input.
         controlled_joints = self.controlled_joints[control_type]["arm"]
         controlled_joints_size = len(controlled_joints)
-        if len(input_joint_names) == 0:  # If not joint_names were given
-            # Check if enough joint position commands were given otherwise give warning
+        if len(input_joint_names) == 0:  # If not joint_names were given.
+            # Check if enough joint position commands were given otherwise give warning.
             if len(control_input) != controlled_joints_size:
                 logwarn_msg_strings = [
                     f"joint {control_type}"
@@ -1013,7 +1013,7 @@ class PandaControlServer(object):
                     "joint" if controlled_joints_size == 1 else "joints",
                 ]
 
-                # Check if control input is bigger than controllable joints
+                # Check if control input is bigger than controllable joints.
                 if len(control_input) > controlled_joints_size:
                     logwarn_message = (
                         "You specified %s while the Panda arm control group has %s."
@@ -1042,7 +1042,7 @@ class PandaControlServer(object):
                     )
                     rospy.logwarn(logwarn_message)
 
-                    # Update current state dictionary with given joint_position commands
+                    # Update current state dictionary with given joint_position commands.
                     arm_position_commands = [
                         val
                         for key, val in dict(
@@ -1052,11 +1052,11 @@ class PandaControlServer(object):
                     ]
                     arm_position_commands[: len(control_input)] = control_input
 
-            # Return command message
+            # Return command message.
             control_commands = [Float64(item) for item in arm_position_commands]
             return control_commands
         else:
-            # Check if enough control values were given
+            # Check if enough control values were given.
             if len(input_joint_names) != len(control_input):
                 logwarn_msg_strings = [
                     f"joint {control_type}"
@@ -1091,13 +1091,13 @@ class PandaControlServer(object):
                     },
                 )
             else:
-                # Validate joint_names
+                # Validate joint_names.
                 invalid_joint_names = [
                     joint_name
                     for joint_name in input_joint_names
                     if joint_name not in controlled_joints
                 ]
-                if len(invalid_joint_names) != 0:  # Joint names invalid
+                if len(invalid_joint_names) != 0:  # Joint names invalid.
                     logwarn_msg_strings = [
                         "Joint" if len(invalid_joint_names) == 1 else "Joints",
                         "was" if len(invalid_joint_names) == 1 else "were",
@@ -1121,7 +1121,7 @@ class PandaControlServer(object):
                         details={"invalid_joint_names": invalid_joint_names},
                     )
                 else:
-                    # Update current state dictionary with given joint_position commands
+                    # Update current state dictionary with given joint_position commands.
                     arm_position_commands_dict = {
                         key: val
                         for key, val in dict(
@@ -1139,7 +1139,7 @@ class PandaControlServer(object):
                         Float64(item) for item in arm_position_commands_dict.values()
                     ]
 
-                    # Return command message
+                    # Return command message.
                     return control_commands
 
     def _split_joint_commands_req(self, joint_commands_req, control_type):
@@ -1204,7 +1204,7 @@ class PandaControlServer(object):
                 )
             )
 
-        # Create arm and hand control messages
+        # Create arm and hand control messages.
         joint_commands_dict = dict(
             zip(joint_commands_req.joint_names, joint_commands_req.joint_commands)
         )
@@ -1304,7 +1304,7 @@ class PandaControlServer(object):
                                     resource
                                 )
                             controlled_joints_dict["position"]["both"].append(resource)
-                except KeyError:  # Controller not initialized
+                except KeyError:  # Controller not initialized.
                     pass
             for controller in ARM_EFFORT_CONTROLLERS + HAND_CONTROLLERS:
                 try:
@@ -1317,7 +1317,7 @@ class PandaControlServer(object):
                                     resource
                                 )
                             controlled_joints_dict["effort"]["both"].append(resource)
-                except KeyError:  # Controller not initialized
+                except KeyError:  # Controller not initialized.
                     pass
             for controller in ARM_TRAJ_CONTROLLERS + HAND_CONTROLLERS:
                 try:
@@ -1334,7 +1334,7 @@ class PandaControlServer(object):
                             controlled_joints_dict["trajectory"]["both"].append(
                                 resource
                             )
-                except KeyError:  # Controller not initialized
+                except KeyError:  # Controller not initialized.
                     pass
             self.__controlled_joints = controlled_joints_dict
         return self.__controlled_joints
@@ -1374,8 +1374,8 @@ class PandaControlServer(object):
             self.__controllers = controller_list_array_2_dict(
                 self._list_controllers_client.call(ListControllersRequest())
             )
-            self.__joint_controllers = {}  # Trigger refresh
-            self.__controlled_joints = {}  # Trigger refresh
+            self.__joint_controllers = {}  # Trigger refresh.
+            self.__controlled_joints = {}  # Trigger refresh.
             self.__controller_check_t = time.time()
         return self.__controllers
 
@@ -1429,12 +1429,12 @@ class PandaControlServer(object):
         else:
             control_type = set_joint_commands_req.control_type.lower()
 
-        # Split input message and send arm and gripper control commands
+        # Split input message and send arm and gripper control commands.
         arm_command_msg, gripper_command_msg = self._split_joint_commands_req(
             set_joint_commands_req, control_type
         )
 
-        # Send control commands
+        # Send control commands.
         gripper_result = False
         if arm_command_msg is not None:
             if control_type == "position":
@@ -1451,7 +1451,7 @@ class PandaControlServer(object):
                 f"'{rospy.get_name()}'."
             )
 
-        # Return result
+        # Return result.
         resp = SetJointCommandsResponse()
         if (
             (self._load_gripper and all([gripper_result, arm_resp.success]))
@@ -1497,7 +1497,7 @@ class PandaControlServer(object):
                 )
             )
 
-        # Check if all controllers are available and running
+        # Check if all controllers are available and running.
         # NOTE: Fail if missing and display warning if not started.
         resp = SetJointPositionsResponse()
         missing_controllers, stopped_controllers = self._controllers_running(
@@ -1519,7 +1519,7 @@ class PandaControlServer(object):
             resp.message = "Arm controllers not initialised."
             return resp
         if len(stopped_controllers) >= 1:
-            # Check if these controllers are required for the current command
+            # Check if these controllers are required for the current command.
             req_missing_controllers = []
             if not set_joint_positions_req.joint_names:
                 req_missing_controllers = stopped_controllers
@@ -1546,7 +1546,7 @@ class PandaControlServer(object):
                     )
                 )
 
-        # Validate request and publish control command
+        # Validate request and publish control command.
         try:
             control_pub_msgs = self._create_control_publisher_msg(
                 input_msg=set_joint_positions_req,
@@ -1563,7 +1563,7 @@ class PandaControlServer(object):
         rospy.logdebug("Publishing Panda arm joint positions control message.")
         self._arm_joint_position_pub.publish(control_pub_msgs)
 
-        # Wait till control is finished or timeout has been reached
+        # Wait till control is finished or timeout has been reached.
         if set_joint_positions_req.wait and not len(stopped_controllers) >= 1:
             self._wait_till_arm_control_done(
                 control_type="position",
@@ -1597,7 +1597,7 @@ class PandaControlServer(object):
                 )
             )
 
-        # Check if all controllers are available and running
+        # Check if all controllers are available and running.
         # NOTE: Fail if is missing and display warning if not started.
         resp = SetJointEffortsResponse()
         missing_controllers, stopped_controllers = self._controllers_running(
@@ -1619,7 +1619,7 @@ class PandaControlServer(object):
             resp.message = "Arm controllers not initialised."
             return resp
         if len(stopped_controllers) >= 1:
-            # Check if these controllers are required for the current command
+            # Check if these controllers are required for the current command.
             req_missing_controllers = []
             if not set_joint_efforts_req.joint_names:
                 req_missing_controllers = stopped_controllers
@@ -1646,7 +1646,7 @@ class PandaControlServer(object):
                     )
                 )
 
-        # Validate request and publish control command
+        # Validate request and publish control command.
         try:
             control_pub_msgs = self._create_control_publisher_msg(
                 input_msg=set_joint_efforts_req,
@@ -1663,7 +1663,7 @@ class PandaControlServer(object):
         rospy.logdebug("Publishing Panda arm joint efforts control message.")
         self._arm_joint_effort_pub.publish(control_pub_msgs)
 
-        # Wait till control is finished or timeout has been reached
+        # Wait till control is finished or timeout has been reached.
         # NOTE: We currently do not have to wait for control efforts to be applied
         # since the 'FrankaHWSim' does not yet implement control latency. Torques
         # are therefore applied instantly.
@@ -1689,7 +1689,7 @@ class PandaControlServer(object):
         """
         resp = SetGripperWidthResponse()
 
-        # Check if gripper width is within boundaries
+        # Check if gripper width is within boundaries.
         set_gripper_width_req.width = (
             set_gripper_width_req.width / 2
         )  # NOTE: Done because the gripper command action takes in the joints positions
@@ -1701,7 +1701,7 @@ class PandaControlServer(object):
         else:
             gripper_width = set_gripper_width_req.width
 
-        # Create gripper command message
+        # Create gripper command message.
         req = GripperCommandGoal()
         req.command.position = gripper_width
         req.command.max_effort = (
@@ -1715,7 +1715,7 @@ class PandaControlServer(object):
         if self._gripper_command_client_connected:
             self._gripper_command_client.send_goal(req)
 
-            # Wait for result
+            # Wait for result.
             if set_gripper_width_req.wait:
                 gripper_result = self._gripper_command_client.wait_for_result(
                     timeout=rospy.Duration.from_sec(WAIT_TILL_DONE_TIMEOUT)
@@ -1731,7 +1731,7 @@ class PandaControlServer(object):
             )
             resp.success = False
 
-        # Add result message and return result
+        # Add result message and return result.
         if resp.success:
             resp.message = "Everything went OK"
         else:
@@ -1754,7 +1754,7 @@ class PandaControlServer(object):
         resp.success = True
         resp.message = "Everything went OK"
         try:
-            self.__controllers = {}  # Make sure latest controller info is retrieved
+            self.__controllers = {}  # Make sure latest controller info is retrieved.
             controlled_joints = self.controlled_joints[
                 get_controlled_joints_req.control_type
             ]
@@ -1792,10 +1792,10 @@ class PandaControlServer(object):
                     )
                 )
 
-            # Check the input goal message for errors and if valid convert it to
+            # Check the input goal message for errors and if valid convert it to.
             # the right format for the original panda joint trajectory action servers.
             try:
-                # Convert input goal message to the right format
+                # Convert input goal message to the right format.
                 goal_msg_dict = self._create_arm_traj_action_server_msg(goal)
             except InputMessageInvalidError as e:
                 self._result = FollowJointTrajectoryResult()
@@ -1810,7 +1810,7 @@ class PandaControlServer(object):
                 )
                 return False
 
-            # Send trajectory goal to the original Panda arm action servers
+            # Send trajectory goal to the original Panda arm action servers.
             self._arm_joint_traj_client.send_goal(
                 goal_msg_dict, feedback_cb=self._arm_joint_traj_feedback_cb
             )
@@ -1818,7 +1818,7 @@ class PandaControlServer(object):
                 timeout=rospy.Duration.from_sec(WAIT_TILL_DONE_TIMEOUT)
             )
 
-            # Get result from action server and return to user
+            # Get result from action server and return to user.
             self._result = self._arm_joint_traj_client.get_result()
             self._result.error_string = translate_actionclient_result_error_code(
                 self._result
@@ -1829,7 +1829,7 @@ class PandaControlServer(object):
             ):
                 if self._result.error_code == self._result.SUCCESSFUL:
                     self._arm_joint_traj_as.set_succeeded(self._result)
-                else:  # If not successful
+                else:  # If not successful.
                     self._arm_joint_traj_as.set_aborted(self._result)
         else:
             self._result = FollowJointTrajectoryResult()
@@ -1856,7 +1856,7 @@ class PandaControlServer(object):
         ``panda_control_server/panda_arm/follow_joint_trajectory`` action server wrapper
         to the original ``panda_arm_controller/follow_joint_trajectory`` action server.
         """
-        # Stop panda_arm_controller action server
+        # Stop panda_arm_controller action server.
         if self._arm_joint_traj_client.get_state() in [
             GoalStatus.PREEMPTING,
             GoalStatus.ACTIVE,

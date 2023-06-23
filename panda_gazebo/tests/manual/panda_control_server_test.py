@@ -45,7 +45,7 @@ if __name__ == "__main__":
     )
     rospy.logdebug("Connected to '/panda_control_server/set_joint_commands' service!")
 
-    # Generate joint_efforts msg
+    # Generate joint_efforts msg.
     set_joint_commands_msg = SetJointCommandsRequest()
     set_joint_commands_msg.joint_names = [
         "panda_joint1",
@@ -96,7 +96,7 @@ if __name__ == "__main__":
         "Connected to '/panda_control_server/panda_arm/set_joint_efforts' service!"
     )
 
-    # Generate joint_efforts msg
+    # Generate joint_efforts msg.
     set_arm_joint_efforts_msg = SetJointEffortsRequest()
     set_arm_joint_efforts_msg.joint_names = ["panda_joint2", "panda_joint3"]
     set_arm_joint_efforts_msg.joint_efforts = [0, 0]
@@ -123,7 +123,7 @@ if __name__ == "__main__":
         "Connected to '/panda_control_server/panda_arm/set_joint_positions' " "service!"
     )
 
-    # Generate set_arm_joint_positions_msg
+    # Generate set_arm_joint_positions_msg.
     set_arm_joint_positions_msg = SetJointPositionsRequest()
     # set_arm_joint_positions_msg.joint_names = ["panda_joint5", "panda_joint6"]
     set_arm_joint_positions_msg.joint_positions = [1.5, 2]
@@ -154,20 +154,20 @@ if __name__ == "__main__":
 
     # %% /panda_control_server/panda_arm/follow_joint_trajectory test
 
-    # Create action client
+    # Create action client.
     follow_joint_traj_client = actionlib.SimpleActionClient(
         "/panda_control_server/panda_arm/follow_joint_trajectory",
         FollowJointTrajectoryAction,
     )
 
-    # Waits until the action server has started up and started
+    # Waits until the action server has started up and started.
     # listening for goals.
     retval = follow_joint_traj_client.wait_for_server(timeout=rospy.Duration(5))
     if not retval:
         rospy.logerr("Shutting down")
         sys.exit(0)
 
-    # Create action client goal
+    # Create action client goal.
     header = Header()
     # header.stamp = rospy.get_rostime()
     goal = FollowJointTrajectoryGoal()
@@ -195,7 +195,7 @@ if __name__ == "__main__":
     # goal.trajectory.header = header
     # goal.goal_time_tolerance.secs = 5
 
-    # Send goal
+    # Send goal.
     follow_joint_traj_client.send_goal(goal)
     follow_joint_traj_client.wait_for_result()
     result = follow_joint_traj_client.get_result()
@@ -203,7 +203,7 @@ if __name__ == "__main__":
 
     # -- Test set gripper width service --
 
-    # Without grasp
+    # Without grasp.
     req = SetGripperWidthRequest()
     req.width = 0.04
     req.wait = True
@@ -223,7 +223,7 @@ if __name__ == "__main__":
     resp = set_gripper_width_srv.call(req)
     print(resp.message)
 
-    # With grasp
+    # With grasp.
     req = SetGripperWidthRequest()
     req.width = 0.04
     req.wait = True
@@ -245,7 +245,7 @@ if __name__ == "__main__":
     resp = set_gripper_width_srv.call(req)
     print(resp.message)
 
-    # Reset grasp
+    # Reset grasp.
     req = SetGripperWidthRequest()
     req.width = 0.04
     req.wait = True
