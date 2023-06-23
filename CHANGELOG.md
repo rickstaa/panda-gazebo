@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.14.8](https://github.com/rickstaa/panda-gazebo/compare/v2.14.7...v2.14.8) (2023-06-23)
+
+
+### Documentation
+
+* add recursive cloning remark ([a585705](https://github.com/rickstaa/panda-gazebo/commit/a585705d67620cec6cacd8c70ce7572d16cbee21))
+
 ## [2.14.7](https://github.com/rickstaa/panda-gazebo/compare/v2.14.6...v2.14.7) (2023-06-21)
 
 
