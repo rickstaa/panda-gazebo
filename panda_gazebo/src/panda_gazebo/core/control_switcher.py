@@ -272,7 +272,7 @@ class PandaControlSwitcher(object):
             control_type (str): The robot control type you want to switch to for the
                 given 'control_group'. Options are: ``trajectory``, ``position`` and
                 ``effort``.
-            timeout (float, optional): The function timeout. Defaults to `None` meaning
+            timeout (float, optional): The function timeout. Defaults to ``None`` meaning
                 the function will wait for ever.
             rate (int, optional): The 'control_type' check rate. Defaults to `10`
                 hz.
@@ -314,7 +314,7 @@ class PandaControlSwitcher(object):
             load_controllers (bool): Try to load the required controllers for a given
                 control_type if they are not yet loaded.
             timeout (int, optional): The timout for switching to a given controller.
-                Defaults to :py:attr:`self._controller_manager_response_timeout`.
+                Defaults to :attr:`self._controller_manager_response_timeout`.
             verbose (bool, optional): Whether to display debug log messages. Defaults
                 to verbose value set during the class initiation.
 

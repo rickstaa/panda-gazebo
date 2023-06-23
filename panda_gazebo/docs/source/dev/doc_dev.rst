@@ -29,7 +29,7 @@ Additionally, the Python dependencies can be installed using the following `pip`
     `venv`_ package instead of `Conda`_ since the latter is known to cause issues when used with ROS. If you use the 
     `venv`_ package, please use the `--system-site-packages` flag when creating the virtual environment. This will
     ensure all the ROS system packages are available in the virtual environment. This is required because the `sphinx`_ 
-    package needs to be able to import the `panda_gazebo` ROS package.
+    package needs to be able to import the ``panda_gazebo`` ROS package.
 
 .. _venv: https://docs.python.org/3/library/venv.html
 .. _Conda: https://docs.conda.io/en/latest/

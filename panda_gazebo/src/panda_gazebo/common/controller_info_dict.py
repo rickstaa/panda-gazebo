@@ -69,7 +69,7 @@ CONTROLLER_INFO_DICT = {
 
 class ControllerInfoDict(dict):
     """Used for storing information about the Gazebo robot controllers.
-    This class overloads the normal `dict` class in order to pre-initialize the
+    This class overloads the normal :obj:`dict` class in order to pre-initialize the
     dictionary with the needed keys.
     """
 

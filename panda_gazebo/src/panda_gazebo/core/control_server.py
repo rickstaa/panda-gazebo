@@ -3,7 +3,7 @@
 (action) services that can be used to send control commands to the Panda Robot arm and
 hand. These services wrap around the original control topics and services created by
 the `franka_ros`_ and `ros_control`_ packages and add extra functionality. They allow
-you to `wait` for control commands to be completed, send incomplete control commands
+you to ``wait`` for control commands to be completed, send incomplete control commands
 and incomplete trajectories (i.e. control commands/trajectories that do not contain
 all the joints).
 
