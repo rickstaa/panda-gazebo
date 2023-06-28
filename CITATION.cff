@@ -20,15 +20,13 @@ identifiers:
     value: 'https://zenodo.org/badge/latestdoi/353980386'
 repository-code: 'https://github.com/rickstaa/stable-gym'
 abstract: >-
-  Several gymnasium environments with cost functions
-  compatible with (stable) RL agents (i.e. positive
-  definite).
+  A package that contains all the ROS components needed for creating a Panda Emika
+  Franka Gazebo simulation.
 keywords:
-  - reinforcement-learning
   - simulation
-  - stability
   - openai-gym
-  - gym-environments
-  - gymnasium
-  - gymnasium-environments
+  - ros
+  - gazebo
+  - panda
+  - emika-franka
 license: MIT

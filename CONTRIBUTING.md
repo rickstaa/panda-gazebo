@@ -24,11 +24,10 @@ Pull requests are the best way to propose changes to the codebase (we use [Githu
 2.  Add tests if you've added code that should be tested.
 3.  If you've changed APIs, update the documentation.
 4.  If you changed the documentation, please ensure it builds (see [Documentation guidelines](#documentation-guidelines)).
-5.  Ensure the test suite passes (i.e. `npm run test`). If snapshots fail, please check if this is intended and update the snapshots if necessary using the `npm run test:update:snapshot` command.
-6.  Make sure your code lints.
-7.  Commit your changes.
-8.  Create a pull request to pull the changes of your development branch onto the `main` branch.
-9.  Ensure that all the [pull request checks](https://github.com/rickstaa/panda-gazebo/actions) were successful.
+5.  Make sure your code lints.
+6.  Commit your changes.
+7.  Create a pull request to pull the changes of your development branch onto the `main` branch.
+8.  Ensure that all the [pull request checks](https://github.com/rickstaa/panda-gazebo/actions) were successful.
 
 ### Report bugs using Github's [issues](https://github.com/rickstaa/panda-gazebo/issues)
 
