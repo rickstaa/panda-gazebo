@@ -25,6 +25,7 @@ Additionally, the Python dependencies can be installed using the following `pip`
 .. _`pip`: https://pypi.org/project/pip/
 
 .. note::
+
     You can also install these requirements in a virtual environment. If you want to do so, you are advised to use the
     `venv`_ package instead of `Conda`_ since the latter is known to cause issues when used with ROS. If you use the 
     `venv`_ package, please use the `--system-site-packages` flag when creating the virtual environment. This will
@@ -43,16 +44,17 @@ html documentation inside the ``docs/build/html`` directory. If the documentatio
 ``make linkcheck`` command to check for broken links.
 
 .. note::
+
     If you used a virtual environment, ensure you are in the environment where you installed the panda_gazebo package with its
     dependencies.
 
 .. note::
+
     You can also use the `make html` command to build the documentation. Although warnings and errors are now coloured, it does not produce the
     accompanying ROS package documentation. 
 
 .. _rosdoc_lite: http://wiki.ros.org/rosdoc_lite
 .. _HTML: https://www.w3schools.com/html/
-
 
 Deploying
 ---------
