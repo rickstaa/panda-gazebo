@@ -45,9 +45,9 @@ For more information about the messages these services require, see the :ref:`RO
 information about this package's modules and classes can be found in the :ref:`Python API documentation <python_api>`.
 
 .. _`Panda Emika Franka`: https://frankaemika.github.io/docs
-.. _`gazebo`: http://gazebosim.org
+.. _`gazebo`: https://gazebosim.org
 .. _`ros_gazebo_gym`: https://github.com/rickstaa/ros-gazebo-gym
-.. _`the ros_gazebo_gym documentation`: https://rickstaa.github.io/ros-gazebo-gym/panda_environment.html#task-environments
+.. _`the ros_gazebo_gym documentation`: https://rickstaa.dev/ros-gazebo-gym/panda_environment.html#task-environments
 .. _`franka_ros`: https://github.com/frankaemika/franka_ros
 .. _`panda_moveit_config`: https://github.com/ros-planning/panda_moveit_config
 .. _`Panda Gazebo simulation`: https://github.com/frankaemika/franka_ros/tree/develop/franka_gazebo

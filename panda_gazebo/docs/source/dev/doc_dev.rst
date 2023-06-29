@@ -21,7 +21,7 @@ Additionally, the Python dependencies can be installed using the following `pip`
 
     pip install -r requirements/doc_requirements.txt
 
-.. _`sphinx`: http://www.sphinx-doc.org/en/master
+.. _`sphinx`: https://www.sphinx-doc.org/en/master
 .. _`pip`: https://pypi.org/project/pip/
 
 .. note::
@@ -53,7 +53,7 @@ html documentation inside the ``docs/build/html`` directory. If the documentatio
     You can also use the `make html` command to build the documentation. Although warnings and errors are now coloured, it does not produce the
     accompanying ROS package documentation. 
 
-.. _rosdoc_lite: http://wiki.ros.org/rosdoc_lite
+.. _rosdoc_lite: https://wiki.ros.org/rosdoc_lite
 .. _HTML: https://www.w3schools.com/html/
 
 Deploying
