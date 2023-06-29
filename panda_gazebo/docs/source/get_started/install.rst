@@ -43,6 +43,6 @@ When this command finishes, you can build the ROS packages inside the Catkin wor
 
     catkin build -j4 -DCMAKE_BUILD_TYPE=Release
 
-.. _`rosdep tool`: http://wiki.ros.org/rosdep
+.. _`rosdep tool`: https://wiki.ros.org/rosdep
 .. _`libfranka`: https://github.com/frankaemika/libfranka
 .. _`the franka documentation`: https://frankaemika.github.io/docs/installation_linux.html#building-from-source)
