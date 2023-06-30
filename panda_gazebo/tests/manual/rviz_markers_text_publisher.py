@@ -1,8 +1,8 @@
 """Small python script that publishes a marker."""
 import rospy
+from geometry_msgs.msg import Point, Pose, Quaternion, Vector3
+from std_msgs.msg import ColorRGBA, Header
 from visualization_msgs.msg import Marker
-from geometry_msgs.msg import Vector3, Pose, Point, Quaternion
-from std_msgs.msg import Header, ColorRGBA
 
 
 class MarkerBasics(object):

@@ -9,10 +9,11 @@ import numpy as np
 import rospy
 from actionlib_msgs.msg import GoalStatusArray
 from numpy import linalg, nan
-from panda_gazebo.msg import FollowJointTrajectoryGoal
 from rospy.exceptions import ROSException
 from sensor_msgs.msg import JointState
 from trajectory_msgs.msg import JointTrajectoryPoint
+
+from panda_gazebo.msg import FollowJointTrajectoryGoal
 
 
 #################################################

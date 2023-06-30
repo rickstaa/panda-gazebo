@@ -1,13 +1,13 @@
 """Small example python script that publishes a OverlayText."""
-import rospy
 import math
 
-# import math
-from jsk_rviz_plugins.msg import OverlayText
+import rospy
 
 # from random import random, choice
 from geometry_msgs.msg import Point
 
+# import math
+from jsk_rviz_plugins.msg import OverlayText
 
 if __name__ == "__main__":
     rospy.init_node("pictogram_object_demo_node")

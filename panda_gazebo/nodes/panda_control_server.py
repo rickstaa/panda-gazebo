@@ -12,6 +12,7 @@ Source code
 """
 
 import rospy
+
 from panda_gazebo.core.control_server import PandaControlServer
 
 if __name__ == "__main__":  # noqa: C901

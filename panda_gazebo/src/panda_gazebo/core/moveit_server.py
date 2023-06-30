@@ -40,6 +40,10 @@ from dynamic_reconfigure.server import Server
 from geometry_msgs.msg import Pose, PoseStamped, Quaternion
 from moveit_commander.exception import MoveItCommanderException
 from moveit_msgs.msg import DisplayTrajectory
+from rospy.exceptions import ROSException
+from sensor_msgs.msg import JointState
+from std_msgs.msg import Header
+
 from panda_gazebo.cfg import MoveitServerConfig
 from panda_gazebo.common.functions import (
     flatten_list,
@@ -78,9 +82,6 @@ from panda_gazebo.srv import (
     SetJointPositions,
     SetJointPositionsResponse,
 )
-from rospy.exceptions import ROSException
-from sensor_msgs.msg import JointState
-from std_msgs.msg import Header
 
 # The maximum number times the get_random_ee_pose service tries to sample from the
 # bounding region before ignoring it.
