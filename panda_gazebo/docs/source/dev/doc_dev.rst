@@ -28,7 +28,7 @@ Additionally, the Python dependencies can be installed using the following `pip`
 
     You can also install these requirements in a virtual environment. If you want to do so, you are advised to use the
     `venv`_ package instead of `Conda`_ since the latter is known to cause issues when used with ROS. If you use the 
-    `venv`_ package, please use the `--system-site-packages` flag when creating the virtual environment. This will
+    `venv`_ package, please use the ``--system-site-packages`` flag when creating the virtual environment. This will
     ensure all the ROS system packages are available in the virtual environment. This is required because the `sphinx`_ 
     package needs to be able to import the ``panda_gazebo`` ROS package.
 
@@ -45,12 +45,12 @@ html documentation inside the ``docs/build/html`` directory. If the documentatio
 
 .. note::
 
-    If you used a virtual environment, ensure you are in the environment where you installed the panda_gazebo package with its
+    If you used a virtual environment, ensure you are in the environment where you installed the :panda_gazebo:`panda_gazebo <>` package with its
     dependencies.
 
 .. note::
 
-    You can also use the `make html` command to build the documentation. Although warnings and errors are now coloured, it does not produce the
+    You can also use the ``make html`` command to build the documentation. Although warnings and errors are now coloured, it does not produce the
     accompanying ROS package documentation. 
 
 .. _rosdoc_lite: https://wiki.ros.org/rosdoc_lite
@@ -66,4 +66,3 @@ deploy the documentation through the `GitHub action interface`_ by running the `
 .. _`create a new release`: https://rickstaa.dev/panda-gazebo/dev/contributing.html#release-guidelines
 .. _`Docs workflow`: https://github.com/rickstaa/panda-gazebo/actions/workflows/documentation.yml
 .. _`GitHub action interface`: https://docs.github.com/en/actions/using-workflows/triggering-a-workflow#defining-inputs-for-manually-triggered-workflows
-If you used a virtual environment, ensure you are in the environment where you installed the panda_gazebo package with its dependencies.

@@ -56,6 +56,7 @@ autoapi_dirs = [
         ).resolve()
     ),
 ]
+myst_heading_anchors = 2  # Add anchors to headings.
 
 # Extensions settings.
 autoapi_member_order = "bysource"
@@ -81,6 +82,9 @@ templates_path = ["_templates"]
 # directories to ignore when looking for source files.
 # This patterns also effect to html_static_path and html_extra_path.
 exclude_patterns = []
+
+# The name of the Pygments (syntax highlighting) style to use.
+pygments_style = "sphinx"
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
