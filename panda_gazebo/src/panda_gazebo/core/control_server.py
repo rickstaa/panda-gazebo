@@ -38,6 +38,10 @@ from actionlib import SimpleActionClient, SimpleActionServer
 from actionlib_msgs.msg import GoalStatus
 from control_msgs.msg import GripperCommandAction, GripperCommandGoal
 from controller_manager_msgs.srv import ListControllers, ListControllersRequest
+from rospy.exceptions import ROSException, ROSInterruptException
+from sensor_msgs.msg import JointState
+from std_msgs.msg import Float64
+
 from panda_gazebo.common import ControlledJointsDict
 from panda_gazebo.common.functions import (
     action_server_exists,
@@ -65,9 +69,6 @@ from panda_gazebo.srv import (
     SetJointPositions,
     SetJointPositionsResponse,
 )
-from rospy.exceptions import ROSException, ROSInterruptException
-from sensor_msgs.msg import JointState
-from std_msgs.msg import Float64
 
 # Global script variables.
 GRASP_EPSILON = 0.003  # NOTE: Uses 'kGraspRestingThreshold' from 'franka_gripper.sim.h'
@@ -415,7 +416,7 @@ class PandaControlServer(object):
     ################################################
     # Panda control member functions ###############
     ################################################
-    def _wait_till_arm_control_done(  # noqa: C901
+    def _wait_till_arm_control_done(
         self,
         control_type,
         joint_setpoint,
@@ -1403,7 +1404,7 @@ class PandaControlServer(object):
     ################################################
     # Control services callback functions ##########
     ################################################
-    def _set_joint_commands_cb(self, set_joint_commands_req):  # noqa: C901
+    def _set_joint_commands_cb(self, set_joint_commands_req):
         """Request arm and hand joint command control.
 
         Args:
@@ -1574,7 +1575,7 @@ class PandaControlServer(object):
         resp.message = "Everything went OK"
         return resp
 
-    def _arm_set_joint_efforts_cb(self, set_joint_efforts_req):  # noqa: C901
+    def _arm_set_joint_efforts_cb(self, set_joint_efforts_req):
         """Request arm Joint effort control.
 
         Args:

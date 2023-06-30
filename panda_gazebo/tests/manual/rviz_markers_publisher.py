@@ -1,7 +1,7 @@
 """Small python script that publishes a marker."""
 import rospy
-from visualization_msgs.msg import Marker
 from geometry_msgs.msg import Point
+from visualization_msgs.msg import Marker
 
 
 class MarkerBasics(object):

@@ -1,11 +1,11 @@
 """Small script that sends a sinusoid command to one of the panda joints."""
 
 import sys
+import time
 
 import actionlib
 import numpy as np
 import rospy
-import time
 from control_msgs.msg import FollowJointTrajectoryAction, FollowJointTrajectoryGoal
 from sensor_msgs.msg import JointState
 from std_msgs.msg import Header

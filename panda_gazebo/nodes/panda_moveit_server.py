@@ -12,6 +12,7 @@ Source code
 """
 
 import rospy
+
 from panda_gazebo.core.moveit_server import PandaMoveItPlannerServer
 
 if __name__ == "__main__":

@@ -2,6 +2,7 @@
 
 import rospy
 from geometry_msgs.msg import Pose, Quaternion
+
 from panda_gazebo.msg import BoundingRegion
 from panda_gazebo.srv import (
     AddBox,

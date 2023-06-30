@@ -2,13 +2,14 @@
 """Small node that spins up a dynamic reconfigure server that can be used to change the
 joint efforts.
 """
+import actionlib
 import rospy
 from dynamic_reconfigure.server import Server
-from panda_gazebo.cfg import JointEffortConfig
-from std_msgs.msg import Float64
-import actionlib
 from franka_gripper.msg import MoveAction, MoveGoal
 from sensor_msgs.msg import JointState
+from std_msgs.msg import Float64
+
+from panda_gazebo.cfg import JointEffortConfig
 
 
 class JointEffortDynamicReconfigureServer:

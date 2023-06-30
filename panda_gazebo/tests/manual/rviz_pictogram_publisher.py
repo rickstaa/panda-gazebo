@@ -1,12 +1,11 @@
 """Small example python script that publishes a pictogram."""
 import rospy
 
-# import math
-from jsk_rviz_plugins.msg import Pictogram, PictogramArray
-
 # from random import random, choice
 from geometry_msgs.msg import Point
 
+# import math
+from jsk_rviz_plugins.msg import Pictogram, PictogramArray
 
 if __name__ == "__main__":
     rospy.init_node("pictogram_object_demo_node")
