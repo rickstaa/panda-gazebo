@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.14.10](https://github.com/rickstaa/panda-gazebo/compare/v2.14.9...v2.14.10) (2023-06-30)
+
+
+### Documentation
+
+* improve docs ([#110](https://github.com/rickstaa/panda-gazebo/issues/110)) ([9efc08d](https://github.com/rickstaa/panda-gazebo/commit/9efc08d8526ab65245ae53324722ec77412aebc8))
+
 ## [2.14.9](https://github.com/rickstaa/panda-gazebo/compare/v2.14.8...v2.14.9) (2023-06-29)
 
 
