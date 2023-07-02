@@ -104,6 +104,7 @@
   <doc_depend>python3-sphinx</doc_depend>
   <doc_depend>python3-sphinx-rtd-theme</doc_depend>
   <doc_depend>python3-myst-parser-pip</doc_depend>
+  <doc_depend>python3-sphinx-autoapi-pip</doc_depend>
   
   <!-- The export tag contains other, unspecified, tags (Used for metapackages and
   Plugins -->
