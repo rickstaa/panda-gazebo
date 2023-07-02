@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.14.11](https://github.com/rickstaa/panda-gazebo/compare/v2.14.10...v2.14.11) (2023-07-02)
+
+
+### Documentation
+
+* add sphinx-autoapi ROS doc dependency ([#113](https://github.com/rickstaa/panda-gazebo/issues/113)) ([0dd2db1](https://github.com/rickstaa/panda-gazebo/commit/0dd2db15cc2edbbf4e69205358fbb7669da713bd))
+
 ## [2.14.10](https://github.com/rickstaa/panda-gazebo/compare/v2.14.9...v2.14.10) (2023-06-30)
 
 
