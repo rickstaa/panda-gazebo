@@ -7,15 +7,13 @@ Release documentation
 Install requirements
 --------------------
 
-Building the :panda_gazebo:`panda_gazebo <>` documentation requires `sphinx`_,
-the ``panda_gazebo`` package and several system and python packages. To install the system dependencies, run the following command
-inside your catkin workspace:
+Building the :panda_gazebo:`panda_gazebo <>` documentation requires `sphinx`_, the ``panda_gazebo``
+package and several system and python packages. To install these requirements, you can run the
+following command inside your Catkin workspace:
 
-.. code-block:: bash
-
-    rosdep install --from-path src --ignore-src -r -y -t doc
-
-Additionally, the Python dependencies can be installed using the following `pip`_ command inside the ``./panda_gazebo`` folder:
+Alternatively, you can use the `requirements/doc_requirements.txt` file to install the Python 
+packages in your virtual environments instead of the system Python environment. This can be 
+done using the following `pip`_ command:
 
 .. code-block:: bash
 
