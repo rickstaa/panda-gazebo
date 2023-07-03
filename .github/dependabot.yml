@@ -23,7 +23,7 @@ updates:
       - dependency-name: "*"
         update-types: ["version-update:semver-patch"]
 
-  # Maintain dependencies for npm.
+  # Maintain dependencies for pip.
   - package-ecosystem: "pip"
     directory: "/panda_gazebo"
     schedule:
