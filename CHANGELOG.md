@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.14.12](https://github.com/rickstaa/panda-gazebo/compare/v2.14.11...v2.14.12) (2023-07-10)
+
+
+### Documentation
+
+* add pkg test badge ([#117](https://github.com/rickstaa/panda-gazebo/issues/117)) ([71511ab](https://github.com/rickstaa/panda-gazebo/commit/71511ab60e09fb143e8c04b9041e7e6c3abd7ae0))
+* update python badge ([#120](https://github.com/rickstaa/panda-gazebo/issues/120)) ([b98a1b8](https://github.com/rickstaa/panda-gazebo/commit/b98a1b83c807e4c993cce3abf2cc34cf94388fc2))
+
 ## [2.14.11](https://github.com/rickstaa/panda-gazebo/compare/v2.14.10...v2.14.11) (2023-07-02)
 
 
