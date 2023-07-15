@@ -13,7 +13,12 @@ from panda_gazebo.cfg import JointEffortConfig
 
 
 class JointEffortDynamicReconfigureServer:
+    """A small node that spins up a dynamic reconfigure server that can be used to
+    change the joint efforts.
+    """
+
     def __init__(self):
+        """Initialise JointEffortDynamicReconfigureServer object."""
         self.srv = Server(JointEffortConfig, self.callback)
 
         # Create joint effort publishers.

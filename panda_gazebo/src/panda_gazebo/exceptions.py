@@ -11,7 +11,7 @@ class InputMessageInvalidError(Exception):
     """
 
     def __init__(self, message="", log_message="", **details):
-        """Initializes the InputMessageInvalidError exception object.
+        """Initialise InputMessageInvalidError exception object.
 
         Args:
             message (str, optional): Exception message specifying whether the exception

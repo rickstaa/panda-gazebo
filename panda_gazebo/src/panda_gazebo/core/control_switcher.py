@@ -66,7 +66,7 @@ class ControllerSwitcherResponse:
     """
 
     def __init__(self, success=True, prev_control_type=""):
-        """Initiate ControllerSwitcher response object.
+        """Initialise ControllerSwitcher response object.
 
         Args:
             success (bool, optional): Whether the switch operation was successful.
@@ -87,7 +87,7 @@ class PandaControlSwitcher(object):
     """
 
     def __init__(self, connection_timeout=10, verbose=True, robot_name_space=""):
-        """Initializes the PandaControlSwitcher object.
+        """Initialise PandaControlSwitcher object.
 
         Args:
             connection_timeout (str, optional): The timeout for connecting to the
@@ -155,7 +155,7 @@ class PandaControlSwitcher(object):
 
         Returns:
             dict: Dictionary containing information about which controllers are
-                currently running or initialized divided by control group
+                currently running or initialised divided by control group
                 arm/hand and other).
         """
         list_controllers_resp = self._list_controller_client.call(

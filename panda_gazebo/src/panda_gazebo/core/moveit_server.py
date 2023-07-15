@@ -115,7 +115,7 @@ class PandaMoveItPlannerServer(object):
         load_set_ee_pose_service=True,
         load_extra_services=False,
     ):
-        """Initializes the PandaMoveItPlannerServer object.
+        """Initialise PandaMoveItPlannerServer object.
 
         Args:
             arm_move_group (str, optional): The name of the move group you want to use
@@ -136,8 +136,8 @@ class PandaMoveItPlannerServer(object):
         """
         self._load_gripper = load_gripper
 
-        # Initialize MoveIt/Robot/Scene commanders
-        rospy.logdebug("Initialize MoveIt Robot/Scene commanders.")
+        # Initialise MoveIt/Robot/Scene commanders
+        rospy.logdebug("Initialise MoveIt Robot/Scene commanders.")
         try:
             moveit_commander.roscpp_initialize(sys.argv)
             self.robot = moveit_commander.RobotCommander()
@@ -155,9 +155,9 @@ class PandaMoveItPlannerServer(object):
                 )
                 sys.exit(0)
 
-        # Initialize group commanders.
+        # Initialise group commanders.
         try:
-            rospy.logdebug("Initialize MoveIt Panda arm commander.")
+            rospy.logdebug("Initialise MoveIt Panda arm commander.")
             self.move_group_arm = moveit_commander.MoveGroupCommander(arm_move_group)
         except Exception as e:
             if len(re.findall("Group '(.*)' was not found", e.args[0])) >= 1:
@@ -177,7 +177,7 @@ class PandaMoveItPlannerServer(object):
                 sys.exit(0)
         if self._load_gripper:
             try:
-                rospy.logdebug("Initialize MoveIt Panda hand commander.")
+                rospy.logdebug("Initialise MoveIt Panda hand commander.")
                 self.move_group_hand = moveit_commander.MoveGroupCommander(
                     hand_move_group
                 )
@@ -329,7 +329,7 @@ class PandaMoveItPlannerServer(object):
 
         rospy.loginfo("'%s' services created successfully." % rospy.get_name())
 
-        # Initiate service msgs.
+        # Initialise service msgs.
         self.ee_pose_target = Pose()
         self.joint_positions_target = {}
 

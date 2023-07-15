@@ -67,6 +67,7 @@ autoapi_options = [
     "show-module-summary",
     "imported-members",
 ]
+autoapi_python_class_content = "both"
 autoapi_template_dir = "_templates/autoapi"
 
 # Add mappings.

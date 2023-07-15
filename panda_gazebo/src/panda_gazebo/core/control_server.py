@@ -135,7 +135,7 @@ class PandaControlServer(object):
         brute_force_grasping=False,
         controllers_check_rate=CONTROLLER_INFO_RATE,
     ):
-        """Initializes the PandaControlServer object.
+        """Initialise PandaControlServer object.
 
         Args:
             autofill_traj_positions (bool, optional): Whether you want to automatically
@@ -455,7 +455,7 @@ class PandaControlServer(object):
             rospy.logwarn(
                 "Not waiting for control to be completed as no joints appear to be "
                 "controlled when using '%s' control. Please make sure the '%s' "
-                "controllers that are needed for '%s' control are initialized."
+                "controllers that are needed for '%s' control are initialised."
                 % (
                     control_type,
                     ARM_POSITION_CONTROLLERS
@@ -564,7 +564,7 @@ class PandaControlServer(object):
             ],
         }
 
-        # Initiate new arm action server messages using the current robot state.
+        # Initialise new arm action server messages using the current robot state.
         arm_control_msg = copy.deepcopy(input_msg)
         arm_control_msg.trajectory.joint_names = controlled_joints
         for idx, waypoint in enumerate(input_msg.trajectory.points):
@@ -1305,7 +1305,7 @@ class PandaControlServer(object):
                                     resource
                                 )
                             controlled_joints_dict["position"]["both"].append(resource)
-                except KeyError:  # Controller not initialized.
+                except KeyError:  # Controller not initialised.
                     pass
             for controller in ARM_EFFORT_CONTROLLERS + HAND_CONTROLLERS:
                 try:
@@ -1318,7 +1318,7 @@ class PandaControlServer(object):
                                     resource
                                 )
                             controlled_joints_dict["effort"]["both"].append(resource)
-                except KeyError:  # Controller not initialized.
+                except KeyError:  # Controller not initialised.
                     pass
             for controller in ARM_TRAJ_CONTROLLERS + HAND_CONTROLLERS:
                 try:
@@ -1335,14 +1335,14 @@ class PandaControlServer(object):
                             controlled_joints_dict["trajectory"]["both"].append(
                                 resource
                             )
-                except KeyError:  # Controller not initialized.
+                except KeyError:  # Controller not initialised.
                     pass
             self.__controlled_joints = controlled_joints_dict
         return self.__controlled_joints
 
     @property
     def joint_controllers(self):
-        """Retrieves the controllers which are currently initialized to work with a
+        """Retrieves the controllers which are currently initialised to work with a
         given joint.
 
         Returns:
@@ -1507,7 +1507,7 @@ class PandaControlServer(object):
         if len(missing_controllers) >= 1:
             rospy.logwarn(
                 "Panda arm joint position command could not be send as the %s %s "
-                "not initialized. Please make sure you load the controller parameters "
+                "not initialised. Please make sure you load the controller parameters "
                 "onto the ROS parameter server."
                 % (
                     missing_controllers,
@@ -1607,7 +1607,7 @@ class PandaControlServer(object):
         if len(missing_controllers) >= 1:
             rospy.logwarn(
                 "Panda arm joint effort command could not be send as the %s %s "
-                "not initialized. Please make sure you load the controller parameters "
+                "not initialised. Please make sure you load the controller parameters "
                 "onto the ROS parameter server."
                 % (
                     missing_controllers,
