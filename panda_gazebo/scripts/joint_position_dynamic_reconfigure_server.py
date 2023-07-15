@@ -13,7 +13,12 @@ from panda_gazebo.cfg import JointPositionConfig
 
 
 class JointPositionDynamicReconfigureServer:
+    """A small node that spins up a dynamic reconfigure server that can be used to
+    change the joint positions.
+    """
+
     def __init__(self):
+        """Initialise JointPositionDynamicReconfigureServer object."""
         self.srv = Server(JointPositionConfig, self.callback)
 
         # Create joint position publishers.

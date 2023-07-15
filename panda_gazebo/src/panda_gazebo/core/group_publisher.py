@@ -10,10 +10,10 @@ class GroupPublisher(list):
     """
 
     def __init__(self, iterable=[]):
-        """Initiate group publisher object.
+        """Initialise group publisher object.
 
         Args:
-            iterable (list, optional): New list initialized from iterable items.
+            iterable (list, optional): New list initialised from iterable items.
                 Defaults to ``[]``.
 
         Raises:
