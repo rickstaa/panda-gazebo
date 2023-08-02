@@ -41,15 +41,20 @@ To build the Python and ROS documentation, go into the :panda_gazebo:`docs/ <tre
 html documentation inside the ``docs/build/html`` directory. If the documentation is successfully built, you can also use the 
 ``make linkcheck`` command to check for broken links.
 
-.. note::
+.. attention::
 
     If you used a virtual environment, ensure you are in the environment where you installed the :panda_gazebo:`panda_gazebo <>` package with its
     dependencies.
 
-.. note::
+.. tip::
 
     You can also use the ``make html`` command to build the documentation. Although warnings and errors are now coloured, it does not produce the
     accompanying ROS package documentation. 
+
+.. note::
+
+    Sometimes the ``make linkcheck`` command doesn't show the results on the stdout. You can also find the results
+    in the ``docs/build/linkcheck`` folder. 
 
 .. _rosdoc_lite: https://wiki.ros.org/rosdoc_lite
 .. _HTML: https://www.w3schools.com/html/
