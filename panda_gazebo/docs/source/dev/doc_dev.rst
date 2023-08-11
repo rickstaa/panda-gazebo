@@ -23,7 +23,6 @@ done using the following `pip`_ command:
 .. _`pip`: https://pypi.org/project/pip/
 
 .. note::
-
     You can also install these requirements in a virtual environment. If you want to do so, you are advised to use the
     `venv`_ package instead of `Conda`_ since the latter is known to cause issues when used with ROS. If you use the 
     `venv`_ package, please use the ``--system-site-packages`` flag when creating the virtual environment. This will
@@ -42,17 +41,14 @@ html documentation inside the ``docs/build/html`` directory. If the documentatio
 ``make linkcheck`` command to check for broken links.
 
 .. attention::
-
     If you used a virtual environment, ensure you are in the environment where you installed the :panda_gazebo:`panda_gazebo <>` package with its
     dependencies.
 
 .. tip::
-
     You can also use the ``make html`` command to build the documentation. Although warnings and errors are now coloured, it does not produce the
     accompanying ROS package documentation. 
 
 .. note::
-
     Sometimes the ``make linkcheck`` command doesn't show the results on the stdout. You can also find the results
     in the ``docs/build/linkcheck`` folder. 
 
