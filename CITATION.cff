@@ -25,6 +25,7 @@ abstract: >-
 keywords:
   - simulation
   - openai-gym
+  - gymnasium
   - ros
   - gazebo
   - panda
