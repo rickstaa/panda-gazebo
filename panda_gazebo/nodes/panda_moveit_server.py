@@ -10,7 +10,6 @@ Source code
    :linenos:
    :lines: 14-
 """
-
 import rospy
 
 from panda_gazebo.core.moveit_server import PandaMoveItPlannerServer

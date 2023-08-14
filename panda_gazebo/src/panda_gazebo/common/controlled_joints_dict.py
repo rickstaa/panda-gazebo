@@ -1,6 +1,5 @@
 ﻿"""Class used to store information about the currently controlled joints.
 """
-
 import copy
 
 CONTROLLED_JOINTS_DICT = {

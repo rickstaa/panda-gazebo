@@ -27,7 +27,6 @@ Dynamic reconfigure service:
     'panda_moveit_planner_server/max_velocity_scaling_factor' and
     'panda_moveit_planner_server/max_velocity_scaling_factor' topics.
 """
-
 import copy
 import re
 import sys
