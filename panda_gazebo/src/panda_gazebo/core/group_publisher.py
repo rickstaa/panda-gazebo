@@ -1,6 +1,5 @@
 """Class used to group a number of publishers together.
 """
-
 import rospy
 
 

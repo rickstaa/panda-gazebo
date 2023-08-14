@@ -4,7 +4,6 @@
 
 .. _franka_gazebo: https://github.com/frankaemika/franka_ros/tree/develop/franka_gazebo
 """
-
 import argparse
 import sys
 

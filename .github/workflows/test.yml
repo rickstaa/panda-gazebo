@@ -62,7 +62,7 @@ jobs:
           cache-dependency-path: |
             **/requirements.txt
             **/requirements/dev_requirements.txt
-      - name: Install the panda_gym dev dependencies
+      - name: Install the panda_gazebo dev dependencies
         run: |
           pip install -r panda_gazebo/requirements/dev_requirements.txt
       - name: flake8 Lint

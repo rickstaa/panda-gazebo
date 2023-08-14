@@ -1,5 +1,4 @@
 """This script can be used to manually test the 'panda_moveit_server' services"""
-
 import rospy
 from geometry_msgs.msg import Pose, Quaternion
 

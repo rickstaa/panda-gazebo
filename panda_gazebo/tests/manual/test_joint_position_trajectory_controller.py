@@ -1,5 +1,4 @@
 """Small script that sends a sinusoid command to one of the panda joints."""
-
 import sys
 import time
 

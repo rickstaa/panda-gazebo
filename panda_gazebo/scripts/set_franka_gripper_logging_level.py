@@ -4,7 +4,6 @@
 
 .. _franka_gripper: https://github.com/frankaemika/franka_ros/tree/develop/franka_gripper
 """  # noqa: E501
-
 import argparse
 import sys
 

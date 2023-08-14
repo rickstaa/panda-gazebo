@@ -10,7 +10,7 @@
   <!-- One license tag required, multiple allowed, one license per tag -->
   <!-- Commonly used license strings: -->
   <!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
-  <license>Rick Staa copyright</license>
+  <license>MIT</license>
 
   <!-- Url tags are optional, but multiple are allowed, one per tag -->
   <!-- Optional attribute type can be: website, bugtracker, or repository -->
@@ -45,6 +45,7 @@
 
   <!-- Build tools that are needed -->
   <buildtool_depend>catkin</buildtool_depend>
+  <buildtool_depend>python3-setuptools</buildtool_depend>
 
   <!-- Packages that are required during building (find_packages()-ed in CMake).-->
   <build_depend>rospy</build_depend>
@@ -97,7 +98,9 @@
   <exec_depend>franka_gazebo</exec_depend>
   <exec_depend>panda_moveit_config</exec_depend>
 
-  <!-- Python packages -->
+  <!-- Python dependencies -->
+  <exec_depend>gym-pip</exec_depend>
+  <exec_depend>python3-numpy</exec_depend>
 
   <!-- Documentation dependencies -->
   <doc_depend>rosdoc_lite</doc_depend>
@@ -105,7 +108,7 @@
   <doc_depend>python3-sphinx-rtd-theme</doc_depend>
   <doc_depend>python3-myst-parser-pip</doc_depend>
   <doc_depend>python3-sphinx-autoapi-pip</doc_depend>
-  
+
   <!-- The export tag contains other, unspecified, tags (Used for metapackages and
   Plugins -->
   <export>
