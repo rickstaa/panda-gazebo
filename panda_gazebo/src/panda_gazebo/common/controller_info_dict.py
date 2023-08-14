@@ -1,6 +1,5 @@
 ﻿"""Class used to store information about the Gazebo controllers.
 """
-
 import copy
 
 CONTROLLER_INFO_DICT = {

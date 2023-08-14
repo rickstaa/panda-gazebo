@@ -23,8 +23,6 @@ Extra services:
 .. _`franka_ros`: https://github.com/frankaemika/franka_ros
 .. _`ros_control`: https://github.com/ros-controls/ros_control
 """
-
-
 import copy
 import os
 import sys

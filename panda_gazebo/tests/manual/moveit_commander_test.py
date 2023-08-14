@@ -1,6 +1,5 @@
 """Small script for testing capabilities of the Moveit commander.
 """
-
 import sys
 
 import moveit_commander

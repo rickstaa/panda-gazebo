@@ -1,5 +1,4 @@
 """Script used to manually test the '/panda_control_server' control services"""
-
 import sys
 
 import actionlib

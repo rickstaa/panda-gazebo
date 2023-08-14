@@ -7,7 +7,6 @@ Control types:
     * `position <https://wiki.ros.org/position_controllers/>`_
     * `effort <https://wiki.ros.org/effort_controllers/>`_
 """
-
 import sys
 import time
 from itertools import compress
