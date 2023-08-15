@@ -2,7 +2,7 @@
 How to use
 ==========
 
-The :panda_gazebo:`panda_gazebo <>` package contains three types of launch files: **world**, **robot** and **simulation** launch files.
+The :panda-gazebo:`panda_gazebo <>` package contains three types of launch files: **world**, **robot** and **simulation** launch files.
 
 **World launch files**
 

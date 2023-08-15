@@ -7,7 +7,7 @@ Release documentation
 Install requirements
 --------------------
 
-Building the :panda_gazebo:`panda_gazebo <>` documentation requires `sphinx`_, the ``panda_gazebo``
+Building the :panda-gazebo:`panda_gazebo <>` documentation requires `sphinx`_, the ``panda_gazebo``
 package and several system and python packages. To install these requirements, you can run the
 following command inside your Catkin workspace:
 
@@ -35,13 +35,13 @@ done using the following `pip`_ command:
 Build the documentation
 -----------------------
 
-To build the Python and ROS documentation, go into the :panda_gazebo:`docs/ <tree/noetic/panda_gazebo/docs>` directory and run the
+To build the Python and ROS documentation, go into the :panda-gazebo:`docs/ <tree/noetic/panda_gazebo/docs>` directory and run the
 ``make docs`` command. This command will use `rosdoc_lite`_ and `sphinx`_ to generate the 
 html documentation inside the ``docs/build/html`` directory. If the documentation is successfully built, you can also use the 
 ``make linkcheck`` command to check for broken links.
 
 .. attention::
-    If you used a virtual environment, ensure you are in the environment where you installed the :panda_gazebo:`panda_gazebo <>` package with its
+    If you used a virtual environment, ensure you are in the environment where you installed the :panda-gazebo:`panda_gazebo <>` package with its
     dependencies.
 
 .. tip::
