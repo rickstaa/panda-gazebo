@@ -113,8 +113,8 @@ html_context = {
 # -- External links dictionary -----------------------------------------------
 # Here you will find some often used global url definitions.
 extlinks = {
-    "panda_gazebo": ("https://github.com/rickstaa/panda-gazebo/%s", None),
-    "ros_gazebo_gym": (
+    "panda-gazebo": ("https://github.com/rickstaa/panda-gazebo/%s", None),
+    "ros-gazebo-gym": (
         "https://github.com/rickstaa/ros-gazebo-gym/tree/noetic/%s",
         None,
     ),

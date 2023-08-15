@@ -5,13 +5,13 @@ Welcome to panda-gazebo documentation
 .. image:: ./images/panda_environment.png
    :alt: Panda Gazebo environment
 
-Welcome to the API documentation for the :panda_gazebo:`panda_gazebo <>` package. This package
+Welcome to the API documentation for the :panda-gazebo:`panda_gazebo <>` package. This package
 contains all the ROS packages needed for creating a `Panda Emika Franka`_ Gazebo simulation. It
 is used by the :ros_gazebo_gym:`ros_gazebo_gym <>` RL framework to create the Panda task environments.
 It wraps the `franka_ros`_ and `panda_moveit_config`_ packages to add the 
 functionalities needed to train RL agents efficiently.
 
-The :panda_gazebo:`panda_gazebo <>` package contains several launch files and ROS nodes that ease the
+The :panda-gazebo:`panda_gazebo <>` package contains several launch files and ROS nodes that ease the
 :ros_gazebo_gym:`ros_gazebo_gym <>` interaction with the `Panda Gazebo simulation`_. These launch files
 can spawn the Panda Robot in several distinct task environments (see `the ros_gazebo_gym documentation`_ for
 the available environments). The ROS nodes generate several ROS services that make controlling or getting
