@@ -23,7 +23,11 @@ from controller_manager_msgs.srv import (
 from rospy.exceptions import ROSException, ROSInterruptException
 
 from panda_gazebo.common import ControllerInfoDict
-from panda_gazebo.common.functions import dict_clean, flatten_list, get_unique_list
+from panda_gazebo.src.panda_gazebo.common.helpers import (
+    dict_clean,
+    flatten_list,
+    get_unique_list,
+)
 
 # Global script vars.
 ARM_CONTROLLERS = {

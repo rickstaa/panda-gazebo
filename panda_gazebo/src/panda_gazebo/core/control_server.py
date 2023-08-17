@@ -41,7 +41,7 @@ from sensor_msgs.msg import JointState
 from std_msgs.msg import Float64
 
 from panda_gazebo.common import ControlledJointsDict
-from panda_gazebo.common.functions import (
+from panda_gazebo.src.panda_gazebo.common.helpers import (
     action_server_exists,
     controller_list_array_2_dict,
     get_duplicate_list,
