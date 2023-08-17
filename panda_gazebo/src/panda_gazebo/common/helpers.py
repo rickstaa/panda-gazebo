@@ -1,4 +1,4 @@
-"""Module containing some additional functions used in the
+"""Module containing some additional helper functions used in the
 :panda-gazebo:`panda_gazebo <>` package.
 """
 import copy

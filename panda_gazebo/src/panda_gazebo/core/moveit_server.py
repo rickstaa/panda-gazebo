@@ -44,7 +44,7 @@ from sensor_msgs.msg import JointState
 from std_msgs.msg import Header
 
 from panda_gazebo.cfg import MoveitServerConfig
-from panda_gazebo.common.functions import (
+from panda_gazebo.src.panda_gazebo.common.helpers import (
     flatten_list,
     get_duplicate_list,
     get_unique_list,
