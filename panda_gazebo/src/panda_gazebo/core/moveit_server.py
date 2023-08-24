@@ -653,7 +653,10 @@ class PandaMoveItPlannerServer(object):
                         if control_group == "arm"
                         else list(hand_state_dict.values())
                     )
-                joint_positions = joint_positions + joint_states[len(joint_positions) :]
+                joint_positions = (
+                    joint_positions
+                    + joint_states[len(joint_positions) :]  # noqa: E203, E501
+                )
 
             # Return moveit_commander_control command dictionary.
             if control_group == "arm":

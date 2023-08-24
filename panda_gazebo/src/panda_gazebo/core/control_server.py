@@ -481,7 +481,8 @@ class PandaControlServer(object):
             )
             grad_threshold = self.arm_velocity_threshold
             joint_setpoint_tmp = np.append(
-                np.array(joint_setpoint), joint_states[len(joint_setpoint) :]
+                np.array(joint_setpoint),
+                joint_states[len(joint_setpoint) :],  # noqa: E203, E501
             )
 
             # Add current state to state_buffer and delete oldest entry.
