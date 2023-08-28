@@ -8,13 +8,19 @@ from std_msgs.msg import Header
 from trajectory_msgs.msg import JointTrajectoryPoint
 
 from panda_gazebo.common.helpers import ros_exit_gracefully
-from panda_gazebo.msg import (FollowJointTrajectoryAction,
-                              FollowJointTrajectoryGoal)
-from panda_gazebo.srv import (GetControlledJoints, GetControlledJointsRequest,
-                              SetGripperWidth, SetGripperWidthRequest,
-                              SetJointCommands, SetJointCommandsRequest,
-                              SetJointEfforts, SetJointEffortsRequest,
-                              SetJointPositions, SetJointPositionsRequest)
+from panda_gazebo.msg import FollowJointTrajectoryAction, FollowJointTrajectoryGoal
+from panda_gazebo.srv import (
+    GetControlledJoints,
+    GetControlledJointsRequest,
+    SetGripperWidth,
+    SetGripperWidthRequest,
+    SetJointCommands,
+    SetJointCommandsRequest,
+    SetJointEfforts,
+    SetJointEffortsRequest,
+    SetJointPositions,
+    SetJointPositionsRequest,
+)
 
 # --TESTS--
 # For the `joint effort`, `joint_position` and `joint_trajectory` services test the

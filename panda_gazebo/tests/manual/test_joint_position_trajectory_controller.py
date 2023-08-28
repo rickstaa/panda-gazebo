@@ -6,8 +6,7 @@ import time
 import actionlib
 import numpy as np
 import rospy
-from control_msgs.msg import (FollowJointTrajectoryAction,
-                              FollowJointTrajectoryGoal)
+from control_msgs.msg import FollowJointTrajectoryAction, FollowJointTrajectoryGoal
 from sensor_msgs.msg import JointState
 from std_msgs.msg import Header
 from trajectory_msgs.msg import JointTrajectoryPoint
