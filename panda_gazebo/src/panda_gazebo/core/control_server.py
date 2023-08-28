@@ -143,14 +143,14 @@ class PandaControlServer(object):
                 control services.
             load_set_joint_commands_service (boolean, optional): Whether the set joint
                 commands service should be loaded. This service is used by the
-                :ros_gazebo_gym:`ros_gazebo_gym <>` package when the control type is
+                :ros-gazebo-gym:`ros_gazebo_gym <>` package when the control type is
                 **NOT** set to ``trajectory``. Defaults, to ``True``.
             load_arm_follow_joint_trajectory_action (boolean, optional): Whether the
                 arm follow joint trajectory action should be loaded. This service is
-                used by the :ros_gazebo_gym:`ros_gazebo_gym <>` package when the control
+                used by the :ros-gazebo-gym:`ros_gazebo_gym <>` package when the control
                 type is set to ``trajectory``. Defaults, to ``False``.
             load_extra_services (bool, optional): Whether to load extra services that
-                are not used by the :ros_gazebo_gym:`ros_gazebo_gym <>` package.
+                are not used by the :ros-gazebo-gym:`ros_gazebo_gym <>` package.
                 Defaults to ``False``.
             brute_force_grasping (bool, optional): Disable the gripper width reached
                 check when grasping. Defaults to ``False``.
