@@ -8,7 +8,7 @@ from pathlib import Path
 import catkin_pkg.package
 
 # -- Retrieve package version ------------------------------------------------
-catkin_dir = Path(__file__).joinpath("../../..").resolve()
+catkin_dir = Path(__file__).parent.joinpath("../..").resolve()
 catkin_package = catkin_pkg.package.parse_package(
     catkin_dir.joinpath(catkin_pkg.package.PACKAGE_MANIFEST_FILENAME)
 )
