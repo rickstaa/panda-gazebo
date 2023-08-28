@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """Small script that sends a sinusoid command to one of the panda joints."""
 import sys
 import time
@@ -5,7 +6,8 @@ import time
 import actionlib
 import numpy as np
 import rospy
-from control_msgs.msg import FollowJointTrajectoryAction, FollowJointTrajectoryGoal
+from control_msgs.msg import (FollowJointTrajectoryAction,
+                              FollowJointTrajectoryGoal)
 from sensor_msgs.msg import JointState
 from std_msgs.msg import Header
 from trajectory_msgs.msg import JointTrajectoryPoint
@@ -27,8 +29,9 @@ if __name__ == "__main__":
     # listening for goals.
     retval = follow_joint_traj_client.wait_for_server(timeout=rospy.Duration(5))
     if not retval:
-        rospy.logerr("Shutting down")
-        sys.exit(0)
+        ros_exit_gracefully(
+            shutdown_msg=f"Shutting down '{rospy.get_name()}'", exit_code=1
+        )
 
     # Get starting state.
     joint_states = rospy.wait_for_message("/panda/joint_states", JointState)

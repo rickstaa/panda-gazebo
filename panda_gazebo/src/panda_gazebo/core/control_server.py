@@ -25,7 +25,6 @@ Extra services:
 """
 import copy
 import os
-import sys
 import time
 from itertools import compress
 
@@ -49,6 +48,7 @@ from panda_gazebo.common.helpers import (
     list_2_human_text,
     lower_first_char,
     panda_action_msg_2_control_msgs_action_msg,
+    ros_exit_gracefully,
     translate_actionclient_result_error_code,
 )
 from panda_gazebo.core.group_publisher import GroupPublisher
@@ -285,12 +285,11 @@ class PandaControlServer(object):
                 "Connected to 'controller_manager/list_controllers' service!"
             )
         except (rospy.ServiceException, ROSException, ROSInterruptException):
-            rospy.logerr(
-                "Shutting down '%s' because no connection could be established "
-                "with the 'controller_manager/list_controllers' service."
-                % (rospy.get_name(),)
+            err_msg = (
+                f"Shutting down '{rospy.get_name()}' because no connection could be "
+                "established with the 'controller_manager/list_controllers' service."
             )
-            sys.exit(0)
+            ros_exit_gracefully(shutdown_message=err_msg, exit_code=1)
 
         # Connect to the gripper command action server.
         if self._load_gripper:
@@ -311,19 +310,19 @@ class PandaControlServer(object):
                 )
                 if not retval:
                     rospy.logwarn(
-                        "No connection could be established with the '%s' service. "
-                        "The Panda Robot Environment therefore can not use this action "
-                        "service to control the Panda Robot."
-                        % (franka_gripper_command_topic)
+                        "No connection could be established with the "
+                        f"'{franka_gripper_command_topic}' service. The Panda Robot "
+                        "environment therefore can not use this action service to "
+                        "control the Panda Robot."
                     )
                 else:
                     self._gripper_command_client_connected = True
             else:
                 rospy.logwarn(
-                    "No connection could be established with the '%s' service. "
-                    "The Panda Robot Environment therefore can not use this action "
-                    "service to control the Panda Robot."
-                    % (franka_gripper_command_topic)
+                    "No connection could be established with the "
+                    f"'{franka_gripper_command_topic}' service. The Panda Robot "
+                    "environment therefore can not use this action service to control "
+                    "the Panda Robot."
                 )
 
         ########################################
@@ -339,8 +338,8 @@ class PandaControlServer(object):
                 )
             except ROSException:
                 rospy.logwarn(
-                    "Current joint_states not ready yet, retrying for getting %s"
-                    % "joint_states"
+                    "Current joint_states not ready yet, retrying for getting "
+                    "'joint_states'"
                 )
 
         # Create joint_state subscriber.
@@ -363,8 +362,8 @@ class PandaControlServer(object):
             # Connect to original 'panda_arm_controller/follow_joint_trajectory' action
             # server.
             rospy.logdebug(
-                "Connecting to '%s' action service."
-                % "panda_arm_controller/follow_joint_trajectory"
+                "Connecting to 'panda_arm_controller/follow_joint_trajectory' action "
+                "service."
             )
             if action_server_exists("panda_arm_controller/follow_joint_trajectory"):
                 # Connect to robot control action server.
@@ -379,19 +378,19 @@ class PandaControlServer(object):
                 )
                 if not retval:
                     rospy.logwarn(
-                        "No connection could be established with the '%s' service. "
-                        "The Panda Robot Environment therefore can not use this action "
+                        "No connection could be established with the "
+                        "'panda_arm_controller/follow_joint_trajectory' service. The "
+                        "Panda Robot Environment therefore can not use this action "
                         "service to control the Panda Robot."
-                        % ("panda_arm_controller/follow_joint_trajectory")
                     )
                 else:
                     self._arm_joint_traj_client_connected = True
             else:
                 rospy.logwarn(
-                    "No connection could be established with the '%s' service. "
-                    "The Panda Robot Environment therefore can not use this action "
-                    "service to control the Panda Robot."
-                    % ("panda_arm_controller/follow_joint_trajectory")
+                    "No connection could be established with the "
+                    "'panda_arm_controller/follow_joint_trajectory' service. The Panda "
+                    "Robot Environment therefore can not use this action service to "
+                    "control the Panda Robot."
                 )
 
             # Setup a new Panda arm joint trajectory action server.
@@ -438,8 +437,8 @@ class PandaControlServer(object):
         """
         if control_type not in ["position", "effort"]:
             raise ValueError(
-                "Please specify a valid control type. Valid values are %s."
-                % ("['position', 'effort']")
+                "Please specify a valid control type. Valid values are 'position' & "
+                "'effort'."
             )
         else:
             control_type = control_type.lower()
@@ -598,9 +597,9 @@ class PandaControlServer(object):
         # Validate time axis step size and throw warning if invalid.
         if input_msg.time_axis_step <= 0.0 and input_msg.create_time_axis:
             rospy.logwarn(
-                "A time axis step size of %s is not supported. Please supply a time "
-                "axis step greater than 0.0 if you want to automatically create the "
-                "trajectory time axis." % input_msg.time_axis_step
+                f"A time axis step size of '{input_msg.time_axis_step}' is not "
+                "supported. Please supply a time axis step greater than 0.0 if you "
+                "want to automatically create the trajectory time axis."
             )
             input_msg.create_time_axis = False  # Disable time axis generation.
 
@@ -698,12 +697,9 @@ class PandaControlServer(object):
                         [key for key, val in waypoints_lengths_to_big.items() if val]
                     )
                     logwarn_message = (
-                        "Your joint trajectory goal message contains more joint %s "
-                        "than the %s joints that are found in the arm control group."
-                        % (
-                            invalid_fields_string,
-                            controlled_joints_size,
-                        )
+                        "Your joint trajectory goal message contains more joint "
+                        f"{invalid_fields_string} than the {controlled_joints_size} "
+                        "joints that are found in the arm control group."
                     )
                     raise InputMessageInvalidError(
                         message="Invalid number of joint position commands.",
@@ -715,14 +711,11 @@ class PandaControlServer(object):
                         [key for key, val in waypoints_lengths_to_small.items() if val]
                     )
                     logwarn_message = (
-                        "Some of the trajectory waypoints contain less %s "
-                        "commands than %s joints that are found in the arm control "
-                        "group. When this is the case the current joint states will be "
-                        "used for the joints without a position command."
-                        % (
-                            invalid_fields_string,
-                            controlled_joints_size,
-                        )
+                        "Some of the trajectory waypoints contain less "
+                        f"{invalid_fields_string} commands than "
+                        f"{controlled_joints_size} joints that are found in the arm "
+                        "control group. When this is the case the current joint states "
+                        "will be used for the joints without a position command."
                     )
                     rospy.logwarn_once(logwarn_message)
 
@@ -811,12 +804,9 @@ class PandaControlServer(object):
                     [key for key, val in waypoints_length_not_equal.items() if val]
                 )
                 logwarn_message = (
-                    "Your joint trajectory goal message contains more or less joint %s "
-                    "than the %s joints that are found in the 'joint_names' field."
-                    % (
-                        invalid_fields_string,
-                        controlled_joints_size,
-                    )
+                    "Your joint trajectory goal message contains more or less joint "
+                    f"{invalid_fields_string} than the {controlled_joints_size} "
+                    "joints that are found in the arm control group."
                 )
                 raise InputMessageInvalidError(
                     message=logwarn_message,
@@ -988,8 +978,8 @@ class PandaControlServer(object):
         """  # noqa: E501
         if control_type not in ["position", "effort"]:
             raise ValueError(
-                "Please specify a valid control type. Valid values are %s."
-                % ("['position', 'effort']")
+                "Please specify a valid control type. Valid values are 'position' & "
+                "'effort'."
             )
         else:
             control_type = control_type.lower()
@@ -1042,7 +1032,7 @@ class PandaControlServer(object):
                     )
                     rospy.logwarn(logwarn_message)
 
-                    # Update current state dictionary with given joint_position commands.
+                    # Update current state dict with given joint_position commands.
                     arm_position_commands = [
                         val
                         for key, val in dict(
@@ -1121,7 +1111,7 @@ class PandaControlServer(object):
                         details={"invalid_joint_names": invalid_joint_names},
                     )
                 else:
-                    # Update current state dictionary with given joint_position commands.
+                    # Update current state dict with given joint_position commands.
                     arm_position_commands_dict = {
                         key: val
                         for key, val in dict(
@@ -1166,8 +1156,8 @@ class PandaControlServer(object):
         """  # noqa: E501
         if control_type not in ["position", "effort"]:
             raise ValueError(
-                "Please specify a valid control type. Valid values are %s."
-                % ("['position', 'effort']")
+                "Please specify a valid control type. Valid values are 'position' & "
+                "'effort'."
             )
         if len(joint_commands_req.joint_names) != len(
             joint_commands_req.joint_commands
@@ -1420,8 +1410,8 @@ class PandaControlServer(object):
             "effort",
         ]:
             rospy.logwarn(
-                "Please specify a valid control type. Valid values are %s."
-                % ("['position', 'effort']")
+                "Please specify a valid control type. Valid values are 'position' & "
+                "'effort'."
             )
             resp.success = False
             resp.message = "Specified 'control_type' invalid."

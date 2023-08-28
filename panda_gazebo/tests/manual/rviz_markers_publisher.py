@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """Small python script that publishes a marker."""
 import rospy
 from geometry_msgs.msg import Point

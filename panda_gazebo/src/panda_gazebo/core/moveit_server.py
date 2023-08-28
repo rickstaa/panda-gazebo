@@ -52,6 +52,7 @@ from panda_gazebo.common.helpers import (
     lower_first_char,
     normalize_quaternion,
     quaternion_norm,
+    ros_exit_gracefully,
     translate_moveit_error_code,
 )
 from panda_gazebo.exceptions import InputMessageInvalidError
@@ -143,16 +144,17 @@ class PandaMoveItPlannerServer(object):
             self.scene = moveit_commander.PlanningSceneInterface()
         except Exception as e:
             if "invalid robot mode" in e.args[0]:
-                rospy.logerr(
+                err_msg = (
                     "Shutting down '%s' because robot_description was not found."
                     % rospy.get_name()
                 )
-                sys.exit(0)
+                ros_exit_gracefully(shutdown_msg=err_msg, exit_code=1)
             else:
-                rospy.logerr(
-                    "Shutting down '%s' because %s" % (rospy.get_name(), e.args[0])
+                err_msg = "Shutting down '%s' because %s" % (
+                    rospy.get_name(),
+                    e.args[0],
                 )
-                sys.exit(0)
+                ros_exit_gracefully(shutdown_msg=err_msg, exit_code=1)
 
         # Initialise group commanders.
         try:
@@ -160,7 +162,7 @@ class PandaMoveItPlannerServer(object):
             self.move_group_arm = moveit_commander.MoveGroupCommander(arm_move_group)
         except Exception as e:
             if len(re.findall("Group '(.*)' was not found", e.args[0])) >= 1:
-                rospy.logerr(
+                err_msg = (
                     "Shutting down '%s' because Panda arm move group '%s' was not "
                     "found."
                     % (
@@ -168,12 +170,13 @@ class PandaMoveItPlannerServer(object):
                         arm_move_group,
                     )
                 )
-                sys.exit(0)
+                ros_exit_gracefully(shutdown_msg=err_msg, exit_code=1)
             else:
-                rospy.logerr(
-                    "Shutting down '%s' because %s" % (rospy.get_name(), e.args[0])
+                err_msg = "Shutting down '%s' because %s" % (
+                    rospy.get_name(),
+                    e.args[0],
                 )
-                sys.exit(0)
+                ros_exit_gracefully(shutdown_msg=err_msg, exit_code=1)
         if self._load_gripper:
             try:
                 rospy.logdebug("Initialise MoveIt Panda hand commander.")
@@ -188,10 +191,11 @@ class PandaMoveItPlannerServer(object):
                     )
                     self._load_gripper = False
                 else:
-                    rospy.logerr(
-                        "Shutting down '%s' because %s" % (rospy.get_name(), e.args[0])
+                    err_msg = "Shutting down '%s' because %s" % (
+                        rospy.get_name(),
+                        e.args[0],
                     )
-                    sys.exit(0)
+                    ros_exit_gracefully(shutdown_msg=err_msg, exit_code=1)
 
         self.move_group_arm.set_end_effector_link(arm_ee_link)
         self._display_trajectory_publisher = rospy.Publisher(
@@ -344,8 +348,8 @@ class PandaMoveItPlannerServer(object):
                 )
             except ROSException:
                 rospy.logwarn(
-                    "Current joint_states not ready yet, retrying for getting %s"
-                    % "joint_states"
+                    "Current joint_states not ready yet, retrying for getting "
+                    "'joint_states'."
                 )
         self._controlled_joints_dict = {
             "arm": flatten_list(self.move_group_arm.get_active_joints()),
@@ -486,9 +490,8 @@ class PandaMoveItPlannerServer(object):
             retval.append(arm_retval)
         else:
             logwarn_msg = (
-                "Control group '%s' does not exist. Please specify a valid control "
-                "group. Valid values are %s."
-                % (control_group, "['arm', 'hand', 'both']")
+                f"Control group '{control_group}' does not exist. Please specify a "
+                "valid control group. Valid values are 'arm', 'hand' or 'both'."
             )
             rospy.logwarn(logwarn_msg)
             retval = [False]
@@ -523,12 +526,12 @@ class PandaMoveItPlannerServer(object):
         # Validate control_group.
         if control_group not in ["arm", "hand", "both"]:
             logwarn_msg = (
-                "The '%s' control group does not exist. Please specify a valid control "
-                "group (options: %s)." % (control_group, "['arm', 'hand', 'both']")
+                f"The '{control_group}' control group does not exist. Please specify "
+                "a valid control group (options: 'arm', 'hand', 'both')."
             )
             rospy.logerr(logwarn_msg)
             raise InputMessageInvalidError(
-                message="Control group '%s' does not exist." % control_group,
+                message=f"Control group '{control_group}' does not exist.",
                 log_message=logwarn_msg,
             )
         elif control_group == "hand" and not self._load_gripper:
@@ -539,7 +542,7 @@ class PandaMoveItPlannerServer(object):
             )
             rospy.logerr(logwarn_msg)
             raise InputMessageInvalidError(
-                message="Control group '%s' does not exist." % control_group,
+                message=f"Control group '{control_group}' does not exist.",
                 log_message=logwarn_msg,
             )
         elif control_group == "both" and not self._load_gripper:
@@ -996,10 +999,10 @@ class PandaMoveItPlannerServer(object):
 
         # Set joint positions setpoint.
         arm_joint_states = self.move_group_arm.get_current_joint_values()
-        rospy.logdebug("Current arm joint positions: %s" % arm_joint_states)
+        rospy.logdebug(f"Current arm joint positions: {arm_joint_states}")
         if self._load_gripper:
             hand_joint_states = self.move_group_hand.get_current_joint_values()
-            rospy.logdebug("Current hand joint positions: %s" % hand_joint_states)
+            rospy.logdebug(f"Current hand joint positions: {hand_joint_states}")
         self.joint_positions_target = moveit_commander_commands
         set_joint_value_target_success_bool = []
         set_joint_value_target_error_msg = []
@@ -1052,7 +1055,7 @@ class PandaMoveItPlannerServer(object):
                     )
                 )
             resp.success = False
-            resp.message = "Failed to set %s setpoints." % log_warn_string
+            resp.message = f"Failed to set {log_warn_string} setpoints."
             return resp
 
         # Execute setpoints.
@@ -1115,7 +1118,7 @@ class PandaMoveItPlannerServer(object):
 
         # Set joint positions setpoint.
         arm_joint_states = self.move_group_arm.get_current_joint_values()
-        rospy.logdebug("Current arm joint positions: %s" % arm_joint_states)
+        rospy.logdebug(f"Current arm joint positions: {arm_joint_states}")
         self.joint_positions_target = moveit_commander_commands
         try:
             rospy.logdebug(
@@ -1191,7 +1194,7 @@ class PandaMoveItPlannerServer(object):
 
         # Set joint positions setpoint.
         hand_joint_states = self.move_group_hand.get_current_joint_values()
-        rospy.logdebug("Current hand joint positions: %s" % hand_joint_states)
+        rospy.logdebug(f"Current hand joint positions: {hand_joint_states}")
         self.joint_positions_target = moveit_commander_commands
         try:
             rospy.logdebug(
@@ -1290,7 +1293,7 @@ class PandaMoveItPlannerServer(object):
             :obj:`panda_gazebo.srv.SetEeResponse`: Response message containing (success
                 bool, message).
         """
-        rospy.logdebug("Setting ee to '%s'." % set_ee_req.ee_name)
+        rospy.logdebug(f"Setting ee to '{set_ee_req.ee_name}'.")
         resp = SetEeResponse()
         if self._link_exists(set_ee_req.ee_name):  # Check if valid.
             try:
@@ -1303,10 +1306,10 @@ class PandaMoveItPlannerServer(object):
             resp.message = "Everything went OK"
         else:
             rospy.logwarn(
-                "EE could not be as '%s' is not a valid ee link." % set_ee_req.ee_name
+                f"EE could not be as '{set_ee_req.ee_name}' is not a valid ee link."
             )
             resp.success = False
-            resp.message = "'%s' is not a valid ee link." % set_ee_req.ee_name
+            resp.message = f"'{set_ee_req.ee_name}' is not a valid ee link."
         return resp
 
     def _get_random_joint_positions_callback(  # noqa: C901
