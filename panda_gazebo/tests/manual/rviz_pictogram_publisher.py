@@ -1,9 +1,8 @@
+#!/usr/bin/env python3
 """Small example python script that publishes a pictogram."""
 import rospy
-
 # from random import random, choice
 from geometry_msgs.msg import Point
-
 # import math
 from jsk_rviz_plugins.msg import Pictogram, PictogramArray
 

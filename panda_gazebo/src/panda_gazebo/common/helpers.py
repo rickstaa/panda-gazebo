@@ -2,6 +2,7 @@
 :panda-gazebo:`panda_gazebo <>` package.
 """
 import copy
+import sys
 
 import control_msgs.msg as control_msgs
 import numpy as np
@@ -426,3 +427,16 @@ def normalize_quaternion(quaternion):
         quaternion.z = quaternion.z / norm
         quaternion.w = quaternion.w / norm
     return quaternion
+
+
+def ros_exit_gracefully(shutdown_msg=None, exit_code=0):
+    """Shuts down the ROS node wait until it is shutdown and exits the script.
+
+    Args:
+        shutdown_msg (str, optional): The shutdown message. Defaults to ``None``.
+        exit_code (int, optional): The exit code. Defaults to ``0``.
+    """
+    rospy.signal_shutdown(shutdown_msg)
+    while not rospy.is_shutdown():
+        rospy.sleep(0.1)
+    sys.exit(exit_code)

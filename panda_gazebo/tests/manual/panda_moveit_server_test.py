@@ -1,34 +1,20 @@
+#!/usr/bin/env python3
 """This script can be used to manually test the 'panda_moveit_server' services"""
 import rospy
 from geometry_msgs.msg import Pose, Quaternion
 
 from panda_gazebo.msg import BoundingRegion
-from panda_gazebo.srv import (
-    AddBox,
-    AddBoxRequest,
-    AddPlane,
-    AddPlaneRequest,
-    GetEe,
-    GetEePose,
-    GetEePoseJointConfig,
-    GetEePoseJointConfigRequest,
-    GetEePoseRequest,
-    GetEeRequest,
-    GetEeRpy,
-    GetEeRpyRequest,
-    GetMoveItControlledJoints,
-    GetMoveItControlledJointsRequest,
-    GetRandomEePose,
-    GetRandomEePoseRequest,
-    GetRandomJointPositions,
-    GetRandomJointPositionsRequest,
-    SetEe,
-    SetEePose,
-    SetEePoseRequest,
-    SetEeRequest,
-    SetJointPositions,
-    SetJointPositionsRequest,
-)
+from panda_gazebo.srv import (AddBox, AddBoxRequest, AddPlane, AddPlaneRequest,
+                              GetEe, GetEePose, GetEePoseJointConfig,
+                              GetEePoseJointConfigRequest, GetEePoseRequest,
+                              GetEeRequest, GetEeRpy, GetEeRpyRequest,
+                              GetMoveItControlledJoints,
+                              GetMoveItControlledJointsRequest,
+                              GetRandomEePose, GetRandomEePoseRequest,
+                              GetRandomJointPositions,
+                              GetRandomJointPositionsRequest, SetEe, SetEePose,
+                              SetEePoseRequest, SetEeRequest,
+                              SetJointPositions, SetJointPositionsRequest)
 
 if __name__ == "__main__":
     rospy.init_node("test_panda_moveit_server")

@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """Smalls script to test if the ControlSwitcher class is working.
 """
 from panda_gazebo.core.control_switcher import PandaControlSwitcher

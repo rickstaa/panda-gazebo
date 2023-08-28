@@ -7,7 +7,6 @@ Control types:
     * `position <https://wiki.ros.org/position_controllers/>`_
     * `effort <https://wiki.ros.org/effort_controllers/>`_
 """
-import sys
 import time
 from itertools import compress
 
@@ -27,6 +26,7 @@ from panda_gazebo.common.helpers import (
     dict_clean,
     flatten_list,
     get_unique_list,
+    ros_exit_gracefully,
 )
 
 # Global script vars.
@@ -142,7 +142,7 @@ class PandaControlSwitcher(object):
             )
             rospy.logdebug("Connected to '%s' service!" % load_controller_srv_topic)
         except (rospy.ServiceException, ROSException, ROSInterruptException) as e:
-            rospy.logerr(
+            err_msg = (
                 "Shutting down '%s' because no connection could be established "
                 "with the '%s' service and this service is needed "
                 "when using 'position'."
@@ -151,7 +151,7 @@ class PandaControlSwitcher(object):
                     "/" + e.args[0].split(" /")[1],
                 )
             )
-            sys.exit(0)
+            ros_exit_gracefully(shutdown_message=err_msg, exit_code=1)
 
     def _list_controllers_state(self):  # noqa: C901
         """Get information about the currently running and loaded controllers.
@@ -234,8 +234,8 @@ class PandaControlSwitcher(object):
         else:
             rospy.logwarn(
                 "Controllers could not be loaded as the data type of the 'controllers' "
-                " variable was %s while the 'PandaControlSwitcher' only takes an "
-                "argument of type 'str' or 'list'." % type(controllers)
+                f"variable was {type(controllers)} while the 'PandaControlSwitcher' "
+                "only takes an argument of type 'str' or 'list'."
             )
             return [False]
 
@@ -346,17 +346,17 @@ class PandaControlSwitcher(object):
                 control_group = control_group[0]
         if control_group not in CONTROLLER_DICT.keys():
             rospy.logwarn(
-                "The '%s' control group you specified is not valid. Valid control "
-                "groups for the Panda robot are %s"
-                % (control_group, CONTROLLER_DICT.keys())
+                f"The '{control_group}' control group you specified is not valid. "
+                "Valid control groups for the Panda robot are "
+                f"{CONTROLLER_DICT.keys()}."
             )
             resp.success = False
             return resp
         if control_type not in CONTROLLER_DICT[control_group].keys():
             rospy.logwarn(
-                "The '%s' control type you specified is not valid. Valid control types "
-                "for the Panda robot are %s"
-                % (control_type, CONTROLLER_DICT[control_group].keys())
+                f"The '{control_type} control type you specified is not valid. Valid "
+                "control types for the Panda robot are "
+                f"{CONTROLLER_DICT[control_group].keys()}."
             )
             resp.success = False
             return resp
@@ -433,14 +433,11 @@ class PandaControlSwitcher(object):
                 )
             else:
                 rospy.logwarn(
-                    "The Panda %s control type was not switched to '%s' because the %s "
-                    "controllers could not be loaded as 'load_controllers' was set to "
-                    "argument was set to 'False'."
-                    % (
-                        control_group,
-                        control_type,
-                        CONTROLLER_DICT[control_group][control_type],
-                    )
+                    f"The Panda {control_group} control group was not switched to "
+                    f"'{control_type}' because the "
+                    f"{CONTROLLER_DICT[control_group][control_type]} controllers could "
+                    "not be loaded as 'load_controllers' was set to argument was set "
+                    "to 'False'."
                 )
                 resp.success = False
                 resp.prev_control_type = prev_control_type
@@ -465,9 +462,9 @@ class PandaControlSwitcher(object):
                     and control_type is not self.hand_control_type
                 ):
                     rospy.logwarn(
-                        "The Panda %s control type was not switched to '%s' as the %s "
-                        "controllers could not be loaded."
-                        % (control_group, control_type, failed_controllers)
+                        f"The Panda {control_group} control griyo was not switched to "
+                        f"'{control_type}' as the {failed_controllers} controllers "
+                        "could not be loaded."
                     )
                     resp.success = False
                 else:
@@ -488,14 +485,13 @@ class PandaControlSwitcher(object):
         # Send switch_controller msgs.
         if not controller_already_running:
             rospy.logdebug(
-                "Switching Panda %s control type to '%s'."
-                % (control_group, control_type)
+                f"Switching Panda {control_group} control group to '{control_type}'."
             )
             retval = self._switch_controller_client(switch_controller_msg)
             if retval.ok:
                 rospy.logdebug(
-                    "Switching Panda %s control type to '%s' successful."
-                    % (control_group, control_type)
+                    f"Switching Panda {control_group} control group to "
+                    f"'{control_type}' successful."
                 )
                 resp.success = retval.ok
                 resp.prev_control_type = prev_control_type
@@ -508,8 +504,8 @@ class PandaControlSwitcher(object):
                     and control_type is not self.arm_control_type
                 ):
                     rospy.logwarn(
-                        "Switching Panda %s control type to '%s' failed."
-                        % (control_group, control_type)
+                        f"Switching Panda {control_group} control type to "
+                        f"'{control_type}' failed."
                     )
                     resp.success = retval.ok
                 else:
@@ -519,9 +515,9 @@ class PandaControlSwitcher(object):
         else:
             if verbose:
                 rospy.logdebug(
-                    "Panda %s control type not switched to '%s' as the Panda robot was "
-                    "already using '%s'."
-                    % (control_group, control_type, prev_control_type)
+                    f"Panda {control_group} control type not switched to "
+                    "'{control_type}' as the Panda robot was already using "
+                    f"'{prev_control_type}'."
                 )
             resp.success = True
             resp.prev_control_type = prev_control_type

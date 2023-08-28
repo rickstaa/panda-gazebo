@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """Small script for testing capabilities of the Moveit commander.
 """
 import sys
@@ -38,11 +39,11 @@ if __name__ == "__main__":
 
     # We can get the name of the reference frame for this robot:
     planning_frame = move_group.get_planning_frame()
-    print("============ Planning frame: %s" % planning_frame)
+    print(f"============ Planning frame: {planning_frame}")
 
     # We can also print the name of the end-effector link for this group:
     eef_link = move_group.get_end_effector_link()
-    print("============ End effector link: %s" % eef_link)
+    print(f"============ End effector link: {eef_link}")
 
     # We can get a list of all the groups in the robot:
     group_names = robot.get_group_names()

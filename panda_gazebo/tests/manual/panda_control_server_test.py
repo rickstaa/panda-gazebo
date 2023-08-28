@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """Script used to manually test the '/panda_control_server' control services"""
 import sys
 
@@ -6,19 +7,14 @@ import rospy
 from std_msgs.msg import Header
 from trajectory_msgs.msg import JointTrajectoryPoint
 
-from panda_gazebo.msg import FollowJointTrajectoryAction, FollowJointTrajectoryGoal
-from panda_gazebo.srv import (
-    GetControlledJoints,
-    GetControlledJointsRequest,
-    SetGripperWidth,
-    SetGripperWidthRequest,
-    SetJointCommands,
-    SetJointCommandsRequest,
-    SetJointEfforts,
-    SetJointEffortsRequest,
-    SetJointPositions,
-    SetJointPositionsRequest,
-)
+from panda_gazebo.common.helpers import ros_exit_gracefully
+from panda_gazebo.msg import (FollowJointTrajectoryAction,
+                              FollowJointTrajectoryGoal)
+from panda_gazebo.srv import (GetControlledJoints, GetControlledJointsRequest,
+                              SetGripperWidth, SetGripperWidthRequest,
+                              SetJointCommands, SetJointCommandsRequest,
+                              SetJointEfforts, SetJointEffortsRequest,
+                              SetJointPositions, SetJointPositionsRequest)
 
 # --TESTS--
 # For the `joint effort`, `joint_position` and `joint_trajectory` services test the
@@ -164,8 +160,9 @@ if __name__ == "__main__":
     # listening for goals.
     retval = follow_joint_traj_client.wait_for_server(timeout=rospy.Duration(5))
     if not retval:
-        rospy.logerr("Shutting down")
-        sys.exit(0)
+        ros_exit_gracefully(
+            shutdown_msg=f"Shutting down '{rospy.get_name()}'", exit_code=1
+        )
 
     # Create action client goal.
     header = Header()
