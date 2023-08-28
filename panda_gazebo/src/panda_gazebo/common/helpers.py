@@ -436,6 +436,10 @@ def ros_exit_gracefully(shutdown_msg=None, exit_code=0):
         shutdown_msg (str, optional): The shutdown message. Defaults to ``None``.
         exit_code (int, optional): The exit code. Defaults to ``0``.
     """
+    if exit_code == 0:
+        rospy.loginfo(shutdown_msg)
+    else:
+        rospy.logerr(shutdown_msg)
     rospy.signal_shutdown(shutdown_msg)
     while not rospy.is_shutdown():
         rospy.sleep(0.1)
