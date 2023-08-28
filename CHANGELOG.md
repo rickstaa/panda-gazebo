@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.15.0](https://github.com/rickstaa/panda-gazebo/compare/v2.14.16...v2.15.0) (2023-08-28)
+
+
+### Features
+
+* improve ros shutdown and codebase ([#150](https://github.com/rickstaa/panda-gazebo/issues/150)) ([1c04095](https://github.com/rickstaa/panda-gazebo/commit/1c04095245de29b50953968ff403805d705fc06c))
+
+
+### Documentation
+
+* add pre-commit note ([#147](https://github.com/rickstaa/panda-gazebo/issues/147)) ([2a7b99a](https://github.com/rickstaa/panda-gazebo/commit/2a7b99ae23cb67fc22657998b8b0eb8521265f41))
+
 ## [2.14.16](https://github.com/rickstaa/panda-gazebo/compare/v2.14.15...v2.14.16) (2023-08-24)
 
 
