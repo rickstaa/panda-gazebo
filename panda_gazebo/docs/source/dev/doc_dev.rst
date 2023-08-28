@@ -8,12 +8,17 @@ Install requirements
 --------------------
 
 Building the :panda-gazebo:`panda_gazebo <>` documentation requires `sphinx`_, the ``panda_gazebo``
-package and several system and python packages. To install these requirements, you can run the
-following command inside your Catkin workspace:
+package and several system and Python packages. you can use `rosdep`_, a package manager for 
+ROS that automates the installation of system and ROS dependencies. To install the 
+required dependencies for building the documentation, you can run the following 
+command inside your Catkin workspace:
 
-Alternatively, you can use the `requirements/doc_requirements.txt` file to install the Python 
-packages in your virtual environments instead of the system Python environment. This can be 
-done using the following `pip`_ command:
+.. code-block:: bash
+
+    rosdep install -t doc --from-paths src --ignore-src -r -y
+
+Alternatively, you can also use the ``requirements/doc_requirements.txt`` file to install the Python 
+packages inside your Python environment. This can be  done using the following `pip`_ command:
 
 .. code-block:: bash
 
@@ -29,6 +34,7 @@ done using the following `pip`_ command:
     ensure all the ROS system packages are available in the virtual environment. This is required because the `sphinx`_ 
     package needs to be able to import the ``panda_gazebo`` ROS package.
 
+.. _rosdep: https://wiki.ros.org/rosdep
 .. _venv: https://docs.python.org/3/library/venv.html
 .. _Conda: https://docs.conda.io/en/latest/
 
