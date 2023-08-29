@@ -2,7 +2,7 @@
 Welcome to panda-gazebo documentation
 =====================================
 
-.. image:: ./images/panda_environment.png
+.. image:: /images/panda_environment.png
    :alt: Panda Gazebo environment
 
 Welcome to the API documentation for the :panda-gazebo:`panda_gazebo <>` package. This package
