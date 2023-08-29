@@ -10,7 +10,6 @@ ROS API
 
 Auto-generated API documentation for this package's ROS msgs/services/actions can be found `here <../index-msg.html>`_.
 
-
 .. _python_api:
 
 Python API
