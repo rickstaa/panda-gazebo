@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.15.2](https://github.com/rickstaa/panda-gazebo/compare/v2.15.1...v2.15.2) (2023-08-29)
+
+
+### Documentation
+
+* fix broken 'ros_gazebo_gym' reference ([#156](https://github.com/rickstaa/panda-gazebo/issues/156)) ([8a87a15](https://github.com/rickstaa/panda-gazebo/commit/8a87a1592e8206ea6896725430909b44f5f27a69))
+* improve docs ([#158](https://github.com/rickstaa/panda-gazebo/issues/158)) ([4277075](https://github.com/rickstaa/panda-gazebo/commit/42770756ceefc900267771c7d276541402004cdb))
+
 ## [2.15.1](https://github.com/rickstaa/panda-gazebo/compare/v2.15.0...v2.15.1) (2023-08-28)
 
 
