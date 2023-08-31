@@ -1,7 +1,7 @@
 # Panda Gazebo
 
 [![Panda Gazebo](https://github.com/rickstaa/panda-gazebo/actions/workflows/panda_gazebo.yml/badge.svg)](https://github.com/rickstaa/panda-gazebo/actions/workflows/panda_gazebo.yml)
-[![ROS Test](https://github.com/rickstaa/panda-gazebo/actions/workflows/ros_test.yml/badge.svg)](https://github.com/rickstaa/panda-gazebo/actions/workflows/ros_test.yml)
+[![ROS Test](https://github.com/rickstaa/panda-gazebo/actions/workflows/ros_test.yml/badge.svg?branch=noetic)](https://github.com/rickstaa/panda-gazebo/actions/workflows/ros_test.yml)
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/rickstaa/panda-gazebo)](https://github.com/rickstaa/panda-gazebo/releases)
 [![Python 3](https://img.shields.io/badge/Python->=3.8-brightgreen)](https://www.python.org/)
 [![ROS version](https://img.shields.io/badge/ROS%20versions-Noetic-brightgreen)](https://wiki.ros.org)
