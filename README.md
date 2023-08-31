@@ -1,10 +1,11 @@
 # Panda Gazebo
 
-[![Panda Gazebo CI](https://github.com/rickstaa/panda-gazebo/actions/workflows/panda_gazebo.yml/badge.svg)](https://github.com/rickstaa/panda-gazebo/actions/workflows/panda_gazebo.yml)
+[![Panda Gazebo](https://github.com/rickstaa/panda-gazebo/actions/workflows/panda_gazebo.yml/badge.svg)](https://github.com/rickstaa/panda-gazebo/actions/workflows/panda_gazebo.yml)
+[![ROS Test](https://github.com/rickstaa/panda-gazebo/actions/workflows/ros_test.yml/badge.svg)](https://github.com/rickstaa/panda-gazebo/actions/workflows/ros_test.yml)
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/rickstaa/panda-gazebo)](https://github.com/rickstaa/panda-gazebo/releases)
 [![Python 3](https://img.shields.io/badge/Python->=3.8-brightgreen)](https://www.python.org/)
 [![ROS version](https://img.shields.io/badge/ROS%20versions-Noetic-brightgreen)](https://wiki.ros.org)
-[![Contributions](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)](contributing.md)
+[![Contributions](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)](CONTRIBUTING.md)
 [![DOI](https://zenodo.org/badge/353980386.svg)](https://zenodo.org/badge/latestdoi/353980386)
 
 This package contains all the ROS components needed for creating a [Panda Emika Franka](https://frankaemika.github.io/docs/)
