@@ -8,7 +8,7 @@ Install dependencies
 The following dependencies are required to run the :panda-gazebo:`panda_gazebo <>` package:
 
 * `ROS Noetic - Desktop full <https://wiki.ros.org/noetic/Installation>`_.
-* `libfranka library <https://github.com/frankaemika/libfranka>`_  **(automatically installed by rosdep).**
+* `libfranka library <https://github.com/frankaemika/libfranka>`_ **(automatically installed by rosdep)**.
 * `Python 3 <https://www.python.org/downloads/>`_.
 
 Clone instructions
