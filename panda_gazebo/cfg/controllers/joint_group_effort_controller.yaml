@@ -1,0 +1,12 @@
+# Configuration file that contains the configuration values for setting up the panda
+# group effort controller.
+panda_arm_joint_effort_controller:
+  type: effort_controllers/JointGroupEffortController
+  joints:
+    - panda_joint1
+    - panda_joint2
+    - panda_joint3
+    - panda_joint4
+    - panda_joint5
+    - panda_joint6
+    - panda_joint7

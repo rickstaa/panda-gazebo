@@ -1,5 +1,7 @@
 # Configuration file that contains the configuration values for setting up the panda
 # trajectory controllers.
+# NOTE: Equal to Franka's 'position_joint_trajectory_controller' but with a different 
+# goal tolerance (see https://github.com/frankaemika/franka_ros/issues/201).
 panda_arm_controller:
   type: position_controllers/JointTrajectoryController
   joints:

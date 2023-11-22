@@ -1,5 +1,4 @@
-﻿"""Class used to store information about the Gazebo controllers.
-"""
+﻿"""Class used to store information about the Gazebo controllers."""
 import copy
 
 CONTROLLER_INFO_DICT = {
@@ -73,6 +72,6 @@ class ControllerInfoDict(dict):
     """
 
     def __init__(self, *args, **kwargs):
-        """Initialise the ControllerInfoDict"""
+        """Initialise the ControllerInfoDict."""
         super().__init__(*args, **kwargs)
         super().update(copy.deepcopy(CONTROLLER_INFO_DICT))

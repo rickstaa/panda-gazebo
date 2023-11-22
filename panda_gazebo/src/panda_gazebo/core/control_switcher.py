@@ -1,5 +1,5 @@
 """This class is responsible for switching the control type that is used for
-controlling the Panda Robot robot ``arm``. It serves as a wrapper aroundthe services
+controlling the Panda Robot robot ``arm``. It serves as a wrapper around the services
 created by the ROS `controller_manager <https://wiki.ros.orgcontroller_manager>`_ class.
 
 Control types:

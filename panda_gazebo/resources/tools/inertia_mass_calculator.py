@@ -43,7 +43,6 @@ def get_cube_inertia(height, width, depth, mass):
     Returns:
         numpy.ndarray: The inertia matrix [kg*m^2].
     """
-
     return np.array(
         [
             [(1 / 12) * mass * (width**2 + depth**2), 0, 0],
@@ -79,7 +78,6 @@ def get_cylinder_inertia(radius, height, mass):
     Returns:
         numpy.ndarray: The inertia matrix [kg*m^2].
     """
-
     return np.array(
         [
             [(1 / 12) * mass * (3 * radius**2 + height**2), 0, 0],

@@ -24,16 +24,18 @@ modes that can be selected using the ``control_mode`` argument:
 
 .. Note::
 
-    You can test different control modes using the :mod:`joint_effort_dynamic_reconfigure_server` and :mod:`joint_position_dynamic_reconfigure_server` nodes. 
+    You can test different control modes using the :mod:`joint_efforts_dynamic_reconfigure_server` and :mod:`joint_positions_dynamic_reconfigure_server` nodes. 
     These nodes allow you to send joint efforts and joint positions to the robot. To learn more about utilizing these dynamic reconfigure servers, refer to the 
     documentation of the `dynamic_reconfigure`_ and `rqt_reconfigure`_ ROS packages.
 
-    Furthermore, you can explore trajectory control using the `MoveIt! package`_. To enable this functionality, set the ``use_moveit`` launch file argument to ```true``. Once 
-    enabled, you can control the robot through the `RViz Motion Planning`_ panel. For detailed instructions on how to use `MoveIt!`_, consult the `MoveIt! tutorials`_.
+    Furthermore, you can explore trajectory control using the `MoveIt! package`_ or `rqt_joint_trajectory_controller package`_. To enable `MoveIt!`, set the
+    ``use_moveit`` launch file argument to ``true``. Once enabled, you can control the robot through the `RViz Motion Planning`_ panel. For detailed instructions on how to
+    use `MoveIt!`_, consult the `MoveIt! tutorials`_.
 
 .. _dynamic_reconfigure: https://wiki.ros.org/dynamic_reconfigure
 .. _rqt_reconfigure: https://wiki.ros.org/rqt_reconfigure
 .. _`MoveIt! package`: https://moveit.ros.org/
+.. _`rqt_joint_trajectory_controller package`: https://wiki.ros.org/rqt_joint_trajectory_controller
 .. _`RViz Motion Planning`: https://ros-planning.github.io/moveit_tutorials/doc/motion_planning_rviz/motion_planning_rviz_tutorial.html
 .. _`MoveIt!`: https://ros-planning.github.io/moveit_tutorials/
 .. _`MoveIt! tutorials`: https://ros-planning.github.io/moveit_tutorials/

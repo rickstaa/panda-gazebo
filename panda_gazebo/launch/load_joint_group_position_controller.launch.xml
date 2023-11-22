@@ -1,0 +1,12 @@
+<!--Launch file that launches a joint group position controller-->
+<launch>
+  <arg name="stopped" default="false" doc="Spawn the controllers in stoped mode"/>
+
+  <!--Load controller parameters-->
+  <rosparam file="$(find panda_gazebo)/cfg/controllers/joint_group_position_controller.yaml" command="load"/>
+
+  <!--Load the controllers-->
+  <arg if="$(arg stopped)" name="command_args" value="--stopped"/>
+  <arg unless="$(arg stopped)" name="command_args" value=""/>
+  <node name="joint_position_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="$(arg command_args) panda_arm_joint_position_controller"/>
+</launch>

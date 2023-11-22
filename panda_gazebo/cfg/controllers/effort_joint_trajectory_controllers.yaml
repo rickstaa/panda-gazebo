@@ -1,5 +1,7 @@
 # Configuration file that contains the configuration values for setting up the panda
 # trajectory controllers that can control a joint effort hardware interface.
+# NOTE: Equal to Franka's 'effort_joint_trajectory_controller' but with a different 
+# goal tolerance (see https://github.com/frankaemika/franka_ros/issues/201).
 panda_arm_controller:
   type: effort_controllers/JointTrajectoryController
   joints:
@@ -20,7 +22,6 @@ panda_arm_controller:
     panda_joint7: { p:  50, d:  5, i: 0 }
   constraints:
     goal_time: 0.5
-    stopped_velocity_tolerance: 0 # Added because of wrong PID gains see #9
     panda_joint1: { goal: 0.005 }
     panda_joint2: { goal: 0.005 }
     panda_joint3: { goal: 0.005 }

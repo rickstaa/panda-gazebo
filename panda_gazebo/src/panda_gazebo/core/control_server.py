@@ -37,7 +37,7 @@ from control_msgs.msg import GripperCommandAction, GripperCommandGoal
 from controller_manager_msgs.srv import ListControllers, ListControllersRequest
 from rospy.exceptions import ROSException, ROSInterruptException
 from sensor_msgs.msg import JointState
-from std_msgs.msg import Float64
+from std_msgs.msg import Float64MultiArray
 
 from panda_gazebo.common import ControlledJointsDict
 from panda_gazebo.common.helpers import (
@@ -51,7 +51,6 @@ from panda_gazebo.common.helpers import (
     ros_exit_gracefully,
     translate_actionclient_result_error_code,
 )
-from panda_gazebo.core.group_publisher import GroupPublisher
 from panda_gazebo.exceptions import InputMessageInvalidError
 from panda_gazebo.msg import FollowJointTrajectoryAction, FollowJointTrajectoryResult
 from panda_gazebo.srv import (
@@ -86,26 +85,10 @@ PANDA_JOINTS = {
     ],
     "hand": ["panda_finger_joint1", "panda_finger_joint2"],
 }
-ARM_POSITION_CONTROLLERS = [
-    "panda_arm_joint1_position_controller",
-    "panda_arm_joint2_position_controller",
-    "panda_arm_joint3_position_controller",
-    "panda_arm_joint4_position_controller",
-    "panda_arm_joint5_position_controller",
-    "panda_arm_joint6_position_controller",
-    "panda_arm_joint7_position_controller",
-]
-ARM_EFFORT_CONTROLLERS = [
-    "panda_arm_joint1_effort_controller",
-    "panda_arm_joint2_effort_controller",
-    "panda_arm_joint3_effort_controller",
-    "panda_arm_joint4_effort_controller",
-    "panda_arm_joint5_effort_controller",
-    "panda_arm_joint6_effort_controller",
-    "panda_arm_joint7_effort_controller",
-]
-ARM_TRAJ_CONTROLLERS = ["panda_arm_controller"]
-HAND_CONTROLLERS = ["franka_gripper"]
+ARM_POSITION_CONTROLLER = "panda_arm_joint_position_controller"
+ARM_EFFORT_CONTROLLER = "panda_arm_joint_effort_controller"
+ARM_TRAJ_CONTROLLER = "panda_arm_controller"
+HAND_CONTROLLER = "franka_gripper"
 CONTROLLER_INFO_RATE = 1 / 10  # Rate [hz] for retrieving controller information.
 CONNECTION_TIMEOUT = 10  # Service connection timeout [s].
 
@@ -247,27 +230,17 @@ class PandaControlServer(object):
         # services and messages. ###############
         ########################################
         if load_set_joint_commands_service:
-            # Create arm joint position controller publishers.
-            self._arm_joint_position_pub = GroupPublisher()
-            for position_controller in ARM_POSITION_CONTROLLERS:
-                self._arm_joint_position_pub.append(
-                    rospy.Publisher(
-                        "%s/command" % (position_controller),
-                        Float64,
-                        queue_size=10,
-                    )
-                )
+            # Create arm joint position controller publisher.
+            self._arm_joint_position_pub = rospy.Publisher(
+                "%s/command" % (ARM_POSITION_CONTROLLER),
+                Float64MultiArray,
+                queue_size=10,
+            )
 
-            # Create arm joint effort publishers.
-            self._arm_joint_effort_pub = GroupPublisher()
-            for effort_controller in ARM_EFFORT_CONTROLLERS:
-                self._arm_joint_effort_pub.append(
-                    rospy.Publisher(
-                        "%s/command" % (effort_controller),
-                        Float64,
-                        queue_size=10,
-                    )
-                )
+            # Create arm joint effort publisher.
+            self._arm_joint_effort_pub = rospy.Publisher(
+                "%s/command" % (ARM_EFFORT_CONTROLLER), Float64MultiArray, queue_size=10
+            )
 
         # Connect to controller_manager services.
         try:
@@ -452,12 +425,12 @@ class PandaControlServer(object):
             rospy.logwarn(
                 "Not waiting for control to be completed as no joints appear to be "
                 "controlled when using '%s' control. Please make sure the '%s' "
-                "controllers that are needed for '%s' control are initialised."
+                "controller that is needed for '%s' control is initialised."
                 % (
                     control_type,
-                    ARM_POSITION_CONTROLLERS
+                    ARM_POSITION_CONTROLLER
                     if control_type == "position"
-                    else ARM_EFFORT_CONTROLLERS,
+                    else ARM_EFFORT_CONTROLLER,
                     control_type,
                 )
             )
@@ -519,6 +492,11 @@ class PandaControlServer(object):
         action servers into the right format for the original ``panda_arm_controller``
         `follow_joint_trajectory <https://wiki.ros.org/joint_trajectory_action/>`_
         action server.
+
+        By doing this, we allow our users to send incomplete joint trajectory messages
+        (i.e., joint trajectory messages that do not contain all the joints). We also
+        allow them to generate the time axes automatically when the ``create_time_axis``
+        field is set to ``True``.
 
         Args:
             input_msg (:obj:`trajectory_msgs/JointTrajectory`): The service input
@@ -956,8 +934,8 @@ class PandaControlServer(object):
 
                     return panda_action_msg_2_control_msgs_action_msg(arm_control_msg)
 
-    def _create_control_publisher_msg(self, input_msg, control_type):  # noqa: C901
-        """Converts the input message of the position/effort control service into a
+    def _create_arm_control_publisher_msg(self, input_msg, control_type):  # noqa: C901
+        """Converts the input message of the arm position/effort control service into a
         control commands that is used by the control publishers. While doing this it
         also verifies whether the given input message is valid.
 
@@ -976,41 +954,52 @@ class PandaControlServer(object):
                 input_msg could not be converted into arm joint position/effort
                 commands.
         """  # noqa: E501
-        if control_type not in ["position", "effort"]:
+        valid_control_types = ["position", "effort"]
+        if control_type not in valid_control_types:
             raise ValueError(
-                "Please specify a valid control type. Valid values are 'position' & "
-                "'effort'."
+                "Invalid control type. Valid values are 'position' & 'effort'."
             )
-        else:
-            control_type = control_type.lower()
-            if control_type == "position":
-                input_joint_names = input_msg.joint_names
-                control_input = input_msg.joint_positions
-            elif control_type == "effort":
-                input_joint_names = input_msg.joint_names
-                control_input = input_msg.joint_efforts
 
-        # Validate and handle service request input.
+        # Parse control input.
+        control_type = control_type.lower()
+        input_joint_names = input_msg.joint_names
+        control_input = (
+            input_msg.joint_positions
+            if control_type == "position"
+            else input_msg.joint_efforts
+        )
+
+        # Retrieve controlled joints and current joint state.
         controlled_joints = self.controlled_joints[control_type]["arm"]
         controlled_joints_size = len(controlled_joints)
-        if len(input_joint_names) == 0:  # If not joint_names were given.
+        joint_values = (
+            self.joint_states.position
+            if control_type == "position"
+            else self.joint_states.effort
+        )
+        arm_commands_dict = {
+            key: val
+            for key, val in zip(self.joint_states.name, joint_values)
+            if key in controlled_joints
+        }
+
+        # Handle the case when no joint_names were given.
+        if len(input_joint_names) == 0:
             # Check if enough joint position commands were given otherwise give warning.
             if len(control_input) != controlled_joints_size:
-                logwarn_msg_strings = [
+                joint_str = (
                     f"joint {control_type}"
                     if len(control_input) == 1
-                    else f"joint {control_type}",
-                    "joint" if controlled_joints_size == 1 else "joints",
-                ]
+                    else f"joint {control_type}s"
+                )
+                joint_names_str = "joint" if controlled_joints_size == 1 else "joints"
 
                 # Check if control input is bigger than controllable joints.
                 if len(control_input) > controlled_joints_size:
                     logwarn_message = (
-                        "You specified %s while the Panda arm control group has %s."
-                        % (
-                            "%s %s" % (len(control_input), logwarn_msg_strings[0]),
-                            "%s %s" % (controlled_joints_size, logwarn_msg_strings[1]),
-                        )
+                        f"You specified {len(control_input)} {joint_str} while the "
+                        f"Panda arm control group has {controlled_joints_size} "
+                        f"{joint_names_str}."
                     )
                     raise InputMessageInvalidError(
                         message=f"Invalid number of joint {control_type} commands.",
@@ -1022,115 +1011,81 @@ class PandaControlServer(object):
                     )
                 elif len(control_input) < controlled_joints_size:
                     logwarn_message = (
-                        "You specified %s while the Panda arm control group has %s."
-                        % (
-                            "%s %s" % (len(control_input), logwarn_msg_strings[0]),
-                            "%s %s" % (controlled_joints_size, logwarn_msg_strings[1]),
-                        )
-                        + " As a result only joints %s will be controlled."
-                        % (controlled_joints[: len(control_input)])
+                        f"You specified {len(control_input)} {joint_str} while the "
+                        f"Panda arm control group has {controlled_joints_size} "
+                        f"{joint_names_str}. As a result only joints "
+                        f"{controlled_joints[: len(control_input)]} will be controlled."
                     )
                     rospy.logwarn(logwarn_message)
 
-                    # Update current state dict with given joint_position commands.
-                    arm_position_commands = [
-                        val
-                        for key, val in dict(
-                            zip(self.joint_states.name, self.joint_states.position)
-                        ).items()
-                        if key in controlled_joints
+                    # Add control commands to arm command dict.
+                    joints_to_update = list(arm_commands_dict.keys())[
+                        : len(control_input)
                     ]
-                    arm_position_commands[: len(control_input)] = control_input
-
-            # Return command message.
-            control_commands = [Float64(item) for item in arm_position_commands]
-            return control_commands
+                    arm_commands_dict = {
+                        k: v
+                        if k not in joints_to_update
+                        else control_input[joints_to_update.index(k)]
+                        for k, v in arm_commands_dict.items()
+                    }
         else:
-            # Check if enough control values were given.
+            # Throw warning if not enough control values were given.
             if len(input_joint_names) != len(control_input):
-                logwarn_msg_strings = [
+                joint_str = (
                     f"joint {control_type}"
                     if len(control_input) == 1
-                    else f"joint {control_type}s",
-                    f"panda_gazebo/SetJoint{control_type.capitalize()}s",
-                    "joint" if len(input_joint_names) == 1 else "joints",
-                    f"joint {control_type}",
-                    f"joint_{control_type}s",
-                ]
+                    else f"joint {control_type}s"
+                )
+                joint_names_str = "joint" if len(input_joint_names) == 1 else "joints"
                 logwarn_message = (
-                    "You specified %s while the 'joint_names' field of the "
-                    "'%s' message contains %s. Please make sure you supply "
-                    "a %s for each of the joints contained in the 'joint_names' "
-                    "field."
-                    % (
-                        "%s %s" % (len(control_input), logwarn_msg_strings[0]),
-                        logwarn_msg_strings[1],
-                        "%s %s" % (len(input_joint_names), logwarn_msg_strings[2]),
-                        logwarn_msg_strings[3],
-                    )
+                    f"You specified {len(control_input)} {joint_str} while the "
+                    "'joint_names' field of the "
+                    f"'panda_gazebo/SetJoint{control_type.capitalize()}s' message "
+                    f"contains {len(input_joint_names)} {joint_names_str}. "
+                    f"Please make sure you supply a {joint_str} for each of the joints "
+                    "contained in the 'joint_names' field."
                 )
                 raise InputMessageInvalidError(
                     message=(
-                        f"The 'joint_names' and '{logwarn_msg_strings[4]}' fields "
-                        "of the input message are of different lengths."
+                        f"The 'joint_names' and 'joint_{control_type}s' fields of the "
+                        "input message are of different lengths."
                     ),
                     log_message=logwarn_message,
                     details={
-                        logwarn_msg_strings[4] + "_length": len(control_input),
+                        f"joint_{control_type}s_length": len(control_input),
                         "joint_names_length": len(input_joint_names),
                     },
                 )
-            else:
-                # Validate joint_names.
-                invalid_joint_names = [
-                    joint_name
-                    for joint_name in input_joint_names
-                    if joint_name not in controlled_joints
-                ]
-                if len(invalid_joint_names) != 0:  # Joint names invalid.
-                    logwarn_msg_strings = [
-                        "Joint" if len(invalid_joint_names) == 1 else "Joints",
-                        "was" if len(invalid_joint_names) == 1 else "were",
-                        f"panda_gazebo/SetJoint{control_type.capitalize()}",
-                    ]
-                    logwarn_message = (
-                        "%s that %s specified in the 'joint_names' field of the '%s' "
-                        "message %s invalid. Valid joint names for controlling the "
-                        "Panda arm are %s."
-                        % (
-                            "%s %s" % (logwarn_msg_strings[0], invalid_joint_names),
-                            logwarn_msg_strings[1],
-                            logwarn_msg_strings[2],
-                            logwarn_msg_strings[1],
-                            controlled_joints,
-                        )
-                    )
-                    raise InputMessageInvalidError(
-                        message="Invalid joint_names were given.",
-                        log_message=logwarn_message,
-                        details={"invalid_joint_names": invalid_joint_names},
-                    )
-                else:
-                    # Update current state dict with given joint_position commands.
-                    arm_position_commands_dict = {
-                        key: val
-                        for key, val in dict(
-                            zip(self.joint_states.name, self.joint_states.position)
-                        ).items()
-                        if key in controlled_joints
-                    }
-                    for (
-                        joint,
-                        position,
-                    ) in dict(zip(input_joint_names, control_input)).items():
-                        if joint in arm_position_commands_dict.keys():
-                            arm_position_commands_dict[joint] = position
-                    control_commands = [
-                        Float64(item) for item in arm_position_commands_dict.values()
-                    ]
 
-                    # Return command message.
-                    return control_commands
+            # Throw error if joint_names are invalid.
+            invalid_joint_names = [
+                joint_name
+                for joint_name in input_joint_names
+                if joint_name not in controlled_joints
+            ]
+            if invalid_joint_names:  # Joint names invalid.
+                joint_str = "Joint" if len(invalid_joint_names) == 1 else "Joints"
+                was_were = "was" if len(invalid_joint_names) == 1 else "were"
+                logwarn_message = (
+                    f"{joint_str} {invalid_joint_names} that {was_were} specified in "
+                    "the 'joint_names' field of the "
+                    f"'panda_gazebo/SetJoint{control_type.capitalize()}' message "
+                    f"{was_were} invalid. Valid joint names for controlling the Panda "
+                    f"arm are {controlled_joints}."
+                )
+                raise InputMessageInvalidError(
+                    message="Invalid joint_names were given.",
+                    log_message=logwarn_message,
+                    details={"invalid_joint_names": invalid_joint_names},
+                )
+
+            # Add control commands to arm command dict.
+            for joint, command in zip(input_joint_names, control_input):
+                if joint in arm_commands_dict:
+                    arm_commands_dict[joint] = command
+
+        # Return command message.
+        return Float64MultiArray(data=list(arm_commands_dict.values()))
 
     def _split_joint_commands_req(self, joint_commands_req, control_type):
         """Splits the combined :obj:`~panda_gazebo.msg.SetJointControlCommandRequest`
@@ -1281,43 +1236,43 @@ class PandaControlServer(object):
         if not self.__controlled_joints:
             controllers = self.controllers
             controlled_joints_dict = ControlledJointsDict()
-            for controller in ARM_POSITION_CONTROLLERS + HAND_CONTROLLERS:
+            for controller in [ARM_POSITION_CONTROLLER, HAND_CONTROLLER]:
                 try:
                     for claimed_resources in controllers[controller].claimed_resources:
                         for resource in claimed_resources.resources:
-                            if controller in ARM_POSITION_CONTROLLERS:
+                            if controller == ARM_POSITION_CONTROLLER:
                                 controlled_joints_dict["position"]["arm"].append(
                                     resource
                                 )
-                            elif controller in HAND_CONTROLLERS:
+                            elif controller == HAND_CONTROLLER:
                                 controlled_joints_dict["position"]["hand"].append(
                                     resource
                                 )
                             controlled_joints_dict["position"]["both"].append(resource)
                 except KeyError:  # Controller not initialised.
                     pass
-            for controller in ARM_EFFORT_CONTROLLERS + HAND_CONTROLLERS:
+            for controller in [ARM_EFFORT_CONTROLLER, HAND_CONTROLLER]:
                 try:
                     for claimed_resources in controllers[controller].claimed_resources:
                         for resource in claimed_resources.resources:
-                            if controller in ARM_EFFORT_CONTROLLERS:
+                            if controller == ARM_EFFORT_CONTROLLER:
                                 controlled_joints_dict["effort"]["arm"].append(resource)
-                            elif controller in HAND_CONTROLLERS:
+                            elif controller == HAND_CONTROLLER:
                                 controlled_joints_dict["effort"]["hand"].append(
                                     resource
                                 )
                             controlled_joints_dict["effort"]["both"].append(resource)
                 except KeyError:  # Controller not initialised.
                     pass
-            for controller in ARM_TRAJ_CONTROLLERS + HAND_CONTROLLERS:
+            for controller in [ARM_TRAJ_CONTROLLER, HAND_CONTROLLER]:
                 try:
                     for claimed_resources in controllers[controller].claimed_resources:
                         for resource in claimed_resources.resources:
-                            if controller in ARM_TRAJ_CONTROLLERS:
+                            if controller == ARM_TRAJ_CONTROLLER:
                                 controlled_joints_dict["trajectory"]["arm"].append(
                                     resource
                                 )
-                            elif controller in HAND_CONTROLLERS:
+                            elif controller == HAND_CONTROLLER:
                                 controlled_joints_dict["trajectory"]["hand"].append(
                                     resource
                                 )
@@ -1424,15 +1379,19 @@ class PandaControlServer(object):
             set_joint_commands_req, control_type
         )
 
-        # Send control commands.
-        gripper_result = False
+        # Send arm control commands.
+        arm_resp = None
         if arm_command_msg is not None:
-            if control_type == "position":
-                arm_resp = self._arm_set_joint_positions_cb(arm_command_msg)
-            else:
-                arm_resp = self._arm_set_joint_efforts_cb(arm_command_msg)
+            arm_resp = (
+                self._arm_set_joint_positions_cb(arm_command_msg)
+                if control_type == "position"
+                else self._arm_set_joint_efforts_cb(arm_command_msg)
+            )
+
+        # Send gripper control commands.
+        gripper_resp = None
         if self._load_gripper and gripper_command_msg is not None:
-            gripper_result = self._set_gripper_width_cb(gripper_command_msg)
+            gripper_resp = self._set_gripper_width_cb(gripper_command_msg)
         elif gripper_command_msg is not None:
             rospy.logwarn_once(
                 f"Gripper command could not be set since the '{rospy.get_name()}' "
@@ -1441,26 +1400,25 @@ class PandaControlServer(object):
                 f"'{rospy.get_name()}'."
             )
 
-        # Return result.
-        resp = SetJointCommandsResponse()
+        # Check if everything went OK and return response.
         if (
-            (self._load_gripper and all([gripper_result, arm_resp.success]))
-            or not self._load_gripper
+            arm_resp is not None
             and arm_resp.success
+            and (not self._load_gripper or gripper_resp)
         ):
             resp.success = True
             resp.message = "Everything went OK"
-        elif self._load_gripper and all(
-            [not item for item in [gripper_result, arm_resp.success]]
+        elif (
+            self._load_gripper and gripper_command_msg is not None and not gripper_resp
         ):
             resp.success = False
-            resp.message = "Joint control failed"
-        elif not arm_resp.success:
+            resp.message = "Gripper control failed"
+        elif arm_resp is not None and not arm_resp.success:
             resp.success = False
             resp.message = "Arm control failed"
-        elif self._load_gripper and not gripper_result:
+        elif self._load_gripper and not gripper_resp:
             resp.success = False
-            resp.message = "Gripper control failed"
+            resp.message = "Joint control failed"
         return resp
 
     def _arm_set_joint_positions_cb(self, set_joint_positions_req):  # noqa: C901
@@ -1491,7 +1449,7 @@ class PandaControlServer(object):
         # NOTE: Fail if missing and display warning if not started.
         resp = SetJointPositionsResponse()
         missing_controllers, stopped_controllers = self._controllers_running(
-            ARM_POSITION_CONTROLLERS
+            [ARM_POSITION_CONTROLLER]
         )
         if len(missing_controllers) >= 1:
             rospy.logwarn(
@@ -1538,7 +1496,7 @@ class PandaControlServer(object):
 
         # Validate request and publish control command.
         try:
-            control_pub_msgs = self._create_control_publisher_msg(
+            control_pub_msgs = self._create_arm_control_publisher_msg(
                 input_msg=set_joint_positions_req,
                 control_type="position",
             )
@@ -1557,7 +1515,7 @@ class PandaControlServer(object):
         if set_joint_positions_req.wait and not len(stopped_controllers) >= 1:
             self._wait_till_arm_control_done(
                 control_type="position",
-                joint_setpoint=[command.data for command in control_pub_msgs],
+                joint_setpoint=control_pub_msgs.data,
             )
 
         resp.success = True
@@ -1591,7 +1549,7 @@ class PandaControlServer(object):
         # NOTE: Fail if is missing and display warning if not started.
         resp = SetJointEffortsResponse()
         missing_controllers, stopped_controllers = self._controllers_running(
-            ARM_EFFORT_CONTROLLERS
+            [ARM_EFFORT_CONTROLLER]
         )
         if len(missing_controllers) >= 1:
             rospy.logwarn(
@@ -1638,7 +1596,7 @@ class PandaControlServer(object):
 
         # Validate request and publish control command.
         try:
-            control_pub_msgs = self._create_control_publisher_msg(
+            control_pub_msgs = self._create_arm_control_publisher_msg(
                 input_msg=set_joint_efforts_req,
                 control_type="effort",
             )
@@ -1707,10 +1665,10 @@ class PandaControlServer(object):
 
             # Wait for result.
             if set_gripper_width_req.wait:
-                gripper_result = self._gripper_command_client.wait_for_result(
+                gripper_resp = self._gripper_command_client.wait_for_result(
                     timeout=rospy.Duration.from_sec(WAIT_TILL_DONE_TIMEOUT)
                 )
-                resp.success = gripper_result
+                resp.success = gripper_resp
             else:
                 resp.success = True
         else:

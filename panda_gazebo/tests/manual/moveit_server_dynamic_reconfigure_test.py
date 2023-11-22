@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
-"""Small node that spins up a dynamic reconfigure server that can be used to change the
-parameters of the panda_moveit_planner_server.
-"""
+"""Node to dynamically reconfigure 'panda_moveit_planner_server' parameters."""
+
 import rospy
 from dynamic_reconfigure.server import Server
 
