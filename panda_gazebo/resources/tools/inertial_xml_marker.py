@@ -1,5 +1,6 @@
 """This script creates gazebo inertia xml code when it is supplied with the joint mass,
-inertia and center of mass."""
+inertia and center of mass.
+"""
 
 # Make script python3 compatible
 from __future__ import print_function

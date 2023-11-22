@@ -1,5 +1,4 @@
-﻿"""Class used to store information about the currently controlled joints.
-"""
+﻿"""Class used to store information about the currently controlled joints."""
 import copy
 
 CONTROLLED_JOINTS_DICT = {
@@ -16,6 +15,6 @@ class ControlledJointsDict(dict):
     """
 
     def __init__(self, *args, **kwargs):
-        """Initialise the ControllerInfoDict"""
+        """Initialise the ControllerInfoDict."""
         super().__init__(*args, **kwargs)
         super().update(copy.deepcopy(CONTROLLED_JOINTS_DICT))

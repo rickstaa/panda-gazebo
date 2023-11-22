@@ -89,9 +89,10 @@
   <exec_depend>joint_trajectory_controller</exec_depend>
 
   <!--Extra run dependencies
-    NOTE: Disabled by default as they are only needed for some test scripts
+    NOTE: Disabled by default as they are only needed for some test scripts.
   -->
   <!-- <exec_depend>dynamic_reconfigure</exec_depend> -->
+  <!-- <exec_depend>rqt_joint_trajectory_controller</exec_depend> -->
 
   <!--Local ROS package dependencies -->
   <exec_depend>franka_description</exec_depend>

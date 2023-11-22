@@ -1,4 +1,4 @@
-<!-- Launch file for starting the grasp gazebo environment -->
+<!--Launch file for starting the grasp gazebo environment-->
 <launch>
   <!--Simulation arguments-->
   <arg name="world" value="$(find panda_gazebo)/resources/worlds/pick_and_place.world"/>

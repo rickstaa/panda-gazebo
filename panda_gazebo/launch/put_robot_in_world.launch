@@ -12,7 +12,7 @@
   <arg name="end_effector" default="panda_link8" doc="The end effector link"/>
   <arg name="max_velocity_scaling_factor" default="1.0" doc="Factor used when scaling the MoveIt plan velocity"/>
   <arg name="max_acceleration_scaling_factor" default="1.0" doc="Factor used when scaling the MoveIt plan acceleration"/>
-  <!-- Gazebo specific options -->
+  <!--Gazebo specific options-->
   <arg name="world" default="$(find panda_gazebo)/resources/worlds/empty.world" doc="Path to the world file"/>
   <arg name="gazebo" default="false" doc="Start Gazebo"/>
   <arg name="paused" default="false" doc="Start gazebo paused"/>
@@ -23,14 +23,12 @@
   <arg name="roll" default="0" doc="How much to rotate the base of the robot around its X-axis in [rad]?"/>
   <arg name="pitch" default="0" doc="How much to rotate the base of the robot around its Y-axis in [rad]?"/>
   <arg name="yaw" default="0" doc="How much to rotate the base of the robot around its Z-axis in [rad]?"/>
+  <!--Phyics engines: dart|ode-->
+  <arg name="physics" default="dart" doc="The physics engine used by gazebo"/>
   <!--Control arguments-->
   <!--    The control type used for controlling the robot (Options: Trajectory, position, effort)-->
   <arg name="control_type" default="trajectory" doc="The type of control used for controlling the arm. Options: trajectory, position, effort"/>
   <arg name="brute_force_grasping" default="false" doc="Disable the gripper width reached check when grasping."/>
-
-  <!--Retrieve the right transmission for the control type-->
-  <arg if="$(eval arg('control_type') == 'position')" name="transmission" value="position"/>
-  <arg unless="$(eval arg('control_type') == 'position')" name="transmission" value="effort"/>
 
   <!--Spawn the Panda robot-->
   <include file="$(find franka_gazebo)/launch/panda.launch">
@@ -40,13 +38,13 @@
     <arg name="paused" value="$(arg paused)"/>
     <arg name="world" value="$(arg world)"/>
     <arg name="use_gripper" default="$(arg load_gripper)"/>
-    <arg name="transmission" value="$(arg transmission)"/>
     <arg name="x" value="$(arg x)"/>
     <arg name="y" value="$(arg y)"/>
     <arg name="z" value="$(arg z)"/>
     <arg name="roll" value="$(arg roll)"/>
     <arg name="pitch" value="$(arg pitch)"/>
     <arg name="yaw" value="$(arg yaw)" />
+    <arg name="physics" value="$(arg physics)"/>
   </include>
 
   <!--Set panda_gazebo parameters-->

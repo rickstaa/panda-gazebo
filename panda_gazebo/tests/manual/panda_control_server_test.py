@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""Script used to manually test the '/panda_control_server' control services"""
-import sys
+"""Script used to manually test the '/panda_control_server' control services."""
 
 import actionlib
 import rospy

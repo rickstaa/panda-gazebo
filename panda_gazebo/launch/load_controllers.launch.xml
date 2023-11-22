@@ -1,4 +1,4 @@
-<!--Launch file loads the control parameters and controllers-->
+<!--Launch file that loads the control parameters and controllers-->
 <launch>
   <arg name="moveit" default="true" doc="Start MoveIt"/>
   <arg name="load_gripper" default="true" doc="Load the gripper"/>
@@ -18,20 +18,20 @@
   <!--Load controllers-->
   <!--Joint position controllers-->
   <group if="$(eval arg('control_type') == 'position')">
-    <include file="$(find panda_gazebo)/launch/load_joint_position_controllers.launch.xml"/>
+    <include file="$(find panda_gazebo)/launch/load_joint_group_position_controller.launch.xml"/>
     <!--Load joint_trajectory controller in stopped mode
             NOTE: This enabled us to set the initial robot pose using euclidean coordinates.
         -->
-    <include file="$(find panda_gazebo)/launch/load_position_joint_trajectory_controllers.launch.xml">
+    <include file="$(find panda_gazebo)/launch/load_position_joint_trajectory_controller.launch.xml">
       <arg name="stopped" value="true"/>
     </include>
   </group>
   <!--Joint effort controllers-->
   <group if="$(eval arg('control_type') == 'effort')">
-    <include file="$(find panda_gazebo)/launch/load_joint_effort_controllers.launch.xml"/>
+    <include file="$(find panda_gazebo)/launch/load_joint_group_effort_controller.launch.xml"/>
   </group>
   <!--Joint_trajectory controller-->
-  <include unless="$(eval arg('control_type') == 'position')" file="$(find panda_gazebo)/launch/load_effort_joint_trajectory_controllers.launch.xml">
+  <include unless="$(eval arg('control_type') == 'position')" file="$(find panda_gazebo)/launch/load_effort_joint_trajectory_controller.launch.xml">
     <arg name="stopped" value="$(eval arg('control_type') == 'effort')"/>
   </include>
 </launch>

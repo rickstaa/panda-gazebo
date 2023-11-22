@@ -1,4 +1,4 @@
-<!-- Launch file for launching the robot controllers -->
+<!--Launch file that launches a effort joint trajectory controller-->
 <launch>
   <arg name="stopped" default="false" doc="Spawn the controllers in stoped mode"/>
 
