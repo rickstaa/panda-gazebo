@@ -5,7 +5,7 @@
   <!--Load controller parameters-->
   <rosparam file="$(find panda_gazebo)/cfg/controllers/joint_group_effort_controller.yaml" command="load"/>
 
-  <!--Load the controllers-->
+  <!--Load (and start) the controller-->
   <arg if="$(arg stopped)" name="command_args" value="--stopped"/>
   <arg unless="$(arg stopped)" name="command_args" value="" />
   <node name="joint_effort_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="$(arg command_args) panda_arm_joint_effort_controller"/>

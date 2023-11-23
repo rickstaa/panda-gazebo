@@ -1,9 +1,5 @@
 #!/usr/bin/env python
-"""Small python ROS node that can be used to set the logging level of the
-`franka_gazebo`_ node.
-
-.. _franka_gazebo: https://github.com/frankaemika/franka_ros/tree/develop/franka_gazebo
-"""
+"""Small python ROS node that can be used to set the logging level of a ROS logger."""
 import argparse
 import sys
 
@@ -11,12 +7,15 @@ import rospy
 from roscpp.srv import SetLoggerLevel, SetLoggerLevelRequest
 
 if __name__ == "__main__":
-    rospy.init_node("set_franka_gazebo_logger_level")
+    rospy.init_node("set_logger_level")
 
-    # Get input argument.
-    parser = argparse.ArgumentParser(description="Retrieve log level")
+    # Get input arguments.
+    parser = argparse.ArgumentParser(description="Set logging level of a ROS logger.")
     parser.add_argument(
         "-l", "--level", nargs="?", type=str, default="error", help="logging level"
+    )
+    parser.add_argument(
+        "-n", "--name", nargs="?", type=str, required=True, help="logger name"
     )
     args = parser.parse_args(rospy.myargv(argv=sys.argv)[1:])
 
@@ -26,8 +25,6 @@ if __name__ == "__main__":
         set_logger_level_srv = rospy.ServiceProxy(
             "/gazebo/set_logger_level", SetLoggerLevel
         )
-        set_logger_level_srv(
-            SetLoggerLevelRequest(logger="ros.franka_gazebo", level=args.level)
-        )
+        set_logger_level_srv(SetLoggerLevelRequest(logger=args.name, level=args.level))
     except rospy.ServiceException as e:
         print("Service call '/gazebo/set_logger_level' failed: %s" % e)

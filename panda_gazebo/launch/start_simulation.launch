@@ -1,5 +1,6 @@
 <!--Starts the panda gazebo simulation-->
 <launch>
+  <!--General arguments-->
   <arg name="rviz" default="true" doc="Start Rviz"/>
   <arg name="moveit" default="true" doc="Start MoveIt"/>
   <!--Simulation arguments-->
@@ -7,13 +8,13 @@
   <arg name="paused" default="true" doc="Start gazebo paused"/>
   <arg name="verbose" default="false" doc="Enable Gazebo verbose mode"/>
   <arg name="gazebo_gui" default="true" doc="Start the gazebo GUI"/>
-  <!--Phyics engines: dart|ode-->
+  <!--  The used phyics engine (options: dart and ode)-->
   <arg name="physics" default="dart" doc="The physics engine used by gazebo"/>
   <!--Control arguments-->
-  <!--    The control type used for controlling the robot (Options: Trajectory, position, effort)-->
+  <!--  The control type used for controlling the robot (Options: Trajectory, position, effort)-->
   <arg name="control_type" default="trajectory" doc="The type of control used for controlling the arm. Options: trajectory, position, effort"/>
 
-  <!--Launch gazebo environment-->
+  <!--Start the Gazebo world-->
   <include file="$(find panda_gazebo)/launch/start_world.launch.xml">
     <arg name="world" value="$(arg world)"/>
     <arg name="paused" value="$(arg paused)"/>

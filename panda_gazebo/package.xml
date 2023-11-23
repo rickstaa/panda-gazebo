@@ -87,6 +87,7 @@
   <exec_depend>position_controllers</exec_depend>
   <exec_depend>effort_controllers</exec_depend>
   <exec_depend>joint_trajectory_controller</exec_depend>
+  <exec_depend>panda_moveit_config</exec_depend>
 
   <!--Extra run dependencies
     NOTE: Disabled by default as they are only needed for some test scripts.

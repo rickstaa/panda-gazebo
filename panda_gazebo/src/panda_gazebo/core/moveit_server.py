@@ -110,7 +110,7 @@ class PandaMoveItPlannerServer(object):
         self,
         arm_move_group="panda_arm",
         arm_ee_link="panda_link8",
-        hand_move_group="hand",
+        hand_move_group="panda_hand",
         load_gripper=True,
         load_set_ee_pose_service=True,
         load_extra_services=False,
@@ -123,7 +123,7 @@ class PandaMoveItPlannerServer(object):
             arm_ee_link (str, optional): The end effector you want moveit to use when
                 controlling the Panda arm. Defaults to ``panda_link8``.
             hand_move_group (str, optional): The name of the move group you want to use
-                for controlling the Panda hand. Defaults to ``hand``.
+                for controlling the Panda hand. Defaults to ``panda_hand``.
             load_gripper (boolean, optional): Whether we also want to load the gripper
                 control services. Defaults to ``True``.
             load_set_ee_pose_service (boolean, optional): Whether the set ee pose
