@@ -48,14 +48,8 @@
   </include>
 
   <!--Change 'franka_ros' nodes logging levels-->
-  <node pkg="panda_gazebo" type="set_ros_node_logging_level.py" name="set_logging_level" output="$(arg output)">
-    <param name="level" value="warn"/>
-    <param name="name" value="ros.franka_gazebo.FrankaGripperSim"/>
-  </node>
-  <node if="$(arg disable_franka_gazebo_logs)" pkg="panda_gazebo" type="set_logging_level.py" name="set_ros_node_logging_level" output="$(arg output)">
-    <param name="level" value="error"/>
-    <param name="name" value="ros.franka_gazebo"/>
-  </node>
+  <node if="$(arg disable_franka_gazebo_logs)" pkg="panda_gazebo" type="set_logging_level.py" name="set_logging_level_franka_gazebo" args="--name ros.franka_gazebo --level error" output="$(arg output)"/>
+  <node pkg="panda_gazebo" type="set_logging_level.py" name="set_logging_level_franka_control" args="--name ros.franka_gazebo.FrankaGripperSim --level warn" output="$(arg output)"/>
 
   <!--Start MoveIt-->
   <include file="$(find panda_moveit_config)/launch/demo.launch" pass_all_args="true">

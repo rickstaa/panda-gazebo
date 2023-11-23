@@ -12,7 +12,7 @@ if __name__ == "__main__":
     # Get input arguments.
     parser = argparse.ArgumentParser(description="Set logging level of a ROS logger.")
     parser.add_argument(
-        "-l", "--level", nargs="?", type=str, default="error", help="logging level"
+        "-l", "--level", nargs="?", type=str, default="info", help="logging level"
     )
     parser.add_argument(
         "-n", "--name", nargs="?", type=str, required=True, help="logger name"
