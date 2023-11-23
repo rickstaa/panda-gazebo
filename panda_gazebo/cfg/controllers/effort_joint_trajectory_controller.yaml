@@ -1,9 +1,9 @@
 # Configuration file that contains the configuration values for setting up the panda
-# trajectory controllers.
-# NOTE: Equal to Franka's 'position_joint_trajectory_controller' but with a different 
+# trajectory controllers that can control a joint effort hardware interface.
+# NOTE: Equal to Franka's 'effort_joint_trajectory_controller' but with a different 
 # goal tolerance (see https://github.com/frankaemika/franka_ros/issues/201).
-panda_arm_controller:
-  type: position_controllers/JointTrajectoryController
+panda_arm_trajectory_controller:
+  type: effort_controllers/JointTrajectoryController
   joints:
     - panda_joint1
     - panda_joint2
@@ -12,6 +12,14 @@ panda_arm_controller:
     - panda_joint5
     - panda_joint6
     - panda_joint7
+  gains:
+    panda_joint1: { p: 600, d: 30, i: 0.0 }
+    panda_joint2: { p: 600, d: 30, i: 0.0 }
+    panda_joint3: { p: 600, d: 30, i: 0.0 }
+    panda_joint4: { p: 600, d: 30, i: 0.0 }
+    panda_joint5: { p: 250, d: 10, i: 0 }
+    panda_joint6: { p: 150, d: 10, i: 0 }
+    panda_joint7: { p:  50, d:  5, i: 0 }
   constraints:
     goal_time: 0.5
     panda_joint1: { goal: 0.005 }

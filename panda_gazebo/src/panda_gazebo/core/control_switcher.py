@@ -1,6 +1,7 @@
 """This class is responsible for switching the control type that is used for
-controlling the Panda Robot robot ``arm``. It serves as a wrapper around the services
-created by the ROS `controller_manager <https://wiki.ros.orgcontroller_manager>`_ class.
+controlling the Panda Robot robot arm and hand. It serves as a wrapper around the
+services created by the ROS
+`controller_manager <https://wiki.ros.orgcontroller_manager>`_ class.
 
 Control types:
     * `trajectory <https://wiki.ros.org/joint_trajectory_controller/>`_
@@ -31,37 +32,20 @@ from panda_gazebo.common.helpers import (
 
 # Global script vars.
 ARM_CONTROLLERS = {
-    "end_effector": "panda_arm_controller",
-    "trajectory": "panda_arm_controller",
-    "position": [
-        "panda_arm_joint1_position_controller",
-        "panda_arm_joint2_position_controller",
-        "panda_arm_joint3_position_controller",
-        "panda_arm_joint4_position_controller",
-        "panda_arm_joint5_position_controller",
-        "panda_arm_joint6_position_controller",
-        "panda_arm_joint7_position_controller",
-    ],
-    "effort": [
-        "panda_arm_joint1_effort_controller",
-        "panda_arm_joint2_effort_controller",
-        "panda_arm_joint3_effort_controller",
-        "panda_arm_joint4_effort_controller",
-        "panda_arm_joint5_effort_controller",
-        "panda_arm_joint6_effort_controller",
-        "panda_arm_joint7_effort_controller",
-    ],
+    "end_effector": "panda_arm_trajectory_controller",
+    "trajectory": "panda_arm_trajectory_controller",
+    "position": "panda_arm_joint_position_controller",
+    "effort": "panda_arm_joint_effort_controller",
 }
 HAND_CONTROLLERS = {
-    "position": [
-        "franka_gripper",
-    ],
+    "position": "franka_gripper",
 }
 CONTROLLER_DICT = {"arm": ARM_CONTROLLERS, "hand": HAND_CONTROLLERS}
 
 
 class ControllerSwitcherResponse:
-    """Class used for returning the result of the ControllerSwitcher.switch method.
+    """Class used for returning the result of the :meth:`PandaControlSwitcher.switch`
+    method.
 
     Attributes:
         success (bool): Specifies whether the switch operation was successful.
@@ -69,7 +53,7 @@ class ControllerSwitcherResponse:
     """
 
     def __init__(self, success=True, prev_control_type=""):
-        """Initialise ControllerSwitcher response object.
+        """Initialise ControllerSwitcherResponse object.
 
         Args:
             success (bool, optional): Whether the switch operation was successful.
@@ -85,8 +69,10 @@ class PandaControlSwitcher(object):
     """Used for switching the Panda robot controllers.
 
     Attributes:
-        verbose : bool
-            Boolean specifying whether we want to display log messages during switching.
+        verbose (bool): Boolean specifying whether we want to display log messages
+            during switching.
+        arm_control_types (list): List of currently active arm control types.
+        hand_control_types (list): List of currently active hand control types.
     """
 
     def __init__(self, connection_timeout=10, verbose=True, robot_name_space=""):
@@ -101,7 +87,6 @@ class PandaControlSwitcher(object):
                 'controller_manager' is on. Defaults to ``""``.
         """
         self.verbose = verbose
-        self._controller_manager_response_timeout = 3
         self._controller_spawner_wait_timeout = 5
 
         # Connect to controller_manager services.
@@ -158,8 +143,8 @@ class PandaControlSwitcher(object):
 
         Returns:
             dict: Dictionary containing information about which controllers are
-                currently running or initialised divided by control group
-                arm/hand and other).
+                currently running or loaded divided by control group arm/hand and
+                other).
         """
         list_controllers_resp = self._list_controller_client.call(
             ListControllersRequest()
@@ -240,39 +225,31 @@ class PandaControlSwitcher(object):
             return [False]
 
     @property
-    def arm_control_type(self):
-        """Returns the currently active arm control type. Returns empty string when no
+    def arm_control_types(self):
+        """Returns the currently active arm control types. Returns empty list when no
         control type is enabled.
         """
-        try:
-            arm_control_type = list(
-                self._list_controllers_state()["arm"]["running"].keys()
-            )[0]
-        except KeyError:
-            arm_control_type = ""
-        return arm_control_type
+        controllers_state = self._list_controllers_state()
+        arm_state = controllers_state.get("arm", {})
+        return list(arm_state.get("running", {}).keys())
 
     @property
-    def hand_control_type(self):
-        """Returns the currently active hand control type. Returns empty string when no
+    def hand_control_types(self):
+        """Returns the currently active hand control types. Returns empty when no
         control type is enabled.
         """
-        try:
-            hand_control_type = list(
-                self._list_controllers_state()["hand"]["running"].keys()
-            )[0]
-        except KeyError:
-            hand_control_type = ""
-        return hand_control_type
+        controllers_state = self._list_controllers_state()
+        hand_state = controllers_state.get("hand", {})
+        return list(hand_state.get("running", {}).keys())
 
     def wait_for_control_type(self, control_group, control_type, timeout=None, rate=10):
         """Function that can be used to wait till all the controllers used for a given
-        'control_group' and 'control_type' are running. Useful 6 when you expect a
+        'control_group' and 'control_type' are running. Useful four when you expect a
         launch file to load certain controllers.
 
         Args:
             control_group (str): The control group of which you want the switch the
-                control type. Options are 'hand' or 'arm'.
+                control type. Options are ``hand`` or ``arm``.
             control_type (str): The robot control type you want to switch to for the
                 given 'control_group'. Options are: ``trajectory``, ``position`` and
                 ``effort``.
@@ -285,17 +262,16 @@ class PandaControlSwitcher(object):
             TimeoutError: Thrown when the set timeout has passed.
         """
         start_time = time.time()
-        timeout = timeout if timeout else -1
+        timeout = timeout if timeout else float("inf")
         while (
-            (control_type == "arm" and control_type != self.arm_control_type)
-            or (control_type == "hand" and control_type != self.hand_control_type)
-            and time.time() - start_time <= timeout
-        ):
+            (control_group == "arm" and control_type not in self.arm_control_types)
+            or (control_group == "hand" and control_type not in self.hand_control_types)
+        ) and time.time() - start_time <= timeout:
             time.sleep(1.0 / rate)
         if time.time() - start_time > timeout:
             raise TimeoutError(
                 f"Control type '{control_type}' for control_group '{control_group}' "
-                "was not spawned within the set timeout (i.e. {timeout})."
+                f"was not spawned within the set timeout (i.e. {timeout})."
             )
 
     def switch(  # noqa: C901
@@ -303,7 +279,7 @@ class PandaControlSwitcher(object):
         control_group,
         control_type,
         load_controllers=True,
-        timeout=None,
+        timeout=3,
         verbose=None,
     ):
         """Switch Panda robot control type. This function stops all currently running
@@ -311,14 +287,14 @@ class PandaControlSwitcher(object):
 
         Args:
             control_group (str): The control group of which you want the switch the
-                control type. Options are 'hand' or 'arm'.
+                control type. Options are ``hand`` or ``arm``.
             control_type (str): The robot control type you want to switch to for the
                 given 'control_group'. Options are: ``trajectory``, ``position``
                 and ``effort``.
             load_controllers (bool): Try to load the required controllers for a given
                 control_type if they are not yet loaded.
-            timeout (int, optional): The timout for switching to a given controller.
-                Defaults to :attr:`self._controller_manager_response_timeout`.
+            timeout (int, optional): The timeout for switching to a given controller.
+                Defaults to ``3`` sec.
             verbose (bool, optional): Whether to display debug log messages. Defaults
                 to verbose value set during the class initiation.
 
@@ -328,8 +304,7 @@ class PandaControlSwitcher(object):
                 'success' and the previously used controller 'prev_control_type'.
         """
         resp = ControllerSwitcherResponse()
-        if not verbose:
-            verbose = self.verbose
+        verbose = self.verbose if verbose is None else verbose
 
         # Validate input arguments.
         control_type = control_type.lower()
@@ -344,78 +319,63 @@ class PandaControlSwitcher(object):
                 return resp
             else:
                 control_group = control_group[0]
-        if control_group not in CONTROLLER_DICT.keys():
+        if control_group not in CONTROLLER_DICT:
             rospy.logwarn(
                 f"The '{control_group}' control group you specified is not valid. "
                 "Valid control groups for the Panda robot are "
-                f"{CONTROLLER_DICT.keys()}."
+                f"{list(CONTROLLER_DICT.keys())}."
             )
             resp.success = False
             return resp
-        if control_type not in CONTROLLER_DICT[control_group].keys():
+        if control_type not in CONTROLLER_DICT[control_group]:
             rospy.logwarn(
                 f"The '{control_type} control type you specified is not valid. Valid "
                 "control types for the Panda robot are "
-                f"{CONTROLLER_DICT[control_group].keys()}."
+                f"{list(CONTROLLER_DICT[control_group].keys())}."
             )
             resp.success = False
             return resp
-        if not timeout:
-            switch_timeout = self._controller_manager_response_timeout
-        else:
-            switch_timeout = timeout
 
-        # Get active controllers.
-        # NOTE: Here we wait a bit till we are sure the controller_spawner is ready
+        # Retrieve information about the currently running and loaded controllers.
+        # NOTE: Here we wait a bit till we are sure the controller_spawner is ready.
         start_time = time.time()
         controllers_state = {}
         while (
             control_group not in controllers_state
-            or "running" not in controllers_state[control_group].keys()
+            or "running" not in controllers_state[control_group]
         ) and time.time() - start_time <= self._controller_spawner_wait_timeout:
             controllers_state = self._list_controllers_state()
+        running_controllers = controllers_state.get(control_group, {}).get("running")
+        prev_control_type = ", ".join(running_controllers.keys())
+        running_state = controllers_state.get(control_group, {}).get("running", {})
+        running_control_types = list(running_state.keys())
+        running_controllers = get_unique_list(flatten_list(running_state.values()))
+        stopped_state = controllers_state.get(control_group, {}).get("stopped", {})
+        stopped_control_types = list(stopped_state.keys())
+        loaded_state = controllers_state.get(control_group, {}).get("loaded", {})
+        loaded_control_types = list(loaded_state.keys())
+        controllers = CONTROLLER_DICT[control_group][control_type]
 
-        # Generate switch controller msg.
-        prev_control_type = (
-            str(list(controllers_state[control_group]["running"].keys())[0])
-            if (
-                control_group in controllers_state
-                and "running" in controllers_state[control_group].keys()
-            )
-            else ""
-        )
-        controller_already_running = False
+        # Generate switch controller msg and load controllers if needed.
         switch_controller_msg = SwitchControllerRequest()
         switch_controller_msg.strictness = SwitchControllerRequest.STRICT
-        switch_controller_msg.timeout = switch_timeout
-        try:
-            running_control_types = controllers_state[control_group]["running"].keys()
-            running_controllers = get_unique_list(
-                flatten_list(controllers_state[control_group]["running"].values())
-            )
-        except KeyError:
-            running_control_types, running_controllers = [], []
-        try:
-            stopped_control_types = controllers_state[control_group]["stopped"].keys()
-        except KeyError:
-            stopped_control_types = []
-        try:
-            loaded_control_types = controllers_state[control_group]["loaded"].keys()
-        except KeyError:
-            loaded_control_types = []
+        switch_controller_msg.timeout = timeout
+        switch_controller_msg.start_controllers = (
+            controllers if isinstance(controllers, list) else [controllers]
+        )
         if (
             control_type in running_control_types
         ):  # If control type controllers are already running.
-            controller_already_running = True
+            if verbose:
+                rospy.logdebug(
+                    f"Panda {control_group} control type not switched to "
+                    f"'{control_type}' as the Panda robot was already using "
+                    f"'{prev_control_type}'."
+                )
+            resp.success = True
+            resp.prev_control_type = prev_control_type
+            return resp
         elif control_type in stopped_control_types:  # If controller was stopped.
-            # Fill the start_controllers field of the switch control message.
-            switch_controller_msg.start_controllers = (
-                CONTROLLER_DICT[control_group][control_type]
-                if isinstance(CONTROLLER_DICT[control_group][control_type], list)
-                else [CONTROLLER_DICT[control_group][control_type]]
-            )
-
-            # Fill the stop_controllers field of the switch control message.
             switch_controller_msg.stop_controllers = flatten_list(
                 controllers_state[control_group]["running"].values()
             )
@@ -424,10 +384,10 @@ class PandaControlSwitcher(object):
         ):  # Try to load the controllers if not yet loaded.
             # Load the required controllers.
             if load_controllers:
-                retval = self._load(CONTROLLER_DICT[control_group][control_type])
+                retval = self._load(controllers)
                 failed_controllers = list(
                     compress(
-                        CONTROLLER_DICT[control_group][control_type],
+                        controllers,
                         [not val for val in retval],
                     )
                 )
@@ -435,7 +395,7 @@ class PandaControlSwitcher(object):
                 rospy.logwarn(
                     f"The Panda {control_group} control group was not switched to "
                     f"'{control_type}' because the "
-                    f"{CONTROLLER_DICT[control_group][control_type]} controllers could "
+                    f"{controllers} controllers could "
                     "not be loaded as 'load_controllers' was set to argument was set "
                     "to 'False'."
                 )
@@ -445,21 +405,14 @@ class PandaControlSwitcher(object):
 
             # Check if all controllers were loaded successfully.
             if len(failed_controllers) == 0:
-                # Fill the start_controllers field of the switch control message.
-                switch_controller_msg.start_controllers = (
-                    CONTROLLER_DICT[control_group][control_type]
-                    if isinstance(CONTROLLER_DICT[control_group][control_type], list)
-                    else [CONTROLLER_DICT[control_group][control_type]]
-                )
-
-                # Fill the stop_controllers field of the switch control message.
                 switch_controller_msg.stop_controllers = running_controllers
             else:
                 if (
-                    control_group == "arm" and control_type is not self.arm_control_type
+                    control_group == "arm"
+                    and control_type not in self.arm_control_types
                 ) or (
                     control_group == "hand"
-                    and control_type is not self.hand_control_type
+                    and control_type not in self.hand_control_types
                 ):
                     rospy.logwarn(
                         f"The Panda {control_group} control griyo was not switched to "
@@ -472,53 +425,30 @@ class PandaControlSwitcher(object):
                 resp.prev_control_type = prev_control_type
                 return resp
         else:
-            # Fill the start_controllers field of the switch control message.
-            switch_controller_msg.start_controllers = (
-                CONTROLLER_DICT[control_group][control_type]
-                if isinstance(CONTROLLER_DICT[control_group][control_type], list)
-                else [CONTROLLER_DICT[control_group][control_type]]
-            )
-
-            # Fill the stop_controllers field of the switch control message.
             switch_controller_msg.stop_controllers = running_controllers
 
         # Send switch_controller msgs.
-        if not controller_already_running:
+        rospy.logdebug(
+            f"Switching Panda {control_group} control group to '{control_type}'."
+        )
+        retval = self._switch_controller_client(switch_controller_msg)
+        if retval.ok:
             rospy.logdebug(
-                f"Switching Panda {control_group} control group to '{control_type}'."
+                f"Switching Panda {control_group} control group to "
+                f"'{control_type}' successful."
             )
-            retval = self._switch_controller_client(switch_controller_msg)
-            if retval.ok:
-                rospy.logdebug(
-                    f"Switching Panda {control_group} control group to "
-                    f"'{control_type}' successful."
-                )
-                resp.success = retval.ok
-                resp.prev_control_type = prev_control_type
-                return resp
-            else:
-                if (
-                    control_group == "arm" and control_type is not self.arm_control_type
-                ) or (
-                    control_group == "hand"
-                    and control_type is not self.arm_control_type
-                ):
-                    rospy.logwarn(
-                        f"Switching Panda {control_group} control type to "
-                        f"'{control_type}' failed."
-                    )
-                    resp.success = retval.ok
-                else:
-                    resp.success = True
-                resp.prev_control_type = prev_control_type
-                return resp
         else:
-            if verbose:
-                rospy.logdebug(
-                    f"Panda {control_group} control type not switched to "
-                    "'{control_type}' as the Panda robot was already using "
-                    f"'{prev_control_type}'."
+            if (
+                control_group == "arm" and control_type not in self.arm_control_types
+            ) or (
+                control_group == "hand" and control_type not in self.arm_control_types
+            ):
+                rospy.logwarn(
+                    f"Switching Panda {control_group} control type to "
+                    f"'{control_type}' failed."
                 )
-            resp.success = True
-            resp.prev_control_type = prev_control_type
-            return resp
+            else:
+                retval.ok = True
+        resp.success = retval.ok
+        resp.prev_control_type = prev_control_type
+        return resp
