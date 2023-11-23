@@ -52,7 +52,7 @@
   <node pkg="panda_gazebo" type="set_logging_level.py" name="set_logging_level_franka_control" args="--name ros.franka_gazebo.FrankaGripperSim --level warn" output="$(arg output)"/>
 
   <!--Start MoveIt-->
-  <include file="$(find panda_moveit_config)/launch/demo.launch" pass_all_args="true">
+  <include if="$(arg moveit)" file="$(find panda_moveit_config)/launch/demo.launch">
     <arg name="debug" value="$(arg debug)"/>
     <arg name="pipeline" value="$(arg pipeline)" />
     <arg name="load_gripper" value="$(arg load_gripper)"/>
