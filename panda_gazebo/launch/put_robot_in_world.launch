@@ -1,5 +1,6 @@
 <!--Launch file for adding the panda robot to the gazebo world-->
 <launch>
+  <!--General arguments-->
   <arg name="rviz" default="true" doc="Start Rviz"/>
   <arg name="load_gripper" default="true" doc="Load the gripper"/>
   <arg name="debug" default="false" doc="Add gdb debug flag"/>
@@ -23,18 +24,17 @@
   <arg name="roll" default="0" doc="How much to rotate the base of the robot around its X-axis in [rad]?"/>
   <arg name="pitch" default="0" doc="How much to rotate the base of the robot around its Y-axis in [rad]?"/>
   <arg name="yaw" default="0" doc="How much to rotate the base of the robot around its Z-axis in [rad]?"/>
-  <!--Phyics engines: dart|ode-->
+  <!--  The used phyics engine (options: dart and ode)-->
   <arg name="physics" default="dart" doc="The physics engine used by gazebo"/>
   <!--Control arguments-->
-  <!--    The control type used for controlling the robot (Options: Trajectory, position, effort)-->
+  <!--  The control type used for controlling the robot (Options: Trajectory, position, effort)-->
   <arg name="control_type" default="trajectory" doc="The type of control used for controlling the arm. Options: trajectory, position, effort"/>
   <arg name="brute_force_grasping" default="false" doc="Disable the gripper width reached check when grasping."/>
 
-  <!--Spawn the Panda robot-->
+  <!--Start Gazebo and spawn the robot-->
   <include file="$(find franka_gazebo)/launch/panda.launch">
     <arg name="gazebo" value="$(arg gazebo)"/>
-    <arg unless="$(arg gazebo_gui)" name="headless" value="true"/>
-    <arg if="$(arg gazebo_gui)" name="headless" value="false"/>
+    <arg name="headless" value="$(eval not arg('gazebo_gui'))" />
     <arg name="paused" value="$(arg paused)"/>
     <arg name="world" value="$(arg world)"/>
     <arg name="use_gripper" default="$(arg load_gripper)"/>
@@ -47,23 +47,27 @@
     <arg name="physics" value="$(arg physics)"/>
   </include>
 
-  <!--Set panda_gazebo parameters-->
-  <!--  Disable franka action console logs-->
-  <node pkg="panda_gazebo" type="set_franka_gripper_logging_level.py" name="set_franka_gripper_logger_level" output="$(arg output)"/>
-  <node if="$(arg disable_franka_gazebo_logs)" pkg="panda_gazebo" type="set_franka_gazebo_logging_level.py" name="set_franka_gazebo_logger_level" output="$(arg output)"/>
+  <!--Change 'franka_ros' nodes logging levels-->
+  <node pkg="panda_gazebo" type="set_ros_node_logging_level.py" name="set_logging_level" output="$(arg output)">
+    <param name="level" value="warn"/>
+    <param name="name" value="ros.franka_gazebo.FrankaGripperSim"/>
+  </node>
+  <node if="$(arg disable_franka_gazebo_logs)" pkg="panda_gazebo" type="set_logging_level.py" name="set_ros_node_logging_level" output="$(arg output)">
+    <param name="level" value="error"/>
+    <param name="name" value="ros.franka_gazebo"/>
+  </node>
 
-  <!--Run the main MoveIt! executable without trajectory execution (we do not have controllers configured by default)-->
-  <include if="$(arg moveit)" file="$(find panda_moveit_config)/launch/move_group.launch">
-    <arg name="info" value="true"/>
+  <!--Start MoveIt-->
+  <include file="$(find panda_moveit_config)/launch/demo.launch" pass_all_args="true">
     <arg name="debug" value="$(arg debug)"/>
     <arg name="pipeline" value="$(arg pipeline)" />
-    <arg name="allow_trajectory_execution" value="true"/>
-    <arg name="fake_execution" value="false"/>
     <arg name="load_gripper" value="$(arg load_gripper)"/>
     <arg name="load_robot_description" value="false"/>
+    <arg name="moveit_controller_manager" value="simple"/>
+    <arg name="use_rviz" value="false"/>
   </include>
 
-  <!--Load Moveit configuration values-->
+  <!--Set MoveIt configuration values-->
   <rosparam if="$(arg moveit)" file="$(find panda_gazebo)/cfg/controllers/moveit.yaml" command="load" />
 
   <!--Load and start the controllers-->
@@ -73,7 +77,7 @@
     <arg name="load_gripper" value="$(arg load_gripper)"/>
   </include>
 
-  <!--Load Moveit control services-->
+  <!--Load the 'panda_gazebo' MoveIt server-->
   <!--Retrieve the right transmission for the control type-->
   <arg if="$(eval arg('control_type') == 'trajectory')" name="load_set_ee_pose_service" value="true"/>
   <arg unless="$(eval arg('control_type') == 'trajectory')" name="load_set_ee_pose_service" value="false"/>
@@ -85,7 +89,7 @@
     <param name="load_set_ee_pose_service" value="$(arg load_set_ee_pose_service)"/>
   </node>
 
-  <!--Load ros_control service-->
+  <!--Load the 'panda_Gazebo' ROS control server-->
   <arg if="$(eval arg('control_type') == 'trajectory')" name="load_set_joint_commands_service" value="false"/>
   <arg if="$(eval arg('control_type') == 'trajectory')" name="load_arm_follow_joint_trajectory_action" value="true"/>
   <arg unless="$(eval arg('control_type') == 'trajectory')" name="load_set_joint_commands_service" value="true"/>
