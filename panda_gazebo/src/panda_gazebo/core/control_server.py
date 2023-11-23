@@ -87,7 +87,7 @@ PANDA_JOINTS = {
 }
 ARM_POSITION_CONTROLLER = "panda_arm_joint_position_controller"
 ARM_EFFORT_CONTROLLER = "panda_arm_joint_effort_controller"
-ARM_TRAJ_CONTROLLER = "panda_arm_controller"
+ARM_TRAJ_CONTROLLER = "panda_arm_trajectory_controller"
 HAND_CONTROLLER = "franka_gripper"
 CONTROLLER_INFO_RATE = 1 / 10  # Rate [hz] for retrieving controller information.
 CONNECTION_TIMEOUT = 10  # Service connection timeout [s].
@@ -325,23 +325,26 @@ class PandaControlServer(object):
         # servers ##############################
         ########################################
         # NOTE: Here setup a new action service that serves as a wrapper around the
-        # original 'panda_arm_controller/follow_joint_trajectory'. By doing this
-        # we add the following features to the original action servers.
+        # original 'panda_arm_trajectory_controller/follow_joint_trajectory'. By doing
+        # this we add the following features to the original action servers.
         #   - The ability to send partial joint messages.
         #   - The ability to send joint trajectory messages that do not specify joints.
         #   - The ability to automatic generate a time axes when the create_time_axis
         #     field is set to True.
         if load_arm_follow_joint_trajectory_action:
-            # Connect to original 'panda_arm_controller/follow_joint_trajectory' action
-            # server.
+            # Connect to the 'panda_arm_trajectory_controller/follow_joint_trajectory'
+            # action server.
             rospy.logdebug(
-                "Connecting to 'panda_arm_controller/follow_joint_trajectory' action "
-                "service."
+                "Connecting to '{}' action service.".format(
+                    "panda_arm_trajectory_controller/follow_joint_trajectory"
+                )
             )
-            if action_server_exists("panda_arm_controller/follow_joint_trajectory"):
+            if action_server_exists(
+                "panda_arm_trajectory_controller/follow_joint_trajectory"
+            ):
                 # Connect to robot control action server.
                 self._arm_joint_traj_client = SimpleActionClient(
-                    "panda_arm_controller/follow_joint_trajectory",
+                    "panda_arm_trajectory_controller/follow_joint_trajectory",
                     control_msgs.FollowJointTrajectoryAction,
                 )
 
@@ -352,18 +355,18 @@ class PandaControlServer(object):
                 if not retval:
                     rospy.logwarn(
                         "No connection could be established with the "
-                        "'panda_arm_controller/follow_joint_trajectory' service. The "
-                        "Panda Robot Environment therefore can not use this action "
-                        "service to control the Panda Robot."
+                        "'panda_arm_trajectory_controller/follow_joint_trajectory' "
+                        "service. The Panda Robot Environment therefore can not use "
+                        "this action service to control the Panda Robot."
                     )
                 else:
                     self._arm_joint_traj_client_connected = True
             else:
                 rospy.logwarn(
                     "No connection could be established with the "
-                    "'panda_arm_controller/follow_joint_trajectory' service. The Panda "
-                    "Robot Environment therefore can not use this action service to "
-                    "control the Panda Robot."
+                    "'panda_arm_trajectory_controller/follow_joint_trajectory' "
+                    "service. The Panda Robot Environment therefore can not use this "
+                    "action service to control the Panda Robot."
                 )
 
             # Setup a new Panda arm joint trajectory action server.
@@ -489,7 +492,7 @@ class PandaControlServer(object):
     def _create_arm_traj_action_server_msg(self, input_msg):  # noqa: C901
         """Converts the ``control_msgs.msg.FollowJointTrajectoryGoal`` message that
         is received by the ``panda_control_server`` follow joint trajectory wrapper
-        action servers into the right format for the original ``panda_arm_controller``
+        action servers into the right format for the original ``panda_arm_trajectory_controller``
         `follow_joint_trajectory <https://wiki.ros.org/joint_trajectory_action/>`_
         action server.
 
@@ -503,13 +506,13 @@ class PandaControlServer(object):
                 message we want to validate.
 
         Returns:
-            dict: A dictionary containing the arm and hand panda_arm_controller
+            dict: A dictionary containing the arm and hand panda_arm_trajectory_controller
                 :control_msgs:`control_msgs.msg.FollowJointTrajectoryGoal <html/action/FollowJointTrajectory.html>`
                 messages.
 
         Raises:
             :obj:`panda_gazebo.exceptions.InputMessageInvalidError`: Raised when the
-                input_msg could not be converted into panda_arm_controller control
+                input_msg could not be converted into panda_arm_trajectory_controller control
                 messages.
         """  # noqa: E501
         input_joint_names = input_msg.trajectory.joint_names
@@ -1789,7 +1792,7 @@ class PandaControlServer(object):
 
     def _arm_joint_traj_feedback_cb(self, feedback):
         """Relays the feedback messages from the original
-        ``panda_arm_controller/follow_joint_trajectory`` server to our to our
+        ``panda_arm_trajectory_controller/follow_joint_trajectory`` server to our to our
         ``panda_control_server/panda_arm/follow_joint_trajectory`` wrapper action
         server.
 
@@ -1802,9 +1805,10 @@ class PandaControlServer(object):
     def _arm_joint_traj_preempt_cb(self):
         """Relays the preempt request made to the
         ``panda_control_server/panda_arm/follow_joint_trajectory`` action server wrapper
-        to the original ``panda_arm_controller/follow_joint_trajectory`` action server.
+        to the original ``panda_arm_trajectory_controller/follow_joint_trajectory``
+        action server.
         """
-        # Stop panda_arm_controller action server.
+        # Stop panda_arm_trajectory_controller action server.
         if self._arm_joint_traj_client.get_state() in [
             GoalStatus.PREEMPTING,
             GoalStatus.ACTIVE,

@@ -2,7 +2,7 @@
 # Make controllers visible to MoveIt.
 move_group:
   controller_list:
-    - name: panda_arm_controller
+    - name: panda_arm_trajectory_controller
       action_ns: follow_joint_trajectory
       type: FollowJointTrajectory
       default: true
