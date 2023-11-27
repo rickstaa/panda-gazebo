@@ -54,6 +54,7 @@ from panda_gazebo.common.helpers import (
     quaternion_norm,
     ros_exit_gracefully,
     translate_moveit_error_code,
+    normalize_vector,
 )
 from panda_gazebo.exceptions import InputMessageInvalidError
 from panda_gazebo.srv import (
@@ -1884,30 +1885,25 @@ class PandaMoveItPlannerServer(object):
         Returns:
             bool: Whether the plane was successfully added.
         """
-        pose_header = Header(
-            frame_id=add_plane_req.frame_id if add_plane_req.frame_id else "world"
-        )
+        pose_header = Header(frame_id=add_plane_req.frame_id or "world")
         plane_pose = Pose(
             position=add_plane_req.pose.position,
-            orientation=normalize_quaternion(add_plane_req.pose.orientation),
+            orientation=add_plane_req.pose.orientation,
         )
+        pose_stamped = PoseStamped(header=pose_header, pose=plane_pose)
 
         # Send request.
         resp = AddPlaneResponse()
         try:
             self.scene.add_plane(
-                add_plane_req.name if add_plane_req.name else "plane",
-                PoseStamped(header=pose_header, pose=plane_pose)
-                if add_plane_req.pose
-                else PoseStamped(
-                    header=pose_header, pose=Pose(orientation=Quaternion(0, 0, 0, 1))
-                ),
-                normal=add_plane_req.normal if add_plane_req.normal else (0, 0, 1),
-                offset=add_plane_req.offset if add_plane_req.offset else 0,
+                add_plane_req.name or "plane",
+                pose_stamped,
+                normal=normalize_vector(add_plane_req.normal, force=True),
+                offset=add_plane_req.offset,
             )
-        except Exception:
+        except Exception as e:
             resp.success = False
-            resp.message = "Plane could not be added"
+            resp.message = "Plane could not be added because: %s" % e
             return resp
 
         # Return response.
