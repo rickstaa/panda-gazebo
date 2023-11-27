@@ -429,6 +429,52 @@ def normalize_quaternion(quaternion):
     return quaternion
 
 
+def vector_norm(vector):
+    """Calculates the norm of a vector.
+
+    Args:
+        vector (union[list, tuple, np.array]): A vector.
+
+    Returns:
+        float: The norm of the vector.
+
+    Raises:
+        TypeError: If vector is not of type list or tuple.
+    """
+    if not isinstance(vector, (list, tuple, np.ndarray)):
+        raise TypeError("vector must be of type list, tuple or numpy array")
+
+    vector = np.array(vector)
+    return np.linalg.norm(vector)
+
+
+def normalize_vector(vector, force=True):
+    """Normalizes a given vector.
+
+    Args:
+        vector (union[list, tuple]): A vector.
+        force (bool): Whether to force the vector to have a unit length if the norm is
+            zero. Defaults to ``True``.
+
+    Returns:
+        list: The normalized vector.
+
+    Raises:
+        TypeError: If vector is not of type list or tuple.
+    """
+    if not isinstance(vector, (list, tuple, np.ndarray)):
+        raise TypeError("vector must be of type list or tuple or numpy array")
+
+    vector = np.array(vector)
+    norm = vector_norm(vector)
+    if norm == 0:
+        if force:
+            return [0.0, 0.0, 1.0]
+        rospy.logwarn("Vector could not be normalized since the norm is zero.")
+        return list(vector)
+    return list(vector / norm)
+
+
 def ros_exit_gracefully(shutdown_msg=None, exit_code=0):
     """Shuts down the ROS node wait until it is shutdown and exits the script.
 
