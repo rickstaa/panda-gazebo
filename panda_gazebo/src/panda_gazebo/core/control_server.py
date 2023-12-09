@@ -943,7 +943,7 @@ class PandaControlServer(object):
         also verifies whether the given input message is valid.
 
         Args:
-            input_msg (union[:obj:`panda_gazebo.msgs.SetJointPositions`,:obj:`panda_gazebo.msgs.SetJointEfforts`]):
+            input_msg (union[:obj:`panda_gazebo.msgs.SetJointPositions`, :obj:`panda_gazebo.msgs.SetJointEfforts`]):
                 The service input message we want to convert and validate.
             control_type (str): The type of control that is being executed. Options
                 are ``effort`` and ``position``.

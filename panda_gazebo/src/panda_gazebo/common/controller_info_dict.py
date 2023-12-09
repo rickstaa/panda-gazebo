@@ -66,12 +66,17 @@ CONTROLLER_INFO_DICT = {
 
 
 class ControllerInfoDict(dict):
-    """Used for storing information about the Gazebo robot controllers.
-    This class overloads the normal :obj:`dict` class in order to pre-initialise the
-    dictionary with the needed keys.
+    """Used for storing information about the Gazebo robot controllers. This class
+    overloads the normal :obj:`dict` class in order to pre-initialise the dictionary
+    with the required keys to store this information.
     """
 
     def __init__(self, *args, **kwargs):
-        """Initialise the ControllerInfoDict."""
+        """Initialise the ControllerInfoDict.
+
+        Args:
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+        """
         super().__init__(*args, **kwargs)
         super().update(copy.deepcopy(CONTROLLER_INFO_DICT))

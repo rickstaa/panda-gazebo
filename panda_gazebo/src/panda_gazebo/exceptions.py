@@ -2,8 +2,8 @@
 
 
 class InputMessageInvalidError(Exception):
-    """Custom exception that is raised when an input argument to one of the
-    panda_gazebo functions is invalid.
+    """Custom exception that is thrown when the input message to a 'panda_gazebo'
+    service or action is invalid.
 
     Attributes:
         log_message (str): The full log message.

@@ -12,6 +12,9 @@ from numpy import linalg, nan
 from rospy.exceptions import ROSException
 from sensor_msgs.msg import JointState
 from trajectory_msgs.msg import JointTrajectoryPoint
+from controller_manager_msgs.srv import ListControllersResponse
+from moveit_msgs.msg import MoveItErrorCodes
+from geometry_msgs.msg import Quaternion
 
 from panda_gazebo.msg import FollowJointTrajectoryGoal
 
@@ -30,7 +33,14 @@ def joint_state_dict_2_joint_state_msg(joint_state_dict, type="position"):
 
     Returns:
         :obj:`sensor_msgs.msg.JointState`: A JoinState message.
+
+    Raises:
+        ValueError: If the type is not one of the expected values.
     """
+    valid_types = ["velocity", "effort", "position"]
+    if type.lower() not in valid_types:
+        raise ValueError(f"Invalid type. Expected one of: {valid_types}")
+
     resp = JointState()
     resp.name = list(joint_state_dict.keys())
     if type.lower() == "velocity":
@@ -101,8 +111,8 @@ def action_dict_2_joint_trajectory_msg(
 
 
 def panda_action_msg_2_control_msgs_action_msg(panda_action_msg):
-    """Converts a panda_gazebo FollowJointTrajectoryActionGoal action message
-    into a :control_msgs:`control_msgs/FollowJointTrajectoryGoal
+    """Converts a :class:``panda_gazebo.msg.FollowJointTrajectoryActionGoal` action
+    message into a :control_msgs:`control_msgs/FollowJointTrajectoryGoal
     <html/action/FollowJointTrajectory.html>` action message.
 
     Args:
@@ -111,8 +121,18 @@ def panda_action_msg_2_control_msgs_action_msg(panda_action_msg):
 
     Returns:
         :obj:`control_msgs.msg.FollowJointTrajectoryGoal`: Control_msgs follow joint
-            trajectory goal message
+            trajectory goal message.
+
+    Raises:
+        TypeError: If panda_action_msg is not of type
+            :class:`panda_gazebo.msg.FollowJointTrajectoryGoal`.
     """
+    if not isinstance(panda_action_msg, FollowJointTrajectoryGoal):
+        raise TypeError(
+            "panda_action_msg must be of type "
+            "panda_gazebo.msg.FollowJointTrajectoryGoal"
+        )
+
     control_msgs_action_msg = control_msgs.FollowJointTrajectoryGoal()
     control_msgs_action_msg.trajectory = panda_action_msg.trajectory
     control_msgs_action_msg.goal_time_tolerance = panda_action_msg.goal_time_tolerance
@@ -131,7 +151,17 @@ def controller_list_array_2_dict(controller_list_msgs):
 
     Returns:
         dict: Dictionary containing information about all the available controllers.
+
+    Raises:
+        TypeError: If controller_list_msgs is not of type
+            controller_manager_msgs.srv.ListControllersResponse.
     """  # noqa: E501
+    if not isinstance(controller_list_msgs, ListControllersResponse):
+        raise TypeError(
+            "controller_list_msgs must be of type "
+            "controller_manager_msgs.srv.ListControllersResponse"
+        )
+
     controller_list_dict = {}
     for controller in controller_list_msgs.controller:
         controller_name = controller.name
@@ -151,8 +181,20 @@ def translate_actionclient_result_error_code(actionclient_retval):
 
     Returns:
         str: Error string that corresponds to the error code.
+
+    Raises:
+        TypeError: If actionclient_retval is not of type
+            control_msgs.msg.FollowJointTrajectoryResult.
     """
     if actionclient_retval is not None:
+        if not isinstance(
+            actionclient_retval, control_msgs.FollowJointTrajectoryResult
+        ):
+            raise TypeError(
+                "actionclient_retval must be of type "
+                "control_msgs.msg.FollowJointTrajectoryResult"
+            )
+
         error_dict = {
             value: attr
             for attr, value in actionclient_retval.__class__.__dict__.items()
@@ -167,8 +209,7 @@ def translate_actionclient_result_error_code(actionclient_retval):
             if error_dict[actionclient_retval.error_code] != "SUCCESSFUL"
             else ""
         )
-    else:
-        return "No goal set"
+    return "No goal set"
 
 
 def translate_moveit_error_code(moveit_error_code):
@@ -180,7 +221,16 @@ def translate_moveit_error_code(moveit_error_code):
 
     Returns:
         str: Error string that corresponds to the error code.
+
+    Raises:
+        TypeError: If moveit_error_code is not of type
+            moveit_msgs.msg.MoveItErrorCodes.
     """
+    if not isinstance(moveit_error_code, MoveItErrorCodes):
+        raise TypeError(
+            "moveit_error_code must be of type moveit_msgs.msg.MoveItErrorCodes"
+        )
+
     error_dict = {
         value: attr
         for attr, value in moveit_error_code.__class__.__dict__.items()
@@ -205,14 +255,19 @@ def lower_first_char(string):
     Returns:
         str: The de-capitalized string.
 
+    Raises:
+        TypeError: If text is not of type str.
+
     .. note::
         This function is not the exact opposite of the capitalize function of the
         standard library. For example, capitalize('abC') returns Abc rather than AbC.
     """
+    if not isinstance(string, str):
+        raise TypeError("string must be of type str")
+
     if not string:  # Added to handle case where s == None
         return
-    else:
-        return string[0].lower() + string[1:]
+    return string[0].lower() + string[1:]
 
 
 def wrap_space_around(text):
@@ -223,15 +278,20 @@ def wrap_space_around(text):
 
     Returns:
         str: Text with extra spaces around it.
+
+    Raises:
+        TypeError: If text is not of type str.
     """
+    if not isinstance(text, str):
+        raise TypeError("text must be of type str")
+
     if text[0] != " " and text[-1] != " ":
         return " " + text + " "
     elif text[0] != " ":
         return " " + text
     elif text[-1] != " ":
         return text + " "
-    else:
-        return text
+    return text
 
 
 def list_2_human_text(input_list, separator=",", end_separator="&"):
@@ -246,7 +306,13 @@ def list_2_human_text(input_list, separator=",", end_separator="&"):
 
     Returns:
         str: A human readable string that can be printed.
+
+    Raises:
+        TypeError: If input_list is not of type list or tuple.
     """
+    if not isinstance(input_list, (list, tuple)):
+        raise TypeError("input_list must be of type list or tuple")
+
     # Add spaces around separators if not present.
     separator = wrap_space_around(separator)[1:]
     end_separator = wrap_space_around(end_separator)
@@ -261,8 +327,7 @@ def list_2_human_text(input_list, separator=",", end_separator="&"):
             )
         if len(input_list) == 0:
             return ""
-        else:
-            return str(input_list[0])
+        return str(input_list[0])
     if isinstance(input_list, tuple):
         input_list = list(input_list)
         if len(input_list) > 1:
@@ -273,10 +338,8 @@ def list_2_human_text(input_list, separator=",", end_separator="&"):
             )
         if len(input_list) == 0:
             return ""
-        else:
-            return str(input_list[0])
-    else:
-        return input_list
+        return str(input_list[0])
+    return input_list
 
 
 def dict_clean(input_dict):
@@ -287,8 +350,14 @@ def dict_clean(input_dict):
         input_dict (dict):The input dictionary.
 
     Returns:
-        dict: The cleaned dictionary
+        dict: The cleaned dictionary.
+
+    Raises:
+        TypeError: If input_dict is not of type dict.
     """
+    if not isinstance(input_dict, dict):
+        raise TypeError("input_dict must be of type dict")
+
     stripped_dict = {}
     for k, v in input_dict.items():
         if isinstance(v, dict):
@@ -307,11 +376,15 @@ def get_unique_list(input_list, trim=True):
 
     Returns:
         list: The new list containing only unique items.
+    Raises:
+        TypeError: If input_list is not of type list.
     """
+    if not isinstance(input_list, list):
+        raise TypeError("input_list must be of type list")
+
     if trim:
         return list({item for item in input_list if item != ""})
-    else:
-        return list({item for item in input_list})
+    return list({item for item in input_list})
 
 
 def get_duplicate_list(input_list):
@@ -321,8 +394,13 @@ def get_duplicate_list(input_list):
         input_list (list): The input list.
 
     Returns:
-        list: The new list containing only the itesm that had duplicates.
+        list: The new list containing only the items that had duplicates.
+    Raises:
+        TypeError: If input_list is not of type list.
     """
+    if not isinstance(input_list, list):
+        raise TypeError("input_list must be of type list")
+
     return list(set([x for x in input_list if input_list.count(x) > 1]))
 
 
@@ -335,7 +413,12 @@ def flatten_list(input_list):
 
     Returns:
         list: The flattened list.
+    Raises:
+        TypeError: If input_list is not of type list.
     """
+    if not isinstance(input_list, list):
+        raise TypeError("input_list must be of type list")
+
     flattened_list = []
     for list_item in input_list:
         if type(list_item) is list:
@@ -359,7 +442,12 @@ def action_server_exists(topic_name):
 
     Returns:
         bool: Boolean specifying whether the action service exists.
+    Raises:
+        TypeError: If topic_name is not of type str.
     """
+    if not isinstance(topic_name, str):
+        raise TypeError("topic_name must be of type str")
+
     # Strip action server specific topics from topic name.
     if topic_name.split("/")[-1] in ["cancel", "feedback", "goal", "result", "status"]:
         topic_name = "/".join(topic_name.split("/")[:-1])
@@ -391,7 +479,12 @@ def quaternion_norm(quaternion):
 
     Returns:
         float: The norm of the quaternion.
+    Raises:
+        TypeError: If quaternion is not of type Quaternion.
     """
+    if not isinstance(quaternion, Quaternion):
+        raise TypeError("quaternion must be of type Quaternion")
+
     return linalg.norm([quaternion.x, quaternion.y, quaternion.z, quaternion.w])
 
 
@@ -403,7 +496,13 @@ def normalize_quaternion(quaternion):
 
     Returns:
         :obj:`geometry_msgs.msg.Quaternion`: The normalized quaternion.
+
+    Raises:
+        TypeError: If quaternion is not of type Quaternion.
     """
+    if not isinstance(quaternion, Quaternion):
+        raise TypeError("quaternion must be of type Quaternion")
+
     quaternion = copy.deepcopy(
         quaternion
     )  # Make sure the original object is not changed.
@@ -482,11 +581,13 @@ def ros_exit_gracefully(shutdown_msg=None, exit_code=0):
         shutdown_msg (str, optional): The shutdown message. Defaults to ``None``.
         exit_code (int, optional): The exit code. Defaults to ``0``.
     """
-    if exit_code == 0:
-        rospy.loginfo(shutdown_msg)
-    else:
-        rospy.logerr(shutdown_msg)
-    rospy.signal_shutdown(shutdown_msg)
-    while not rospy.is_shutdown():
-        rospy.sleep(0.1)
-    sys.exit(exit_code)
+    try:
+        if exit_code == 0:
+            rospy.loginfo(shutdown_msg)
+        else:
+            rospy.logerr(shutdown_msg)
+        rospy.signal_shutdown(shutdown_msg)
+        while not rospy.is_shutdown():
+            rospy.sleep(0.1)
+    finally:
+        sys.exit(exit_code)
