@@ -72,7 +72,7 @@
   </include>
 
   <!--Load the 'panda_gazebo' MoveIt server-->
-  <!--Retrieve the right transmission for the control type-->
+  <!--  Only load required services-->
   <arg if="$(eval arg('control_type') == 'trajectory')" name="load_set_ee_pose_service" value="true"/>
   <arg unless="$(eval arg('control_type') == 'trajectory')" name="load_set_ee_pose_service" value="false"/>
   <node if="$(arg moveit)" pkg="panda_gazebo" type="panda_moveit_server.py" name="panda_moveit_planner_server" required="true" output="$(arg output)">
@@ -84,6 +84,7 @@
   </node>
 
   <!--Load the 'panda_Gazebo' ROS control server-->
+  <!--  Only load required services-->
   <arg if="$(eval arg('control_type') == 'trajectory')" name="load_set_joint_commands_service" value="false"/>
   <arg if="$(eval arg('control_type') == 'trajectory')" name="load_arm_follow_joint_trajectory_action" value="true"/>
   <arg unless="$(eval arg('control_type') == 'trajectory')" name="load_set_joint_commands_service" value="true"/>

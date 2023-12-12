@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """This node sets up several extra services that can be used to control the Panda Emika
-Franka robot using the Moveit framework.
+Franka robot using the MoveIt framework.
 
 Source code
 -----------
