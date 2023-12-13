@@ -20,7 +20,7 @@ modes that can be selected using the ``control_mode`` argument:
 
     - ``trajectory``: The robot is controlled using joint position trajectories.
     - ``position``: The robot is controlled using joint position commands.
-    - ``effort``: The robot is controlled using joint effort commands.
+    - ``effort``: The robot is controlled using joint effort commands.    
 
 .. Note::
 
@@ -53,3 +53,6 @@ of the Panda robot, you can use the following ``roslaunch`` command:
 .. code-block:: bash
 
     roslaunch panda_gazebo start_simulation.launch
+
+
+The note you've provided is clear and informative, but you can improve it further by organizing the information more effectively and making it easier to read. Here's a revised version:

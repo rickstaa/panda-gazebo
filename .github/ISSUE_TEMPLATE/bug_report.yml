@@ -36,8 +36,7 @@ body:
       description: "Please complete the following information."
       value: |
         - OS: [e.g. Windows, Mac, Linux, iOS, android]
-        - Browser [e.g. chrome, safari, brave, firefox]
-        - Version [e.g. 22]
+        - Panda gazebo version: [e.g. v2.15.4]
   - type: textarea
     attributes:
       label: Additional context
