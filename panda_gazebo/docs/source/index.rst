@@ -63,6 +63,7 @@ Contents
 
    get_started/install.rst
    get_started/usage.rst
+   get_started/issues.rst
 
 .. toctree::
    :maxdepth: 2
