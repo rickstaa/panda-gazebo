@@ -20,7 +20,7 @@ modes that can be selected using the ``control_mode`` argument:
 
     - ``trajectory``: The robot is controlled using joint position trajectories.
     - ``position``: The robot is controlled using joint position commands.
-    - ``effort``: The robot is controlled using joint effort commands.
+    - ``effort``: The robot is controlled using joint effort commands.    
 
 .. Note::
 
