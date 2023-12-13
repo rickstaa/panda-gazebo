@@ -4,17 +4,17 @@
     <link name='link'>
       <inertial>
         <pose>0.03 0.03 0.03 0 -0 0</pose>
-        <!--NOTE: Uses Polyethylene density to calculate the mass
-        see https://en.wikipedia.org/wiki/Polyethylene
+        <!--NOTE: Uses wood (Longleaf Pine) density (i.e 590 kg/m^3) to calculate the
+        mass see https://en.wikipedia.org/wiki/Wood.
         -->
-        <mass>0.20735999999999996</mass>
+        <mass>0.12743999999999997</mass>
         <inertia>
-          <ixx>0.00012442</ixx>
+          <ixx>7.6464e-05</ixx>
           <ixy>0</ixy>
           <ixz>0</ixz>
-          <iyy>0.00012442</iyy>
+          <iyy>7.6464e-05</iyy>
           <iyz>0</iyz>
-          <izz>0.00012442</izz>
+          <izz>7.6464e-05</izz>
         </inertia>
       </inertial>
       <visual name='visual'>
@@ -40,27 +40,24 @@
           </box>
         </geometry>
         <surface>
-          <!--NOTE: Used dynamic friction of clean dry plastic cube on a plastic surface
-          (i.e. Polyethylene) see https://www.engineeringtoolbox.com/friction-coefficients-d_778.html
+          <!--NOTE: Uses dynamic friction of brick on a wood surface
+          see https://www.engineeringtoolbox.com/friction-coefficients-d_778.html
           -->
           <friction>
             <ode>
-              <mu>0.2</mu>
-              <mu2>0.2</mu2>
+              <mu>0.6</mu>
+              <mu2>0.6</mu2>
             </ode>
+            <bullet>
+              <friction>0.6</friction>
+              <friction2>0.6</friction2>
+            </bullet>
           </friction>
           <contact>
             <collide_bitmask>1</collide_bitmask>
             <ode>
-              <kp>1e+06</kp>
-              <kd>1e+06</kd>
-              <max_vel>1</max_vel>
               <min_depth>0.002</min_depth>
-            </ode>
-            <bullet>
-              <kp>1e+06</kp>
-              <kd>1e+06</kd>
-            </bullet>
+            </ode>  
           </contact>
         </surface>
       </collision>

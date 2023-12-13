@@ -7,14 +7,14 @@ import math
 import numpy as np
 
 # Script settings.
-CUBE_WIDTH = 0.02
-CUBE_DEPTH = 0.032
-CUBE_HEIGHT = 0.064
+CUBE_WIDTH = 0.06
+CUBE_DEPTH = 0.06
+CUBE_HEIGHT = 0.06
 
 CYLINDER_RADIUS = 0.025
 CYLINDER_HEIGHT = 0.02
 
-MATERIAL_DENSITY = 2000
+MATERIAL_DENSITY = 590
 
 
 def get_cylinder_mass(radius, height, rho):
