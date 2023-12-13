@@ -2,9 +2,9 @@
 # NOTE: It serves as a small wrapper around the 'franka_gripper/move` action but automatically
 # sets the speed to the maximum speed. It further clips gripper width such that it is within
 # the set max/min boundaries.
-float64 width
-bool grasping # The gripper simply moves if this is `false`.
-float64 max_effort # The max effort used by the gripper.
+float64 width       # Gripper width - ignored when the gripper is grasping.
+bool grasping       # The gripper simply moves if this is `false`.
+float64 max_effort  # The max effort used by the gripper.
 bool wait
 ---
 bool success

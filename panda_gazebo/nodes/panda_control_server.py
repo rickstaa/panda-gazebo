@@ -42,10 +42,6 @@ if __name__ == "__main__":  # noqa: C901
         load_extra_services = rospy.get_param("~load_extra_services")
     except KeyError:
         load_extra_services = False
-    try:  # Disables the gripper width reached check when grasping.
-        brute_force_grasping = rospy.get_param("~brute_force_grasping")
-    except KeyError:
-        brute_force_grasping = False
     try:  # The rate with which we check for the used controllers to be active.
         controllers_check_rate = rospy.get_param("~controllers_check_rate")
     except KeyError:
@@ -58,7 +54,6 @@ if __name__ == "__main__":  # noqa: C901
         load_set_joint_commands_service=load_set_joint_commands_service,
         load_arm_follow_joint_trajectory_action=load_arm_follow_joint_trajectory_action,
         load_extra_services=load_extra_services,
-        brute_force_grasping=brute_force_grasping,
         controllers_check_rate=controllers_check_rate,
     )
     rospy.spin()  # Maintain the service open.

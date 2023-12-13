@@ -29,7 +29,6 @@
   <!--Control arguments-->
   <!--  The control type used for controlling the robot (Options: Trajectory, position, effort)-->
   <arg name="control_type" default="trajectory" doc="The type of control used for controlling the arm. Options: trajectory, position, effort"/>
-  <arg name="brute_force_grasping" default="false" doc="Disable the gripper width reached check when grasping."/>
 
   <!--Start Gazebo and spawn the robot-->
   <include file="$(find franka_gazebo)/launch/panda.launch">
@@ -90,7 +89,6 @@
   <arg unless="$(eval arg('control_type') == 'trajectory')" name="load_set_joint_commands_service" value="true"/>
   <arg unless="$(eval arg('control_type') == 'trajectory')" name="load_arm_follow_joint_trajectory_action" value="false"/>
   <node pkg="panda_gazebo" type="panda_control_server.py" name="panda_control_server" required="true" output="$(arg output)">
-    <param name="brute_force_grasping" value="$(arg brute_force_grasping)"/>
     <param name="load_gripper" value="$(arg load_gripper)"/>
     <param name="load_set_joint_commands_service" value="$(arg load_set_joint_commands_service)"/>
     <param name="load_arm_follow_joint_trajectory_action" value="$(arg load_arm_follow_joint_trajectory_action)"/>

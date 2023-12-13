@@ -207,7 +207,7 @@ if __name__ == "__main__":
 
     # Without grasp.
     req = SetGripperWidthRequest()
-    req.width = 0.04
+    req.width = 0.08
     req.wait = True
     set_gripper_width_srv = rospy.ServiceProxy(
         "/panda_control_server/panda_hand/set_gripper_width",
@@ -224,10 +224,19 @@ if __name__ == "__main__":
     )
     resp = set_gripper_width_srv.call(req)
     print(resp.message)
+    req = SetGripperWidthRequest()
+    req.width = 0.04
+    req.wait = True
+    set_gripper_width_srv = rospy.ServiceProxy(
+        "/panda_control_server/panda_hand/set_gripper_width",
+        SetGripperWidth,
+    )
+    resp = set_gripper_width_srv.call(req)
+    print(resp.message)
 
     # With grasp.
     req = SetGripperWidthRequest()
-    req.width = 0.04
+    req.width = 0.08
     req.wait = True
     req.grasping = True
     set_gripper_width_srv = rospy.ServiceProxy(
