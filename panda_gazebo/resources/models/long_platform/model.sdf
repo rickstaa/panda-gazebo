@@ -1,6 +1,6 @@
 <?xml version='1.0'?>
 <sdf version='1.7'>
-  <model name='long platform'>
+  <model name='long_platform'>
     <link name='link'>
       <inertial>
         <mass>10</mass>
