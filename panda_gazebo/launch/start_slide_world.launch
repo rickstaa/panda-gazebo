@@ -6,7 +6,7 @@
   <arg name="verbose" default="false" doc="Enable Gazebo verbose mode"/>
   <arg name="gazebo_gui" default="true" doc="Start the gazebo GUI"/>
   <!--  The used phyics engine (options: dart and ode)-->
-  <arg name="physics" default="dart" doc="The physics engine used by gazebo"/>
+  <arg name="physics" default="ode" doc="The physics engine used by gazebo"/>
 
   <!--Start the Gazebo world-->
   <include file="$(find panda_gazebo)/launch/start_world.launch.xml">

@@ -9,7 +9,7 @@
   <arg name="verbose" default="false" doc="Enable Gazebo verbose mode"/>
   <arg name="gazebo_gui" default="true" doc="Start the gazebo GUI"/>
   <!--  The used phyics engine (options: dart and ode)-->
-  <arg name="physics" default="dart" doc="The physics engine used by gazebo"/>
+  <arg name="physics" default="ode" doc="The physics engine used by gazebo"/>
   <!--Control arguments-->
   <!--  The control type used for controlling the robot (Options: Trajectory, position, effort)-->
   <arg name="control_type" default="trajectory" doc="The type of control used for controlling the arm. Options: trajectory, position, effort"/>
