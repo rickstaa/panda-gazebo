@@ -33,6 +33,7 @@ duration goal_time_tolerance
 # NOTE: Used for automatic time axis generation
 bool create_time_axis  # Automatically create a time axis
 float64 time_axis_step  # Time axis step size
+duration timeout # Action server timeout. If set to 0, no timeout is used and action waits indefinitely.
 
 ---
 int32 error_code
@@ -42,6 +43,7 @@ int32 INVALID_JOINTS = -2
 int32 OLD_HEADER_TIMESTAMP = -3
 int32 PATH_TOLERANCE_VIOLATED = -4
 int32 GOAL_TOLERANCE_VIOLATED = -5
+int32 ACTION_TIMEOUT = -6
 
 # Human readable description of the error code. Contains complementary
 # information that is especially useful when execution fails, for instance:
@@ -51,6 +53,8 @@ int32 GOAL_TOLERANCE_VIOLATED = -5
 #   and those provided in the goal.
 # - PATH_TOLERANCE_VIOLATED and GOAL_TOLERANCE_VIOLATED: Which joint
 #   violated which tolerance, and by how much.
+# - ACTION_TIMEOUT: The controller failed to achieve the goal before
+#   the specified timeout elapsed.
 string error_string
 
 ---

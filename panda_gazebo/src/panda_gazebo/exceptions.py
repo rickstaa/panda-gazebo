@@ -17,8 +17,9 @@ class InputMessageInvalidError(Exception):
             message (str, optional): Exception message specifying whether the exception
                 occurred. Defaults to ``""``.
             log_message (str, optional): Full log message. Defaults to ``""``.
-            details (dict): Additional dictionary that can be used to supply the user
-                with more details about why the exception occurred.
+            details: Additional keyword arguments that can be used to supply the user
+                with more details about why the exception occurred. These details are
+                stored in the ``details`` attribute.
         """
         super().__init__(message)
 
