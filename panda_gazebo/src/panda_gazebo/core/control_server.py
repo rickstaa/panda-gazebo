@@ -113,7 +113,6 @@ class PandaControlServer(object):
         load_set_joint_commands_service=True,
         load_arm_follow_joint_trajectory_action=False,
         load_extra_services=False,
-        brute_force_grasping=False,
         controllers_check_rate=CONTROLLER_INFO_RATE,
     ):
         """Initialise PandaControlServer object.
@@ -135,8 +134,6 @@ class PandaControlServer(object):
             load_extra_services (bool, optional): Whether to load extra services that
                 are not used by the :ros-gazebo-gym:`ros_gazebo_gym <>` package.
                 Defaults to ``False``.
-            brute_force_grasping (bool, optional): Disable the gripper width reached
-                check when grasping. Defaults to ``False``.
             controllers_check_rate (float, optional): Rate at which the availability of
                 the used controllers is checked. Setting this to ``-1`` will check at
                 every time step. Defaults to ``0.1`` Hz.
@@ -158,10 +155,9 @@ class PandaControlServer(object):
         self.__controlled_joints = {}
         self.__joint_controllers = {}
 
-        # Disable the gripper width reached check used in the.
-        # franka_gripper/gripper_action` when the `max_effort` is bigger than 0.0.
-        if brute_force_grasping:
-            rospy.set_param("/franka_gripper/gripper_action/width_tolerance", 0.1)
+        # Disable the `gripper_action` gripper width reached check.
+        # NOTE: Done to allow grasping with the `gripper_action` service (see #33).
+        rospy.set_param("/franka_gripper/gripper_action/width_tolerance", 0.1)
 
         ########################################
         # Create Panda control services ########
@@ -1640,26 +1636,26 @@ class PandaControlServer(object):
         """
         resp = SetGripperWidthResponse()
 
-        # Check if gripper width is within boundaries.
-        set_gripper_width_req.width = (
-            set_gripper_width_req.width / 2
-        )  # NOTE: Done because the gripper command action takes in the joints positions
-        if set_gripper_width_req.width < 0.0 or set_gripper_width_req.width > 0.08:
+        # Check if gripper width is within boundaries and convert to finger position.
+        set_gripper_width_req.width /= 2
+        gripper_width = np.clip(set_gripper_width_req.width, 0, 0.08)
+        if gripper_width != set_gripper_width_req.width:
             rospy.logwarn(
-                "Gripper width was clipped as it was not within bounds [0, 0.8]."
+                "Gripper width was clipped as it was not within bounds [0, 0.08]."
             )
-            gripper_width = np.clip(set_gripper_width_req.width, 0, 0.08)
-        else:
-            gripper_width = set_gripper_width_req.width
 
-        # Create gripper command message.
+        # Create gripper command action message.
+        # NOTE: The max_effort has to be 0 for the gripper to move (see #33).
         req = GripperCommandGoal()
         req.command.position = gripper_width
         req.command.max_effort = (
-            set_gripper_width_req.max_effort
-            if set_gripper_width_req.max_effort != 0.0
-            and set_gripper_width_req.grasping
-            else (GRASP_FORCE if set_gripper_width_req.grasping else 0.0)
+            (
+                set_gripper_width_req.max_effort
+                if set_gripper_width_req.max_effort != 0.0
+                else GRASP_FORCE
+            )
+            if set_gripper_width_req.grasping
+            else 0.0
         )
 
         # Invoke 'franka_gripper' action service
@@ -1668,10 +1664,9 @@ class PandaControlServer(object):
 
             # Wait for result.
             if set_gripper_width_req.wait:
-                gripper_resp = self._gripper_command_client.wait_for_result(
+                resp.success = self._gripper_command_client.wait_for_result(
                     timeout=rospy.Duration.from_sec(WAIT_TILL_DONE_TIMEOUT)
                 )
-                resp.success = gripper_resp
             else:
                 resp.success = True
         else:
@@ -1705,7 +1700,9 @@ class PandaControlServer(object):
         resp.success = True
         resp.message = "Everything went OK"
         try:
-            self.__controllers = {}  # Make sure latest controller info is retrieved.
+            self.__controllers = (
+                {}
+            )  # Make sure latest controller info is retrieved. # TODO: Doesn't work!
             controlled_joints = self.controlled_joints[
                 get_controlled_joints_req.control_type
             ]
