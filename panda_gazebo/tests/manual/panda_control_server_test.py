@@ -100,8 +100,9 @@ if __name__ == "__main__":
     # Generate joint_efforts msg.
     set_arm_joint_efforts_msg = SetJointEffortsRequest()
     set_arm_joint_efforts_msg.joint_names = ["panda_joint2", "panda_joint3"]
-    set_arm_joint_efforts_msg.joint_efforts = [0, 0]
+    set_arm_joint_efforts_msg.joint_efforts = [0, 1]
     # set_arm_joint_efforts_msg.joint_efforts = [0, 0, 0]
+    set_arm_joint_efforts_msg.wait = True
     resp = set_arm_joint_effort_srv.call(set_arm_joint_efforts_msg)
     print(resp.message)
 
@@ -126,7 +127,7 @@ if __name__ == "__main__":
 
     # Generate set_arm_joint_positions_msg.
     set_arm_joint_positions_msg = SetJointPositionsRequest()
-    # set_arm_joint_positions_msg.joint_names = ["panda_joint5", "panda_joint6"]
+    set_arm_joint_positions_msg.joint_names = ["panda_joint5", "panda_joint6"]
     set_arm_joint_positions_msg.joint_positions = [1.5, 2]
     # set_arm_joint_positions_msg.joint_positions = [
     # 0.0,
@@ -175,6 +176,7 @@ if __name__ == "__main__":
     goal = FollowJointTrajectoryGoal()
     goal.trajectory.joint_names = [
         "panda_joint1",
+        # "panda_joint12",
         "panda_joint2",
         "panda_joint3",
         "panda_joint4",
@@ -184,18 +186,33 @@ if __name__ == "__main__":
     ]
     point = JointTrajectoryPoint()
     point.positions = [
-        0.5,
-        -0.5,
-        0.1,
-        -0.579418370643596,
-        -0.208283306265037815,
-        0.3501401410371793,
-        0.44266583523250507,
+        -0.1898988458903048,
+        -1.0548482299719186,
+        -0.6408902483998249,
+        -2.207504181306631,
+        -0.5692399052822985,
+        1.3015368095958824,
+        0.07330453737040443,
     ]
     point.time_from_start.secs = 1
     goal.trajectory.points.append(point)
+    point2 = JointTrajectoryPoint()
+    point2.positions = [
+        0.25,
+        -0.5,
+        0.1,
+        -0.5,
+        -0.3,
+        0.3501401410371793,
+        0.44266583523250507,
+    ]
+    point2.time_from_start.secs = 2
+    goal.trajectory.points.append(point2)
+    # goal.create_time_axis = True
+    # goal.time_axis_step = 0.1
     # goal.trajectory.header = header
     # goal.goal_time_tolerance.secs = 5
+    # goal.timeout = rospy.Duration(2)
 
     # Send goal.
     follow_joint_traj_client.send_goal(goal)
