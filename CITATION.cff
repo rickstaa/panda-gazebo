@@ -18,7 +18,7 @@ authors:
 identifiers:
   - type: url
     value: 'https://zenodo.org/badge/latestdoi/353980386'
-repository-code: 'https://github.com/rickstaa/stable-gym'
+repository-code: 'https://github.com/rickstaa/panda-gazebo'
 abstract: >-
   A package that contains all the ROS components needed for creating a Panda Emika
   Franka Gazebo simulation.
