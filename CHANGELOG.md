@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.16.0](https://github.com/rickstaa/panda-gazebo/compare/v2.15.4...v2.16.0) (2023-12-20)
+
+
+### Features
+
+* improve grasping cube ([#195](https://github.com/rickstaa/panda-gazebo/issues/195)) ([3441187](https://github.com/rickstaa/panda-gazebo/commit/3441187551846c0896d7735a45f4b99d76726837))
+* make code compatible with latest franka_ros version ([#183](https://github.com/rickstaa/panda-gazebo/issues/183)) ([b466168](https://github.com/rickstaa/panda-gazebo/commit/b46616842d7215b58c1c203f2585d6e9529cf09c))
+* remove 'panda_moveit_config' submodule ([#185](https://github.com/rickstaa/panda-gazebo/issues/185)) ([39c8f12](https://github.com/rickstaa/panda-gazebo/commit/39c8f129806921ae9df03187a3b1a518b5e9163b))
+
+
+### Bug Fixes
+
+* **control_switcher:** fix control switcher ([#187](https://github.com/rickstaa/panda-gazebo/issues/187)) ([43fd75c](https://github.com/rickstaa/panda-gazebo/commit/43fd75cdbf3958f895f85143e4b7e0b0612a6b1f))
+* fix 'set_logging_level' launch file arguments ([#186](https://github.com/rickstaa/panda-gazebo/issues/186)) ([2bc9a26](https://github.com/rickstaa/panda-gazebo/commit/2bc9a26e7f1c513bab9ab39f5d97d56a092b7900))
+* fix moveit launch argument ([#188](https://github.com/rickstaa/panda-gazebo/issues/188)) ([a03b978](https://github.com/rickstaa/panda-gazebo/commit/a03b9783cb42f8b3b23aa706da1121c3ebc5249d))
+* **moveit_server:** fix add_plane service ([#189](https://github.com/rickstaa/panda-gazebo/issues/189)) ([424fd4e](https://github.com/rickstaa/panda-gazebo/commit/424fd4ef3cf05e72ea2c27c140a10f7284314960))
+
+
+### Documentation
+
+* add known issues to docs ([35c77f8](https://github.com/rickstaa/panda-gazebo/commit/35c77f8b4a0aeb266f86bf5863ad0ffb02c4f1f8))
+* add known issues to docs ([#197](https://github.com/rickstaa/panda-gazebo/issues/197)) ([4cac087](https://github.com/rickstaa/panda-gazebo/commit/4cac08709490ed986854aa14ac12b6141436fa47))
+
 ## [2.15.4](https://github.com/rickstaa/panda-gazebo/compare/v2.15.3...v2.15.4) (2023-10-04)
 
 
