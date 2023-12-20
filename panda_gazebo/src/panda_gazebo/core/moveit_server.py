@@ -53,8 +53,9 @@ from panda_gazebo.common.helpers import (
     ros_exit_gracefully,
     translate_moveit_error_code,
     normalize_vector,
+    load_panda_joint_limits,
 )
-from panda_gazebo.exceptions import InputMessageInvalidError
+from panda_gazebo.exceptions import InputMessageInvalidError, JointLimitsInvalidError
 from panda_gazebo.srv import (
     AddBox,
     AddBoxResponse,
@@ -376,6 +377,15 @@ class PandaMoveItPlannerServer(object):
                 for joint in self._joint_states.name
             ]
 
+        # Retrieve panda joint limits.
+        self._joint_limits = load_panda_joint_limits()
+        if not self._joint_limits:
+            rospy.logerr(
+                "Unable to load Panda joint limits. Ensure 'joint_limits.yaml' from "
+                "'franka_description' is loaded in 'put_robot_in_world.launch'."
+            )
+            ros_exit_gracefully(shutdown_msg="Shutting down.", exit_code=1)
+
     ################################################
     # Helper functions #############################
     ################################################
@@ -640,10 +650,8 @@ class PandaMoveItPlannerServer(object):
                     "of different lengths."
                 ),
                 log_message=logwarn_msg,
-                details={
-                    "joint_positions_command_length": joint_positions_count,
-                    "joint_names_length": joint_names_count,
-                },
+                joint_positions_command_length=joint_positions_count,
+                joint_names_length=joint_names_count,
             )
 
         # Split joint positions into arm and hand joint positions and return.
@@ -832,6 +840,32 @@ class PandaMoveItPlannerServer(object):
         )
         if not joint_limits:
             return random_arm_joint_values, random_hand_joint_values
+
+        # Notify the user if joint limits are not valid with the panda joint limits.
+        rospy.logdebug("Checking if joint limits are valid.")
+        invalid_joint_limits = [
+            joint_name
+            for joint_name in joint_limits
+            if (
+                joint_name.endswith("_min")
+                and joint_limits[joint_name] < self._joint_limits[joint_name]
+            )
+            or (
+                joint_name.endswith("_max")
+                and joint_limits[joint_name] > self._joint_limits[joint_name]
+            )
+        ]
+        if invalid_joint_limits:
+            verb = "is" if len(invalid_joint_limits) == 1 else "are"
+            log_msg = (
+                f"Joint limits '{invalid_joint_limits}' {verb} not valid since they are "
+                "outside the Panda joint limits specified in 'joint_limits.yaml'. "
+                f"Valid joint limits are '{self._joint_limits}'."
+            )
+            raise JointLimitsInvalidError(
+                message=("Invalid joint limits were given."),
+                log_message=log_msg,
+            )
 
         # If joint limits were given, retrieve bounded random joint values.
         joint_commands_valid = {
@@ -1418,10 +1452,16 @@ class PandaMoveItPlannerServer(object):
             joint_limits = {}
 
         # Retrieve random joint values.
-        (
-            random_arm_joint_values,
-            random_hand_joint_values,
-        ) = self._get_bounded_random_joint_values(joint_limits, max_attempts)
+        try:
+            (
+                random_arm_joint_values,
+                random_hand_joint_values,
+            ) = self._get_bounded_random_joint_values(joint_limits, max_attempts)
+        except JointLimitsInvalidError as e:
+            rospy.logwarn(e.log_message)
+            resp.success = False
+            resp.message = e.args[0]
+            return resp
 
         # Return failure if no random joint positions could be retrieved.
         if random_arm_joint_values is None or random_hand_joint_values is None:

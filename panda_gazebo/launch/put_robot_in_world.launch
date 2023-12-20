@@ -70,6 +70,9 @@
     <arg name="load_gripper" value="$(arg load_gripper)"/>
   </include>
 
+  <!--Load panda joint limits on parameter server-->
+  <rosparam ns="panda_gazebo/panda" file="$(find franka_description)/robots/panda/joint_limits.yaml" command="load"/>
+
   <!--Load the 'panda_gazebo' MoveIt server-->
   <!--  Only load required services-->
   <arg if="$(eval arg('control_type') == 'trajectory')" name="load_set_ee_pose_service" value="true"/>

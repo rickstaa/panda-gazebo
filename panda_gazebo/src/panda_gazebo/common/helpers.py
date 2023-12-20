@@ -591,3 +591,33 @@ def ros_exit_gracefully(shutdown_msg=None, exit_code=0):
             rospy.sleep(0.1)
     finally:
         sys.exit(exit_code)
+
+
+def load_panda_joint_limits():
+    """Loads the joint limits of the Panda robot from the parameter server.
+
+    Returns:
+        dict: Dictionary containing the joint position limits (i.e. min and max) for
+            each joint. Returns an empty dictionary if the joint limits could not be
+            loaded.
+    """
+    # Load arm joint limits from parameter server.
+    joint_limits = {}
+    for i in range(1, 8):
+        joint_name = f"joint{i}"
+        if rospy.has_param(f"panda_gazebo/panda/{joint_name}"):
+            limits = rospy.get_param(f"panda_gazebo/panda/{joint_name}")
+            joint_limits[f"panda_{joint_name}_min"] = limits["limit"]["lower"]
+            joint_limits[f"panda_{joint_name}_max"] = limits["limit"]["upper"]
+
+    # Add finger joint limits.
+    joint_limits.update(
+        {
+            "panda_finger_joint1_min": 0.0,
+            "panda_finger_joint1_max": 0.04,
+            "panda_finger_joint2_min": 0.0,
+            "panda_finger_joint2_max": 0.04,
+        }
+    )
+
+    return joint_limits
