@@ -2,9 +2,8 @@
 Known Issues
 ============
 
-This document outlines the known issues with the :panda-gazebo:`panda_gazebo <>` package you 
-may encounter while using. We recommend checking :panda-gazebo:`the issues page <issues>` on the
-:panda-gazebo:`GitHub repository <>` for updates.
+This document outlines the known issues you may encounter when using the :panda-gazebo:`panda_gazebo <>` package. We recommend checking 
+:panda-gazebo:`the issues page <issues>` on the :panda-gazebo:`GitHub repository <>` for updates.
 
 Gravity Compensation Bug
 -------------------------
