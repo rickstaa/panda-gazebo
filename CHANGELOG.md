@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.16.1](https://github.com/rickstaa/panda-gazebo/compare/v2.16.0...v2.16.1) (2023-12-23)
+
+
+### Bug Fixes
+
+* fix 'set_joint_commands' service return values ([#205](https://github.com/rickstaa/panda-gazebo/issues/205)) ([e2df695](https://github.com/rickstaa/panda-gazebo/commit/e2df69549538ec3e32859e96c2356df9b36e5a95))
+* fix random joint positions service ([#204](https://github.com/rickstaa/panda-gazebo/issues/204)) ([44d6855](https://github.com/rickstaa/panda-gazebo/commit/44d68552849bd2f35264e6e9e87bafb5d253cff7))
+
+
+### Documentation
+
+* fix broken links ([b99e1b1](https://github.com/rickstaa/panda-gazebo/commit/b99e1b10dd16f9fd38fcb9c10f084a9884938965))
+* fix broken README links ([484c224](https://github.com/rickstaa/panda-gazebo/commit/484c224c71ffb8e338fa3e2363b1daeb24251a72))
+* improve issues section ([8a610b3](https://github.com/rickstaa/panda-gazebo/commit/8a610b3c7dfca40f626dff2acb191c06e400747b))
+
 ## [2.16.0](https://github.com/rickstaa/panda-gazebo/compare/v2.15.4...v2.16.0) (2023-12-20)
 
 
