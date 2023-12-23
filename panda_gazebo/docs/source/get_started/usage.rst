@@ -36,7 +36,7 @@ modes that can be selected using the ``control_mode`` argument:
 .. _rqt_reconfigure: https://wiki.ros.org/rqt_reconfigure
 .. _`MoveIt! package`: https://moveit.ros.org/
 .. _`rqt_joint_trajectory_controller package`: https://wiki.ros.org/rqt_joint_trajectory_controller
-.. _`RViz Motion Planning`: https://ros-planning.github.io/moveit_tutorials/doc/motion_planning_rviz/motion_planning_rviz_tutorial.html
+.. _`RViz Motion Planning`: https://ros-planning.github.io/moveit_tutorials/doc/quickstart_in_rviz/quickstart_in_rviz_tutorial.html
 .. _`MoveIt!`: https://ros-planning.github.io/moveit_tutorials/
 .. _`MoveIt! tutorials`: https://ros-planning.github.io/moveit_tutorials/
 

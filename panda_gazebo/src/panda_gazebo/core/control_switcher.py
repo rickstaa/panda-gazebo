@@ -1,7 +1,7 @@
 """This class is responsible for switching the control type that is used for
 controlling the Panda Robot robot arm and hand. It serves as a wrapper around the
 services created by the ROS
-`controller_manager <https://wiki.ros.orgcontroller_manager>`_ class.
+`controller_manager <https://wiki.ros.org/controller_manager>`_ class.
 
 Control types:
     * `trajectory <https://wiki.ros.org/joint_trajectory_controller/>`_
