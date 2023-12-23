@@ -1202,24 +1202,29 @@ class PandaControlServer(object):
                 )
 
         # Check if everything went OK and return response.
-        if (
-            arm_resp
-            and arm_resp.success
-            and (
-                not self._load_gripper or (self._load_gripper and gripper_resp.success)
-            )
-        ):
-            resp.success = True
-            resp.message = "Everything went OK"
-        elif self._load_gripper and gripper_resp and not gripper_resp.success:
-            resp.success = False
-            resp.message = "Gripper control failed"
-        elif arm_resp and not arm_resp.success:
-            resp.success = False
-            resp.message = "Arm control failed"
-        else:
+        arm_control_failed = (
+            arm_command_msg is not None
+            and arm_resp is not None
+            and not arm_resp.success
+        )
+        gripper_control_failed = (
+            self._load_gripper
+            and gripper_command_msg is not None
+            and gripper_resp is not None
+            and not gripper_resp.success
+        )
+        if arm_control_failed and gripper_control_failed:
             resp.success = False
             resp.message = "Joint control failed"
+        elif arm_control_failed:
+            resp.success = False
+            resp.message = "Arm control failed"
+        elif gripper_control_failed:
+            resp.success = False
+            resp.message = "Gripper control failed"
+        else:
+            resp.success = True
+            resp.message = "Everything went OK"
         return resp
 
     def _arm_set_joint_positions_cb(self, set_joint_positions_req):  # noqa: C901

@@ -52,6 +52,10 @@ if __name__ == "__main__":
         "panda_joint1",
         "panda_joint2",
         "panda_joint3",
+        "panda_joint4",
+        "panda_joint5",
+        "panda_joint6",
+        "panda_joint7",
         "gripper_width",
         "gripper_max_effort",
     ]
@@ -74,7 +78,9 @@ if __name__ == "__main__":
     set_joint_commands_msg.control_type = "position"
     # set_joint_commands_msg.control_type = "effort"
     # set_joint_commands_msg.joint_commands = [1, 2, 3, 0.03]  # NOTE: Wrong input!
-    set_joint_commands_msg.joint_commands = [1, 2, 3, 0.03, 130]
+    # set_joint_commands_msg.joint_commands = [0.04, 10]
+    # set_joint_commands_msg.joint_commands = [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+    set_joint_commands_msg.joint_commands = [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.04, 10]
     set_joint_commands_msg.grasping = True
     resp = set_arm_joint_effort_srv.call(set_joint_commands_msg)
     print(resp.message)
