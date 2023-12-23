@@ -828,9 +828,11 @@ class PandaMoveItPlannerServer(object):
         Returns:
             (tuple): tuple containing:
                 - **random_arm_joint_values** (:obj:`dict`): Dictionary containing the
-                    (bounded) random arm joint values.
+                    (bounded) random arm joint values. Is ``None`` if no valid random
+                    arm joint values could be sampled.
                 - **random_hand_joint_values** (:obj:`dict`): Dictionary containing the
-                    (bounded) random hand joint values.
+                    (bounded) random hand joint values. Is ``None`` if the gripper is not
+                    loaded or no valid random hand joint values could be sampled.
         """
         # Retrieve unbounded random joint values.
         rospy.logdebug("Retrieving unbounded random joint values.")
@@ -1464,17 +1466,20 @@ class PandaMoveItPlannerServer(object):
             return resp
 
         # Return failure if no random joint positions could be retrieved.
-        if random_arm_joint_values is None or random_hand_joint_values is None:
-            warn_string = (
-                "hand and arm"
-                if random_arm_joint_values is None and random_hand_joint_values is None
-                else ("hand" if random_hand_joint_values is None else "arm"),
-                "with the set joint limits" if joint_limits else ".",
-            )
+        if random_arm_joint_values is None or (
+            self._load_gripper and random_hand_joint_values is None
+        ):
+            joint_type = "arm"
+            if self._load_gripper:
+                if random_arm_joint_values is None and random_hand_joint_values is None:
+                    joint_type = "hand and arm"
+                elif random_hand_joint_values is None:
+                    joint_type = "hand"
+            limit_string = " with the set joint limits" if joint_limits else "."
             resp.success = False
             resp.message = (
-                f"Random {warn_string[0]} joint positions could not be retrieved "
-                f"{warn_string[1]}"
+                f"Random {joint_type} joint positions could not be retrieved"
+                f"{limit_string}"
             )
             return resp
 
@@ -1484,6 +1489,9 @@ class PandaMoveItPlannerServer(object):
             if self._arm_states_mask[0]
             else [random_hand_joint_values, random_arm_joint_values]
         )
+        joint_order = [
+            joint_values for joint_values in joint_order if joint_values is not None
+        ]  # Filter out None values
         resp.joint_names = flatten_list(
             [list(joint_values.keys()) for joint_values in joint_order]
         )
