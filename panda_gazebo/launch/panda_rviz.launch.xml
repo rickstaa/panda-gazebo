@@ -8,7 +8,7 @@
   <arg name="moveit" default="false" doc="Start MoveIt"/>
   <arg unless="$(arg moveit)" name="rviz_file_default" value="$(find panda_gazebo)/launch/includes/rviz/panda.rviz"/>
   <arg if="$(arg moveit)" name="rviz_file_default" value="$(find panda_gazebo)/launch/includes/rviz/panda_moveit.rviz"/>
-  <arg name="rviz_file" default="$(arg rviz_file_default)" doc="Path to the Rviz configuration file"/>
+  <arg name="rviz_file" default="$(arg rviz_file_default)" doc="Path to the RViz configuration file"/>
   <arg name="command_args" value="-d $(arg rviz_file)" />
 
   <!--launch RVIZ-->

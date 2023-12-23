@@ -1,7 +1,7 @@
 <!--Launch file for adding the panda robot to the gazebo world-->
 <launch>
   <!--General arguments-->
-  <arg name="rviz" default="true" doc="Start Rviz"/>
+  <arg name="rviz" default="true" doc="Start RViz"/>
   <arg name="load_gripper" default="true" doc="Load the gripper"/>
   <arg name="debug" default="false" doc="Add gdb debug flag"/>
   <arg name="output" default="screen" doc="output channel of main nodes. options: screen, log"/>

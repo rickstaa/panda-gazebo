@@ -1,7 +1,7 @@
 <!--Starts the panda gazebo simulation-->
 <launch>
   <!--General arguments-->
-  <arg name="rviz" default="true" doc="Start Rviz"/>
+  <arg name="rviz" default="true" doc="Start RViz"/>
   <arg name="moveit" default="true" doc="Start MoveIt"/>
   <!--Simulation arguments-->
   <arg name="world" default="$(find panda_gazebo)/resources/worlds/empty.world" doc="Path to the world file"/>

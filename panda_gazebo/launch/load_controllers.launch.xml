@@ -12,7 +12,7 @@
   <rosparam file="$(find panda_gazebo)/cfg/controllers/gazebo_ros_control.yaml" command="load" />
   <!--  Load general ros_control configuration parameters-->
   <rosparam file="$(find panda_gazebo)/cfg/controllers/ros_control.yaml" command="load"/>
-  <!--  Load Moveit control configuration parameters-->
+  <!--  Load MoveIt control configuration parameters-->
   <rosparam if="$(eval arg('moveit') and arg('load_gripper'))" file="$(find panda_gazebo)/cfg/controllers/moveit_ros_control_gripper.yaml" command="load"/>
   <rosparam unless="$(eval arg('moveit') and arg('load_gripper'))" file="$(find panda_gazebo)/cfg/controllers/moveit_ros_control.yaml" command="load"/>
 
