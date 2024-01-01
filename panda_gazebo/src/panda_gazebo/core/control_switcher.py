@@ -349,7 +349,9 @@ class PandaControlSwitcher(object):
         prev_control_type = ", ".join(running_controllers.keys())
         running_state = controllers_state.get(control_group, {}).get("running", {})
         running_control_types = list(running_state.keys())
-        running_controllers = get_unique_list(flatten_list(list(running_state.values())))
+        running_controllers = get_unique_list(
+            flatten_list(list(running_state.values()))
+        )
         stopped_state = controllers_state.get(control_group, {}).get("stopped", {})
         stopped_control_types = list(stopped_state.keys())
         loaded_state = controllers_state.get(control_group, {}).get("loaded", {})

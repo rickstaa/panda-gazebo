@@ -80,7 +80,17 @@ if __name__ == "__main__":
     # set_joint_commands_msg.joint_commands = [1, 2, 3, 0.03]  # NOTE: Wrong input!
     # set_joint_commands_msg.joint_commands = [0.04, 10]
     # set_joint_commands_msg.joint_commands = [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
-    set_joint_commands_msg.joint_commands = [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.04, 10]
+    set_joint_commands_msg.joint_commands = [
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.04,
+        10,
+    ]
     set_joint_commands_msg.grasping = True
     resp = set_arm_joint_effort_srv.call(set_joint_commands_msg)
     print(resp.message)
