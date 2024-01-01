@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.17.0](https://github.com/rickstaa/panda-gazebo/compare/v2.16.1...v2.17.0) (2024-01-01)
+
+
+### Features
+
+* add Panda joint locker service ([#209](https://github.com/rickstaa/panda-gazebo/issues/209)) ([b0845a5](https://github.com/rickstaa/panda-gazebo/commit/b0845a5e1853c9336733746d02b69897488b42e5))
+
+
+### Bug Fixes
+
+* **control_switcher:** fix control switcher type error ([#206](https://github.com/rickstaa/panda-gazebo/issues/206)) ([13d4052](https://github.com/rickstaa/panda-gazebo/commit/13d4052d10086d4b072bd120709d7244387abae4))
+* ensure srv headers are build before gazebo plugin ([9c4ef85](https://github.com/rickstaa/panda-gazebo/commit/9c4ef858502ab8236d3ead733ae59c3d4682adfc))
+
 ## [2.16.1](https://github.com/rickstaa/panda-gazebo/compare/v2.16.0...v2.16.1) (2023-12-23)
 
 
