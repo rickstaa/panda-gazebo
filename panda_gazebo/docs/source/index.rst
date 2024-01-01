@@ -11,7 +11,7 @@ is used by the :ros-gazebo-gym:`ros_gazebo_gym <>` RL framework to create the Pa
 It wraps the `franka_ros`_ package to add the functionalities needed to train RL agents efficiently.
 
 Package Overview
-----------------
+================
 
 The :panda-gazebo:`panda_gazebo <>` package contains several launch files, ROS nodes and a Gazebo plugin that ease the
 :ros-gazebo-gym:`ros_gazebo_gym <>` interaction with the `Panda Gazebo simulation`_. The launch files
@@ -20,7 +20,7 @@ controlling or getting information from the robot easier. The Gazebo plugins can
 It also contains a Gazebo world plugin that can be used to lock specific joints of the Panda robot.
 
 Launch files
-~~~~~~~~~~~~
+------------
 
 - **put_robot_in_world.launch:** Spawns the Panda robot in a given task environment.
 - **Start_pick_and_place_world.launch:** Loads the pick and place task environment.
@@ -32,7 +32,7 @@ Launch files
 For more information about these task environments see `the ros_gazebo_gym documentation`_.
 
 ROS Nodes
-~~~~~~~~~
+---------
 
 - **panda_control_server**: Creates services related to the panda_control.
    - ``get_controlled_joints:`` Returns the panda joints that are currently controlled when using a given control type.
@@ -42,7 +42,7 @@ ROS Nodes
    - ``panda_hand/set_gripper_width:`` Sets the gripper width.
    - ``panda_arm/set_joint_positions:`` Sets the arm positions.
    - ``panda_arm/set_joint_efforts:`` Sets the arm efforts.
-- **panda_moveit_server:** Creates services to control the robot through `MoveIt!`_.
+- **panda_moveit_server**: Creates services to control the robot through `MoveIt!`_.
    - ``panda_arm/set_ee_pose:`` Sets the end-effector pose.
    - ``get_random_joint_positions``: Returns random valid joint positions.
    - ``get_random_ee_pose``: Returns a valid random end-effector pose.
@@ -59,9 +59,9 @@ ROS Nodes
    - ``panda_hand/set_joint_positions``: Sets the hand joints position.
 
 Gazebo plugins
-~~~~~~~~~~~~~~
+--------------
 
-- **panda_joint_locker**: Creates a service that can be used to lock/unlock specific joints of the Panda robot.
+- **panda_joint_locker**: Creates a service to lock/unlock Panda robot's specific joints.
    - ``lock_unlock_panda_joints``: Locks/unlocks the specified joints of the Panda robot.
 
 .. _`Panda Emika Franka`: https://frankaemika.github.io/docs
@@ -74,7 +74,7 @@ Gazebo plugins
 .. _`MoveIt!`: https://moveit.ros.org
 
 API Documentation
------------------
+=================
 
 More information about this package's modules and classes can be found in the :ref:`Python API documentation <python_api>`. For more
 information about the message the services require, see the :ref:`ROS API documentation <ros_api>`.
