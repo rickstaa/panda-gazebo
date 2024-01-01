@@ -1,0 +1,6 @@
+# Service that can be used to lock/unlock specific joints of the robot.
+string[] joint_names
+bool lock
+---
+bool success
+string message

@@ -27,5 +27,7 @@
         <projection_type>perspective</projection_type>
       </camera>
     </gui>
+    <!--Load Panda joint fixer Gazebo world plugin-->
+    <plugin name="panda_joint_locker" filename="libpanda_gazebo.so"/>
   </world>
 </sdf>
