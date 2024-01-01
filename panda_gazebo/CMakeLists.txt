@@ -63,18 +63,18 @@ add_message_files(
 ## Generate services in the 'srv' folder
 add_service_files(
   FILES
-  LockJoints.srv
   AddBox.srv
   AddPlane.srv
   GetControlledJoints.srv
-  GetMoveItControlledJoints.srv
   GetEe.srv
-  SetEe.srv
   GetEePose.srv
   GetEePoseJointConfig.srv
   GetEeRpy.srv
+  GetMoveItControlledJoints.srv
   GetRandomEePose.srv
   GetRandomJointPositions.srv
+  LockJoints.srv
+  SetEe.srv
   SetEePose.srv
   SetGripperWidth.srv
   SetJointCommands.srv
@@ -161,7 +161,7 @@ add_library(${PROJECT_NAME} src/panda_joint_locker_world_plugin.cpp)
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
-# add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
