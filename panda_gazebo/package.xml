@@ -58,6 +58,8 @@
   <build_depend>control_msgs</build_depend>
   <build_depend>python3-catkin-pkg</build_depend>
   <build_depend>python3-catkin-tools</build_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>gazebo_ros</build_depend>
 
   <!--Extra build dependencies
     NOTE: Disabled by default as they are only needed for some test scripts
@@ -88,6 +90,7 @@
   <exec_depend>effort_controllers</exec_depend>
   <exec_depend>joint_trajectory_controller</exec_depend>
   <exec_depend>panda_moveit_config</exec_depend>
+  <exec_depend>roscpp</exec_depend>
 
   <!--Extra run dependencies
     NOTE: Disabled by default as they are only needed for some test scripts.
@@ -98,7 +101,6 @@
   <!--Local ROS package dependencies -->
   <exec_depend>franka_description</exec_depend>
   <exec_depend>franka_gazebo</exec_depend>
-  <exec_depend>panda_moveit_config</exec_depend>
 
   <!-- Python dependencies -->
   <exec_depend>gym-pip</exec_depend>
@@ -123,5 +125,8 @@
     <gazebo_ros gazebo_model_path="${prefix}/resources/models"/>
     <gazebo_ros gazebo_media_path="${prefix}/resources/models"/>
     <gazebo_ros gazebo_resource_path="${prefix}/resources"/>
+
+    <!--Export gazebo plugin-->
+    <gazebo_ros plugin_path="${prefix}/../../lib"/>
   </export>
 </package>

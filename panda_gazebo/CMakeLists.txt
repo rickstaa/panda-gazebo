@@ -17,10 +17,12 @@ find_package(catkin REQUIRED COMPONENTS
   trajectory_msgs
   control_msgs
   dynamic_reconfigure
+  roscpp
+  gazebo_ros
 )
 
 ## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
+find_package(gazebo REQUIRED)
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -72,6 +74,7 @@ add_service_files(
   GetEeRpy.srv
   GetRandomEePose.srv
   GetRandomJointPositions.srv
+  LockJoints.srv
   SetEePose.srv
   SetGripperWidth.srv
   SetJointCommands.srv
@@ -132,25 +135,28 @@ catkin_package(
   CATKIN_DEPENDS
     message_runtime rospy gazebo_msgs std_msgs controller_manager_msgs
     geometry_msgs actionlib_msgs trajectory_msgs sensor_msgs control_msgs rviz actionlib
-    franka_description franka_gazebo panda_moveit_config
-#  DEPENDS system_lib
+    franka_description franka_gazebo panda_moveit_config gazebo_ros
+  DEPENDS 
+    gazebo
 )
 
 ###########
 ## Build ##
 ###########
 
+# Link to gazebo libraries
+link_directories(${GAZEBO_LIBRARY_DIRS})
+
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-# include
+  ${Boost_INCLUDE_DIR}
   ${catkin_INCLUDE_DIRS}
+  ${GAZEBO_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
-# add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/panda_gazebo.cpp
-# )
+add_library(${PROJECT_NAME} src/panda_joint_locker_world_plugin.cpp)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -173,9 +179,7 @@ include_directories(
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(${PROJECT_NAME}_node
-#   ${catkin_LIBRARIES}
-# )
+target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})
 
 #############
 ## Install ##
