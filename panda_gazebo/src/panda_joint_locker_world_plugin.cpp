@@ -113,7 +113,7 @@ private:
     }
 
     res.success = true;
-    res.message = "Joint " + (req.lock ? "locking" : "unlocking") + " successful";
+    res.message = std::string("Joint ") + (req.lock ? "locking" : "unlocking") + " successful";
     return true;
   }
 };
