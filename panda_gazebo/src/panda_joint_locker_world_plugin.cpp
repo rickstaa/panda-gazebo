@@ -102,14 +102,18 @@ private:
       }
       else
       {
-        // Unlock the joint by restoring the old joint limits.
-        joint->SetLowerLimit(JOINT_AXIS_INDEX, this->oldLowerLimit[joint_name]);
-        joint->SetUpperLimit(JOINT_AXIS_INDEX, this->oldUpperLimit[joint_name]);
+        // Unlock the joint by restoring the old joint limits if they exist.
+        if (this->oldLowerLimit.find(joint_name) != this->oldLowerLimit.end() &&
+            this->oldUpperLimit.find(joint_name) != this->oldUpperLimit.end())
+        {
+          joint->SetLowerLimit(JOINT_AXIS_INDEX, this->oldLowerLimit[joint_name]);
+          joint->SetUpperLimit(JOINT_AXIS_INDEX, this->oldUpperLimit[joint_name]);
+        }
       }
     }
 
     res.success = true;
-    res.message = "Joints updated successfully";
+    res.message = "Joint " + (req.lock ? "locking" : "unlocking") + " successful";
     return true;
   }
 };
