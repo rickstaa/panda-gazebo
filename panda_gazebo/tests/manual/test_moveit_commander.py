@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """Small script for testing capabilities of the MoveIt commander."""
-import sys
 import math
+import sys
 
-from geometry_msgs.msg import Pose, PoseStamped, Quaternion, Point
 import moveit_commander
 import moveit_msgs.msg
-from std_msgs.msg import Header
 import rospy
+from geometry_msgs.msg import Point, Pose, PoseStamped, Quaternion
+from std_msgs.msg import Header
 
 if __name__ == "__main__":
     # Initialise MoveIt commander and node.
@@ -22,6 +22,7 @@ if __name__ == "__main__":
     # Load arm and hand groups.
     move_group = moveit_commander.MoveGroupCommander("panda_arm")
     hand_move_group = moveit_commander.MoveGroupCommander("panda_hand")
+    full_move_group = moveit_commander.MoveGroupCommander("panda_manipulator")
 
     display_trajectory_publisher = rospy.Publisher(
         "/move_group/display_planned_path",
@@ -47,56 +48,56 @@ if __name__ == "__main__":
     print(robot.get_current_state())
     print("")
 
-    # # -- Plan arm joint goal --
+    # -- Plan arm joint goal --
 
-    # # We get the joint values from the group and change some of the values:
-    # joint_goal = move_group.get_current_joint_values()
-    # joint_goal[0] = 0
-    # joint_goal[1] = -math.tau / 8
-    # joint_goal[2] = 0
-    # joint_goal[3] = -math.tau / 4
-    # joint_goal[4] = 0
-    # joint_goal[5] = math.tau / 6  # 1/6 of a turn
-    # joint_goal[6] = 0
+    # We get the joint values from the group and change some of the values:
+    joint_goal = move_group.get_current_joint_values()
+    joint_goal[0] = 0
+    joint_goal[1] = -math.tau / 8
+    joint_goal[2] = 0
+    joint_goal[3] = -math.tau / 4
+    joint_goal[4] = 0
+    joint_goal[5] = math.tau / 6  # 1/6 of a turn
+    joint_goal[6] = 0
 
-    # # METHOD 1
-    # # -- UNCOMMENT BELOW TO SEE THE SCALING FACTOR IN ACTION --
-    # # max_vel_scale_factor = 0.2
-    # # max_vel_scale_factor = 1.0
-    # # max_acc_scale_factor = 0.2
-    # # max_acc_scale_factor = 1.0
-    # # move_group.set_max_velocity_scaling_factor(max_vel_scale_factor)
-    # # move_group.set_max_acceleration_scaling_factor(max_acc_scale_factor)
-    # # -- UNCOMMENT ABOVE TO SEE THE SCALING FACTOR IN ACTION --
-    # move_group.set_joint_value_target(joint_goal)
-    # move_group.plan()
-    # move_group.go(wait=True)
+    # METHOD 1
+    # -- UNCOMMENT BELOW TO SEE THE SCALING FACTOR IN ACTION --
+    # max_vel_scale_factor = 0.2
+    # max_vel_scale_factor = 1.0
+    # max_acc_scale_factor = 0.2
+    # max_acc_scale_factor = 1.0
+    # move_group.set_max_velocity_scaling_factor(max_vel_scale_factor)
+    # move_group.set_max_acceleration_scaling_factor(max_acc_scale_factor)
+    # -- UNCOMMENT ABOVE TO SEE THE SCALING FACTOR IN ACTION --
+    move_group.set_joint_value_target(joint_goal)
+    move_group.plan()
+    move_group.go(wait=True)
 
-    # # METHOD 2
-    # # The go command can be called with joint values, poses, or without any
-    # # parameters if you have already set the pose or joint target for the group.
-    # move_group.go(joint_goal, wait=True)
+    # METHOD 2
+    # The go command can be called with joint values, poses, or without any
+    # parameters if you have already set the pose or joint target for the group.
+    move_group.go(joint_goal, wait=True)
 
-    # # Calling ``stop()`` ensures that there is no residual movement
-    # move_group.stop()
+    # Calling ``stop()`` ensures that there is no residual movement
+    move_group.stop()
 
-    # # # -- Plan pose goal --
-    # pose_goal = Pose()
-    # pose_goal.orientation.w = 1.0
-    # pose_goal.position.x = 400
-    # pose_goal.position.y = 100
-    # pose_goal.position.z = 0.4
+    # # -- Plan pose goal --
+    pose_goal = Pose()
+    pose_goal.orientation.w = 1.0
+    pose_goal.position.x = 400
+    pose_goal.position.y = 100
+    pose_goal.position.z = 0.4
 
-    # # move_group.set_pose_target(pose_goal)
-    # retval, plan, _, error_code = move_group.plan(pose_goal)
-    # plan = move_group.go(wait=True)
+    # move_group.set_pose_target(pose_goal)
+    retval, plan, _, error_code = move_group.plan(pose_goal)
+    plan = move_group.go(wait=True)
 
-    # # Calling `stop()` ensures that there is no residual movement
-    # move_group.stop()
+    # Calling `stop()` ensures that there is no residual movement
+    move_group.stop()
 
-    # # It is always good to clear your targets after planning with poses.
-    # # Note: there is no equivalent function for clear_joint_value_targets()
-    # move_group.clear_pose_targets()
+    # It is always good to clear your targets after planning with poses.
+    # Note: there is no equivalent function for clear_joint_value_targets()
+    move_group.clear_pose_targets()
 
     # -- Plan hand goal --
     # hand_move_group.set_joint_value_target([0.04, 0.04])
@@ -123,3 +124,10 @@ if __name__ == "__main__":
         offset=0.0,
     )
     print("Added plane to scene")
+
+    # -- Get random ee pose --
+    # move_group.set_end_effector_link("panda_link8")
+    move_group.set_end_effector_link("panda_hand")
+    move_group.set_end_effector_link("panda_EE")
+    pose = move_group.get_random_pose()
+    print(f"Random pose: {pose}")

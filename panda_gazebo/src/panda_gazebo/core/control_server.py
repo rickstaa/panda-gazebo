@@ -1155,6 +1155,11 @@ class PandaControlServer(object):
     def _set_joint_commands_cb(self, set_joint_commands_req):
         """Request arm and hand joint command control.
 
+        .. note::
+            The gripper `max_effort` is determined based on the `grasping` field if it's
+            set to `0`. Specifically, if `grasping` is `True`, `max_effort` is set to
+            10N. Otherwise, it remains at `0`.
+
         Args:
             set_joint_commands_req (:obj:`panda_gazebo.srv.SetJointPositionsRequest`):
                 Service request message specifying the joint position/effort commands
@@ -1444,6 +1449,11 @@ class PandaControlServer(object):
     def _set_gripper_width_cb(self, set_gripper_width_req):
         """Request gripper width.
 
+        .. note::
+            The gripper `max_effort` is determined based on the `grasping` field if it's
+            set to `0`. Specifically, if `grasping` is `True`, `max_effort` is set to
+            10N. Otherwise, it remains at `0`.
+
         Args:
             set_gripper_width_req (:obj:`panda_gazebo.srv.SetGripperWidth`):
                 Service request message specifying the gripper width for the robot hand.
@@ -1462,15 +1472,13 @@ class PandaControlServer(object):
             )
 
         # Create gripper command action message.
-        # NOTE: The max_effort has to be 0 for the gripper to move (see #33).
+        # NOTE: The max_effort has to be 0 for the gripper to be able to move (see #33).
         req = GripperCommandGoal()
         req.command.position = gripper_width
         req.command.max_effort = (
-            (
-                set_gripper_width_req.max_effort
-                if set_gripper_width_req.max_effort != 0.0
-                else GRASP_FORCE
-            )
+            set_gripper_width_req.max_effort
+            if set_gripper_width_req.max_effort != 0.0
+            else GRASP_FORCE
             if set_gripper_width_req.grasping
             else 0.0
         )

@@ -6,7 +6,7 @@
   <arg name="debug" default="false" doc="Add gdb debug flag"/>
   <arg name="output" default="screen" doc="output channel of main nodes. options: screen, log"/>
   <arg name="disable_franka_gazebo_logs" default="false" doc="prevents franka gazebo from logging to the stdout"/>
-  <!--Moveit arguments-->
+  <!--MoveIt arguments-->
   <arg name="moveit" default="true" doc="Start MoveIt"/>
   <arg name="rviz_file" default="" doc="Path to the Rviz configuration file"/>
   <arg name="pipeline" default="ompl" doc="MoveIt planning pipeline"/>

@@ -1,4 +1,4 @@
-# Service that can be used to get pose information about the EE using moveit.
+# Service that can be used to get pose information about the EE using MoveIt.
 
 ---
 geometry_msgs/Pose pose

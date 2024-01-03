@@ -7,7 +7,6 @@ from control_msgs.msg import FollowJointTrajectoryAction, FollowJointTrajectoryG
 from std_msgs.msg import Header
 from trajectory_msgs.msg import JointTrajectoryPoint
 
-
 if __name__ == "__main__":
     rospy.init_node("position_joint_trajectory_controller_test")
 

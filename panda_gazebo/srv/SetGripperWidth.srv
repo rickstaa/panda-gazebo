@@ -1,5 +1,5 @@
 # Service that can be used to control the robot hand gripper width using the panda_control_server.
-# NOTE: It serves as a small wrapper around the 'franka_gripper/move` action but automatically
+# NOTE: It serves as a small wrapper around the 'franka_gripper/move' action but automatically
 # sets the speed to the maximum speed. It further clips gripper width such that it is within
 # the set max/min boundaries.
 float64 width       # Gripper width - ignored when the gripper is grasping.

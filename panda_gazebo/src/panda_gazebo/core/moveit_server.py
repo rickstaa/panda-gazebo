@@ -47,13 +47,13 @@ from panda_gazebo.common.helpers import (
     get_duplicate_list,
     get_unique_list,
     joint_state_dict_2_joint_state_msg,
+    load_panda_joint_limits,
     lower_first_char,
     normalize_quaternion,
+    normalize_vector,
     quaternion_norm,
     ros_exit_gracefully,
     translate_moveit_error_code,
-    normalize_vector,
-    load_panda_joint_limits,
 )
 from panda_gazebo.exceptions import InputMessageInvalidError, JointLimitsInvalidError
 from panda_gazebo.srv import (
@@ -120,7 +120,7 @@ class PandaMoveItPlannerServer(object):
         Args:
             arm_move_group (str, optional): The name of the move group you want to use
                 for controlling the Panda arm. Defaults to ``panda_arm``.
-            arm_ee_link (str, optional): The end effector you want moveit to use when
+            arm_ee_link (str, optional): The end effector you want MoveIt to use when
                 controlling the Panda arm. Defaults to ``panda_link8``.
             hand_move_group (str, optional): The name of the move group you want to use
                 for controlling the Panda hand. Defaults to ``panda_hand``.
@@ -472,8 +472,11 @@ class PandaMoveItPlannerServer(object):
             wait (boolean, optional): Whether to wait on the control to be executed.
 
         Returns:
-            list: List specifying whether the arm and/or hand execution was successful.
+        (tuple): tuple containing:
+
+            - list: List specifying whether the arm and/or hand execution was successful.
                 If ``control_group == "both"`` then ``["arm_success", "hand_success"]``.
+            - str: The error message, or an empty string if successful.
         """
         control_group = control_group.lower()
         if control_group not in ["arm", "hand", "both"]:
@@ -484,7 +487,7 @@ class PandaMoveItPlannerServer(object):
             return [False]
 
         # Plan and execute trajectory.
-        retval, groups = [], []
+        retval, groups, err_msg = [], [], None
         if control_group in ["arm", "both"]:
             groups.append(self.move_group_arm)
         if control_group in ["hand", "both"]:
@@ -501,14 +504,15 @@ class PandaMoveItPlannerServer(object):
                 if wait:
                     group.stop()
             else:
+                err_msg = translate_moveit_error_code(error_code)
                 rospy.logwarn(
                     f"No plan found for the current {group.get_name()} setpoints "
-                    f"since '{translate_moveit_error_code(error_code)}'."
+                    f"since '{err_msg}'."
                 )
                 group_retval = False
             retval.append(group_retval)
 
-        return retval
+        return retval, err_msg
 
     def _create_positions_moveit_setpoints(  # noqa: C901
         self, set_joint_positions_req, control_group
@@ -1043,7 +1047,7 @@ class PandaMoveItPlannerServer(object):
         # Make sure quaternion is normalized.
         if quaternion_norm(get_ee_pose_joint_configuration.pose.orientation) != 1.0:
             rospy.logwarn(
-                "The quaternion in the set ee pose was normalized since moveit expects "
+                "The quaternion in the set ee pose was normalized since MoveIt expects "
                 "normalized quaternions."
             )
             get_ee_pose_joint_configuration.pose.orientation = normalize_quaternion(
@@ -1101,7 +1105,7 @@ class PandaMoveItPlannerServer(object):
         # Make sure quaternion is normalized.
         if quaternion_norm(set_ee_pose_req.pose.orientation) != 1.0:
             rospy.logwarn(
-                "The quaternion in the set ee pose was normalized since moveit expects "
+                "The quaternion in the set ee pose was normalized since MoveIt expects "
                 "normalized quaternions."
             )
             set_ee_pose_req.pose.orientation = normalize_quaternion(
@@ -1116,13 +1120,16 @@ class PandaMoveItPlannerServer(object):
         # Send trajectory message and return response.
         try:
             self.move_group_arm.set_pose_target(self.ee_pose_target)
-            retval = self._execute(control_group="arm")
+            retval, err_msg = self._execute(control_group="arm")
             self.move_group_arm.clear_pose_targets()
 
             # Check if setpoint execution was successful.
             if not all(retval):
                 resp.success = False
-                resp.message = "Ee pose could not be set"
+                resp.message = (
+                    "Ee pose could not be set since MoveIt "
+                    f"{lower_first_char(err_msg)}."
+                )
             else:
                 resp.success = True
                 resp.message = "Everything went OK"
@@ -1192,10 +1199,12 @@ class PandaMoveItPlannerServer(object):
         # Execute setpoints.
         rospy.logdebug("Executing joint positions setpoint.")
         try:
-            retval = self._execute()
+            retval, err_msg = self._execute()
             if not all(retval):
                 resp.success = False
-                resp.message = "Joint position setpoint could not executed"
+                resp.message = (
+                    f"Joint position setpoint could not executed since {err_msg}."
+                )
             else:
                 resp.success = True
                 resp.message = "Everything went OK"
@@ -1254,10 +1263,12 @@ class PandaMoveItPlannerServer(object):
         # Execute setpoint.
         rospy.logdebug("Executing joint positions setpoint.")
         try:
-            retval = self._execute(control_group="arm")
+            retval, err_msg = self._execute(control_group="arm")
             if not all(retval):
                 resp.success = False
-                resp.message = "Arm joint position setpoint could not executed"
+                resp.message = (
+                    f"Arm joint position setpoint could not executed since {err_msg}."
+                )
             else:
                 resp.success = True
                 resp.message = "Everything went OK"
@@ -1314,10 +1325,13 @@ class PandaMoveItPlannerServer(object):
         # Execute setpoints.
         rospy.logdebug("Executing joint positions setpoint.")
         try:
-            retval = self._execute(control_group="hand")
+            retval, err_msg = self._execute(control_group="hand")
             if not all(retval):
                 resp.success = False
-                resp.message = "Hand joint position setpoint could not be executed"
+                resp.message = (
+                    "Hand joint position setpoint could not be executed since "
+                    f"{err_msg}."
+                )
             else:
                 resp.success = True
                 resp.message = "Everything went OK"
@@ -1660,7 +1674,7 @@ class PandaMoveItPlannerServer(object):
         return resp
 
     def _get_controlled_joints_cb(self, _):
-        """Returns the joints that are currently being controlled by moveit.
+        """Returns the joints that are currently being controlled by MoveIt.
 
         Args:
             get_controlled_joints_req (:obj:`panda_gazebo.srv.GetControlledJointsRequest`):

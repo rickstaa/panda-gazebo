@@ -9,6 +9,7 @@ from control_msgs.msg import FollowJointTrajectoryAction, FollowJointTrajectoryG
 from sensor_msgs.msg import JointState
 from std_msgs.msg import Header
 from trajectory_msgs.msg import JointTrajectoryPoint
+
 from panda_gazebo.common.helpers import ros_exit_gracefully
 
 TIMESTEP = 0.01
@@ -71,7 +72,6 @@ def periodic_test(trajectory_client):
 
 def position_test(client):
     """Send a position command to the robot using the trajectory controller."""
-
     # Create action client goal.
     header = Header()
     # header.stamp = rospy.get_rostime()

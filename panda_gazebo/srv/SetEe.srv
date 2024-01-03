@@ -1,4 +1,4 @@
-# Service that can be used to set the current EE used in moveit.
+# Service that can be used to set the current EE used in MoveIt.
 string ee_name
 ---
 bool success

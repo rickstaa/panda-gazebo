@@ -4,8 +4,8 @@
 # the gripper  width to the 'franka_gripper/move' action service.
 string[] joint_names
 float64[] joint_commands
-string control_type # The control type you want to use for the robot arm. Options are "effort" and "position".
-bool grasping # The gripper simply moves if this is `false`.
+string control_type # The control type you want to use for the robot arm. Options are `effort` and `position`.
+bool grasping # If set to true, the gripper 'max_effort' will be set to 10N when not supplied. This will simplify grasping.
 bool arm_wait # Wait till the arm control has completed
 bool hand_wait # Wait till the hand control has completed
 ---

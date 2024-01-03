@@ -8,13 +8,13 @@ import control_msgs.msg as control_msgs
 import numpy as np
 import rospy
 from actionlib_msgs.msg import GoalStatusArray
+from controller_manager_msgs.srv import ListControllersResponse
+from geometry_msgs.msg import Quaternion
+from moveit_msgs.msg import MoveItErrorCodes
 from numpy import linalg, nan
 from rospy.exceptions import ROSException
 from sensor_msgs.msg import JointState
 from trajectory_msgs.msg import JointTrajectoryPoint
-from controller_manager_msgs.srv import ListControllersResponse
-from moveit_msgs.msg import MoveItErrorCodes
-from geometry_msgs.msg import Quaternion
 
 from panda_gazebo.msg import FollowJointTrajectoryGoal
 
@@ -237,7 +237,7 @@ def translate_moveit_error_code(moveit_error_code):
         if attr[0] != "_" and all(map(str.isupper, attr.replace("_", "")))
     }
     return (
-        error_dict[moveit_error_code.val].lower().capitalize().replace("_", " ") + "."
+        error_dict[moveit_error_code.val].lower().capitalize().replace("_", " ")
         if error_dict[moveit_error_code.val] != "SUCCESSFUL"
         else ""
     )
