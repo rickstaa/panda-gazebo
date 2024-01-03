@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.17.2](https://github.com/rickstaa/panda-gazebo/compare/v2.17.1...v2.17.2) (2024-01-03)
+
+
+### Bug Fixes
+
+* **joint_locker:** fix joint locker unlock bug ([#212](https://github.com/rickstaa/panda-gazebo/issues/212)) ([3251cb3](https://github.com/rickstaa/panda-gazebo/commit/3251cb3447a9b9a2e663d10f85e037dee7819331))
+* **joint_locker:** fix string concat error ([#214](https://github.com/rickstaa/panda-gazebo/issues/214)) ([8ad1d8f](https://github.com/rickstaa/panda-gazebo/commit/8ad1d8fcd992cd533a46d74243db7fb2f90bb95e))
+
 ## [2.17.1](https://github.com/rickstaa/panda-gazebo/compare/v2.17.0...v2.17.1) (2024-01-01)
 
 
