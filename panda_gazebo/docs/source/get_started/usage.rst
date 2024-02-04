@@ -8,10 +8,10 @@ The :panda-gazebo:`panda_gazebo <>` package contains three types of launch files
 
 World launch files start Gazebo and load a world where the Panda robot can be trained. *They don't spawn the robot*.
 
-    - ``start_reach_world.launch``: World that can be used for training a reaching task.
-    - ``start_push_world.launch``: World that can be used for training a push task.
-    - ``start_pick_and_place_world.launch``: World can be used for training a puck and place task.
-    - ``start_slide_world.launch``: World that can be used for training a sliding task.
+    - ``start_reach_world.launch``: Provides a clear environment for reach task training with the robot.
+    - ``start_push_world.launch``: Positions the Panda robot and a box on a table for push task simulations.
+    - ``start_pick_and_place_world.launch``: Includes a table and cube, creating a scenario for pick-and-place exercises.
+    - ``start_slide_world.launch``: Contains a puck and a designated target area to practice precision sliding tasks.
 
 **Robot launch file**
 
