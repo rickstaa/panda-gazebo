@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.17.3](https://github.com/rickstaa/panda-gazebo/compare/v2.17.2...v2.17.3) (2024-02-04)
+
+
+### Documentation
+
+* **panda:** update worlds description ([#220](https://github.com/rickstaa/panda-gazebo/issues/220)) ([a3d297f](https://github.com/rickstaa/panda-gazebo/commit/a3d297f9b87d33a3ac18a8a0a0e553b4b481be71))
+
 ## [2.17.2](https://github.com/rickstaa/panda-gazebo/compare/v2.17.1...v2.17.2) (2024-01-03)
 
 
