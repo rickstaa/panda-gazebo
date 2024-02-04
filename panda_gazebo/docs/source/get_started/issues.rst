@@ -2,8 +2,9 @@
 Known Issues
 ============
 
-This document outlines the known issues you may encounter when using the :panda-gazebo:`panda_gazebo <>` package. We recommend checking 
-:panda-gazebo:`the issues page <issues>` on the :panda-gazebo:`GitHub repository <>` for updates.
+This document details the potential issues that may arise while using the :panda-gazebo:`panda_gazebo <>` package. These problems are primarily due to bugs in the upstream `franka_ros`_ package, which is utilized by the :panda-gazebo:`panda_gazebo <>` package to simulate the Panda robot. For the most recent updates and solutions, we suggest visiting :panda-gazebo:`the issues page <issues>` on the :panda-gazebo:`GitHub repository <>`.
+
+.. _`franka_ros`: https://frankaemika.github.io/docs/franka_ros.html
 
 Gravity Compensation Bug
 -------------------------
