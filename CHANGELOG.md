@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.17.5](https://github.com/rickstaa/panda-gazebo/compare/v2.17.4...v2.17.5) (2024-02-05)
+
+
+### Documentation
+
+* **SetGripperWidth:** improve 'grasping' description ([#225](https://github.com/rickstaa/panda-gazebo/issues/225)) ([7584984](https://github.com/rickstaa/panda-gazebo/commit/75849841f7c8d770487ae95e161a9edcec1c2543))
+
 ## [2.17.4](https://github.com/rickstaa/panda-gazebo/compare/v2.17.3...v2.17.4) (2024-02-04)
 
 
