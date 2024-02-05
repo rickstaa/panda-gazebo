@@ -3,7 +3,7 @@
 # sets the speed to the maximum speed. It further clips gripper width such that it is within
 # the set max/min boundaries.
 float64 width       # Gripper width - ignored when the gripper is grasping.
-bool grasping       # The gripper simply moves if this is `false`.
+bool grasping       # The gripper simply moves if this is `false` ignoring the 'max_effort'.
 float64 max_effort  # The max effort used by the gripper.
 bool wait
 duration timeout # Action server timeout. If set to 0, no timeout is used and action waits indefinitely.
