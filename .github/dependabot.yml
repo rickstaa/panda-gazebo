@@ -23,11 +23,11 @@ updates:
 #       - dependency-name: "*"
 #         update-types: ["version-update:semver-patch"]
 
-#   # Maintain dependencies for pip.
-#   - package-ecosystem: "pip"
-#     directory: "/panda_gazebo"
-#     schedule:
-#       interval: "weekly"
-#     ignore:
-#       - dependency-name: "*"
-#         update-types: ["version-update:semver-patch"]
+  # Maintain dependencies for pip.
+  - package-ecosystem: "pip"
+    directory: "/panda_gazebo"
+    schedule:
+      interval: "weekly"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-patch"]
