@@ -1,0 +1,18 @@
+:py:mod:`set_logging_level`
+===========================
+
+.. py:module:: set_logging_level
+
+.. autoapi-nested-parse::
+
+   Small python ROS node that can be used to set the logging level of a ROS logger.
+
+
+
+Module Contents
+---------------
+
+.. py:data:: parser
+
+   
+

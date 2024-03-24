@@ -1,0 +1,11 @@
+:py:mod:`panda_gazebo.version`
+==============================
+
+.. py:module:: panda_gazebo.version
+
+.. autoapi-nested-parse::
+
+   Stores the package version number so that it can be accessed from other modules.
+
+
+

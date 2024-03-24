@@ -1,0 +1,27 @@
+:py:mod:`panda_moveit_server`
+=============================
+
+.. py:module:: panda_moveit_server
+
+.. autoapi-nested-parse::
+
+   This node sets up several extra services that can be used to control the Panda Emika
+   Franka robot using the MoveIt framework.
+
+   Source code
+   -----------
+
+   .. literalinclude:: ../../../../../panda_gazebo/nodes/panda_moveit_server.py
+      :language: python
+      :linenos:
+      :lines: 14-
+
+
+
+Module Contents
+---------------
+
+.. py:data:: arm_ee_link
+
+   
+

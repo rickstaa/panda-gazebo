@@ -1,0 +1,1827 @@
+:py:mod:`panda_gazebo.srv`
+==========================
+
+.. py:module:: panda_gazebo.srv
+
+
+Package Contents
+----------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   panda_gazebo.srv.AddBoxRequest
+   panda_gazebo.srv.AddBoxResponse
+   panda_gazebo.srv.AddBox
+   panda_gazebo.srv.AddPlaneRequest
+   panda_gazebo.srv.AddPlaneResponse
+   panda_gazebo.srv.AddPlane
+   panda_gazebo.srv.GetControlledJointsRequest
+   panda_gazebo.srv.GetControlledJointsResponse
+   panda_gazebo.srv.GetControlledJoints
+   panda_gazebo.srv.GetEeRequest
+   panda_gazebo.srv.GetEeResponse
+   panda_gazebo.srv.GetEe
+   panda_gazebo.srv.GetEePoseRequest
+   panda_gazebo.srv.GetEePoseResponse
+   panda_gazebo.srv.GetEePose
+   panda_gazebo.srv.GetEePoseJointConfigRequest
+   panda_gazebo.srv.GetEePoseJointConfigResponse
+   panda_gazebo.srv.GetEePoseJointConfig
+   panda_gazebo.srv.GetEeRpyRequest
+   panda_gazebo.srv.GetEeRpyResponse
+   panda_gazebo.srv.GetEeRpy
+   panda_gazebo.srv.GetMoveItControlledJointsRequest
+   panda_gazebo.srv.GetMoveItControlledJointsResponse
+   panda_gazebo.srv.GetMoveItControlledJoints
+   panda_gazebo.srv.GetRandomEePoseRequest
+   panda_gazebo.srv.GetRandomEePoseResponse
+   panda_gazebo.srv.GetRandomEePose
+   panda_gazebo.srv.GetRandomJointPositionsRequest
+   panda_gazebo.srv.GetRandomJointPositionsResponse
+   panda_gazebo.srv.GetRandomJointPositions
+   panda_gazebo.srv.LockJointsRequest
+   panda_gazebo.srv.LockJointsResponse
+   panda_gazebo.srv.LockJoints
+   panda_gazebo.srv.SetEeRequest
+   panda_gazebo.srv.SetEeResponse
+   panda_gazebo.srv.SetEe
+   panda_gazebo.srv.SetEePoseRequest
+   panda_gazebo.srv.SetEePoseResponse
+   panda_gazebo.srv.SetEePose
+   panda_gazebo.srv.SetGripperWidthRequest
+   panda_gazebo.srv.SetGripperWidthResponse
+   panda_gazebo.srv.SetGripperWidth
+   panda_gazebo.srv.SetJointCommandsRequest
+   panda_gazebo.srv.SetJointCommandsResponse
+   panda_gazebo.srv.SetJointCommands
+   panda_gazebo.srv.SetJointEffortsRequest
+   panda_gazebo.srv.SetJointEffortsResponse
+   panda_gazebo.srv.SetJointEfforts
+   panda_gazebo.srv.SetJointPositionsRequest
+   panda_gazebo.srv.SetJointPositionsResponse
+   panda_gazebo.srv.SetJointPositions
+
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   panda_gazebo.srv.python3
+   panda_gazebo.srv.python3
+   panda_gazebo.srv.python3
+   panda_gazebo.srv.python3
+   panda_gazebo.srv.python3
+   panda_gazebo.srv.python3
+   panda_gazebo.srv.python3
+   panda_gazebo.srv.python3
+   panda_gazebo.srv.python3
+   panda_gazebo.srv.python3
+   panda_gazebo.srv.python3
+   panda_gazebo.srv.python3
+   panda_gazebo.srv.python3
+   panda_gazebo.srv.python3
+   panda_gazebo.srv.python3
+   panda_gazebo.srv.python3
+   panda_gazebo.srv.python3
+
+
+.. py:data:: python3
+
+   
+
+.. py:class:: AddBoxRequest(*args, **kwds)
+
+
+   Bases: :py:obj:`genpy.Message`
+
+   Base class of Message data classes auto-generated from msg files.
+
+   Constructor. Any message fields that are implicitly/explicitly
+   set to None will be assigned a default value. The recommend
+   use is keyword arguments as this is more robust to future message
+   changes.  You cannot mix in-order arguments and keyword arguments.
+
+   The available fields are:
+      name,frame_id,pose,size
+
+   :param args: complete set of field values, in .msg order
+   :param kwds: use keyword arguments corresponding to message field names
+   to set specific fields.
+
+   .. py:method:: serialize(buff)
+
+      serialize message into buffer
+      :param buff: buffer, ``StringIO``
+
+
+   .. py:method:: deserialize(str)
+
+      unpack serialized message in str into this message instance
+      :param str: byte array of serialized message, ``str``
+
+
+   .. py:method:: serialize_numpy(buff, numpy)
+
+      serialize message with numpy array types into buffer
+      :param buff: buffer, ``StringIO``
+      :param numpy: numpy python module
+
+
+   .. py:method:: deserialize_numpy(str, numpy)
+
+      unpack serialized message in str into this message instance using numpy for array types
+      :param str: byte array of serialized message, ``str``
+      :param numpy: numpy python module
+
+
+
+.. py:class:: AddBoxResponse(*args, **kwds)
+
+
+   Bases: :py:obj:`genpy.Message`
+
+   Base class of Message data classes auto-generated from msg files.
+
+   Constructor. Any message fields that are implicitly/explicitly
+   set to None will be assigned a default value. The recommend
+   use is keyword arguments as this is more robust to future message
+   changes.  You cannot mix in-order arguments and keyword arguments.
+
+   The available fields are:
+      success,message
+
+   :param args: complete set of field values, in .msg order
+   :param kwds: use keyword arguments corresponding to message field names
+   to set specific fields.
+
+   .. py:method:: serialize(buff)
+
+      serialize message into buffer
+      :param buff: buffer, ``StringIO``
+
+
+   .. py:method:: deserialize(str)
+
+      unpack serialized message in str into this message instance
+      :param str: byte array of serialized message, ``str``
+
+
+   .. py:method:: serialize_numpy(buff, numpy)
+
+      serialize message with numpy array types into buffer
+      :param buff: buffer, ``StringIO``
+      :param numpy: numpy python module
+
+
+   .. py:method:: deserialize_numpy(str, numpy)
+
+      unpack serialized message in str into this message instance using numpy for array types
+      :param str: byte array of serialized message, ``str``
+      :param numpy: numpy python module
+
+
+
+.. py:class:: AddBox
+
+
+   Bases: :py:obj:`object`
+
+
+.. py:data:: python3
+
+   
+
+.. py:class:: AddPlaneRequest(*args, **kwds)
+
+
+   Bases: :py:obj:`genpy.Message`
+
+   Base class of Message data classes auto-generated from msg files.
+
+   Constructor. Any message fields that are implicitly/explicitly
+   set to None will be assigned a default value. The recommend
+   use is keyword arguments as this is more robust to future message
+   changes.  You cannot mix in-order arguments and keyword arguments.
+
+   The available fields are:
+      name,frame_id,pose,normal,offset
+
+   :param args: complete set of field values, in .msg order
+   :param kwds: use keyword arguments corresponding to message field names
+   to set specific fields.
+
+   .. py:method:: serialize(buff)
+
+      serialize message into buffer
+      :param buff: buffer, ``StringIO``
+
+
+   .. py:method:: deserialize(str)
+
+      unpack serialized message in str into this message instance
+      :param str: byte array of serialized message, ``str``
+
+
+   .. py:method:: serialize_numpy(buff, numpy)
+
+      serialize message with numpy array types into buffer
+      :param buff: buffer, ``StringIO``
+      :param numpy: numpy python module
+
+
+   .. py:method:: deserialize_numpy(str, numpy)
+
+      unpack serialized message in str into this message instance using numpy for array types
+      :param str: byte array of serialized message, ``str``
+      :param numpy: numpy python module
+
+
+
+.. py:class:: AddPlaneResponse(*args, **kwds)
+
+
+   Bases: :py:obj:`genpy.Message`
+
+   Base class of Message data classes auto-generated from msg files.
+
+   Constructor. Any message fields that are implicitly/explicitly
+   set to None will be assigned a default value. The recommend
+   use is keyword arguments as this is more robust to future message
+   changes.  You cannot mix in-order arguments and keyword arguments.
+
+   The available fields are:
+      success,message
+
+   :param args: complete set of field values, in .msg order
+   :param kwds: use keyword arguments corresponding to message field names
+   to set specific fields.
+
+   .. py:method:: serialize(buff)
+
+      serialize message into buffer
+      :param buff: buffer, ``StringIO``
+
+
+   .. py:method:: deserialize(str)
+
+      unpack serialized message in str into this message instance
+      :param str: byte array of serialized message, ``str``
+
+
+   .. py:method:: serialize_numpy(buff, numpy)
+
+      serialize message with numpy array types into buffer
+      :param buff: buffer, ``StringIO``
+      :param numpy: numpy python module
+
+
+   .. py:method:: deserialize_numpy(str, numpy)
+
+      unpack serialized message in str into this message instance using numpy for array types
+      :param str: byte array of serialized message, ``str``
+      :param numpy: numpy python module
+
+
+
+.. py:class:: AddPlane
+
+
+   Bases: :py:obj:`object`
+
+
+.. py:data:: python3
+
+   
+
+.. py:class:: GetControlledJointsRequest(*args, **kwds)
+
+
+   Bases: :py:obj:`genpy.Message`
+
+   Base class of Message data classes auto-generated from msg files.
+
+   Constructor. Any message fields that are implicitly/explicitly
+   set to None will be assigned a default value. The recommend
+   use is keyword arguments as this is more robust to future message
+   changes.  You cannot mix in-order arguments and keyword arguments.
+
+   The available fields are:
+      control_type
+
+   :param args: complete set of field values, in .msg order
+   :param kwds: use keyword arguments corresponding to message field names
+   to set specific fields.
+
+   .. py:method:: serialize(buff)
+
+      serialize message into buffer
+      :param buff: buffer, ``StringIO``
+
+
+   .. py:method:: deserialize(str)
+
+      unpack serialized message in str into this message instance
+      :param str: byte array of serialized message, ``str``
+
+
+   .. py:method:: serialize_numpy(buff, numpy)
+
+      serialize message with numpy array types into buffer
+      :param buff: buffer, ``StringIO``
+      :param numpy: numpy python module
+
+
+   .. py:method:: deserialize_numpy(str, numpy)
+
+      unpack serialized message in str into this message instance using numpy for array types
+      :param str: byte array of serialized message, ``str``
+      :param numpy: numpy python module
+
+
+
+.. py:class:: GetControlledJointsResponse(*args, **kwds)
+
+
+   Bases: :py:obj:`genpy.Message`
+
+   Base class of Message data classes auto-generated from msg files.
+
+   Constructor. Any message fields that are implicitly/explicitly
+   set to None will be assigned a default value. The recommend
+   use is keyword arguments as this is more robust to future message
+   changes.  You cannot mix in-order arguments and keyword arguments.
+
+   The available fields are:
+      controlled_joints,controlled_joints_arm,controlled_joints_hand,success,message
+
+   :param args: complete set of field values, in .msg order
+   :param kwds: use keyword arguments corresponding to message field names
+   to set specific fields.
+
+   .. py:method:: serialize(buff)
+
+      serialize message into buffer
+      :param buff: buffer, ``StringIO``
+
+
+   .. py:method:: deserialize(str)
+
+      unpack serialized message in str into this message instance
+      :param str: byte array of serialized message, ``str``
+
+
+   .. py:method:: serialize_numpy(buff, numpy)
+
+      serialize message with numpy array types into buffer
+      :param buff: buffer, ``StringIO``
+      :param numpy: numpy python module
+
+
+   .. py:method:: deserialize_numpy(str, numpy)
+
+      unpack serialized message in str into this message instance using numpy for array types
+      :param str: byte array of serialized message, ``str``
+      :param numpy: numpy python module
+
+
+
+.. py:class:: GetControlledJoints
+
+
+   Bases: :py:obj:`object`
+
+
+.. py:data:: python3
+
+   
+
+.. py:class:: GetEeRequest(*args, **kwds)
+
+
+   Bases: :py:obj:`genpy.Message`
+
+   Base class of Message data classes auto-generated from msg files.
+
+   Constructor. Any message fields that are implicitly/explicitly
+   set to None will be assigned a default value. The recommend
+   use is keyword arguments as this is more robust to future message
+   changes.  You cannot mix in-order arguments and keyword arguments.
+
+   The available fields are:
+
+
+   :param args: complete set of field values, in .msg order
+   :param kwds: use keyword arguments corresponding to message field names
+   to set specific fields.
+
+   .. py:method:: serialize(buff)
+
+      serialize message into buffer
+      :param buff: buffer, ``StringIO``
+
+
+   .. py:method:: deserialize(str)
+
+      unpack serialized message in str into this message instance
+      :param str: byte array of serialized message, ``str``
+
+
+   .. py:method:: serialize_numpy(buff, numpy)
+
+      serialize message with numpy array types into buffer
+      :param buff: buffer, ``StringIO``
+      :param numpy: numpy python module
+
+
+   .. py:method:: deserialize_numpy(str, numpy)
+
+      unpack serialized message in str into this message instance using numpy for array types
+      :param str: byte array of serialized message, ``str``
+      :param numpy: numpy python module
+
+
+
+.. py:class:: GetEeResponse(*args, **kwds)
+
+
+   Bases: :py:obj:`genpy.Message`
+
+   Base class of Message data classes auto-generated from msg files.
+
+   Constructor. Any message fields that are implicitly/explicitly
+   set to None will be assigned a default value. The recommend
+   use is keyword arguments as this is more robust to future message
+   changes.  You cannot mix in-order arguments and keyword arguments.
+
+   The available fields are:
+      ee_name,success,message
+
+   :param args: complete set of field values, in .msg order
+   :param kwds: use keyword arguments corresponding to message field names
+   to set specific fields.
+
+   .. py:method:: serialize(buff)
+
+      serialize message into buffer
+      :param buff: buffer, ``StringIO``
+
+
+   .. py:method:: deserialize(str)
+
+      unpack serialized message in str into this message instance
+      :param str: byte array of serialized message, ``str``
+
+
+   .. py:method:: serialize_numpy(buff, numpy)
+
+      serialize message with numpy array types into buffer
+      :param buff: buffer, ``StringIO``
+      :param numpy: numpy python module
+
+
+   .. py:method:: deserialize_numpy(str, numpy)
+
+      unpack serialized message in str into this message instance using numpy for array types
+      :param str: byte array of serialized message, ``str``
+      :param numpy: numpy python module
+
+
+
+.. py:class:: GetEe
+
+
+   Bases: :py:obj:`object`
+
+
+.. py:data:: python3
+
+   
+
+.. py:class:: GetEePoseRequest(*args, **kwds)
+
+
+   Bases: :py:obj:`genpy.Message`
+
+   Base class of Message data classes auto-generated from msg files.
+
+   Constructor. Any message fields that are implicitly/explicitly
+   set to None will be assigned a default value. The recommend
+   use is keyword arguments as this is more robust to future message
+   changes.  You cannot mix in-order arguments and keyword arguments.
+
+   The available fields are:
+
+
+   :param args: complete set of field values, in .msg order
+   :param kwds: use keyword arguments corresponding to message field names
+   to set specific fields.
+
+   .. py:method:: serialize(buff)
+
+      serialize message into buffer
+      :param buff: buffer, ``StringIO``
+
+
+   .. py:method:: deserialize(str)
+
+      unpack serialized message in str into this message instance
+      :param str: byte array of serialized message, ``str``
+
+
+   .. py:method:: serialize_numpy(buff, numpy)
+
+      serialize message with numpy array types into buffer
+      :param buff: buffer, ``StringIO``
+      :param numpy: numpy python module
+
+
+   .. py:method:: deserialize_numpy(str, numpy)
+
+      unpack serialized message in str into this message instance using numpy for array types
+      :param str: byte array of serialized message, ``str``
+      :param numpy: numpy python module
+
+
+
+.. py:class:: GetEePoseResponse(*args, **kwds)
+
+
+   Bases: :py:obj:`genpy.Message`
+
+   Base class of Message data classes auto-generated from msg files.
+
+   Constructor. Any message fields that are implicitly/explicitly
+   set to None will be assigned a default value. The recommend
+   use is keyword arguments as this is more robust to future message
+   changes.  You cannot mix in-order arguments and keyword arguments.
+
+   The available fields are:
+      pose,success,message
+
+   :param args: complete set of field values, in .msg order
+   :param kwds: use keyword arguments corresponding to message field names
+   to set specific fields.
+
+   .. py:method:: serialize(buff)
+
+      serialize message into buffer
+      :param buff: buffer, ``StringIO``
+
+
+   .. py:method:: deserialize(str)
+
+      unpack serialized message in str into this message instance
+      :param str: byte array of serialized message, ``str``
+
+
+   .. py:method:: serialize_numpy(buff, numpy)
+
+      serialize message with numpy array types into buffer
+      :param buff: buffer, ``StringIO``
+      :param numpy: numpy python module
+
+
+   .. py:method:: deserialize_numpy(str, numpy)
+
+      unpack serialized message in str into this message instance using numpy for array types
+      :param str: byte array of serialized message, ``str``
+      :param numpy: numpy python module
+
+
+
+.. py:class:: GetEePose
+
+
+   Bases: :py:obj:`object`
+
+
+.. py:data:: python3
+
+   
+
+.. py:class:: GetEePoseJointConfigRequest(*args, **kwds)
+
+
+   Bases: :py:obj:`genpy.Message`
+
+   Base class of Message data classes auto-generated from msg files.
+
+   Constructor. Any message fields that are implicitly/explicitly
+   set to None will be assigned a default value. The recommend
+   use is keyword arguments as this is more robust to future message
+   changes.  You cannot mix in-order arguments and keyword arguments.
+
+   The available fields are:
+      pose,attempts
+
+   :param args: complete set of field values, in .msg order
+   :param kwds: use keyword arguments corresponding to message field names
+   to set specific fields.
+
+   .. py:method:: serialize(buff)
+
+      serialize message into buffer
+      :param buff: buffer, ``StringIO``
+
+
+   .. py:method:: deserialize(str)
+
+      unpack serialized message in str into this message instance
+      :param str: byte array of serialized message, ``str``
+
+
+   .. py:method:: serialize_numpy(buff, numpy)
+
+      serialize message with numpy array types into buffer
+      :param buff: buffer, ``StringIO``
+      :param numpy: numpy python module
+
+
+   .. py:method:: deserialize_numpy(str, numpy)
+
+      unpack serialized message in str into this message instance using numpy for array types
+      :param str: byte array of serialized message, ``str``
+      :param numpy: numpy python module
+
+
+
+.. py:class:: GetEePoseJointConfigResponse(*args, **kwds)
+
+
+   Bases: :py:obj:`genpy.Message`
+
+   Base class of Message data classes auto-generated from msg files.
+
+   Constructor. Any message fields that are implicitly/explicitly
+   set to None will be assigned a default value. The recommend
+   use is keyword arguments as this is more robust to future message
+   changes.  You cannot mix in-order arguments and keyword arguments.
+
+   The available fields are:
+      joint_names,joint_positions,success,message
+
+   :param args: complete set of field values, in .msg order
+   :param kwds: use keyword arguments corresponding to message field names
+   to set specific fields.
+
+   .. py:method:: serialize(buff)
+
+      serialize message into buffer
+      :param buff: buffer, ``StringIO``
+
+
+   .. py:method:: deserialize(str)
+
+      unpack serialized message in str into this message instance
+      :param str: byte array of serialized message, ``str``
+
+
+   .. py:method:: serialize_numpy(buff, numpy)
+
+      serialize message with numpy array types into buffer
+      :param buff: buffer, ``StringIO``
+      :param numpy: numpy python module
+
+
+   .. py:method:: deserialize_numpy(str, numpy)
+
+      unpack serialized message in str into this message instance using numpy for array types
+      :param str: byte array of serialized message, ``str``
+      :param numpy: numpy python module
+
+
+
+.. py:class:: GetEePoseJointConfig
+
+
+   Bases: :py:obj:`object`
+
+
+.. py:data:: python3
+
+   
+
+.. py:class:: GetEeRpyRequest(*args, **kwds)
+
+
+   Bases: :py:obj:`genpy.Message`
+
+   Base class of Message data classes auto-generated from msg files.
+
+   Constructor. Any message fields that are implicitly/explicitly
+   set to None will be assigned a default value. The recommend
+   use is keyword arguments as this is more robust to future message
+   changes.  You cannot mix in-order arguments and keyword arguments.
+
+   The available fields are:
+
+
+   :param args: complete set of field values, in .msg order
+   :param kwds: use keyword arguments corresponding to message field names
+   to set specific fields.
+
+   .. py:method:: serialize(buff)
+
+      serialize message into buffer
+      :param buff: buffer, ``StringIO``
+
+
+   .. py:method:: deserialize(str)
+
+      unpack serialized message in str into this message instance
+      :param str: byte array of serialized message, ``str``
+
+
+   .. py:method:: serialize_numpy(buff, numpy)
+
+      serialize message with numpy array types into buffer
+      :param buff: buffer, ``StringIO``
+      :param numpy: numpy python module
+
+
+   .. py:method:: deserialize_numpy(str, numpy)
+
+      unpack serialized message in str into this message instance using numpy for array types
+      :param str: byte array of serialized message, ``str``
+      :param numpy: numpy python module
+
+
+
+.. py:class:: GetEeRpyResponse(*args, **kwds)
+
+
+   Bases: :py:obj:`genpy.Message`
+
+   Base class of Message data classes auto-generated from msg files.
+
+   Constructor. Any message fields that are implicitly/explicitly
+   set to None will be assigned a default value. The recommend
+   use is keyword arguments as this is more robust to future message
+   changes.  You cannot mix in-order arguments and keyword arguments.
+
+   The available fields are:
+      r,p,y,success,message
+
+   :param args: complete set of field values, in .msg order
+   :param kwds: use keyword arguments corresponding to message field names
+   to set specific fields.
+
+   .. py:method:: serialize(buff)
+
+      serialize message into buffer
+      :param buff: buffer, ``StringIO``
+
+
+   .. py:method:: deserialize(str)
+
+      unpack serialized message in str into this message instance
+      :param str: byte array of serialized message, ``str``
+
+
+   .. py:method:: serialize_numpy(buff, numpy)
+
+      serialize message with numpy array types into buffer
+      :param buff: buffer, ``StringIO``
+      :param numpy: numpy python module
+
+
+   .. py:method:: deserialize_numpy(str, numpy)
+
+      unpack serialized message in str into this message instance using numpy for array types
+      :param str: byte array of serialized message, ``str``
+      :param numpy: numpy python module
+
+
+
+.. py:class:: GetEeRpy
+
+
+   Bases: :py:obj:`object`
+
+
+.. py:data:: python3
+
+   
+
+.. py:class:: GetMoveItControlledJointsRequest(*args, **kwds)
+
+
+   Bases: :py:obj:`genpy.Message`
+
+   Base class of Message data classes auto-generated from msg files.
+
+   Constructor. Any message fields that are implicitly/explicitly
+   set to None will be assigned a default value. The recommend
+   use is keyword arguments as this is more robust to future message
+   changes.  You cannot mix in-order arguments and keyword arguments.
+
+   The available fields are:
+
+
+   :param args: complete set of field values, in .msg order
+   :param kwds: use keyword arguments corresponding to message field names
+   to set specific fields.
+
+   .. py:method:: serialize(buff)
+
+      serialize message into buffer
+      :param buff: buffer, ``StringIO``
+
+
+   .. py:method:: deserialize(str)
+
+      unpack serialized message in str into this message instance
+      :param str: byte array of serialized message, ``str``
+
+
+   .. py:method:: serialize_numpy(buff, numpy)
+
+      serialize message with numpy array types into buffer
+      :param buff: buffer, ``StringIO``
+      :param numpy: numpy python module
+
+
+   .. py:method:: deserialize_numpy(str, numpy)
+
+      unpack serialized message in str into this message instance using numpy for array types
+      :param str: byte array of serialized message, ``str``
+      :param numpy: numpy python module
+
+
+
+.. py:class:: GetMoveItControlledJointsResponse(*args, **kwds)
+
+
+   Bases: :py:obj:`genpy.Message`
+
+   Base class of Message data classes auto-generated from msg files.
+
+   Constructor. Any message fields that are implicitly/explicitly
+   set to None will be assigned a default value. The recommend
+   use is keyword arguments as this is more robust to future message
+   changes.  You cannot mix in-order arguments and keyword arguments.
+
+   The available fields are:
+      controlled_joints,controlled_joints_arm,controlled_joints_hand,success,message
+
+   :param args: complete set of field values, in .msg order
+   :param kwds: use keyword arguments corresponding to message field names
+   to set specific fields.
+
+   .. py:method:: serialize(buff)
+
+      serialize message into buffer
+      :param buff: buffer, ``StringIO``
+
+
+   .. py:method:: deserialize(str)
+
+      unpack serialized message in str into this message instance
+      :param str: byte array of serialized message, ``str``
+
+
+   .. py:method:: serialize_numpy(buff, numpy)
+
+      serialize message with numpy array types into buffer
+      :param buff: buffer, ``StringIO``
+      :param numpy: numpy python module
+
+
+   .. py:method:: deserialize_numpy(str, numpy)
+
+      unpack serialized message in str into this message instance using numpy for array types
+      :param str: byte array of serialized message, ``str``
+      :param numpy: numpy python module
+
+
+
+.. py:class:: GetMoveItControlledJoints
+
+
+   Bases: :py:obj:`object`
+
+
+.. py:data:: python3
+
+   
+
+.. py:class:: GetRandomEePoseRequest(*args, **kwds)
+
+
+   Bases: :py:obj:`genpy.Message`
+
+   Base class of Message data classes auto-generated from msg files.
+
+   Constructor. Any message fields that are implicitly/explicitly
+   set to None will be assigned a default value. The recommend
+   use is keyword arguments as this is more robust to future message
+   changes.  You cannot mix in-order arguments and keyword arguments.
+
+   The available fields are:
+      bounding_region,attempts
+
+   :param args: complete set of field values, in .msg order
+   :param kwds: use keyword arguments corresponding to message field names
+   to set specific fields.
+
+   .. py:method:: serialize(buff)
+
+      serialize message into buffer
+      :param buff: buffer, ``StringIO``
+
+
+   .. py:method:: deserialize(str)
+
+      unpack serialized message in str into this message instance
+      :param str: byte array of serialized message, ``str``
+
+
+   .. py:method:: serialize_numpy(buff, numpy)
+
+      serialize message with numpy array types into buffer
+      :param buff: buffer, ``StringIO``
+      :param numpy: numpy python module
+
+
+   .. py:method:: deserialize_numpy(str, numpy)
+
+      unpack serialized message in str into this message instance using numpy for array types
+      :param str: byte array of serialized message, ``str``
+      :param numpy: numpy python module
+
+
+
+.. py:class:: GetRandomEePoseResponse(*args, **kwds)
+
+
+   Bases: :py:obj:`genpy.Message`
+
+   Base class of Message data classes auto-generated from msg files.
+
+   Constructor. Any message fields that are implicitly/explicitly
+   set to None will be assigned a default value. The recommend
+   use is keyword arguments as this is more robust to future message
+   changes.  You cannot mix in-order arguments and keyword arguments.
+
+   The available fields are:
+      ee_pose,joint_names,joint_positions,success,message
+
+   :param args: complete set of field values, in .msg order
+   :param kwds: use keyword arguments corresponding to message field names
+   to set specific fields.
+
+   .. py:method:: serialize(buff)
+
+      serialize message into buffer
+      :param buff: buffer, ``StringIO``
+
+
+   .. py:method:: deserialize(str)
+
+      unpack serialized message in str into this message instance
+      :param str: byte array of serialized message, ``str``
+
+
+   .. py:method:: serialize_numpy(buff, numpy)
+
+      serialize message with numpy array types into buffer
+      :param buff: buffer, ``StringIO``
+      :param numpy: numpy python module
+
+
+   .. py:method:: deserialize_numpy(str, numpy)
+
+      unpack serialized message in str into this message instance using numpy for array types
+      :param str: byte array of serialized message, ``str``
+      :param numpy: numpy python module
+
+
+
+.. py:class:: GetRandomEePose
+
+
+   Bases: :py:obj:`object`
+
+
+.. py:data:: python3
+
+   
+
+.. py:class:: GetRandomJointPositionsRequest(*args, **kwds)
+
+
+   Bases: :py:obj:`genpy.Message`
+
+   Base class of Message data classes auto-generated from msg files.
+
+   Constructor. Any message fields that are implicitly/explicitly
+   set to None will be assigned a default value. The recommend
+   use is keyword arguments as this is more robust to future message
+   changes.  You cannot mix in-order arguments and keyword arguments.
+
+   The available fields are:
+      joint_limits,attempts
+
+   :param args: complete set of field values, in .msg order
+   :param kwds: use keyword arguments corresponding to message field names
+   to set specific fields.
+
+   .. py:method:: serialize(buff)
+
+      serialize message into buffer
+      :param buff: buffer, ``StringIO``
+
+
+   .. py:method:: deserialize(str)
+
+      unpack serialized message in str into this message instance
+      :param str: byte array of serialized message, ``str``
+
+
+   .. py:method:: serialize_numpy(buff, numpy)
+
+      serialize message with numpy array types into buffer
+      :param buff: buffer, ``StringIO``
+      :param numpy: numpy python module
+
+
+   .. py:method:: deserialize_numpy(str, numpy)
+
+      unpack serialized message in str into this message instance using numpy for array types
+      :param str: byte array of serialized message, ``str``
+      :param numpy: numpy python module
+
+
+
+.. py:class:: GetRandomJointPositionsResponse(*args, **kwds)
+
+
+   Bases: :py:obj:`genpy.Message`
+
+   Base class of Message data classes auto-generated from msg files.
+
+   Constructor. Any message fields that are implicitly/explicitly
+   set to None will be assigned a default value. The recommend
+   use is keyword arguments as this is more robust to future message
+   changes.  You cannot mix in-order arguments and keyword arguments.
+
+   The available fields are:
+      joint_names,joint_positions,success,message
+
+   :param args: complete set of field values, in .msg order
+   :param kwds: use keyword arguments corresponding to message field names
+   to set specific fields.
+
+   .. py:method:: serialize(buff)
+
+      serialize message into buffer
+      :param buff: buffer, ``StringIO``
+
+
+   .. py:method:: deserialize(str)
+
+      unpack serialized message in str into this message instance
+      :param str: byte array of serialized message, ``str``
+
+
+   .. py:method:: serialize_numpy(buff, numpy)
+
+      serialize message with numpy array types into buffer
+      :param buff: buffer, ``StringIO``
+      :param numpy: numpy python module
+
+
+   .. py:method:: deserialize_numpy(str, numpy)
+
+      unpack serialized message in str into this message instance using numpy for array types
+      :param str: byte array of serialized message, ``str``
+      :param numpy: numpy python module
+
+
+
+.. py:class:: GetRandomJointPositions
+
+
+   Bases: :py:obj:`object`
+
+
+.. py:data:: python3
+
+   
+
+.. py:class:: LockJointsRequest(*args, **kwds)
+
+
+   Bases: :py:obj:`genpy.Message`
+
+   Base class of Message data classes auto-generated from msg files.
+
+   Constructor. Any message fields that are implicitly/explicitly
+   set to None will be assigned a default value. The recommend
+   use is keyword arguments as this is more robust to future message
+   changes.  You cannot mix in-order arguments and keyword arguments.
+
+   The available fields are:
+      joint_names,lock
+
+   :param args: complete set of field values, in .msg order
+   :param kwds: use keyword arguments corresponding to message field names
+   to set specific fields.
+
+   .. py:method:: serialize(buff)
+
+      serialize message into buffer
+      :param buff: buffer, ``StringIO``
+
+
+   .. py:method:: deserialize(str)
+
+      unpack serialized message in str into this message instance
+      :param str: byte array of serialized message, ``str``
+
+
+   .. py:method:: serialize_numpy(buff, numpy)
+
+      serialize message with numpy array types into buffer
+      :param buff: buffer, ``StringIO``
+      :param numpy: numpy python module
+
+
+   .. py:method:: deserialize_numpy(str, numpy)
+
+      unpack serialized message in str into this message instance using numpy for array types
+      :param str: byte array of serialized message, ``str``
+      :param numpy: numpy python module
+
+
+
+.. py:class:: LockJointsResponse(*args, **kwds)
+
+
+   Bases: :py:obj:`genpy.Message`
+
+   Base class of Message data classes auto-generated from msg files.
+
+   Constructor. Any message fields that are implicitly/explicitly
+   set to None will be assigned a default value. The recommend
+   use is keyword arguments as this is more robust to future message
+   changes.  You cannot mix in-order arguments and keyword arguments.
+
+   The available fields are:
+      success,message
+
+   :param args: complete set of field values, in .msg order
+   :param kwds: use keyword arguments corresponding to message field names
+   to set specific fields.
+
+   .. py:method:: serialize(buff)
+
+      serialize message into buffer
+      :param buff: buffer, ``StringIO``
+
+
+   .. py:method:: deserialize(str)
+
+      unpack serialized message in str into this message instance
+      :param str: byte array of serialized message, ``str``
+
+
+   .. py:method:: serialize_numpy(buff, numpy)
+
+      serialize message with numpy array types into buffer
+      :param buff: buffer, ``StringIO``
+      :param numpy: numpy python module
+
+
+   .. py:method:: deserialize_numpy(str, numpy)
+
+      unpack serialized message in str into this message instance using numpy for array types
+      :param str: byte array of serialized message, ``str``
+      :param numpy: numpy python module
+
+
+
+.. py:class:: LockJoints
+
+
+   Bases: :py:obj:`object`
+
+
+.. py:data:: python3
+
+   
+
+.. py:class:: SetEeRequest(*args, **kwds)
+
+
+   Bases: :py:obj:`genpy.Message`
+
+   Base class of Message data classes auto-generated from msg files.
+
+   Constructor. Any message fields that are implicitly/explicitly
+   set to None will be assigned a default value. The recommend
+   use is keyword arguments as this is more robust to future message
+   changes.  You cannot mix in-order arguments and keyword arguments.
+
+   The available fields are:
+      ee_name
+
+   :param args: complete set of field values, in .msg order
+   :param kwds: use keyword arguments corresponding to message field names
+   to set specific fields.
+
+   .. py:method:: serialize(buff)
+
+      serialize message into buffer
+      :param buff: buffer, ``StringIO``
+
+
+   .. py:method:: deserialize(str)
+
+      unpack serialized message in str into this message instance
+      :param str: byte array of serialized message, ``str``
+
+
+   .. py:method:: serialize_numpy(buff, numpy)
+
+      serialize message with numpy array types into buffer
+      :param buff: buffer, ``StringIO``
+      :param numpy: numpy python module
+
+
+   .. py:method:: deserialize_numpy(str, numpy)
+
+      unpack serialized message in str into this message instance using numpy for array types
+      :param str: byte array of serialized message, ``str``
+      :param numpy: numpy python module
+
+
+
+.. py:class:: SetEeResponse(*args, **kwds)
+
+
+   Bases: :py:obj:`genpy.Message`
+
+   Base class of Message data classes auto-generated from msg files.
+
+   Constructor. Any message fields that are implicitly/explicitly
+   set to None will be assigned a default value. The recommend
+   use is keyword arguments as this is more robust to future message
+   changes.  You cannot mix in-order arguments and keyword arguments.
+
+   The available fields are:
+      success,message
+
+   :param args: complete set of field values, in .msg order
+   :param kwds: use keyword arguments corresponding to message field names
+   to set specific fields.
+
+   .. py:method:: serialize(buff)
+
+      serialize message into buffer
+      :param buff: buffer, ``StringIO``
+
+
+   .. py:method:: deserialize(str)
+
+      unpack serialized message in str into this message instance
+      :param str: byte array of serialized message, ``str``
+
+
+   .. py:method:: serialize_numpy(buff, numpy)
+
+      serialize message with numpy array types into buffer
+      :param buff: buffer, ``StringIO``
+      :param numpy: numpy python module
+
+
+   .. py:method:: deserialize_numpy(str, numpy)
+
+      unpack serialized message in str into this message instance using numpy for array types
+      :param str: byte array of serialized message, ``str``
+      :param numpy: numpy python module
+
+
+
+.. py:class:: SetEe
+
+
+   Bases: :py:obj:`object`
+
+
+.. py:data:: python3
+
+   
+
+.. py:class:: SetEePoseRequest(*args, **kwds)
+
+
+   Bases: :py:obj:`genpy.Message`
+
+   Base class of Message data classes auto-generated from msg files.
+
+   Constructor. Any message fields that are implicitly/explicitly
+   set to None will be assigned a default value. The recommend
+   use is keyword arguments as this is more robust to future message
+   changes.  You cannot mix in-order arguments and keyword arguments.
+
+   The available fields are:
+      pose
+
+   :param args: complete set of field values, in .msg order
+   :param kwds: use keyword arguments corresponding to message field names
+   to set specific fields.
+
+   .. py:method:: serialize(buff)
+
+      serialize message into buffer
+      :param buff: buffer, ``StringIO``
+
+
+   .. py:method:: deserialize(str)
+
+      unpack serialized message in str into this message instance
+      :param str: byte array of serialized message, ``str``
+
+
+   .. py:method:: serialize_numpy(buff, numpy)
+
+      serialize message with numpy array types into buffer
+      :param buff: buffer, ``StringIO``
+      :param numpy: numpy python module
+
+
+   .. py:method:: deserialize_numpy(str, numpy)
+
+      unpack serialized message in str into this message instance using numpy for array types
+      :param str: byte array of serialized message, ``str``
+      :param numpy: numpy python module
+
+
+
+.. py:class:: SetEePoseResponse(*args, **kwds)
+
+
+   Bases: :py:obj:`genpy.Message`
+
+   Base class of Message data classes auto-generated from msg files.
+
+   Constructor. Any message fields that are implicitly/explicitly
+   set to None will be assigned a default value. The recommend
+   use is keyword arguments as this is more robust to future message
+   changes.  You cannot mix in-order arguments and keyword arguments.
+
+   The available fields are:
+      success,message
+
+   :param args: complete set of field values, in .msg order
+   :param kwds: use keyword arguments corresponding to message field names
+   to set specific fields.
+
+   .. py:method:: serialize(buff)
+
+      serialize message into buffer
+      :param buff: buffer, ``StringIO``
+
+
+   .. py:method:: deserialize(str)
+
+      unpack serialized message in str into this message instance
+      :param str: byte array of serialized message, ``str``
+
+
+   .. py:method:: serialize_numpy(buff, numpy)
+
+      serialize message with numpy array types into buffer
+      :param buff: buffer, ``StringIO``
+      :param numpy: numpy python module
+
+
+   .. py:method:: deserialize_numpy(str, numpy)
+
+      unpack serialized message in str into this message instance using numpy for array types
+      :param str: byte array of serialized message, ``str``
+      :param numpy: numpy python module
+
+
+
+.. py:class:: SetEePose
+
+
+   Bases: :py:obj:`object`
+
+
+.. py:data:: python3
+
+   
+
+.. py:class:: SetGripperWidthRequest(*args, **kwds)
+
+
+   Bases: :py:obj:`genpy.Message`
+
+   Base class of Message data classes auto-generated from msg files.
+
+   Constructor. Any message fields that are implicitly/explicitly
+   set to None will be assigned a default value. The recommend
+   use is keyword arguments as this is more robust to future message
+   changes.  You cannot mix in-order arguments and keyword arguments.
+
+   The available fields are:
+      width,grasping,max_effort,wait,timeout
+
+   :param args: complete set of field values, in .msg order
+   :param kwds: use keyword arguments corresponding to message field names
+   to set specific fields.
+
+   .. py:method:: serialize(buff)
+
+      serialize message into buffer
+      :param buff: buffer, ``StringIO``
+
+
+   .. py:method:: deserialize(str)
+
+      unpack serialized message in str into this message instance
+      :param str: byte array of serialized message, ``str``
+
+
+   .. py:method:: serialize_numpy(buff, numpy)
+
+      serialize message with numpy array types into buffer
+      :param buff: buffer, ``StringIO``
+      :param numpy: numpy python module
+
+
+   .. py:method:: deserialize_numpy(str, numpy)
+
+      unpack serialized message in str into this message instance using numpy for array types
+      :param str: byte array of serialized message, ``str``
+      :param numpy: numpy python module
+
+
+
+.. py:class:: SetGripperWidthResponse(*args, **kwds)
+
+
+   Bases: :py:obj:`genpy.Message`
+
+   Base class of Message data classes auto-generated from msg files.
+
+   Constructor. Any message fields that are implicitly/explicitly
+   set to None will be assigned a default value. The recommend
+   use is keyword arguments as this is more robust to future message
+   changes.  You cannot mix in-order arguments and keyword arguments.
+
+   The available fields are:
+      success,message
+
+   :param args: complete set of field values, in .msg order
+   :param kwds: use keyword arguments corresponding to message field names
+   to set specific fields.
+
+   .. py:method:: serialize(buff)
+
+      serialize message into buffer
+      :param buff: buffer, ``StringIO``
+
+
+   .. py:method:: deserialize(str)
+
+      unpack serialized message in str into this message instance
+      :param str: byte array of serialized message, ``str``
+
+
+   .. py:method:: serialize_numpy(buff, numpy)
+
+      serialize message with numpy array types into buffer
+      :param buff: buffer, ``StringIO``
+      :param numpy: numpy python module
+
+
+   .. py:method:: deserialize_numpy(str, numpy)
+
+      unpack serialized message in str into this message instance using numpy for array types
+      :param str: byte array of serialized message, ``str``
+      :param numpy: numpy python module
+
+
+
+.. py:class:: SetGripperWidth
+
+
+   Bases: :py:obj:`object`
+
+
+.. py:data:: python3
+
+   
+
+.. py:class:: SetJointCommandsRequest(*args, **kwds)
+
+
+   Bases: :py:obj:`genpy.Message`
+
+   Base class of Message data classes auto-generated from msg files.
+
+   Constructor. Any message fields that are implicitly/explicitly
+   set to None will be assigned a default value. The recommend
+   use is keyword arguments as this is more robust to future message
+   changes.  You cannot mix in-order arguments and keyword arguments.
+
+   The available fields are:
+      joint_names,joint_commands,control_type,grasping,arm_wait,hand_wait
+
+   :param args: complete set of field values, in .msg order
+   :param kwds: use keyword arguments corresponding to message field names
+   to set specific fields.
+
+   .. py:method:: serialize(buff)
+
+      serialize message into buffer
+      :param buff: buffer, ``StringIO``
+
+
+   .. py:method:: deserialize(str)
+
+      unpack serialized message in str into this message instance
+      :param str: byte array of serialized message, ``str``
+
+
+   .. py:method:: serialize_numpy(buff, numpy)
+
+      serialize message with numpy array types into buffer
+      :param buff: buffer, ``StringIO``
+      :param numpy: numpy python module
+
+
+   .. py:method:: deserialize_numpy(str, numpy)
+
+      unpack serialized message in str into this message instance using numpy for array types
+      :param str: byte array of serialized message, ``str``
+      :param numpy: numpy python module
+
+
+
+.. py:class:: SetJointCommandsResponse(*args, **kwds)
+
+
+   Bases: :py:obj:`genpy.Message`
+
+   Base class of Message data classes auto-generated from msg files.
+
+   Constructor. Any message fields that are implicitly/explicitly
+   set to None will be assigned a default value. The recommend
+   use is keyword arguments as this is more robust to future message
+   changes.  You cannot mix in-order arguments and keyword arguments.
+
+   The available fields are:
+      success,message
+
+   :param args: complete set of field values, in .msg order
+   :param kwds: use keyword arguments corresponding to message field names
+   to set specific fields.
+
+   .. py:method:: serialize(buff)
+
+      serialize message into buffer
+      :param buff: buffer, ``StringIO``
+
+
+   .. py:method:: deserialize(str)
+
+      unpack serialized message in str into this message instance
+      :param str: byte array of serialized message, ``str``
+
+
+   .. py:method:: serialize_numpy(buff, numpy)
+
+      serialize message with numpy array types into buffer
+      :param buff: buffer, ``StringIO``
+      :param numpy: numpy python module
+
+
+   .. py:method:: deserialize_numpy(str, numpy)
+
+      unpack serialized message in str into this message instance using numpy for array types
+      :param str: byte array of serialized message, ``str``
+      :param numpy: numpy python module
+
+
+
+.. py:class:: SetJointCommands
+
+
+   Bases: :py:obj:`object`
+
+
+.. py:data:: python3
+
+   
+
+.. py:class:: SetJointEffortsRequest(*args, **kwds)
+
+
+   Bases: :py:obj:`genpy.Message`
+
+   Base class of Message data classes auto-generated from msg files.
+
+   Constructor. Any message fields that are implicitly/explicitly
+   set to None will be assigned a default value. The recommend
+   use is keyword arguments as this is more robust to future message
+   changes.  You cannot mix in-order arguments and keyword arguments.
+
+   The available fields are:
+      joint_names,joint_efforts,wait
+
+   :param args: complete set of field values, in .msg order
+   :param kwds: use keyword arguments corresponding to message field names
+   to set specific fields.
+
+   .. py:method:: serialize(buff)
+
+      serialize message into buffer
+      :param buff: buffer, ``StringIO``
+
+
+   .. py:method:: deserialize(str)
+
+      unpack serialized message in str into this message instance
+      :param str: byte array of serialized message, ``str``
+
+
+   .. py:method:: serialize_numpy(buff, numpy)
+
+      serialize message with numpy array types into buffer
+      :param buff: buffer, ``StringIO``
+      :param numpy: numpy python module
+
+
+   .. py:method:: deserialize_numpy(str, numpy)
+
+      unpack serialized message in str into this message instance using numpy for array types
+      :param str: byte array of serialized message, ``str``
+      :param numpy: numpy python module
+
+
+
+.. py:class:: SetJointEffortsResponse(*args, **kwds)
+
+
+   Bases: :py:obj:`genpy.Message`
+
+   Base class of Message data classes auto-generated from msg files.
+
+   Constructor. Any message fields that are implicitly/explicitly
+   set to None will be assigned a default value. The recommend
+   use is keyword arguments as this is more robust to future message
+   changes.  You cannot mix in-order arguments and keyword arguments.
+
+   The available fields are:
+      success,message
+
+   :param args: complete set of field values, in .msg order
+   :param kwds: use keyword arguments corresponding to message field names
+   to set specific fields.
+
+   .. py:method:: serialize(buff)
+
+      serialize message into buffer
+      :param buff: buffer, ``StringIO``
+
+
+   .. py:method:: deserialize(str)
+
+      unpack serialized message in str into this message instance
+      :param str: byte array of serialized message, ``str``
+
+
+   .. py:method:: serialize_numpy(buff, numpy)
+
+      serialize message with numpy array types into buffer
+      :param buff: buffer, ``StringIO``
+      :param numpy: numpy python module
+
+
+   .. py:method:: deserialize_numpy(str, numpy)
+
+      unpack serialized message in str into this message instance using numpy for array types
+      :param str: byte array of serialized message, ``str``
+      :param numpy: numpy python module
+
+
+
+.. py:class:: SetJointEfforts
+
+
+   Bases: :py:obj:`object`
+
+
+.. py:data:: python3
+
+   
+
+.. py:class:: SetJointPositionsRequest(*args, **kwds)
+
+
+   Bases: :py:obj:`genpy.Message`
+
+   Base class of Message data classes auto-generated from msg files.
+
+   Constructor. Any message fields that are implicitly/explicitly
+   set to None will be assigned a default value. The recommend
+   use is keyword arguments as this is more robust to future message
+   changes.  You cannot mix in-order arguments and keyword arguments.
+
+   The available fields are:
+      joint_names,joint_positions,wait
+
+   :param args: complete set of field values, in .msg order
+   :param kwds: use keyword arguments corresponding to message field names
+   to set specific fields.
+
+   .. py:method:: serialize(buff)
+
+      serialize message into buffer
+      :param buff: buffer, ``StringIO``
+
+
+   .. py:method:: deserialize(str)
+
+      unpack serialized message in str into this message instance
+      :param str: byte array of serialized message, ``str``
+
+
+   .. py:method:: serialize_numpy(buff, numpy)
+
+      serialize message with numpy array types into buffer
+      :param buff: buffer, ``StringIO``
+      :param numpy: numpy python module
+
+
+   .. py:method:: deserialize_numpy(str, numpy)
+
+      unpack serialized message in str into this message instance using numpy for array types
+      :param str: byte array of serialized message, ``str``
+      :param numpy: numpy python module
+
+
+
+.. py:class:: SetJointPositionsResponse(*args, **kwds)
+
+
+   Bases: :py:obj:`genpy.Message`
+
+   Base class of Message data classes auto-generated from msg files.
+
+   Constructor. Any message fields that are implicitly/explicitly
+   set to None will be assigned a default value. The recommend
+   use is keyword arguments as this is more robust to future message
+   changes.  You cannot mix in-order arguments and keyword arguments.
+
+   The available fields are:
+      success,message
+
+   :param args: complete set of field values, in .msg order
+   :param kwds: use keyword arguments corresponding to message field names
+   to set specific fields.
+
+   .. py:method:: serialize(buff)
+
+      serialize message into buffer
+      :param buff: buffer, ``StringIO``
+
+
+   .. py:method:: deserialize(str)
+
+      unpack serialized message in str into this message instance
+      :param str: byte array of serialized message, ``str``
+
+
+   .. py:method:: serialize_numpy(buff, numpy)
+
+      serialize message with numpy array types into buffer
+      :param buff: buffer, ``StringIO``
+      :param numpy: numpy python module
+
+
+   .. py:method:: deserialize_numpy(str, numpy)
+
+      unpack serialized message in str into this message instance using numpy for array types
+      :param str: byte array of serialized message, ``str``
+      :param numpy: numpy python module
+
+
+
+.. py:class:: SetJointPositions
+
+
+   Bases: :py:obj:`object`
+
+

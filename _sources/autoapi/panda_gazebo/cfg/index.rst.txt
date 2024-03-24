@@ -1,0 +1,17 @@
+:py:mod:`panda_gazebo.cfg`
+==========================
+
+.. py:module:: panda_gazebo.cfg
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   JointEffortsConfig/index.rst
+   JointPositionsConfig/index.rst
+   MoveitServerConfig/index.rst
+
+

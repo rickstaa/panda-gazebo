@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>panda_gazebo.core.control_switcher &mdash; Panda Gazebo 2.17.6 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=eafc0fe6" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/modify.css?v=519ed47b" />
+
+  
+    <link rel="shortcut icon" href="../../../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js?v=fe1d5c58"></script>
+        <script src="../../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="panda_gazebo.core.moveit_server" href="../moveit_server/index.html" />
+    <link rel="prev" title="panda_gazebo.core.control_server" href="../control_server/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.17.6
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../get_started/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../get_started/usage.html">How to use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../get_started/issues.html">Known Issues</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../dev/contributing.html">Contribute to panda-gazebo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../dev/doc_dev.html">Release documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../dev/license.html">License</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../index.html#ros-api">ROS API</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../../index.html#python-api">Python API</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">panda_gazebo</span></code></a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="../../index.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../index.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../index.html#package-contents">Package Contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../panda_control_server/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">panda_control_server</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../panda_moveit_server/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">panda_moveit_server</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../joint_positions_dynamic_reconfigure_server/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">joint_positions_dynamic_reconfigure_server</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../set_logging_level/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">set_logging_level</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../joint_efforts_dynamic_reconfigure_server/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">joint_efforts_dynamic_reconfigure_server</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Panda Gazebo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">panda_gazebo</span></code></a></li>
+          <li class="breadcrumb-item"><a href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">panda_gazebo.core</span></code></a></li>
+      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">panda_gazebo.core.control_switcher</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/rickstaa/panda-gazebo/blob/noetic/panda_gazebo/docs/source/autoapi/panda_gazebo/core/control_switcher/index.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-panda_gazebo.core.control_switcher">
+<span id="panda-gazebo-core-control-switcher"></span><h1><a class="reference internal" href="#module-panda_gazebo.core.control_switcher" title="panda_gazebo.core.control_switcher"><code class="xref py py-mod docutils literal notranslate"><span class="pre">panda_gazebo.core.control_switcher</span></code></a><a class="headerlink" href="#module-panda_gazebo.core.control_switcher" title="Permalink to this heading"></a></h1>
+<p>This class is responsible for switching the control type that is used for
+controlling the Panda Robot robot arm and hand. It serves as a wrapper around the
+services created by the ROS
+<a class="reference external" href="https://wiki.ros.org/controller_manager">controller_manager</a> class.</p>
+<dl class="simple">
+<dt>Control types:</dt><dd><ul class="simple">
+<li><p><a class="reference external" href="https://wiki.ros.org/joint_trajectory_controller/">trajectory</a></p></li>
+<li><p><a class="reference external" href="https://wiki.ros.org/position_controllers/">position</a></p></li>
+<li><p><a class="reference external" href="https://wiki.ros.org/effort_controllers/">effort</a></p></li>
+</ul>
+</dd>
+</dl>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this heading"></a></h2>
+<section id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this heading"></a></h3>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#panda_gazebo.core.control_switcher.ControllerSwitcherResponse" title="panda_gazebo.core.control_switcher.ControllerSwitcherResponse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ControllerSwitcherResponse</span></code></a></p></td>
+<td><p>Class used for returning the result of the <a class="reference internal" href="#panda_gazebo.core.control_switcher.PandaControlSwitcher.switch" title="panda_gazebo.core.control_switcher.PandaControlSwitcher.switch"><code class="xref py py-meth docutils literal notranslate"><span class="pre">PandaControlSwitcher.switch()</span></code></a></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#panda_gazebo.core.control_switcher.PandaControlSwitcher" title="panda_gazebo.core.control_switcher.PandaControlSwitcher"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PandaControlSwitcher</span></code></a></p></td>
+<td><p>Used for switching the Panda robot controllers.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="attributes">
+<h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this heading"></a></h3>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#panda_gazebo.core.control_switcher.ARM_CONTROLLERS" title="panda_gazebo.core.control_switcher.ARM_CONTROLLERS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ARM_CONTROLLERS</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#panda_gazebo.core.control_switcher.HAND_CONTROLLERS" title="panda_gazebo.core.control_switcher.HAND_CONTROLLERS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HAND_CONTROLLERS</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#panda_gazebo.core.control_switcher.CONTROLLER_DICT" title="panda_gazebo.core.control_switcher.CONTROLLER_DICT"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CONTROLLER_DICT</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py data">
+<dt class="sig sig-object py" id="panda_gazebo.core.control_switcher.ARM_CONTROLLERS">
+<span class="sig-prename descclassname"><span class="pre">panda_gazebo.core.control_switcher.</span></span><span class="sig-name descname"><span class="pre">ARM_CONTROLLERS</span></span><a class="reference internal" href="../../../../_modules/panda_gazebo/core/control_switcher.html#ARM_CONTROLLERS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.core.control_switcher.ARM_CONTROLLERS" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="panda_gazebo.core.control_switcher.HAND_CONTROLLERS">
+<span class="sig-prename descclassname"><span class="pre">panda_gazebo.core.control_switcher.</span></span><span class="sig-name descname"><span class="pre">HAND_CONTROLLERS</span></span><a class="reference internal" href="../../../../_modules/panda_gazebo/core/control_switcher.html#HAND_CONTROLLERS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.core.control_switcher.HAND_CONTROLLERS" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="panda_gazebo.core.control_switcher.CONTROLLER_DICT">
+<span class="sig-prename descclassname"><span class="pre">panda_gazebo.core.control_switcher.</span></span><span class="sig-name descname"><span class="pre">CONTROLLER_DICT</span></span><a class="reference internal" href="../../../../_modules/panda_gazebo/core/control_switcher.html#CONTROLLER_DICT"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.core.control_switcher.CONTROLLER_DICT" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="panda_gazebo.core.control_switcher.ControllerSwitcherResponse">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">panda_gazebo.core.control_switcher.</span></span><span class="sig-name descname"><span class="pre">ControllerSwitcherResponse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">success</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prev_control_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/panda_gazebo/core/control_switcher.html#ControllerSwitcherResponse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.core.control_switcher.ControllerSwitcherResponse" title="Permalink to this definition"></a></dt>
+<dd><p>Class used for returning the result of the <a class="reference internal" href="#panda_gazebo.core.control_switcher.PandaControlSwitcher.switch" title="panda_gazebo.core.control_switcher.PandaControlSwitcher.switch"><code class="xref py py-meth docutils literal notranslate"><span class="pre">PandaControlSwitcher.switch()</span></code></a>
+method.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="panda_gazebo.core.control_switcher.ControllerSwitcherResponse.success">
+<span class="sig-name descname"><span class="pre">success</span></span><a class="headerlink" href="#panda_gazebo.core.control_switcher.ControllerSwitcherResponse.success" title="Permalink to this definition"></a></dt>
+<dd><p>Specifies whether the switch operation was successful.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="panda_gazebo.core.control_switcher.ControllerSwitcherResponse.prev_control_type">
+<span class="sig-name descname"><span class="pre">prev_control_type</span></span><a class="headerlink" href="#panda_gazebo.core.control_switcher.ControllerSwitcherResponse.prev_control_type" title="Permalink to this definition"></a></dt>
+<dd><p>The previous used control type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>Initialise ControllerSwitcherResponse object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>success</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether the switch operation was successful.
+Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>prev_control_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>, </em><em>optional</em>) – The previous used control type. Defaults
+to <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="panda_gazebo.core.control_switcher.PandaControlSwitcher">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">panda_gazebo.core.control_switcher.</span></span><span class="sig-name descname"><span class="pre">PandaControlSwitcher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connection_timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">robot_name_space</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/panda_gazebo/core/control_switcher.html#PandaControlSwitcher"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.core.control_switcher.PandaControlSwitcher" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Used for switching the Panda robot controllers.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="panda_gazebo.core.control_switcher.PandaControlSwitcher.verbose">
+<span class="sig-name descname"><span class="pre">verbose</span></span><a class="headerlink" href="#panda_gazebo.core.control_switcher.PandaControlSwitcher.verbose" title="Permalink to this definition"></a></dt>
+<dd><p>Boolean specifying whether we want to display log messages
+during switching.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="panda_gazebo.core.control_switcher.PandaControlSwitcher.arm_control_types">
+<span class="sig-name descname"><span class="pre">arm_control_types</span></span><a class="reference internal" href="../../../../_modules/panda_gazebo/core/control_switcher.html#PandaControlSwitcher.arm_control_types"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.core.control_switcher.PandaControlSwitcher.arm_control_types" title="Permalink to this definition"></a></dt>
+<dd><p>List of currently active arm control types.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)">list</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="panda_gazebo.core.control_switcher.PandaControlSwitcher.hand_control_types">
+<span class="sig-name descname"><span class="pre">hand_control_types</span></span><a class="reference internal" href="../../../../_modules/panda_gazebo/core/control_switcher.html#PandaControlSwitcher.hand_control_types"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.core.control_switcher.PandaControlSwitcher.hand_control_types" title="Permalink to this definition"></a></dt>
+<dd><p>List of currently active hand control types.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)">list</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>Initialise PandaControlSwitcher object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>connection_timeout</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>, </em><em>optional</em>) – The timeout for connecting to the
+controller_manager services. Defaults to <cite>10</cite> sec.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to display debug log messages. Defaults to
+<code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>robot_name_space</strong> (<em>string</em><em>, </em><em>optional</em>) – The namespace the robot, and thus the
+‘controller_manager’ is on. Defaults to <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="id0">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">arm_control_types</span></span><a class="reference internal" href="../../../../_modules/panda_gazebo/core/control_switcher.html#PandaControlSwitcher.arm_control_types"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id0" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the currently active arm control types. Returns empty list when no
+control type is enabled.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="id1">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">hand_control_types</span></span><a class="reference internal" href="../../../../_modules/panda_gazebo/core/control_switcher.html#PandaControlSwitcher.hand_control_types"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id1" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the currently active hand control types. Returns empty when no
+control type is enabled.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="panda_gazebo.core.control_switcher.PandaControlSwitcher.wait_for_control_type">
+<span class="sig-name descname"><span class="pre">wait_for_control_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">control_group</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">control_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/panda_gazebo/core/control_switcher.html#PandaControlSwitcher.wait_for_control_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.core.control_switcher.PandaControlSwitcher.wait_for_control_type" title="Permalink to this definition"></a></dt>
+<dd><p>Function that can be used to wait till all the controllers used for a given
+‘control_group’ and ‘control_type’ are running. Useful four when you expect a
+launch file to load certain controllers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>control_group</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – The control group of which you want the switch the
+control type. Options are <code class="docutils literal notranslate"><span class="pre">hand</span></code> or <code class="docutils literal notranslate"><span class="pre">arm</span></code>.</p></li>
+<li><p><strong>control_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – The robot control type you want to switch to for the
+given ‘control_group’. Options are: <code class="docutils literal notranslate"><span class="pre">trajectory</span></code>, <code class="docutils literal notranslate"><span class="pre">position</span></code> and
+<code class="docutils literal notranslate"><span class="pre">effort</span></code>.</p></li>
+<li><p><strong>timeout</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a><em>, </em><em>optional</em>) – The function timeout. Defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code> meaning
+the function will wait for ever.</p></li>
+<li><p><strong>rate</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a><em>, </em><em>optional</em>) – The ‘control_type’ check rate. Defaults to <cite>10</cite>
+hz.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TimeoutError" title="(in Python v3.12)"><strong>TimeoutError</strong></a> – Thrown when the set timeout has passed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="panda_gazebo.core.control_switcher.PandaControlSwitcher.switch">
+<span class="sig-name descname"><span class="pre">switch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">control_group</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">control_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_controllers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/panda_gazebo/core/control_switcher.html#PandaControlSwitcher.switch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.core.control_switcher.PandaControlSwitcher.switch" title="Permalink to this definition"></a></dt>
+<dd><p>Switch Panda robot control type. This function stops all currently running
+controllers and starts the required controllers for a given control type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>control_group</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – The control group of which you want the switch the
+control type. Options are <code class="docutils literal notranslate"><span class="pre">hand</span></code> or <code class="docutils literal notranslate"><span class="pre">arm</span></code>.</p></li>
+<li><p><strong>control_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – The robot control type you want to switch to for the
+given ‘control_group’. Options are: <code class="docutils literal notranslate"><span class="pre">trajectory</span></code>, <code class="docutils literal notranslate"><span class="pre">position</span></code>
+and <code class="docutils literal notranslate"><span class="pre">effort</span></code>.</p></li>
+<li><p><strong>load_controllers</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – Try to load the required controllers for a given
+control_type if they are not yet loaded.</p></li>
+<li><p><strong>timeout</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a><em>, </em><em>optional</em>) – The timeout for switching to a given controller.
+Defaults to <code class="docutils literal notranslate"><span class="pre">3</span></code> sec.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to display debug log messages. Defaults
+to verbose value set during the class initiation.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Contains information about whether the switch operation was successful
+‘success’ and the previously used controller ‘prev_control_type’.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#panda_gazebo.core.control_switcher.ControllerSwitcherResponse" title="panda_gazebo.core.control_switcher.ControllerSwitcherResponse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ControllerSwitcherResponse</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../control_server/index.html" class="btn btn-neutral float-left" title="panda_gazebo.core.control_server" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../moveit_server/index.html" class="btn btn-neutral float-right" title="panda_gazebo.core.moveit_server" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Rick Staa.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

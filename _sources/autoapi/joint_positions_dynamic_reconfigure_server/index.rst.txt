@@ -1,0 +1,70 @@
+:py:mod:`joint_positions_dynamic_reconfigure_server`
+====================================================
+
+.. py:module:: joint_positions_dynamic_reconfigure_server
+
+.. autoapi-nested-parse::
+
+   Small node that spins up a dynamic reconfigure server that can be used to change the
+   panda arm joint positions and gripper width.
+
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   joint_positions_dynamic_reconfigure_server.JointPositionsDynamicReconfigureServer
+
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   joint_positions_dynamic_reconfigure_server.ARM_TOPIC
+   joint_positions_dynamic_reconfigure_server.JOINT_STATES_TOPIC
+   joint_positions_dynamic_reconfigure_server.GRIPPER_ACTION_NAME
+
+
+.. py:data:: ARM_TOPIC
+   :value: '/panda_arm_joint_position_controller/command'
+
+   
+
+.. py:data:: JOINT_STATES_TOPIC
+   :value: 'joint_states'
+
+   
+
+.. py:data:: GRIPPER_ACTION_NAME
+   :value: 'franka_gripper/move'
+
+   
+
+.. py:class:: JointPositionsDynamicReconfigureServer
+
+
+   A small node that spins up a dynamic reconfigure server that can be used to
+   change the panda arm joint positions and gripper width.
+
+   Initialise JointPositionsDynamicReconfigureServer object.
+
+   .. py:method:: callback(config, level)
+
+      Dynamic reconfigure callback function.
+
+      :param config: Dictionary containing the new configuration.
+      :type config: dict
+      :param level: Level of the dynamic reconfigure server. Represents the
+                    variable that was changed or if -1 that the server was just started.
+      :type level: int
+
+
+

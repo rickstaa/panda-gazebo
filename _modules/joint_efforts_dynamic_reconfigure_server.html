@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>joint_efforts_dynamic_reconfigure_server &mdash; Panda Gazebo 2.17.6 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/modify.css?v=519ed47b" />
+
+  
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=fe1d5c58"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.17.6
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../get_started/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../get_started/usage.html">How to use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../get_started/issues.html">Known Issues</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../dev/contributing.html">Contribute to panda-gazebo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dev/doc_dev.html">Release documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dev/license.html">License</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Panda Gazebo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">joint_efforts_dynamic_reconfigure_server</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for joint_efforts_dynamic_reconfigure_server</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="sd">&quot;&quot;&quot;Small node that spins up a dynamic reconfigure server that can be used to change the</span>
+<span class="sd">panda arm joint efforts and gripper width.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">actionlib</span>
+<span class="kn">import</span> <span class="nn">rospy</span>
+<span class="kn">from</span> <span class="nn">dynamic_reconfigure.server</span> <span class="kn">import</span> <span class="n">Server</span>
+<span class="kn">from</span> <span class="nn">franka_gripper.msg</span> <span class="kn">import</span> <span class="n">MoveAction</span><span class="p">,</span> <span class="n">MoveGoal</span>
+<span class="kn">from</span> <span class="nn">sensor_msgs.msg</span> <span class="kn">import</span> <span class="n">JointState</span>
+<span class="kn">from</span> <span class="nn">std_msgs.msg</span> <span class="kn">import</span> <span class="n">Float64MultiArray</span>
+
+<span class="kn">from</span> <span class="nn">panda_gazebo.cfg</span> <span class="kn">import</span> <span class="n">JointEffortsConfig</span>
+
+<span class="c1"># Constants for topic names</span>
+<div class="viewcode-block" id="ARM_TOPIC"><a class="viewcode-back" href="../autoapi/joint_efforts_dynamic_reconfigure_server/index.html#joint_efforts_dynamic_reconfigure_server.ARM_TOPIC">[docs]</a><span class="n">ARM_TOPIC</span> <span class="o">=</span> <span class="s2">&quot;/panda_arm_joint_effort_controller/command&quot;</span></div>
+<div class="viewcode-block" id="JOINT_STATES_TOPIC"><a class="viewcode-back" href="../autoapi/joint_efforts_dynamic_reconfigure_server/index.html#joint_efforts_dynamic_reconfigure_server.JOINT_STATES_TOPIC">[docs]</a><span class="n">JOINT_STATES_TOPIC</span> <span class="o">=</span> <span class="s2">&quot;joint_states&quot;</span></div>
+<div class="viewcode-block" id="GRIPPER_ACTION_NAME"><a class="viewcode-back" href="../autoapi/joint_efforts_dynamic_reconfigure_server/index.html#joint_efforts_dynamic_reconfigure_server.GRIPPER_ACTION_NAME">[docs]</a><span class="n">GRIPPER_ACTION_NAME</span> <span class="o">=</span> <span class="s2">&quot;franka_gripper/move&quot;</span></div>
+
+
+<div class="viewcode-block" id="JointEffortsDynamicReconfigureServer"><a class="viewcode-back" href="../autoapi/joint_efforts_dynamic_reconfigure_server/index.html#joint_efforts_dynamic_reconfigure_server.JointEffortsDynamicReconfigureServer">[docs]</a><span class="k">class</span> <span class="nc">JointEffortsDynamicReconfigureServer</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A small node that spins up a dynamic reconfigure server that can be used to</span>
+<span class="sd">    change the panda arm joint efforts and gripper width.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialise JointEffortsDynamicReconfigureServer object.&quot;&quot;&quot;</span>
+        <span class="n">rospy</span><span class="o">.</span><span class="n">loginfo</span><span class="p">(</span><span class="s2">&quot;Starting dynamic reconfigure server...&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">srv</span> <span class="o">=</span> <span class="n">Server</span><span class="p">(</span><span class="n">JointEffortsConfig</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">callback</span><span class="p">)</span>
+
+        <span class="c1"># Create joint efforts publisher.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arm_pub</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Publisher</span><span class="p">(</span><span class="n">ARM_TOPIC</span><span class="p">,</span> <span class="n">Float64MultiArray</span><span class="p">,</span> <span class="n">queue_size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+        <span class="c1"># Create gripper width publisher.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gripper_move_client</span> <span class="o">=</span> <span class="n">actionlib</span><span class="o">.</span><span class="n">SimpleActionClient</span><span class="p">(</span>
+            <span class="n">GRIPPER_ACTION_NAME</span><span class="p">,</span> <span class="n">MoveAction</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gripper_connected</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gripper_move_client</span><span class="o">.</span><span class="n">wait_for_server</span><span class="p">(</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="n">rospy</span><span class="o">.</span><span class="n">Duration</span><span class="p">(</span><span class="n">secs</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="JointEffortsDynamicReconfigureServer.callback"><a class="viewcode-back" href="../autoapi/joint_efforts_dynamic_reconfigure_server/index.html#joint_efforts_dynamic_reconfigure_server.JointEffortsDynamicReconfigureServer.callback">[docs]</a>    <span class="k">def</span> <span class="nf">callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">level</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Dynamic reconfigure callback function.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            config (dict): Dictionary containing the new configuration.</span>
+<span class="sd">            level (int): Level of the dynamic reconfigure server. Represents the</span>
+<span class="sd">                variable that was changed or if -1 that the server was just started.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">level</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_initialize_joint_states</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_log_reconfigure_request</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">level</span> <span class="o">&lt;</span> <span class="mi">7</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_publish_joint_efforts</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">level</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gripper_connected</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_send_gripper_command</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">rospy</span><span class="o">.</span><span class="n">logwarn_once</span><span class="p">(</span>
+                        <span class="s2">&quot;Gripper commands not applied since the gripper command &quot;</span>
+                        <span class="s2">&quot;action was not found.&quot;</span>
+                    <span class="p">)</span>
+        <span class="k">return</span> <span class="n">config</span></div>
+
+    <span class="k">def</span> <span class="nf">_initialize_joint_states</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set initial joint states.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            config (dict): Dictionary containing the new configuration.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rospy</span><span class="o">.</span><span class="n">loginfo</span><span class="p">(</span><span class="s2">&quot;Waiting for initial joint states...&quot;</span><span class="p">)</span>
+        <span class="n">joint_states</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">wait_for_message</span><span class="p">(</span><span class="n">JOINT_STATES_TOPIC</span><span class="p">,</span> <span class="n">JointState</span><span class="p">)</span>
+        <span class="n">position_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">joint_states</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">joint_states</span><span class="o">.</span><span class="n">position</span><span class="p">))</span>
+        <span class="n">effort_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">joint_states</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">joint_states</span><span class="o">.</span><span class="n">effort</span><span class="p">))</span>
+        <span class="n">set_values</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">effort_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">set_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">position_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+            <span class="o">**</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">([</span><span class="n">key</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="n">key</span> <span class="o">!=</span> <span class="s2">&quot;groups&quot;</span><span class="p">],</span> <span class="n">set_values</span><span class="p">))</span>
+        <span class="p">)</span>
+        <span class="n">rospy</span><span class="o">.</span><span class="n">loginfo</span><span class="p">(</span><span class="s2">&quot;Initial joint states retrieved.&quot;</span><span class="p">)</span>
+        <span class="n">rospy</span><span class="o">.</span><span class="n">loginfo</span><span class="p">(</span><span class="s2">&quot;Dynamic reconfigure server started.&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_log_reconfigure_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Log reconfigure request.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            config (dict): Dictionary containing the new configuration.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rospy</span><span class="o">.</span><span class="n">loginfo</span><span class="p">(</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Reconfigure Request: </span><span class="si">{joint1_effort}</span><span class="s2">, </span><span class="si">{joint2_effort}</span><span class="s2">, &quot;</span>
+                <span class="s2">&quot;</span><span class="si">{joint3_effort}</span><span class="s2">, </span><span class="si">{joint4_effort}</span><span class="s2">, </span><span class="si">{joint5_effort}</span><span class="s2">, </span><span class="si">{joint6_effort}</span><span class="s2">, &quot;</span>
+                <span class="s2">&quot;</span><span class="si">{joint7_effort}</span><span class="s2">, </span><span class="si">{width}</span><span class="s2">, </span><span class="si">{speed}</span><span class="s2">&quot;</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_publish_joint_efforts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Publish joint efforts.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            config (dict): Dictionary containing the new configuration.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arm_pub</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">Float64MultiArray</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">values</span><span class="p">())[:</span><span class="mi">7</span><span class="p">]))</span>
+
+    <span class="k">def</span> <span class="nf">_send_gripper_command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Send gripper command.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            config (dict): Dictionary containing the new configuration.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">move_goal</span> <span class="o">=</span> <span class="n">MoveGoal</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;width&quot;</span><span class="p">],</span> <span class="n">speed</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;speed&quot;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gripper_move_client</span><span class="o">.</span><span class="n">send_goal</span><span class="p">(</span><span class="n">move_goal</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gripper_move_client</span><span class="o">.</span><span class="n">wait_for_result</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="p">:</span>
+            <span class="n">rospy</span><span class="o">.</span><span class="n">logerr</span><span class="p">(</span><span class="s2">&quot;Something went wrong while setting the gripper commands.&quot;</span><span class="p">)</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">rospy</span><span class="o">.</span><span class="n">init_node</span><span class="p">(</span><span class="s2">&quot;joint_efforts_reconfig_server&quot;</span><span class="p">,</span> <span class="n">anonymous</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">JointEffortsDynamicReconfigureServer</span><span class="p">()</span>
+        <span class="n">rospy</span><span class="o">.</span><span class="n">spin</span><span class="p">()</span>
+    <span class="k">except</span> <span class="n">rospy</span><span class="o">.</span><span class="n">ROSInterruptException</span><span class="p">:</span>
+        <span class="n">rospy</span><span class="o">.</span><span class="n">logerr</span><span class="p">(</span><span class="s2">&quot;ROS node interrupted.&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">rospy</span><span class="o">.</span><span class="n">logerr</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unexpected error occurred: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Rick Staa.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

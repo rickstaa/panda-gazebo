@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>panda_gazebo.common.helpers &mdash; Panda Gazebo 2.17.6 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=eafc0fe6" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/modify.css?v=519ed47b" />
+
+  
+    <link rel="shortcut icon" href="../../../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js?v=fe1d5c58"></script>
+        <script src="../../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="panda_gazebo.core" href="../../core/index.html" />
+    <link rel="prev" title="panda_gazebo.common.controller_info_dict" href="../controller_info_dict/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.17.6
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../get_started/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../get_started/usage.html">How to use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../get_started/issues.html">Known Issues</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../dev/contributing.html">Contribute to panda-gazebo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../dev/doc_dev.html">Release documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../dev/license.html">License</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../index.html#ros-api">ROS API</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../../index.html#python-api">Python API</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">panda_gazebo</span></code></a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="../../index.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../index.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../index.html#package-contents">Package Contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../panda_control_server/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">panda_control_server</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../panda_moveit_server/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">panda_moveit_server</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../joint_positions_dynamic_reconfigure_server/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">joint_positions_dynamic_reconfigure_server</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../set_logging_level/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">set_logging_level</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../joint_efforts_dynamic_reconfigure_server/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">joint_efforts_dynamic_reconfigure_server</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Panda Gazebo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">panda_gazebo</span></code></a></li>
+          <li class="breadcrumb-item"><a href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">panda_gazebo.common</span></code></a></li>
+      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">panda_gazebo.common.helpers</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/rickstaa/panda-gazebo/blob/noetic/panda_gazebo/docs/source/autoapi/panda_gazebo/common/helpers/index.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-panda_gazebo.common.helpers">
+<span id="panda-gazebo-common-helpers"></span><h1><a class="reference internal" href="#module-panda_gazebo.common.helpers" title="panda_gazebo.common.helpers"><code class="xref py py-mod docutils literal notranslate"><span class="pre">panda_gazebo.common.helpers</span></code></a><a class="headerlink" href="#module-panda_gazebo.common.helpers" title="Permalink to this heading"></a></h1>
+<p>Module containing some additional helper functions used in the
+<a class="reference external" href="https://github.com/rickstaa/panda-gazebo/">panda_gazebo</a> package.</p>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this heading"></a></h2>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h3>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#panda_gazebo.common.helpers.joint_state_dict_2_joint_state_msg" title="panda_gazebo.common.helpers.joint_state_dict_2_joint_state_msg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">joint_state_dict_2_joint_state_msg</span></code></a>(joint_state_dict[, ...])</p></td>
+<td><p>Converts a joint_state dictionary into a JointState msgs.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#panda_gazebo.common.helpers.action_dict_2_joint_trajectory_msg" title="panda_gazebo.common.helpers.action_dict_2_joint_trajectory_msg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">action_dict_2_joint_trajectory_msg</span></code></a>(action_dict[, ...])</p></td>
+<td><p>Converts an action dictionary into a panda_gazebo <code class="docutils literal notranslate"><span class="pre">FollowJointTrajectoryGoal</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#panda_gazebo.common.helpers.panda_action_msg_2_control_msgs_action_msg" title="panda_gazebo.common.helpers.panda_action_msg_2_control_msgs_action_msg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">panda_action_msg_2_control_msgs_action_msg</span></code></a>(...)</p></td>
+<td><p>Converts a :class:<a href="#id1"><span class="problematic" id="id2">``</span></a>panda_gazebo.msg.FollowJointTrajectoryActionGoal` action</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#panda_gazebo.common.helpers.controller_list_array_2_dict" title="panda_gazebo.common.helpers.controller_list_array_2_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">controller_list_array_2_dict</span></code></a>(controller_list_msgs)</p></td>
+<td><p>Converts a <a class="reference external" href="https://docs.ros.org/api/controller_manager_msgs/html/srv/ListControllers.html">Controller_manager/list_controllers</a></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#panda_gazebo.common.helpers.translate_actionclient_result_error_code" title="panda_gazebo.common.helpers.translate_actionclient_result_error_code"><code class="xref py py-obj docutils literal notranslate"><span class="pre">translate_actionclient_result_error_code</span></code></a>(...)</p></td>
+<td><p>Translates the error code returned by the SimpleActionClient.get_result()</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#panda_gazebo.common.helpers.translate_moveit_error_code" title="panda_gazebo.common.helpers.translate_moveit_error_code"><code class="xref py py-obj docutils literal notranslate"><span class="pre">translate_moveit_error_code</span></code></a>(moveit_error_code)</p></td>
+<td><p>Translates a MoveIt error code object into a human readable error message.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#panda_gazebo.common.helpers.lower_first_char" title="panda_gazebo.common.helpers.lower_first_char"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lower_first_char</span></code></a>(string)</p></td>
+<td><p>De-capitalize the first letter of a string.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#panda_gazebo.common.helpers.wrap_space_around" title="panda_gazebo.common.helpers.wrap_space_around"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrap_space_around</span></code></a>(text)</p></td>
+<td><p>Wrap one additional space around text if it is not already present.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#panda_gazebo.common.helpers.list_2_human_text" title="panda_gazebo.common.helpers.list_2_human_text"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_2_human_text</span></code></a>(input_list[, separator, end_separator])</p></td>
+<td><p>Function converts a list of values into human readable sentence.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#panda_gazebo.common.helpers.dict_clean" title="panda_gazebo.common.helpers.dict_clean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict_clean</span></code></a>(input_dict)</p></td>
+<td><p>Removes empty dictionary keys from a dictionary and returns a cleaned up</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#panda_gazebo.common.helpers.get_unique_list" title="panda_gazebo.common.helpers.get_unique_list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_unique_list</span></code></a>(input_list[, trim])</p></td>
+<td><p>Removes non-unique items from a list.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#panda_gazebo.common.helpers.get_duplicate_list" title="panda_gazebo.common.helpers.get_duplicate_list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_duplicate_list</span></code></a>(input_list)</p></td>
+<td><p>Returns the duplicates in a list.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#panda_gazebo.common.helpers.flatten_list" title="panda_gazebo.common.helpers.flatten_list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flatten_list</span></code></a>(input_list)</p></td>
+<td><p>Function used to flatten a list containing sublists. It does this by calling</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#panda_gazebo.common.helpers.action_server_exists" title="panda_gazebo.common.helpers.action_server_exists"><code class="xref py py-obj docutils literal notranslate"><span class="pre">action_server_exists</span></code></a>(topic_name)</p></td>
+<td><p>Checks whether a topic contains an action server</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#panda_gazebo.common.helpers.quaternion_norm" title="panda_gazebo.common.helpers.quaternion_norm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quaternion_norm</span></code></a>(quaternion)</p></td>
+<td><p>Calculates the norm of a quaternion.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#panda_gazebo.common.helpers.normalize_quaternion" title="panda_gazebo.common.helpers.normalize_quaternion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalize_quaternion</span></code></a>(quaternion)</p></td>
+<td><p>Normalizes a given quaternion.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#panda_gazebo.common.helpers.vector_norm" title="panda_gazebo.common.helpers.vector_norm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">vector_norm</span></code></a>(vector)</p></td>
+<td><p>Calculates the norm of a vector.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#panda_gazebo.common.helpers.normalize_vector" title="panda_gazebo.common.helpers.normalize_vector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalize_vector</span></code></a>(vector[, force])</p></td>
+<td><p>Normalizes a given vector.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#panda_gazebo.common.helpers.ros_exit_gracefully" title="panda_gazebo.common.helpers.ros_exit_gracefully"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ros_exit_gracefully</span></code></a>([shutdown_msg, exit_code])</p></td>
+<td><p>Shuts down the ROS node wait until it is shutdown and exits the script.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#panda_gazebo.common.helpers.load_panda_joint_limits" title="panda_gazebo.common.helpers.load_panda_joint_limits"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_panda_joint_limits</span></code></a>()</p></td>
+<td><p>Loads the joint limits of the Panda robot from the parameter server.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="panda_gazebo.common.helpers.joint_state_dict_2_joint_state_msg">
+<span class="sig-prename descclassname"><span class="pre">panda_gazebo.common.helpers.</span></span><span class="sig-name descname"><span class="pre">joint_state_dict_2_joint_state_msg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">joint_state_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'position'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/panda_gazebo/common/helpers.html#joint_state_dict_2_joint_state_msg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.common.helpers.joint_state_dict_2_joint_state_msg" title="Permalink to this definition"></a></dt>
+<dd><p>Converts a joint_state dictionary into a JointState msgs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>joint_state_dict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><em>dict</em></a>) – Dictionary specifying joint values for each joint
+(key).</p></li>
+<li><p><strong>type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>, </em><em>optional</em>) – The state type. Options are <code class="docutils literal notranslate"><span class="pre">velocity</span></code>, <code class="docutils literal notranslate"><span class="pre">effort</span></code> and
+<code class="docutils literal notranslate"><span class="pre">position</span></code>. Defaults to “position”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A JoinState message.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sensor_msgs.msg.JointState</span></code></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.12)"><strong>ValueError</strong></a> – If the type is not one of the expected values.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="panda_gazebo.common.helpers.action_dict_2_joint_trajectory_msg">
+<span class="sig-prename descclassname"><span class="pre">panda_gazebo.common.helpers.</span></span><span class="sig-name descname"><span class="pre">action_dict_2_joint_trajectory_msg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">create_time_axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_axis_step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/panda_gazebo/common/helpers.html#action_dict_2_joint_trajectory_msg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.common.helpers.action_dict_2_joint_trajectory_msg" title="Permalink to this definition"></a></dt>
+<dd><p>Converts an action dictionary into a panda_gazebo <code class="docutils literal notranslate"><span class="pre">FollowJointTrajectoryGoal</span></code>
+msgs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>action_dict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><em>dict</em></a>) – Dictionary containing actions and joints.</p></li>
+<li><p><strong>create_time_axis</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – Whether you want to automatically create a joint
+trajectory time axis if it is not yet present.</p></li>
+<li><p><strong>time_axis_step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – The size of the time steps used for generating the time
+axis.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>New FollowJointTrajectoryGoal</dt><dd><p>message.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../msg/index.html#panda_gazebo.msg.FollowJointTrajectoryGoal" title="panda_gazebo.msg.FollowJointTrajectoryGoal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">panda_gazebo.msg.FollowJointTrajectoryGoal</span></code></a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValuesError</strong> – When the action_dict is invalid.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="panda_gazebo.common.helpers.panda_action_msg_2_control_msgs_action_msg">
+<span class="sig-prename descclassname"><span class="pre">panda_gazebo.common.helpers.</span></span><span class="sig-name descname"><span class="pre">panda_action_msg_2_control_msgs_action_msg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">panda_action_msg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/panda_gazebo/common/helpers.html#panda_action_msg_2_control_msgs_action_msg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.common.helpers.panda_action_msg_2_control_msgs_action_msg" title="Permalink to this definition"></a></dt>
+<dd><p>Converts a :class:<a href="#id3"><span class="problematic" id="id4">``</span></a>panda_gazebo.msg.FollowJointTrajectoryActionGoal` action
+message into a <a class="reference external" href="https://docs.ros.org/api/control_msgs/html/action/FollowJointTrajectory.html">control_msgs/FollowJointTrajectoryGoal</a> action message.</p>
+<dl class="simple">
+<dt>:param panda_action_msg <code class="xref py py-obj docutils literal notranslate"><span class="pre">control_msgs.msg.FollowJointTrajectoryGoal</span></code>: Panda_gazebo</dt><dd><p>follow joint trajectory goal message.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>Control_msgs follow joint</dt><dd><p>trajectory goal message.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">control_msgs.msg.FollowJointTrajectoryGoal</span></code></p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.12)"><strong>TypeError</strong></a> – If panda_action_msg is not of type
+<a class="reference internal" href="../../msg/index.html#panda_gazebo.msg.FollowJointTrajectoryGoal" title="panda_gazebo.msg.FollowJointTrajectoryGoal"><code class="xref py py-class docutils literal notranslate"><span class="pre">panda_gazebo.msg.FollowJointTrajectoryGoal</span></code></a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="panda_gazebo.common.helpers.controller_list_array_2_dict">
+<span class="sig-prename descclassname"><span class="pre">panda_gazebo.common.helpers.</span></span><span class="sig-name descname"><span class="pre">controller_list_array_2_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">controller_list_msgs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/panda_gazebo/common/helpers.html#controller_list_array_2_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.common.helpers.controller_list_array_2_dict" title="Permalink to this definition"></a></dt>
+<dd><p>Converts a <a class="reference external" href="https://docs.ros.org/api/controller_manager_msgs/html/srv/ListControllers.html">Controller_manager/list_controllers</a>
+message into a controller information dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>controller_list_msgs</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">controller_manager_msgs.srv.ListControllersResponse</span></code>) – Controller_manager/list_controllers service response message.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary containing information about all the available controllers.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)">dict</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.12)"><strong>TypeError</strong></a> – If controller_list_msgs is not of type
+controller_manager_msgs.srv.ListControllersResponse.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="panda_gazebo.common.helpers.translate_actionclient_result_error_code">
+<span class="sig-prename descclassname"><span class="pre">panda_gazebo.common.helpers.</span></span><span class="sig-name descname"><span class="pre">translate_actionclient_result_error_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">actionclient_retval</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/panda_gazebo/common/helpers.html#translate_actionclient_result_error_code"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.common.helpers.translate_actionclient_result_error_code" title="Permalink to this definition"></a></dt>
+<dd><p>Translates the error code returned by the SimpleActionClient.get_result()
+function into a human readable error message.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>actionclient_retval</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">control_msgs.msg.FollowJointTrajectoryResult</span></code>) – The
+result that is returned by the
+<code class="xref py py-func docutils literal notranslate"><span class="pre">actionlib.simple_action_client.SimpleActionClient.get_result()</span></code>
+function.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Error string that corresponds to the error code.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.12)"><strong>TypeError</strong></a> – If actionclient_retval is not of type
+control_msgs.msg.FollowJointTrajectoryResult.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="panda_gazebo.common.helpers.translate_moveit_error_code">
+<span class="sig-prename descclassname"><span class="pre">panda_gazebo.common.helpers.</span></span><span class="sig-name descname"><span class="pre">translate_moveit_error_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">moveit_error_code</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/panda_gazebo/common/helpers.html#translate_moveit_error_code"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.common.helpers.translate_moveit_error_code" title="Permalink to this definition"></a></dt>
+<dd><p>Translates a MoveIt error code object into a human readable error message.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>moveit_error_code</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">MoveItErrorCodes</span></code>) – The MoveIt error code object</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Error string that corresponds to the error code.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.12)"><strong>TypeError</strong></a> – If moveit_error_code is not of type
+moveit_msgs.msg.MoveItErrorCodes.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="panda_gazebo.common.helpers.lower_first_char">
+<span class="sig-prename descclassname"><span class="pre">panda_gazebo.common.helpers.</span></span><span class="sig-name descname"><span class="pre">lower_first_char</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/panda_gazebo/common/helpers.html#lower_first_char"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.common.helpers.lower_first_char" title="Permalink to this definition"></a></dt>
+<dd><p>De-capitalize the first letter of a string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>string</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – The input string.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The de-capitalized string.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.12)"><strong>TypeError</strong></a> – If text is not of type str.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function is not the exact opposite of the capitalize function of the
+standard library. For example, capitalize(‘abC’) returns Abc rather than AbC.</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="panda_gazebo.common.helpers.wrap_space_around">
+<span class="sig-prename descclassname"><span class="pre">panda_gazebo.common.helpers.</span></span><span class="sig-name descname"><span class="pre">wrap_space_around</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/panda_gazebo/common/helpers.html#wrap_space_around"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.common.helpers.wrap_space_around" title="Permalink to this definition"></a></dt>
+<dd><p>Wrap one additional space around text if it is not already present.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>text</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – Text</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Text with extra spaces around it.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.12)"><strong>TypeError</strong></a> – If text is not of type str.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="panda_gazebo.common.helpers.list_2_human_text">
+<span class="sig-prename descclassname"><span class="pre">panda_gazebo.common.helpers.</span></span><span class="sig-name descname"><span class="pre">list_2_human_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">','</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_separator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'&amp;'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/panda_gazebo/common/helpers.html#list_2_human_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.common.helpers.list_2_human_text" title="Permalink to this definition"></a></dt>
+<dd><p>Function converts a list of values into human readable sentence.</p>
+<p class="rubric">Example</p>
+<p>Using this function a list of 4 items <code class="docutils literal notranslate"><span class="pre">[item1,</span> <span class="pre">item2,</span> <span class="pre">item3,</span> <span class="pre">item4]</span></code> becomes
+<code class="docutils literal notranslate"><span class="pre">item2,</span> <span class="pre">item3</span> <span class="pre">and</span> <span class="pre">item4</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input_list</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A input list.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A human readable string that can be printed.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.12)"><strong>TypeError</strong></a> – If input_list is not of type list or tuple.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="panda_gazebo.common.helpers.dict_clean">
+<span class="sig-prename descclassname"><span class="pre">panda_gazebo.common.helpers.</span></span><span class="sig-name descname"><span class="pre">dict_clean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/panda_gazebo/common/helpers.html#dict_clean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.common.helpers.dict_clean" title="Permalink to this definition"></a></dt>
+<dd><p>Removes empty dictionary keys from a dictionary and returns a cleaned up
+dictionary. Empty meaning an empty list, string or dict or a None value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input_dict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><em>dict</em></a>) – The input dictionary.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The cleaned dictionary.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)">dict</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.12)"><strong>TypeError</strong></a> – If input_dict is not of type dict.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="panda_gazebo.common.helpers.get_unique_list">
+<span class="sig-prename descclassname"><span class="pre">panda_gazebo.common.helpers.</span></span><span class="sig-name descname"><span class="pre">get_unique_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/panda_gazebo/common/helpers.html#get_unique_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.common.helpers.get_unique_list" title="Permalink to this definition"></a></dt>
+<dd><p>Removes non-unique items from a list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_list</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – The input list.</p></li>
+<li><p><strong>trim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>, </em><em>optional</em>) – Trim empty items. Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The new list containing only unique items.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)">list</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.12)"><strong>TypeError</strong></a> – If input_list is not of type list.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="panda_gazebo.common.helpers.get_duplicate_list">
+<span class="sig-prename descclassname"><span class="pre">panda_gazebo.common.helpers.</span></span><span class="sig-name descname"><span class="pre">get_duplicate_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/panda_gazebo/common/helpers.html#get_duplicate_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.common.helpers.get_duplicate_list" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the duplicates in a list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input_list</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – The input list.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The new list containing only the items that had duplicates.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)">list</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.12)"><strong>TypeError</strong></a> – If input_list is not of type list.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="panda_gazebo.common.helpers.flatten_list">
+<span class="sig-prename descclassname"><span class="pre">panda_gazebo.common.helpers.</span></span><span class="sig-name descname"><span class="pre">flatten_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/panda_gazebo/common/helpers.html#flatten_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.common.helpers.flatten_list" title="Permalink to this definition"></a></dt>
+<dd><p>Function used to flatten a list containing sublists. It does this by calling
+itself recursively.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input_list</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A list containing strings or other lists.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The flattened list.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)">list</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.12)"><strong>TypeError</strong></a> – If input_list is not of type list.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="panda_gazebo.common.helpers.action_server_exists">
+<span class="sig-prename descclassname"><span class="pre">panda_gazebo.common.helpers.</span></span><span class="sig-name descname"><span class="pre">action_server_exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">topic_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/panda_gazebo/common/helpers.html#action_server_exists"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.common.helpers.action_server_exists" title="Permalink to this definition"></a></dt>
+<dd><p>Checks whether a topic contains an action server
+is running.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>topic_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – Action server topic name.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Boolean specifying whether the action service exists.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)">bool</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.12)"><strong>TypeError</strong></a> – If topic_name is not of type str.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="panda_gazebo.common.helpers.quaternion_norm">
+<span class="sig-prename descclassname"><span class="pre">panda_gazebo.common.helpers.</span></span><span class="sig-name descname"><span class="pre">quaternion_norm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">quaternion</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/panda_gazebo/common/helpers.html#quaternion_norm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.common.helpers.quaternion_norm" title="Permalink to this definition"></a></dt>
+<dd><p>Calculates the norm of a quaternion.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Quaternion</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">geometry_msgs.msg.Quaternion</span></code>) – A quaternion.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The norm of the quaternion.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)">float</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.12)"><strong>TypeError</strong></a> – If quaternion is not of type Quaternion.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="panda_gazebo.common.helpers.normalize_quaternion">
+<span class="sig-prename descclassname"><span class="pre">panda_gazebo.common.helpers.</span></span><span class="sig-name descname"><span class="pre">normalize_quaternion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">quaternion</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/panda_gazebo/common/helpers.html#normalize_quaternion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.common.helpers.normalize_quaternion" title="Permalink to this definition"></a></dt>
+<dd><p>Normalizes a given quaternion.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>quaternion</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">geometry_msgs.msg.Quaternion</span></code>) – A quaternion.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The normalized quaternion.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">geometry_msgs.msg.Quaternion</span></code></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.12)"><strong>TypeError</strong></a> – If quaternion is not of type Quaternion.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="panda_gazebo.common.helpers.vector_norm">
+<span class="sig-prename descclassname"><span class="pre">panda_gazebo.common.helpers.</span></span><span class="sig-name descname"><span class="pre">vector_norm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vector</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/panda_gazebo/common/helpers.html#vector_norm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.common.helpers.vector_norm" title="Permalink to this definition"></a></dt>
+<dd><p>Calculates the norm of a vector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>vector</strong> (<em>union</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.12)"><em>tuple</em></a><em>, </em><em>np.array</em><em>]</em>) – A vector.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The norm of the vector.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)">float</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.12)"><strong>TypeError</strong></a> – If vector is not of type list or tuple.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="panda_gazebo.common.helpers.normalize_vector">
+<span class="sig-prename descclassname"><span class="pre">panda_gazebo.common.helpers.</span></span><span class="sig-name descname"><span class="pre">normalize_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/panda_gazebo/common/helpers.html#normalize_vector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.common.helpers.normalize_vector" title="Permalink to this definition"></a></dt>
+<dd><p>Normalizes a given vector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vector</strong> (<em>union</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.12)"><em>tuple</em></a><em>]</em>) – A vector.</p></li>
+<li><p><strong>force</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – Whether to force the vector to have a unit length if the norm is
+zero. Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The normalized vector.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)">list</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.12)"><strong>TypeError</strong></a> – If vector is not of type list or tuple.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="panda_gazebo.common.helpers.ros_exit_gracefully">
+<span class="sig-prename descclassname"><span class="pre">panda_gazebo.common.helpers.</span></span><span class="sig-name descname"><span class="pre">ros_exit_gracefully</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shutdown_msg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exit_code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/panda_gazebo/common/helpers.html#ros_exit_gracefully"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.common.helpers.ros_exit_gracefully" title="Permalink to this definition"></a></dt>
+<dd><p>Shuts down the ROS node wait until it is shutdown and exits the script.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>shutdown_msg</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>, </em><em>optional</em>) – The shutdown message. Defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>exit_code</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a><em>, </em><em>optional</em>) – The exit code. Defaults to <code class="docutils literal notranslate"><span class="pre">0</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="panda_gazebo.common.helpers.load_panda_joint_limits">
+<span class="sig-prename descclassname"><span class="pre">panda_gazebo.common.helpers.</span></span><span class="sig-name descname"><span class="pre">load_panda_joint_limits</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/panda_gazebo/common/helpers.html#load_panda_joint_limits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.common.helpers.load_panda_joint_limits" title="Permalink to this definition"></a></dt>
+<dd><p>Loads the joint limits of the Panda robot from the parameter server.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>Dictionary containing the joint position limits (i.e. min and max) for</dt><dd><p>each joint. Returns an empty dictionary if the joint limits could not be
+loaded.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../controller_info_dict/index.html" class="btn btn-neutral float-left" title="panda_gazebo.common.controller_info_dict" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../../core/index.html" class="btn btn-neutral float-right" title="panda_gazebo.core" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Rick Staa.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

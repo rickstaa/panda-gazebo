@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How to use &mdash; Panda Gazebo 2.17.6 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/modify.css?v=519ed47b" />
+
+  
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=fe1d5c58"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Known Issues" href="issues.html" />
+    <link rel="prev" title="Installation" href="install.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.17.6
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">How to use</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#usage-instructions">Usage instructions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="issues.html">Known Issues</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../dev/contributing.html">Contribute to panda-gazebo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dev/doc_dev.html">Release documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dev/license.html">License</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Panda Gazebo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">How to use</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/rickstaa/panda-gazebo/blob/noetic/panda_gazebo/docs/source/get_started/usage.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="how-to-use">
+<h1>How to use<a class="headerlink" href="#how-to-use" title="Permalink to this heading"></a></h1>
+<p>The <a class="reference external" href="https://github.com/rickstaa/panda-gazebo/">panda_gazebo</a> package contains three types of launch files: <strong>world</strong>, <strong>robot</strong> and <strong>simulation</strong> launch files.</p>
+<p><strong>World launch files</strong></p>
+<p>World launch files start Gazebo and load a world where the Panda robot can be trained. <em>They don’t spawn the robot</em>.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">start_reach_world.launch</span></code>: Provides a clear environment for reach task training with the robot.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">start_push_world.launch</span></code>: Positions the Panda robot and a box on a table for push task simulations.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">start_pick_and_place_world.launch</span></code>: Includes a table and cube, creating a scenario for pick-and-place exercises.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">start_slide_world.launch</span></code>: Contains a puck and a designated target area to practice precision sliding tasks.</p></li>
+</ul>
+</div></blockquote>
+<p><strong>Robot launch file</strong></p>
+<p>The <code class="docutils literal notranslate"><span class="pre">put_robot_in_world.launch</span></code> robot launch files spawn the Panda robot in Gazebo and load the required control services. The robot currently contains three control
+modes that can be selected using the <code class="docutils literal notranslate"><span class="pre">control_mode</span></code> argument:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">trajectory</span></code>: The robot is controlled using joint position trajectories.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">position</span></code>: The robot is controlled using joint position commands.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">effort</span></code>: The robot is controlled using joint effort commands.</p></li>
+</ul>
+</div></blockquote>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You can test different control modes using the <a class="reference internal" href="../autoapi/joint_efforts_dynamic_reconfigure_server/index.html#module-joint_efforts_dynamic_reconfigure_server" title="joint_efforts_dynamic_reconfigure_server"><code class="xref py py-mod docutils literal notranslate"><span class="pre">joint_efforts_dynamic_reconfigure_server</span></code></a> and <a class="reference internal" href="../autoapi/joint_positions_dynamic_reconfigure_server/index.html#module-joint_positions_dynamic_reconfigure_server" title="joint_positions_dynamic_reconfigure_server"><code class="xref py py-mod docutils literal notranslate"><span class="pre">joint_positions_dynamic_reconfigure_server</span></code></a> nodes.
+These nodes allow you to send joint efforts and joint positions to the robot. To learn more about utilizing these dynamic reconfigure servers, refer to the
+documentation of the <a class="reference external" href="https://wiki.ros.org/dynamic_reconfigure">dynamic_reconfigure</a> and <a class="reference external" href="https://wiki.ros.org/rqt_reconfigure">rqt_reconfigure</a> ROS packages.</p>
+<p>Furthermore, you can explore trajectory control using the <a class="reference external" href="https://moveit.ros.org/">MoveIt! package</a> or <a class="reference external" href="https://wiki.ros.org/rqt_joint_trajectory_controller">rqt_joint_trajectory_controller package</a>. To enable <cite>MoveIt!</cite>, set the
+<code class="docutils literal notranslate"><span class="pre">use_moveit</span></code> launch file argument to <code class="docutils literal notranslate"><span class="pre">true</span></code>. Once enabled, you can control the robot through the <a class="reference external" href="https://ros-planning.github.io/moveit_tutorials/doc/quickstart_in_rviz/quickstart_in_rviz_tutorial.html">RViz Motion Planning</a> panel. For detailed instructions on how to
+use <a class="reference external" href="https://ros-planning.github.io/moveit_tutorials/">MoveIt!</a>, consult the <a class="reference external" href="https://ros-planning.github.io/moveit_tutorials/">MoveIt! tutorials</a>.</p>
+</div>
+<p><strong>Simulation launch file</strong></p>
+<p>The <code class="docutils literal notranslate"><span class="pre">start_simulation.launch</span></code> launch file combines the two other launch files to start the gazebo world and spawns the Panda robot.</p>
+<section id="usage-instructions">
+<h2>Usage instructions<a class="headerlink" href="#usage-instructions" title="Permalink to this heading"></a></h2>
+<p>You can launch any launch files using the <code class="docutils literal notranslate"><span class="pre">roslaunch</span></code> command-line tool. For example, if you want to start a gazebo simulation
+of the Panda robot, you can use the following <code class="docutils literal notranslate"><span class="pre">roslaunch</span></code> command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>roslaunch<span class="w"> </span>panda_gazebo<span class="w"> </span>start_simulation.launch
+</pre></div>
+</div>
+<p>The note you’ve provided is clear and informative, but you can improve it further by organizing the information more effectively and making it easier to read. Here’s a revised version:</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="install.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="issues.html" class="btn btn-neutral float-right" title="Known Issues" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Rick Staa.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

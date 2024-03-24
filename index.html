@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome to panda-gazebo documentation &mdash; Panda Gazebo 2.17.6 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=eafc0fe6" />
+      <link rel="stylesheet" type="text/css" href="_static/css/modify.css?v=519ed47b" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=fe1d5c58"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Installation" href="get_started/install.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#">
+            
+              <img src="_static/logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.17.6
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="get_started/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="get_started/usage.html">How to use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="get_started/issues.html">Known Issues</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="dev/contributing.html">Contribute to panda-gazebo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dev/doc_dev.html">Release documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dev/license.html">License</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="autoapi/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">Panda Gazebo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Welcome to panda-gazebo documentation</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/rickstaa/panda-gazebo/blob/noetic/panda_gazebo/docs/source/index.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="welcome-to-panda-gazebo-documentation">
+<h1>Welcome to panda-gazebo documentation<a class="headerlink" href="#welcome-to-panda-gazebo-documentation" title="Permalink to this heading"></a></h1>
+<img alt="Panda Gazebo environment" src="_images/panda_environment.png" />
+<p>Welcome to the API documentation for the <a class="reference external" href="https://github.com/rickstaa/panda-gazebo/">panda_gazebo</a> package. This package
+contains all the ROS packages needed for creating a <a class="reference external" href="https://frankaemika.github.io/docs">Panda Emika Franka</a> Gazebo simulation. It
+is used by the <a class="reference external" href="https://github.com/rickstaa/ros-gazebo-gym/tree/noetic/">ros_gazebo_gym</a> RL framework to create the Panda task environments.
+It wraps the <a class="reference external" href="https://github.com/frankaemika/franka_ros">franka_ros</a> package to add the functionalities needed to train RL agents efficiently.</p>
+<section id="package-overview">
+<h2>Package Overview<a class="headerlink" href="#package-overview" title="Permalink to this heading"></a></h2>
+<p>The <a class="reference external" href="https://github.com/rickstaa/panda-gazebo/">panda_gazebo</a> package contains several launch files, ROS nodes and a Gazebo plugin that ease the
+<a class="reference external" href="https://github.com/rickstaa/ros-gazebo-gym/tree/noetic/">ros_gazebo_gym</a> interaction with the <a class="reference external" href="https://github.com/frankaemika/franka_ros/tree/develop/franka_gazebo">Panda Gazebo simulation</a>. The launch files
+can spawn the Panda Robot in several distinct task environments. The ROS nodes generate several ROS services that make
+controlling or getting information from the robot easier. The Gazebo plugins can lock specific joints of the Panda robot.
+It also contains a Gazebo world plugin that can be used to lock specific joints of the Panda robot.</p>
+<section id="launch-files">
+<h3>Launch files<a class="headerlink" href="#launch-files" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>put_robot_in_world.launch:</strong> Spawns the Panda robot in a given task environment.</p></li>
+<li><p><strong>Start_pick_and_place_world.launch:</strong> Loads the pick and place task environment.</p></li>
+<li><p><strong>Start_push_world.launch:</strong> Loads the push task environment.</p></li>
+<li><p><strong>Start_reach_world.launch:</strong> Loads the reach task environment.</p></li>
+<li><p><strong>Start_slide_world.launch:</strong> Loads the slide task environment.</p></li>
+<li><p><strong>start_simulation.launch:</strong> Loads the Panda robot in a given task environment.</p></li>
+</ul>
+<p>For more information about these task environments see <a class="reference external" href="https://rickstaa.dev/ros-gazebo-gym/get_started/envs/panda/panda_env.html#task-environments">the ros_gazebo_gym documentation</a>.</p>
+</section>
+<section id="ros-nodes">
+<h3>ROS Nodes<a class="headerlink" href="#ros-nodes" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><dl class="simple">
+<dt><strong>panda_control_server</strong>: Creates services related to the panda_control.</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">get_controlled_joints:</span></code> Returns the panda joints that are currently controlled when using a given control type.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">follow_joint_trajectory:</span></code> Sets the arm joint trajectory and the gripper width.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">set_joint_commands:</span></code> Sets an arm command (i.e. position or effort) based on the specified control type.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">panda_arm/follow_joint_trajectory:</span></code> Sets the arm joint trajectory.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">panda_hand/set_gripper_width:</span></code> Sets the gripper width.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">panda_arm/set_joint_positions:</span></code> Sets the arm positions.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">panda_arm/set_joint_efforts:</span></code> Sets the arm efforts.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>panda_moveit_server</strong>: Creates services to control the robot through <a class="reference external" href="https://moveit.ros.org">MoveIt!</a>.</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">panda_arm/set_ee_pose:</span></code> Sets the end-effector pose.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">get_random_joint_positions</span></code>: Returns random valid joint positions.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">get_random_ee_pose</span></code>: Returns a valid random end-effector pose.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">planning_scene/add_box</span></code>: Adds a box to the MoveIt planning scene</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">planning_scene/add_plane</span></code>: Adds a plane to the MoveIt planning scene</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">panda_arm/get_ee</span></code>: Returns the currently used end-effector link name.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">panda_arm/set_ee</span></code>: Sets the end effector link.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">panda_arm/get_ee_pose</span></code>: Returns the current end-effector pose.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">panda_arm/get_ee_pose_joint_config</span></code>: Returns a set of possible joint configurations for a given end-effector pose.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">panda_arm/get_ee_rpy</span></code>: Returns the current end-effector orientation.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">set_joint_positions</span></code>: Sets the arm and Hand joints positions.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">get_controlled_joints</span></code>: Gets the joints that MoveIt currently controls.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">panda_arm/set_joint_positions</span></code>: Sets the arm joints positions.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">panda_hand/set_joint_positions</span></code>: Sets the hand joints position.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</section>
+<section id="gazebo-plugins">
+<h3>Gazebo plugins<a class="headerlink" href="#gazebo-plugins" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><dl class="simple">
+<dt><strong>panda_joint_locker</strong>: Creates a service to lock/unlock Panda robot’s specific joints.</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">lock_unlock_panda_joints</span></code>: Locks/unlocks the specified joints of the Panda robot.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</section>
+</section>
+<section id="api-documentation">
+<h2>API Documentation<a class="headerlink" href="#api-documentation" title="Permalink to this heading"></a></h2>
+<p>More information about this package’s modules and classes can be found in the <a class="reference internal" href="autoapi/index.html#python-api"><span class="std std-ref">Python API documentation</span></a>. For more
+information about the message the services require, see the <a class="reference internal" href="autoapi/index.html#ros-api"><span class="std std-ref">ROS API documentation</span></a>.</p>
+</section>
+<section id="contents">
+<h2>Contents<a class="headerlink" href="#contents" title="Permalink to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="get_started/install.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="get_started/install.html#install-dependencies">Install dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="get_started/install.html#clone-instructions">Clone instructions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="get_started/install.html#build-instructions">Build instructions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="get_started/usage.html">How to use</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="get_started/usage.html#usage-instructions">Usage instructions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="get_started/issues.html">Known Issues</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="get_started/issues.html#gravity-compensation-bug">Gravity Compensation Bug</a></li>
+<li class="toctree-l2"><a class="reference internal" href="get_started/issues.html#simulation-crashes-with-dart-physics">Simulation Crashes with DART Physics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="get_started/issues.html#gripper-problems-when-vertical">Gripper Problems when Vertical</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="dev/contributing.html">Contribute to panda-gazebo</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dev/contributing.html#contribution-guidelines">Contribution guidelines</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dev/doc_dev.html">Release documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dev/doc_dev.html#install-requirements">Install requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev/doc_dev.html#build-the-documentation">Build the documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev/doc_dev.html#deploying">Deploying</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dev/license.html">License</a></li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="autoapi/index.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="autoapi/index.html#ros-api">ROS API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autoapi/index.html#python-api">Python API</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="indices-and-tables">
+<h2>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="get_started/install.html" class="btn btn-neutral float-right" title="Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Rick Staa.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Known Issues &mdash; Panda Gazebo 2.17.6 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/modify.css?v=519ed47b" />
+
+  
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=fe1d5c58"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Contribute to panda-gazebo" href="../dev/contributing.html" />
+    <link rel="prev" title="How to use" href="usage.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.17.6
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">How to use</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Known Issues</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#gravity-compensation-bug">Gravity Compensation Bug</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#simulation-crashes-with-dart-physics">Simulation Crashes with DART Physics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gripper-problems-when-vertical">Gripper Problems when Vertical</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../dev/contributing.html">Contribute to panda-gazebo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dev/doc_dev.html">Release documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dev/license.html">License</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Panda Gazebo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Known Issues</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/rickstaa/panda-gazebo/blob/noetic/panda_gazebo/docs/source/get_started/issues.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="known-issues">
+<h1>Known Issues<a class="headerlink" href="#known-issues" title="Permalink to this heading"></a></h1>
+<p>This document details the potential issues that may arise while using the <a class="reference external" href="https://github.com/rickstaa/panda-gazebo/">panda_gazebo</a> package. These problems are primarily due to bugs in the upstream <a class="reference external" href="https://frankaemika.github.io/docs/franka_ros.html">franka_ros</a> package, which is utilized by the <a class="reference external" href="https://github.com/rickstaa/panda-gazebo/">panda_gazebo</a> package to simulate the Panda robot. For the most recent updates and solutions, we suggest visiting <a class="reference external" href="https://github.com/rickstaa/panda-gazebo/issues">the issues page</a> on the <a class="reference external" href="https://github.com/rickstaa/panda-gazebo/">GitHub repository</a>.</p>
+<section id="gravity-compensation-bug">
+<h2>Gravity Compensation Bug<a class="headerlink" href="#gravity-compensation-bug" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Issue</strong>: Gravity compensation is not working properly when the robot is effort-controlled.</p></li>
+<li><p><strong>Reference</strong>: <a class="reference external" href="https://github.com/rickstaa/panda-gazebo/issues/39">#39</a></p></li>
+</ul>
+<p>Due to an upstream bug in the <a class="reference external" href="https://github.com/rickstaa/panda-gazebo/">franka_gazebo</a> package, the gravity compensation feature may not function as expected.
+This issue can be mitigated by switching the physics engine from <a class="reference external" href="http://www.ode.org/">ODE</a> to <a class="reference external" href="https://dartsim.github.io/">DART</a> using the <code class="docutils literal notranslate"><span class="pre">physics</span></code> argument in the <code class="docutils literal notranslate"><span class="pre">simulation.launch</span></code> file:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>roslaunch<span class="w"> </span>panda_gazebo<span class="w"> </span>simulation.launch<span class="w"> </span>physics:<span class="o">=</span>Dart
+</pre></div>
+</div>
+</section>
+<section id="simulation-crashes-with-dart-physics">
+<h2>Simulation Crashes with DART Physics<a class="headerlink" href="#simulation-crashes-with-dart-physics" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Issue</strong>: The simulation sometimes crashes when the <a class="reference external" href="https://dartsim.github.io/">DART</a> physics engine is used and the gripper is controlled.</p></li>
+<li><p><strong>Reference</strong>: <a class="reference external" href="https://github.com/rickstaa/panda-gazebo/issues/196">#196</a></p></li>
+</ul>
+<p>Users may experience occasional simulation crashes when using the <a class="reference external" href="https://dartsim.github.io/">DART</a> physics engine and controlling the gripper. We
+recommend switching to the <a class="reference external" href="http://www.ode.org/">ODE</a> physics engine when using the gripper.</p>
+</section>
+<section id="gripper-problems-when-vertical">
+<h2>Gripper Problems when Vertical<a class="headerlink" href="#gripper-problems-when-vertical" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Issue</strong>: The gripper is not working properly when being vertical to the ground.</p></li>
+<li><p><strong>Reference</strong>: <a class="reference external" href="https://github.com/rickstaa/panda-gazebo/issues/33">#33</a></p></li>
+</ul>
+<p>Due to incorrectly tuned PID gains in the <a class="reference external" href="https://github.com/rickstaa/panda-gazebo/">franka_gazebo</a> package, the gripper may not function properly when it is oriented
+vertically to the ground.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="usage.html" class="btn btn-neutral float-left" title="How to use" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../dev/contributing.html" class="btn btn-neutral float-right" title="Contribute to panda-gazebo" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Rick Staa.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

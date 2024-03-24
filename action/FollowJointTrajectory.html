@@ -1,0 +1,30 @@
+<html>
+<head>
+<title>panda_gazebo/FollowJointTrajectory Documentation</title>
+<link type="text/css" rel="stylesheet" href="../msg-styles.css" />
+</head>
+<body>
+
+<div id="container">
+
+<h1 class="msg-title"><a href="../index-msg.html">panda_gazebo</a>/FollowJointTrajectory Action</h1>
+
+<div class="msg">
+
+<h2>File: <span class="filename">panda_gazebo/FollowJointTrajectory.action</filename></h2>
+
+<h2>Action Definition</h2>
+
+<div class="raw-msg">
+<font color="blue">#&nbsp;Follow_joint_trajectory&nbsp;action</font><br/><font color="blue">#&nbsp;NOTE:&nbsp;This&nbsp;action&nbsp;extends&nbsp;the&nbsp;control_msgs/FollowJointTrajectoryAction&nbsp;such&nbsp;that</font><br/><font color="blue">#&nbsp;it&nbsp;also&nbsp;contains&nbsp;values&nbsp;to&nbsp;automatically&nbsp;generate&nbsp;the&nbsp;time&nbsp;axis</font><br/><br/><font color="blue">#&nbsp;The&nbsp;joint&nbsp;trajectory&nbsp;to&nbsp;follow</font><br/>trajectory_msgs/JointTrajectory&nbsp;trajectory<br/><br/><font color="blue">#&nbsp;Tolerances&nbsp;for&nbsp;the&nbsp;trajectory.&nbsp;&nbsp;If&nbsp;the&nbsp;measured&nbsp;joint&nbsp;values&nbsp;fall</font><br/><font color="blue">#&nbsp;outside&nbsp;the&nbsp;tolerances&nbsp;the&nbsp;trajectory&nbsp;goal&nbsp;is&nbsp;aborted.&nbsp;&nbsp;Any</font><br/><font color="blue">#&nbsp;tolerances&nbsp;that&nbsp;are&nbsp;not&nbsp;specified&nbsp;(by&nbsp;being&nbsp;omitted&nbsp;or&nbsp;set&nbsp;to&nbsp;0)&nbsp;are</font><br/><font color="blue">#&nbsp;set&nbsp;to&nbsp;the&nbsp;defaults&nbsp;for&nbsp;the&nbsp;action&nbsp;server&nbsp;(often&nbsp;taken&nbsp;from&nbsp;the</font><br/><font color="blue">#&nbsp;parameter&nbsp;server).</font><br/><br/><font color="blue">#&nbsp;Tolerances&nbsp;applied&nbsp;to&nbsp;the&nbsp;joints&nbsp;as&nbsp;the&nbsp;trajectory&nbsp;is&nbsp;executed.&nbsp;&nbsp;If</font><br/><font color="blue">#&nbsp;violated,&nbsp;the&nbsp;goal&nbsp;aborts&nbsp;with&nbsp;error_code&nbsp;set&nbsp;to</font><br/><font color="blue">#&nbsp;PATH_TOLERANCE_VIOLATED.</font><br/>control_msgs/JointTolerance[]&nbsp;path_tolerance<br/><br/><font color="blue">#&nbsp;To&nbsp;report&nbsp;success,&nbsp;the&nbsp;joints&nbsp;must&nbsp;be&nbsp;within&nbsp;goal_tolerance&nbsp;of&nbsp;the</font><br/><font color="blue">#&nbsp;final&nbsp;trajectory&nbsp;value.&nbsp;&nbsp;The&nbsp;goal&nbsp;must&nbsp;be&nbsp;achieved&nbsp;by&nbsp;time&nbsp;the</font><br/><font color="blue">#&nbsp;trajectory&nbsp;ends&nbsp;plus&nbsp;goal_time_tolerance.&nbsp;&nbsp;(goal_time_tolerance</font><br/><font color="blue">#&nbsp;allows&nbsp;some&nbsp;leeway&nbsp;in&nbsp;time,&nbsp;so&nbsp;that&nbsp;the&nbsp;trajectory&nbsp;goal&nbsp;can&nbsp;still</font><br/><font color="blue">#&nbsp;succeed&nbsp;even&nbsp;if&nbsp;the&nbsp;joints&nbsp;reach&nbsp;the&nbsp;goal&nbsp;some&nbsp;time&nbsp;after&nbsp;the</font><br/><font color="blue">#&nbsp;precise&nbsp;end&nbsp;time&nbsp;of&nbsp;the&nbsp;trajectory).</font><br/><font color="blue">#</font><br/><font color="blue">#&nbsp;If&nbsp;the&nbsp;joints&nbsp;are&nbsp;not&nbsp;within&nbsp;goal_tolerance&nbsp;after&nbsp;"trajectory&nbsp;finish</font><br/><font color="blue">#&nbsp;time"&nbsp;+&nbsp;goal_time_tolerance,&nbsp;the&nbsp;goal&nbsp;aborts&nbsp;with&nbsp;error_code&nbsp;set&nbsp;to</font><br/><font color="blue">#&nbsp;GOAL_TOLERANCE_VIOLATED</font><br/>control_msgs/JointTolerance[]&nbsp;goal_tolerance<br/>duration&nbsp;goal_time_tolerance<br/><br/><font color="blue">#&nbsp;Extra&nbsp;time&nbsp;axis&nbsp;attributes</font><br/><font color="blue">#&nbsp;NOTE:&nbsp;Used&nbsp;for&nbsp;automatic&nbsp;time&nbsp;axis&nbsp;generation</font><br/>bool&nbsp;create_time_axis&nbsp;&nbsp;<font color="blue">#&nbsp;Automatically&nbsp;create&nbsp;a&nbsp;time&nbsp;axis</font><br/>float64&nbsp;time_axis_step&nbsp;&nbsp;<font color="blue">#&nbsp;Time&nbsp;axis&nbsp;step&nbsp;size</font><br/>duration&nbsp;timeout&nbsp;<font color="blue">#&nbsp;Action&nbsp;server&nbsp;timeout.&nbsp;If&nbsp;set&nbsp;to&nbsp;0,&nbsp;no&nbsp;timeout&nbsp;is&nbsp;used&nbsp;and&nbsp;action&nbsp;waits&nbsp;indefinitely.</font><br/><br/>---<br/>int32&nbsp;error_code<br/>int32&nbsp;SUCCESSFUL&nbsp;=&nbsp;0<br/>int32&nbsp;INVALID_GOAL&nbsp;=&nbsp;-1<br/>int32&nbsp;INVALID_JOINTS&nbsp;=&nbsp;-2<br/>int32&nbsp;OLD_HEADER_TIMESTAMP&nbsp;=&nbsp;-3<br/>int32&nbsp;PATH_TOLERANCE_VIOLATED&nbsp;=&nbsp;-4<br/>int32&nbsp;GOAL_TOLERANCE_VIOLATED&nbsp;=&nbsp;-5<br/>int32&nbsp;ACTION_TIMEOUT&nbsp;=&nbsp;-6<br/><br/><font color="blue">#&nbsp;Human&nbsp;readable&nbsp;description&nbsp;of&nbsp;the&nbsp;error&nbsp;code.&nbsp;Contains&nbsp;complementary</font><br/><font color="blue">#&nbsp;information&nbsp;that&nbsp;is&nbsp;especially&nbsp;useful&nbsp;when&nbsp;execution&nbsp;fails,&nbsp;for&nbsp;instance:</font><br/><font color="blue">#&nbsp;-&nbsp;INVALID_GOAL:&nbsp;The&nbsp;reason&nbsp;for&nbsp;the&nbsp;invalid&nbsp;goal&nbsp;(e.g.,&nbsp;the&nbsp;requested</font><br/><font color="blue">#&nbsp;&nbsp;&nbsp;trajectory&nbsp;is&nbsp;in&nbsp;the&nbsp;past).</font><br/><font color="blue">#&nbsp;-&nbsp;INVALID_JOINTS:&nbsp;The&nbsp;mismatch&nbsp;between&nbsp;the&nbsp;expected&nbsp;controller&nbsp;joints</font><br/><font color="blue">#&nbsp;&nbsp;&nbsp;and&nbsp;those&nbsp;provided&nbsp;in&nbsp;the&nbsp;goal.</font><br/><font color="blue">#&nbsp;-&nbsp;PATH_TOLERANCE_VIOLATED&nbsp;and&nbsp;GOAL_TOLERANCE_VIOLATED:&nbsp;Which&nbsp;joint</font><br/><font color="blue">#&nbsp;&nbsp;&nbsp;violated&nbsp;which&nbsp;tolerance,&nbsp;and&nbsp;by&nbsp;how&nbsp;much.</font><br/><font color="blue">#&nbsp;-&nbsp;ACTION_TIMEOUT:&nbsp;The&nbsp;controller&nbsp;failed&nbsp;to&nbsp;achieve&nbsp;the&nbsp;goal&nbsp;before</font><br/><font color="blue">#&nbsp;&nbsp;&nbsp;the&nbsp;specified&nbsp;timeout&nbsp;elapsed.</font><br/>string&nbsp;error_string<br/><br/>---<br/>Header&nbsp;header<br/>string[]&nbsp;joint_names<br/>trajectory_msgs/JointTrajectoryPoint&nbsp;desired<br/>trajectory_msgs/JointTrajectoryPoint&nbsp;actual<br/>trajectory_msgs/JointTrajectoryPoint&nbsp;error<br/><br/>
+</div>
+
+
+</div>
+
+<p class="footer"><small><em>autogenerated on Sun, 24 Mar 2024 18:36:08</em></small></p>
+
+</div>
+
+</body>
+</html>

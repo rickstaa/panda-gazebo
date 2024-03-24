@@ -1,0 +1,323 @@
+:py:mod:`panda_gazebo.core`
+===========================
+
+.. py:module:: panda_gazebo.core
+
+.. autoapi-nested-parse::
+
+   Contains the core components (classes and functions) that are needed for
+   creating the :panda-gazebo:`panda_gazebo <>` simulation.
+
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   control_server/index.rst
+   control_switcher/index.rst
+   moveit_server/index.rst
+
+
+Package Contents
+----------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   panda_gazebo.core.PandaControlServer
+   panda_gazebo.core.PandaControlSwitcher
+   panda_gazebo.core.PandaMoveItPlannerServer
+
+
+
+
+.. py:class:: PandaControlServer(autofill_traj_positions=False, load_gripper=True, load_set_joint_commands_service=True, load_arm_follow_joint_trajectory_action=False, load_extra_services=False, controllers_check_rate=CONTROLLER_INFO_RATE)
+
+
+   Bases: :py:obj:`object`
+
+   Controller server used to send control commands to the simulated Panda Robot.
+
+   .. attribute:: joint_states
+
+      The current joint states.
+
+      :type: :obj:`sensor_msgs.JointState`
+
+   .. attribute:: arm_joint_positions_threshold
+
+      The current threshold for determining
+      whether the arm joint positions are within the given setpoint.
+
+      :type: float
+
+   .. attribute:: arm_joint_efforts_threshold
+
+      The current threshold for determining
+      whether the arm joint efforts are within the given setpoint.
+
+      :type: float
+
+   .. attribute:: arm_velocity_threshold
+
+      The current threshold for determining whether
+      the arm has zero velocity.
+
+      :type: float
+
+   Initialise PandaControlServer object.
+
+   :param autofill_traj_positions: Whether you want to automatically
+                                   set the current states as positions when the positions field of the
+                                   joint trajectory message is left empty. Defaults to ``False``.
+   :type autofill_traj_positions: bool, optional
+   :param load_gripper: Whether we also want to load the gripper
+                        control services.
+   :type load_gripper: boolean, optional
+   :param load_set_joint_commands_service: Whether the set joint
+                                           commands service should be loaded. This service is used by the
+                                           :ros-gazebo-gym:`ros_gazebo_gym <>` package when the control type is
+                                           **NOT** set to ``trajectory``. Defaults, to ``True``.
+   :type load_set_joint_commands_service: boolean, optional
+   :param load_arm_follow_joint_trajectory_action: Whether the
+                                                   arm follow joint trajectory action should be loaded. This service is
+                                                   used by the :ros-gazebo-gym:`ros_gazebo_gym <>` package when the control
+                                                   type is set to ``trajectory``. Defaults, to ``False``.
+   :type load_arm_follow_joint_trajectory_action: boolean, optional
+   :param load_extra_services: Whether to load extra services that
+                               are not used by the :ros-gazebo-gym:`ros_gazebo_gym <>` package.
+                               Defaults to ``False``.
+   :type load_extra_services: bool, optional
+   :param controllers_check_rate: Rate at which the availability of
+                                  the used controllers is checked. Setting this to ``-1`` will check at
+                                  every time step. Defaults to ``0.1`` Hz.
+   :type controllers_check_rate: float, optional
+
+   .. warning::
+       Please note that increasing the ``controllers_check_rate`` decreases the
+       control frequency.
+
+   .. py:property:: arm_trajectory_action_preempted
+
+      Returns whether the arm joint trajectory action server is preempted.
+
+   .. py:property:: controlled_joints
+
+      Returns the joints that can be controlled by a each control type.
+
+      .. important::
+          This does not mean that the necessary controller is running. It only means
+          that the controller was loaded and can be used to control the joints when
+          it is started.
+
+      :returns:
+
+                A dictionary containing the joints that are controlled when using a
+                    given control type
+                    (i.e. ``control_type``>``control_group``>``controller``).
+      :rtype: dict
+
+   .. py:property:: joint_controllers
+
+      Retrieves the controllers which are currently loaded to control each
+      joint.
+
+      :returns:
+
+                A dictionary where the keys are joint names and the values are
+                    lists of controllers that can control the joint.
+      :rtype: dict
+
+   .. py:property:: controllers
+
+      Retrieves info about the loaded controllers.
+
+      .. note:: This method is cached to reduce the number of calls to the
+          controller manager and therefore increase performance.
+
+      :returns: Dictionary with information about the currently loaded controllers.
+      :rtype: dict
+
+   .. py:property:: gripper_width
+
+      Returns the gripper width as calculated based on the Panda finger joints.
+
+      :returns: The gripper width.
+      :rtype: float
+
+
+.. py:class:: PandaControlSwitcher(connection_timeout=10, verbose=True, robot_name_space='')
+
+
+   Bases: :py:obj:`object`
+
+   Used for switching the Panda robot controllers.
+
+   .. attribute:: verbose
+
+      Boolean specifying whether we want to display log messages
+      during switching.
+
+      :type: bool
+
+   .. attribute:: arm_control_types
+
+      List of currently active arm control types.
+
+      :type: list
+
+   .. attribute:: hand_control_types
+
+      List of currently active hand control types.
+
+      :type: list
+
+   Initialise PandaControlSwitcher object.
+
+   :param connection_timeout: The timeout for connecting to the
+                              controller_manager services. Defaults to `10` sec.
+   :type connection_timeout: str, optional
+   :param verbose: Whether to display debug log messages. Defaults to
+                   ``True``.
+   :type verbose: bool, optional
+   :param robot_name_space: The namespace the robot, and thus the
+                            'controller_manager' is on. Defaults to ``""``.
+   :type robot_name_space: string, optional
+
+   .. py:property:: arm_control_types
+
+      Returns the currently active arm control types. Returns empty list when no
+      control type is enabled.
+
+   .. py:property:: hand_control_types
+
+      Returns the currently active hand control types. Returns empty when no
+      control type is enabled.
+
+   .. py:method:: wait_for_control_type(control_group, control_type, timeout=None, rate=10)
+
+      Function that can be used to wait till all the controllers used for a given
+      'control_group' and 'control_type' are running. Useful four when you expect a
+      launch file to load certain controllers.
+
+      :param control_group: The control group of which you want the switch the
+                            control type. Options are ``hand`` or ``arm``.
+      :type control_group: str
+      :param control_type: The robot control type you want to switch to for the
+                           given 'control_group'. Options are: ``trajectory``, ``position`` and
+                           ``effort``.
+      :type control_type: str
+      :param timeout: The function timeout. Defaults to ``None`` meaning
+                      the function will wait for ever.
+      :type timeout: float, optional
+      :param rate: The 'control_type' check rate. Defaults to `10`
+                   hz.
+      :type rate: int, optional
+
+      :raises TimeoutError: Thrown when the set timeout has passed.
+
+
+   .. py:method:: switch(control_group, control_type, load_controllers=True, timeout=3, verbose=None)
+
+      Switch Panda robot control type. This function stops all currently running
+      controllers and starts the required controllers for a given control type.
+
+      :param control_group: The control group of which you want the switch the
+                            control type. Options are ``hand`` or ``arm``.
+      :type control_group: str
+      :param control_type: The robot control type you want to switch to for the
+                           given 'control_group'. Options are: ``trajectory``, ``position``
+                           and ``effort``.
+      :type control_type: str
+      :param load_controllers: Try to load the required controllers for a given
+                               control_type if they are not yet loaded.
+      :type load_controllers: bool
+      :param timeout: The timeout for switching to a given controller.
+                      Defaults to ``3`` sec.
+      :type timeout: int, optional
+      :param verbose: Whether to display debug log messages. Defaults
+                      to verbose value set during the class initiation.
+      :type verbose: bool, optional
+
+      :returns:     Contains information about whether the switch operation was successful
+                    'success' and the previously used controller 'prev_control_type'.
+      :rtype: :obj:`~panda_gazebo.core.control_switcher.ControllerSwitcherResponse`
+
+
+
+.. py:class:: PandaMoveItPlannerServer(arm_move_group='panda_arm', arm_ee_link='panda_link8', hand_move_group='panda_hand', load_gripper=True, load_set_ee_pose_service=True, load_extra_services=False)
+
+
+   Bases: :py:obj:`object`
+
+   Used to control or request information from the Panda Robot. This is done using
+   the MoveIt :mod:`moveit_commander` module.
+
+   .. attribute:: robot
+
+      The MoveIt robot
+      commander object.
+
+      :type: :obj:`moveit_commander.robot.RobotCommander`
+
+   .. attribute:: scene
+
+      The MoveIt robot scene commander object.
+
+      :type: :obj:`moveit_commander.planning_scene_interface.PlanningSceneInterface`
+
+   .. attribute:: move_group_arm
+
+      The MoveIt arm move group object.
+
+      :type: :obj:`moveit_commander.move_group.MoveGroupCommander`
+
+   .. attribute:: move_group_hand
+
+      The MoveIt hand move group object.
+
+      :type: :obj:`moveit_commander.move_group.MoveGroupCommander`
+
+   .. attribute:: ee_pose_target
+
+      The last set ee pose.
+
+      :type: :obj:`geometry_msgs.msg.Pose`
+
+   .. attribute:: joint_positions_target
+
+      Dictionary containing the last Panda arm
+      and hand joint positions setpoint.
+
+      :type: :obj:`dict`
+
+   Initialise PandaMoveItPlannerServer object.
+
+   :param arm_move_group: The name of the move group you want to use
+                          for controlling the Panda arm. Defaults to ``panda_arm``.
+   :type arm_move_group: str, optional
+   :param arm_ee_link: The end effector you want MoveIt to use when
+                       controlling the Panda arm. Defaults to ``panda_link8``.
+   :type arm_ee_link: str, optional
+   :param hand_move_group: The name of the move group you want to use
+                           for controlling the Panda hand. Defaults to ``panda_hand``.
+   :type hand_move_group: str, optional
+   :param load_gripper: Whether we also want to load the gripper
+                        control services. Defaults to ``True``.
+   :type load_gripper: boolean, optional
+   :param load_set_ee_pose_service: Whether the set ee pose
+                                    service should be loaded. This service is used by the
+                                    :ros-gazebo-gym:`ros_gazebo_gym <>` package when the control type is
+                                    set to ``trajectory``. Defaults, to ``True``.
+   :type load_set_ee_pose_service: boolean, optional
+   :param load_extra_services: Whether to load extra services that
+                               are not used by the
+                               :ros-gazebo-gym:`ros_gazebo_gym <>` package. Defaults to ``False``.
+   :type load_extra_services: bool, optional
+
+

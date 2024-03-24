@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>panda_gazebo.msg &mdash; Panda Gazebo 2.17.6 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/modify.css?v=519ed47b" />
+
+  
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=fe1d5c58"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="panda_gazebo.srv" href="../srv/index.html" />
+    <link rel="prev" title="panda_gazebo.core.moveit_server" href="../core/moveit_server/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.17.6
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../get_started/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../get_started/usage.html">How to use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../get_started/issues.html">Known Issues</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../dev/contributing.html">Contribute to panda-gazebo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../dev/doc_dev.html">Release documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../dev/license.html">License</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../index.html#ros-api">ROS API</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html#python-api">Python API</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">panda_gazebo</span></code></a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="../index.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../index.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../index.html#package-contents">Package Contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../panda_control_server/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">panda_control_server</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../panda_moveit_server/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">panda_moveit_server</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../joint_positions_dynamic_reconfigure_server/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">joint_positions_dynamic_reconfigure_server</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../set_logging_level/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">set_logging_level</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../joint_efforts_dynamic_reconfigure_server/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">joint_efforts_dynamic_reconfigure_server</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Panda Gazebo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">panda_gazebo</span></code></a></li>
+      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">panda_gazebo.msg</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/rickstaa/panda-gazebo/blob/noetic/panda_gazebo/docs/source/autoapi/panda_gazebo/msg/index.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-panda_gazebo.msg">
+<span id="panda-gazebo-msg"></span><h1><a class="reference internal" href="#module-panda_gazebo.msg" title="panda_gazebo.msg"><code class="xref py py-mod docutils literal notranslate"><span class="pre">panda_gazebo.msg</span></code></a><a class="headerlink" href="#module-panda_gazebo.msg" title="Permalink to this heading"></a></h1>
+<section id="package-contents">
+<h2>Package Contents<a class="headerlink" href="#package-contents" title="Permalink to this heading"></a></h2>
+<section id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this heading"></a></h3>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#panda_gazebo.msg.BoundingRegion" title="panda_gazebo.msg.BoundingRegion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BoundingRegion</span></code></a></p></td>
+<td><p>Base class of Message data classes auto-generated from msg files.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#panda_gazebo.msg.FollowJointTrajectoryAction" title="panda_gazebo.msg.FollowJointTrajectoryAction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FollowJointTrajectoryAction</span></code></a></p></td>
+<td><p>Base class of Message data classes auto-generated from msg files.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#panda_gazebo.msg.FollowJointTrajectoryActionFeedback" title="panda_gazebo.msg.FollowJointTrajectoryActionFeedback"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FollowJointTrajectoryActionFeedback</span></code></a></p></td>
+<td><p>Base class of Message data classes auto-generated from msg files.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#panda_gazebo.msg.FollowJointTrajectoryActionGoal" title="panda_gazebo.msg.FollowJointTrajectoryActionGoal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FollowJointTrajectoryActionGoal</span></code></a></p></td>
+<td><p>Base class of Message data classes auto-generated from msg files.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#panda_gazebo.msg.FollowJointTrajectoryActionResult" title="panda_gazebo.msg.FollowJointTrajectoryActionResult"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FollowJointTrajectoryActionResult</span></code></a></p></td>
+<td><p>Base class of Message data classes auto-generated from msg files.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#panda_gazebo.msg.FollowJointTrajectoryFeedback" title="panda_gazebo.msg.FollowJointTrajectoryFeedback"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FollowJointTrajectoryFeedback</span></code></a></p></td>
+<td><p>Base class of Message data classes auto-generated from msg files.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#panda_gazebo.msg.FollowJointTrajectoryGoal" title="panda_gazebo.msg.FollowJointTrajectoryGoal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FollowJointTrajectoryGoal</span></code></a></p></td>
+<td><p>Base class of Message data classes auto-generated from msg files.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#panda_gazebo.msg.FollowJointTrajectoryResult" title="panda_gazebo.msg.FollowJointTrajectoryResult"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FollowJointTrajectoryResult</span></code></a></p></td>
+<td><p>Base class of Message data classes auto-generated from msg files.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#panda_gazebo.msg.JointLimits" title="panda_gazebo.msg.JointLimits"><code class="xref py py-obj docutils literal notranslate"><span class="pre">JointLimits</span></code></a></p></td>
+<td><p>Base class of Message data classes auto-generated from msg files.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="attributes">
+<h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this heading"></a></h3>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#id7" title="panda_gazebo.msg.python3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">python3</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#id7" title="panda_gazebo.msg.python3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">python3</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#id7" title="panda_gazebo.msg.python3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">python3</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#id7" title="panda_gazebo.msg.python3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">python3</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#id7" title="panda_gazebo.msg.python3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">python3</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#id7" title="panda_gazebo.msg.python3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">python3</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#id7" title="panda_gazebo.msg.python3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">python3</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#id7" title="panda_gazebo.msg.python3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">python3</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#id7" title="panda_gazebo.msg.python3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">python3</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py data">
+<dt class="sig sig-object py" id="panda_gazebo.msg.python3">
+<span class="sig-prename descclassname"><span class="pre">panda_gazebo.msg.</span></span><span class="sig-name descname"><span class="pre">python3</span></span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_BoundingRegion.html#python3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.msg.python3" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="panda_gazebo.msg.BoundingRegion">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">panda_gazebo.msg.</span></span><span class="sig-name descname"><span class="pre">BoundingRegion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_BoundingRegion.html#BoundingRegion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.msg.BoundingRegion" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">genpy.Message</span></code></p>
+<p>Base class of Message data classes auto-generated from msg files.</p>
+<p>Constructor. Any message fields that are implicitly/explicitly
+set to None will be assigned a default value. The recommend
+use is keyword arguments as this is more robust to future message
+changes.  You cannot mix in-order arguments and keyword arguments.</p>
+<dl class="simple">
+<dt>The available fields are:</dt><dd><p>x_min,x_max,y_min,y_max,z_min,z_max</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> – complete set of field values, in .msg order</p></li>
+<li><p><strong>kwds</strong> – use keyword arguments corresponding to message field names</p></li>
+</ul>
+</dd>
+</dl>
+<p>to set specific fields.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="panda_gazebo.msg.BoundingRegion.serialize">
+<span class="sig-name descname"><span class="pre">serialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buff</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_BoundingRegion.html#BoundingRegion.serialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.msg.BoundingRegion.serialize" title="Permalink to this definition"></a></dt>
+<dd><p>serialize message into buffer
+:param buff: buffer, <code class="docutils literal notranslate"><span class="pre">StringIO</span></code></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="panda_gazebo.msg.BoundingRegion.deserialize">
+<span class="sig-name descname"><span class="pre">deserialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_BoundingRegion.html#BoundingRegion.deserialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.msg.BoundingRegion.deserialize" title="Permalink to this definition"></a></dt>
+<dd><p>unpack serialized message in str into this message instance
+:param str: byte array of serialized message, <code class="docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="panda_gazebo.msg.BoundingRegion.serialize_numpy">
+<span class="sig-name descname"><span class="pre">serialize_numpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buff</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numpy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_BoundingRegion.html#BoundingRegion.serialize_numpy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.msg.BoundingRegion.serialize_numpy" title="Permalink to this definition"></a></dt>
+<dd><p>serialize message with numpy array types into buffer
+:param buff: buffer, <code class="docutils literal notranslate"><span class="pre">StringIO</span></code>
+:param numpy: numpy python module</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="panda_gazebo.msg.BoundingRegion.deserialize_numpy">
+<span class="sig-name descname"><span class="pre">deserialize_numpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numpy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_BoundingRegion.html#BoundingRegion.deserialize_numpy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.msg.BoundingRegion.deserialize_numpy" title="Permalink to this definition"></a></dt>
+<dd><p>unpack serialized message in str into this message instance using numpy for array types
+:param str: byte array of serialized message, <code class="docutils literal notranslate"><span class="pre">str</span></code>
+:param numpy: numpy python module</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-prename descclassname"><span class="pre">panda_gazebo.msg.</span></span><span class="sig-name descname"><span class="pre">python3</span></span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_BoundingRegion.html#python3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id0" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="panda_gazebo.msg.FollowJointTrajectoryAction">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">panda_gazebo.msg.</span></span><span class="sig-name descname"><span class="pre">FollowJointTrajectoryAction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_FollowJointTrajectoryAction.html#FollowJointTrajectoryAction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.msg.FollowJointTrajectoryAction" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">genpy.Message</span></code></p>
+<p>Base class of Message data classes auto-generated from msg files.</p>
+<p>Constructor. Any message fields that are implicitly/explicitly
+set to None will be assigned a default value. The recommend
+use is keyword arguments as this is more robust to future message
+changes.  You cannot mix in-order arguments and keyword arguments.</p>
+<dl class="simple">
+<dt>The available fields are:</dt><dd><p>action_goal,action_result,action_feedback</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> – complete set of field values, in .msg order</p></li>
+<li><p><strong>kwds</strong> – use keyword arguments corresponding to message field names</p></li>
+</ul>
+</dd>
+</dl>
+<p>to set specific fields.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="panda_gazebo.msg.FollowJointTrajectoryAction.serialize">
+<span class="sig-name descname"><span class="pre">serialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buff</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_FollowJointTrajectoryAction.html#FollowJointTrajectoryAction.serialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.msg.FollowJointTrajectoryAction.serialize" title="Permalink to this definition"></a></dt>
+<dd><p>serialize message into buffer
+:param buff: buffer, <code class="docutils literal notranslate"><span class="pre">StringIO</span></code></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="panda_gazebo.msg.FollowJointTrajectoryAction.deserialize">
+<span class="sig-name descname"><span class="pre">deserialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_FollowJointTrajectoryAction.html#FollowJointTrajectoryAction.deserialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.msg.FollowJointTrajectoryAction.deserialize" title="Permalink to this definition"></a></dt>
+<dd><p>unpack serialized message in str into this message instance
+:param str: byte array of serialized message, <code class="docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="panda_gazebo.msg.FollowJointTrajectoryAction.serialize_numpy">
+<span class="sig-name descname"><span class="pre">serialize_numpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buff</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numpy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_FollowJointTrajectoryAction.html#FollowJointTrajectoryAction.serialize_numpy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.msg.FollowJointTrajectoryAction.serialize_numpy" title="Permalink to this definition"></a></dt>
+<dd><p>serialize message with numpy array types into buffer
+:param buff: buffer, <code class="docutils literal notranslate"><span class="pre">StringIO</span></code>
+:param numpy: numpy python module</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="panda_gazebo.msg.FollowJointTrajectoryAction.deserialize_numpy">
+<span class="sig-name descname"><span class="pre">deserialize_numpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numpy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_FollowJointTrajectoryAction.html#FollowJointTrajectoryAction.deserialize_numpy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.msg.FollowJointTrajectoryAction.deserialize_numpy" title="Permalink to this definition"></a></dt>
+<dd><p>unpack serialized message in str into this message instance using numpy for array types
+:param str: byte array of serialized message, <code class="docutils literal notranslate"><span class="pre">str</span></code>
+:param numpy: numpy python module</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-prename descclassname"><span class="pre">panda_gazebo.msg.</span></span><span class="sig-name descname"><span class="pre">python3</span></span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_BoundingRegion.html#python3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id1" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="panda_gazebo.msg.FollowJointTrajectoryActionFeedback">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">panda_gazebo.msg.</span></span><span class="sig-name descname"><span class="pre">FollowJointTrajectoryActionFeedback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_FollowJointTrajectoryActionFeedback.html#FollowJointTrajectoryActionFeedback"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.msg.FollowJointTrajectoryActionFeedback" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">genpy.Message</span></code></p>
+<p>Base class of Message data classes auto-generated from msg files.</p>
+<p>Constructor. Any message fields that are implicitly/explicitly
+set to None will be assigned a default value. The recommend
+use is keyword arguments as this is more robust to future message
+changes.  You cannot mix in-order arguments and keyword arguments.</p>
+<dl class="simple">
+<dt>The available fields are:</dt><dd><p>header,status,feedback</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> – complete set of field values, in .msg order</p></li>
+<li><p><strong>kwds</strong> – use keyword arguments corresponding to message field names</p></li>
+</ul>
+</dd>
+</dl>
+<p>to set specific fields.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="panda_gazebo.msg.FollowJointTrajectoryActionFeedback.serialize">
+<span class="sig-name descname"><span class="pre">serialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buff</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_FollowJointTrajectoryActionFeedback.html#FollowJointTrajectoryActionFeedback.serialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.msg.FollowJointTrajectoryActionFeedback.serialize" title="Permalink to this definition"></a></dt>
+<dd><p>serialize message into buffer
+:param buff: buffer, <code class="docutils literal notranslate"><span class="pre">StringIO</span></code></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="panda_gazebo.msg.FollowJointTrajectoryActionFeedback.deserialize">
+<span class="sig-name descname"><span class="pre">deserialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_FollowJointTrajectoryActionFeedback.html#FollowJointTrajectoryActionFeedback.deserialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.msg.FollowJointTrajectoryActionFeedback.deserialize" title="Permalink to this definition"></a></dt>
+<dd><p>unpack serialized message in str into this message instance
+:param str: byte array of serialized message, <code class="docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="panda_gazebo.msg.FollowJointTrajectoryActionFeedback.serialize_numpy">
+<span class="sig-name descname"><span class="pre">serialize_numpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buff</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numpy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_FollowJointTrajectoryActionFeedback.html#FollowJointTrajectoryActionFeedback.serialize_numpy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.msg.FollowJointTrajectoryActionFeedback.serialize_numpy" title="Permalink to this definition"></a></dt>
+<dd><p>serialize message with numpy array types into buffer
+:param buff: buffer, <code class="docutils literal notranslate"><span class="pre">StringIO</span></code>
+:param numpy: numpy python module</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="panda_gazebo.msg.FollowJointTrajectoryActionFeedback.deserialize_numpy">
+<span class="sig-name descname"><span class="pre">deserialize_numpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numpy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_FollowJointTrajectoryActionFeedback.html#FollowJointTrajectoryActionFeedback.deserialize_numpy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.msg.FollowJointTrajectoryActionFeedback.deserialize_numpy" title="Permalink to this definition"></a></dt>
+<dd><p>unpack serialized message in str into this message instance using numpy for array types
+:param str: byte array of serialized message, <code class="docutils literal notranslate"><span class="pre">str</span></code>
+:param numpy: numpy python module</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-prename descclassname"><span class="pre">panda_gazebo.msg.</span></span><span class="sig-name descname"><span class="pre">python3</span></span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_BoundingRegion.html#python3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id2" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="panda_gazebo.msg.FollowJointTrajectoryActionGoal">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">panda_gazebo.msg.</span></span><span class="sig-name descname"><span class="pre">FollowJointTrajectoryActionGoal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_FollowJointTrajectoryActionGoal.html#FollowJointTrajectoryActionGoal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.msg.FollowJointTrajectoryActionGoal" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">genpy.Message</span></code></p>
+<p>Base class of Message data classes auto-generated from msg files.</p>
+<p>Constructor. Any message fields that are implicitly/explicitly
+set to None will be assigned a default value. The recommend
+use is keyword arguments as this is more robust to future message
+changes.  You cannot mix in-order arguments and keyword arguments.</p>
+<dl class="simple">
+<dt>The available fields are:</dt><dd><p>header,goal_id,goal</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> – complete set of field values, in .msg order</p></li>
+<li><p><strong>kwds</strong> – use keyword arguments corresponding to message field names</p></li>
+</ul>
+</dd>
+</dl>
+<p>to set specific fields.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="panda_gazebo.msg.FollowJointTrajectoryActionGoal.serialize">
+<span class="sig-name descname"><span class="pre">serialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buff</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_FollowJointTrajectoryActionGoal.html#FollowJointTrajectoryActionGoal.serialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.msg.FollowJointTrajectoryActionGoal.serialize" title="Permalink to this definition"></a></dt>
+<dd><p>serialize message into buffer
+:param buff: buffer, <code class="docutils literal notranslate"><span class="pre">StringIO</span></code></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="panda_gazebo.msg.FollowJointTrajectoryActionGoal.deserialize">
+<span class="sig-name descname"><span class="pre">deserialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_FollowJointTrajectoryActionGoal.html#FollowJointTrajectoryActionGoal.deserialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.msg.FollowJointTrajectoryActionGoal.deserialize" title="Permalink to this definition"></a></dt>
+<dd><p>unpack serialized message in str into this message instance
+:param str: byte array of serialized message, <code class="docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="panda_gazebo.msg.FollowJointTrajectoryActionGoal.serialize_numpy">
+<span class="sig-name descname"><span class="pre">serialize_numpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buff</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numpy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_FollowJointTrajectoryActionGoal.html#FollowJointTrajectoryActionGoal.serialize_numpy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.msg.FollowJointTrajectoryActionGoal.serialize_numpy" title="Permalink to this definition"></a></dt>
+<dd><p>serialize message with numpy array types into buffer
+:param buff: buffer, <code class="docutils literal notranslate"><span class="pre">StringIO</span></code>
+:param numpy: numpy python module</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="panda_gazebo.msg.FollowJointTrajectoryActionGoal.deserialize_numpy">
+<span class="sig-name descname"><span class="pre">deserialize_numpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numpy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_FollowJointTrajectoryActionGoal.html#FollowJointTrajectoryActionGoal.deserialize_numpy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.msg.FollowJointTrajectoryActionGoal.deserialize_numpy" title="Permalink to this definition"></a></dt>
+<dd><p>unpack serialized message in str into this message instance using numpy for array types
+:param str: byte array of serialized message, <code class="docutils literal notranslate"><span class="pre">str</span></code>
+:param numpy: numpy python module</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="id3">
+<span class="sig-prename descclassname"><span class="pre">panda_gazebo.msg.</span></span><span class="sig-name descname"><span class="pre">python3</span></span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_BoundingRegion.html#python3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id3" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="panda_gazebo.msg.FollowJointTrajectoryActionResult">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">panda_gazebo.msg.</span></span><span class="sig-name descname"><span class="pre">FollowJointTrajectoryActionResult</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_FollowJointTrajectoryActionResult.html#FollowJointTrajectoryActionResult"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.msg.FollowJointTrajectoryActionResult" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">genpy.Message</span></code></p>
+<p>Base class of Message data classes auto-generated from msg files.</p>
+<p>Constructor. Any message fields that are implicitly/explicitly
+set to None will be assigned a default value. The recommend
+use is keyword arguments as this is more robust to future message
+changes.  You cannot mix in-order arguments and keyword arguments.</p>
+<dl class="simple">
+<dt>The available fields are:</dt><dd><p>header,status,result</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> – complete set of field values, in .msg order</p></li>
+<li><p><strong>kwds</strong> – use keyword arguments corresponding to message field names</p></li>
+</ul>
+</dd>
+</dl>
+<p>to set specific fields.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="panda_gazebo.msg.FollowJointTrajectoryActionResult.serialize">
+<span class="sig-name descname"><span class="pre">serialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buff</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_FollowJointTrajectoryActionResult.html#FollowJointTrajectoryActionResult.serialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.msg.FollowJointTrajectoryActionResult.serialize" title="Permalink to this definition"></a></dt>
+<dd><p>serialize message into buffer
+:param buff: buffer, <code class="docutils literal notranslate"><span class="pre">StringIO</span></code></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="panda_gazebo.msg.FollowJointTrajectoryActionResult.deserialize">
+<span class="sig-name descname"><span class="pre">deserialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_FollowJointTrajectoryActionResult.html#FollowJointTrajectoryActionResult.deserialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.msg.FollowJointTrajectoryActionResult.deserialize" title="Permalink to this definition"></a></dt>
+<dd><p>unpack serialized message in str into this message instance
+:param str: byte array of serialized message, <code class="docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="panda_gazebo.msg.FollowJointTrajectoryActionResult.serialize_numpy">
+<span class="sig-name descname"><span class="pre">serialize_numpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buff</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numpy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_FollowJointTrajectoryActionResult.html#FollowJointTrajectoryActionResult.serialize_numpy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.msg.FollowJointTrajectoryActionResult.serialize_numpy" title="Permalink to this definition"></a></dt>
+<dd><p>serialize message with numpy array types into buffer
+:param buff: buffer, <code class="docutils literal notranslate"><span class="pre">StringIO</span></code>
+:param numpy: numpy python module</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="panda_gazebo.msg.FollowJointTrajectoryActionResult.deserialize_numpy">
+<span class="sig-name descname"><span class="pre">deserialize_numpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numpy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_FollowJointTrajectoryActionResult.html#FollowJointTrajectoryActionResult.deserialize_numpy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.msg.FollowJointTrajectoryActionResult.deserialize_numpy" title="Permalink to this definition"></a></dt>
+<dd><p>unpack serialized message in str into this message instance using numpy for array types
+:param str: byte array of serialized message, <code class="docutils literal notranslate"><span class="pre">str</span></code>
+:param numpy: numpy python module</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="id4">
+<span class="sig-prename descclassname"><span class="pre">panda_gazebo.msg.</span></span><span class="sig-name descname"><span class="pre">python3</span></span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_BoundingRegion.html#python3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id4" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="panda_gazebo.msg.FollowJointTrajectoryFeedback">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">panda_gazebo.msg.</span></span><span class="sig-name descname"><span class="pre">FollowJointTrajectoryFeedback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_FollowJointTrajectoryFeedback.html#FollowJointTrajectoryFeedback"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.msg.FollowJointTrajectoryFeedback" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">genpy.Message</span></code></p>
+<p>Base class of Message data classes auto-generated from msg files.</p>
+<p>Constructor. Any message fields that are implicitly/explicitly
+set to None will be assigned a default value. The recommend
+use is keyword arguments as this is more robust to future message
+changes.  You cannot mix in-order arguments and keyword arguments.</p>
+<dl class="simple">
+<dt>The available fields are:</dt><dd><p>header,joint_names,desired,actual,error</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> – complete set of field values, in .msg order</p></li>
+<li><p><strong>kwds</strong> – use keyword arguments corresponding to message field names</p></li>
+</ul>
+</dd>
+</dl>
+<p>to set specific fields.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="panda_gazebo.msg.FollowJointTrajectoryFeedback.serialize">
+<span class="sig-name descname"><span class="pre">serialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buff</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_FollowJointTrajectoryFeedback.html#FollowJointTrajectoryFeedback.serialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.msg.FollowJointTrajectoryFeedback.serialize" title="Permalink to this definition"></a></dt>
+<dd><p>serialize message into buffer
+:param buff: buffer, <code class="docutils literal notranslate"><span class="pre">StringIO</span></code></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="panda_gazebo.msg.FollowJointTrajectoryFeedback.deserialize">
+<span class="sig-name descname"><span class="pre">deserialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_FollowJointTrajectoryFeedback.html#FollowJointTrajectoryFeedback.deserialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.msg.FollowJointTrajectoryFeedback.deserialize" title="Permalink to this definition"></a></dt>
+<dd><p>unpack serialized message in str into this message instance
+:param str: byte array of serialized message, <code class="docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="panda_gazebo.msg.FollowJointTrajectoryFeedback.serialize_numpy">
+<span class="sig-name descname"><span class="pre">serialize_numpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buff</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numpy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_FollowJointTrajectoryFeedback.html#FollowJointTrajectoryFeedback.serialize_numpy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.msg.FollowJointTrajectoryFeedback.serialize_numpy" title="Permalink to this definition"></a></dt>
+<dd><p>serialize message with numpy array types into buffer
+:param buff: buffer, <code class="docutils literal notranslate"><span class="pre">StringIO</span></code>
+:param numpy: numpy python module</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="panda_gazebo.msg.FollowJointTrajectoryFeedback.deserialize_numpy">
+<span class="sig-name descname"><span class="pre">deserialize_numpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numpy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_FollowJointTrajectoryFeedback.html#FollowJointTrajectoryFeedback.deserialize_numpy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.msg.FollowJointTrajectoryFeedback.deserialize_numpy" title="Permalink to this definition"></a></dt>
+<dd><p>unpack serialized message in str into this message instance using numpy for array types
+:param str: byte array of serialized message, <code class="docutils literal notranslate"><span class="pre">str</span></code>
+:param numpy: numpy python module</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="id5">
+<span class="sig-prename descclassname"><span class="pre">panda_gazebo.msg.</span></span><span class="sig-name descname"><span class="pre">python3</span></span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_BoundingRegion.html#python3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id5" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="panda_gazebo.msg.FollowJointTrajectoryGoal">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">panda_gazebo.msg.</span></span><span class="sig-name descname"><span class="pre">FollowJointTrajectoryGoal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_FollowJointTrajectoryGoal.html#FollowJointTrajectoryGoal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.msg.FollowJointTrajectoryGoal" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">genpy.Message</span></code></p>
+<p>Base class of Message data classes auto-generated from msg files.</p>
+<p>Constructor. Any message fields that are implicitly/explicitly
+set to None will be assigned a default value. The recommend
+use is keyword arguments as this is more robust to future message
+changes.  You cannot mix in-order arguments and keyword arguments.</p>
+<dl class="simple">
+<dt>The available fields are:</dt><dd><p>trajectory,path_tolerance,goal_tolerance,goal_time_tolerance,create_time_axis,time_axis_step,timeout</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> – complete set of field values, in .msg order</p></li>
+<li><p><strong>kwds</strong> – use keyword arguments corresponding to message field names</p></li>
+</ul>
+</dd>
+</dl>
+<p>to set specific fields.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="panda_gazebo.msg.FollowJointTrajectoryGoal.serialize">
+<span class="sig-name descname"><span class="pre">serialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buff</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_FollowJointTrajectoryGoal.html#FollowJointTrajectoryGoal.serialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.msg.FollowJointTrajectoryGoal.serialize" title="Permalink to this definition"></a></dt>
+<dd><p>serialize message into buffer
+:param buff: buffer, <code class="docutils literal notranslate"><span class="pre">StringIO</span></code></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="panda_gazebo.msg.FollowJointTrajectoryGoal.deserialize">
+<span class="sig-name descname"><span class="pre">deserialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_FollowJointTrajectoryGoal.html#FollowJointTrajectoryGoal.deserialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.msg.FollowJointTrajectoryGoal.deserialize" title="Permalink to this definition"></a></dt>
+<dd><p>unpack serialized message in str into this message instance
+:param str: byte array of serialized message, <code class="docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="panda_gazebo.msg.FollowJointTrajectoryGoal.serialize_numpy">
+<span class="sig-name descname"><span class="pre">serialize_numpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buff</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numpy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_FollowJointTrajectoryGoal.html#FollowJointTrajectoryGoal.serialize_numpy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.msg.FollowJointTrajectoryGoal.serialize_numpy" title="Permalink to this definition"></a></dt>
+<dd><p>serialize message with numpy array types into buffer
+:param buff: buffer, <code class="docutils literal notranslate"><span class="pre">StringIO</span></code>
+:param numpy: numpy python module</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="panda_gazebo.msg.FollowJointTrajectoryGoal.deserialize_numpy">
+<span class="sig-name descname"><span class="pre">deserialize_numpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numpy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_FollowJointTrajectoryGoal.html#FollowJointTrajectoryGoal.deserialize_numpy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.msg.FollowJointTrajectoryGoal.deserialize_numpy" title="Permalink to this definition"></a></dt>
+<dd><p>unpack serialized message in str into this message instance using numpy for array types
+:param str: byte array of serialized message, <code class="docutils literal notranslate"><span class="pre">str</span></code>
+:param numpy: numpy python module</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="id6">
+<span class="sig-prename descclassname"><span class="pre">panda_gazebo.msg.</span></span><span class="sig-name descname"><span class="pre">python3</span></span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_BoundingRegion.html#python3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id6" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="panda_gazebo.msg.FollowJointTrajectoryResult">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">panda_gazebo.msg.</span></span><span class="sig-name descname"><span class="pre">FollowJointTrajectoryResult</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_FollowJointTrajectoryResult.html#FollowJointTrajectoryResult"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.msg.FollowJointTrajectoryResult" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">genpy.Message</span></code></p>
+<p>Base class of Message data classes auto-generated from msg files.</p>
+<p>Constructor. Any message fields that are implicitly/explicitly
+set to None will be assigned a default value. The recommend
+use is keyword arguments as this is more robust to future message
+changes.  You cannot mix in-order arguments and keyword arguments.</p>
+<dl class="simple">
+<dt>The available fields are:</dt><dd><p>error_code,error_string</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> – complete set of field values, in .msg order</p></li>
+<li><p><strong>kwds</strong> – use keyword arguments corresponding to message field names</p></li>
+</ul>
+</dd>
+</dl>
+<p>to set specific fields.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="panda_gazebo.msg.FollowJointTrajectoryResult.SUCCESSFUL">
+<span class="sig-name descname"><span class="pre">SUCCESSFUL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#panda_gazebo.msg.FollowJointTrajectoryResult.SUCCESSFUL" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="panda_gazebo.msg.FollowJointTrajectoryResult.INVALID_GOAL">
+<span class="sig-name descname"><span class="pre">INVALID_GOAL</span></span><a class="headerlink" href="#panda_gazebo.msg.FollowJointTrajectoryResult.INVALID_GOAL" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="panda_gazebo.msg.FollowJointTrajectoryResult.INVALID_JOINTS">
+<span class="sig-name descname"><span class="pre">INVALID_JOINTS</span></span><a class="headerlink" href="#panda_gazebo.msg.FollowJointTrajectoryResult.INVALID_JOINTS" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="panda_gazebo.msg.FollowJointTrajectoryResult.OLD_HEADER_TIMESTAMP">
+<span class="sig-name descname"><span class="pre">OLD_HEADER_TIMESTAMP</span></span><a class="headerlink" href="#panda_gazebo.msg.FollowJointTrajectoryResult.OLD_HEADER_TIMESTAMP" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="panda_gazebo.msg.FollowJointTrajectoryResult.PATH_TOLERANCE_VIOLATED">
+<span class="sig-name descname"><span class="pre">PATH_TOLERANCE_VIOLATED</span></span><a class="headerlink" href="#panda_gazebo.msg.FollowJointTrajectoryResult.PATH_TOLERANCE_VIOLATED" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="panda_gazebo.msg.FollowJointTrajectoryResult.GOAL_TOLERANCE_VIOLATED">
+<span class="sig-name descname"><span class="pre">GOAL_TOLERANCE_VIOLATED</span></span><a class="headerlink" href="#panda_gazebo.msg.FollowJointTrajectoryResult.GOAL_TOLERANCE_VIOLATED" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="panda_gazebo.msg.FollowJointTrajectoryResult.ACTION_TIMEOUT">
+<span class="sig-name descname"><span class="pre">ACTION_TIMEOUT</span></span><a class="headerlink" href="#panda_gazebo.msg.FollowJointTrajectoryResult.ACTION_TIMEOUT" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="panda_gazebo.msg.FollowJointTrajectoryResult.serialize">
+<span class="sig-name descname"><span class="pre">serialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buff</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_FollowJointTrajectoryResult.html#FollowJointTrajectoryResult.serialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.msg.FollowJointTrajectoryResult.serialize" title="Permalink to this definition"></a></dt>
+<dd><p>serialize message into buffer
+:param buff: buffer, <code class="docutils literal notranslate"><span class="pre">StringIO</span></code></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="panda_gazebo.msg.FollowJointTrajectoryResult.deserialize">
+<span class="sig-name descname"><span class="pre">deserialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_FollowJointTrajectoryResult.html#FollowJointTrajectoryResult.deserialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.msg.FollowJointTrajectoryResult.deserialize" title="Permalink to this definition"></a></dt>
+<dd><p>unpack serialized message in str into this message instance
+:param str: byte array of serialized message, <code class="docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="panda_gazebo.msg.FollowJointTrajectoryResult.serialize_numpy">
+<span class="sig-name descname"><span class="pre">serialize_numpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buff</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numpy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_FollowJointTrajectoryResult.html#FollowJointTrajectoryResult.serialize_numpy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.msg.FollowJointTrajectoryResult.serialize_numpy" title="Permalink to this definition"></a></dt>
+<dd><p>serialize message with numpy array types into buffer
+:param buff: buffer, <code class="docutils literal notranslate"><span class="pre">StringIO</span></code>
+:param numpy: numpy python module</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="panda_gazebo.msg.FollowJointTrajectoryResult.deserialize_numpy">
+<span class="sig-name descname"><span class="pre">deserialize_numpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numpy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_FollowJointTrajectoryResult.html#FollowJointTrajectoryResult.deserialize_numpy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.msg.FollowJointTrajectoryResult.deserialize_numpy" title="Permalink to this definition"></a></dt>
+<dd><p>unpack serialized message in str into this message instance using numpy for array types
+:param str: byte array of serialized message, <code class="docutils literal notranslate"><span class="pre">str</span></code>
+:param numpy: numpy python module</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="id7">
+<span class="sig-prename descclassname"><span class="pre">panda_gazebo.msg.</span></span><span class="sig-name descname"><span class="pre">python3</span></span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_BoundingRegion.html#python3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id7" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="panda_gazebo.msg.JointLimits">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">panda_gazebo.msg.</span></span><span class="sig-name descname"><span class="pre">JointLimits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_JointLimits.html#JointLimits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.msg.JointLimits" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">genpy.Message</span></code></p>
+<p>Base class of Message data classes auto-generated from msg files.</p>
+<p>Constructor. Any message fields that are implicitly/explicitly
+set to None will be assigned a default value. The recommend
+use is keyword arguments as this is more robust to future message
+changes.  You cannot mix in-order arguments and keyword arguments.</p>
+<dl class="simple">
+<dt>The available fields are:</dt><dd><p>names,values</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> – complete set of field values, in .msg order</p></li>
+<li><p><strong>kwds</strong> – use keyword arguments corresponding to message field names</p></li>
+</ul>
+</dd>
+</dl>
+<p>to set specific fields.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="panda_gazebo.msg.JointLimits.serialize">
+<span class="sig-name descname"><span class="pre">serialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buff</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_JointLimits.html#JointLimits.serialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.msg.JointLimits.serialize" title="Permalink to this definition"></a></dt>
+<dd><p>serialize message into buffer
+:param buff: buffer, <code class="docutils literal notranslate"><span class="pre">StringIO</span></code></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="panda_gazebo.msg.JointLimits.deserialize">
+<span class="sig-name descname"><span class="pre">deserialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_JointLimits.html#JointLimits.deserialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.msg.JointLimits.deserialize" title="Permalink to this definition"></a></dt>
+<dd><p>unpack serialized message in str into this message instance
+:param str: byte array of serialized message, <code class="docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="panda_gazebo.msg.JointLimits.serialize_numpy">
+<span class="sig-name descname"><span class="pre">serialize_numpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buff</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numpy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_JointLimits.html#JointLimits.serialize_numpy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.msg.JointLimits.serialize_numpy" title="Permalink to this definition"></a></dt>
+<dd><p>serialize message with numpy array types into buffer
+:param buff: buffer, <code class="docutils literal notranslate"><span class="pre">StringIO</span></code>
+:param numpy: numpy python module</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="panda_gazebo.msg.JointLimits.deserialize_numpy">
+<span class="sig-name descname"><span class="pre">deserialize_numpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numpy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/panda_gazebo/msg/_JointLimits.html#JointLimits.deserialize_numpy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#panda_gazebo.msg.JointLimits.deserialize_numpy" title="Permalink to this definition"></a></dt>
+<dd><p>unpack serialized message in str into this message instance using numpy for array types
+:param str: byte array of serialized message, <code class="docutils literal notranslate"><span class="pre">str</span></code>
+:param numpy: numpy python module</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../core/moveit_server/index.html" class="btn btn-neutral float-left" title="panda_gazebo.core.moveit_server" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../srv/index.html" class="btn btn-neutral float-right" title="panda_gazebo.srv" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Rick Staa.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

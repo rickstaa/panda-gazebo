@@ -1,0 +1,78 @@
+:py:mod:`panda_gazebo.exceptions`
+=================================
+
+.. py:module:: panda_gazebo.exceptions
+
+.. autoapi-nested-parse::
+
+   Module containing several custom exceptions.
+
+
+
+Module Contents
+---------------
+
+.. py:exception:: InputMessageInvalidError(message='', log_message='', **details)
+
+
+   Bases: :py:obj:`Exception`
+
+   Custom exception that is thrown when the input message to a 'panda_gazebo'
+   service or action is invalid.
+
+   .. attribute:: log_message
+
+      The full log message.
+
+      :type: str
+
+   .. attribute:: details
+
+      Dictionary containing extra Exception information.
+
+      :type: dict
+
+   Initialise InputMessageInvalidError exception object.
+
+   :param message: Exception message specifying whether the exception
+                   occurred. Defaults to ``""``.
+   :type message: str, optional
+   :param log_message: Full log message. Defaults to ``""``.
+   :type log_message: str, optional
+   :param details: Additional keyword arguments that can be used to supply the user
+                   with more details about why the exception occurred. These details are
+                   stored in the ``details`` attribute.
+
+
+.. py:exception:: JointLimitsInvalidError(message='', log_message='', **details)
+
+
+   Bases: :py:obj:`Exception`
+
+   Custom exception that is thrown when the joint limits specified by the user are
+   not within the joint limits of the robot.
+
+   .. attribute:: log_message
+
+      The full log message.
+
+      :type: str
+
+   .. attribute:: details
+
+      Dictionary containing extra Exception information.
+
+      :type: dict
+
+   Initialise JointLimitsInvalidError exception object.
+
+   :param message: Exception message specifying whether the exception
+                   occurred. Defaults to ``""``.
+   :type message: str, optional
+   :param log_message: Full log message. Defaults to ``""``.
+   :type log_message: str, optional
+   :param details: Additional keyword arguments that can be used to supply the user
+                   with more details about why the exception occurred. These details are
+                   stored in the ``details`` attribute.
+
+
