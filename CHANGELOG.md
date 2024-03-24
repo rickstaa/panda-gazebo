@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.17.6](https://github.com/rickstaa/panda-gazebo/compare/v2.17.5...v2.17.6) (2024-03-24)
+
+
+### Bug Fixes
+
+* Update 'franka_ros' branch ([2aeb759](https://github.com/rickstaa/panda-gazebo/commit/2aeb759535c4c0643547f1a7c2174752a9dee112))
+
 ## [2.17.5](https://github.com/rickstaa/panda-gazebo/compare/v2.17.4...v2.17.5) (2024-02-05)
 
 
